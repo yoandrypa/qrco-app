@@ -60,7 +60,7 @@ export default function Handler({ data }: InferGetServerSidePropsType<typeof get
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   // @ts-ignore
   const {code } = params;
   const data = await QrDataModel.get({ id: code });
