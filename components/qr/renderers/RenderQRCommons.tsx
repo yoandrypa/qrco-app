@@ -86,7 +86,7 @@ function RenderQRCommons({omitColorSel, qrName, primary, secondary, handleValue}
         InputProps={{
           endAdornment: (
             !Boolean(qrName?.trim().length) ? (<InputAdornment position="end">
-              <Typography color="error">REQUIRED</Typography>
+              <Typography color="error">{'REQUIRED'}</Typography>
             </InputAdornment>) : null
           )
         }}

@@ -9,16 +9,18 @@ import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import {ColorTypes} from "../types/types";
 import RenderIcon from "../helperComponents/RenderIcon";
 import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import Typography from "@mui/material/Typography";
-import {styled} from "@mui/material/styles";
+import {alpha, styled} from "@mui/material/styles";
+
+import {DEFAULT_COLORS} from "../constants";
 
 interface MicrositesProps {
   children: ReactNode;
@@ -33,7 +35,11 @@ interface BtnProps {
 }
 
 const Btn = styled(Button)(({primary, secondary}: BtnProps) => ({
-  marginTop: '10px', width: '100%', color: primary, background: secondary, '&:hover': {color: secondary, background: primary}
+  marginTop: '10px',
+  width: '100%',
+  color: primary,
+  background: secondary,
+  '&:hover': {color: secondary, background: primary}
 }));
 
 export default function MainMicrosite({children, colors, url, badge}: MicrositesProps) {
@@ -65,43 +71,47 @@ export default function MainMicrosite({children, colors, url, badge}: Microsites
   }, [navigate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Card sx={{
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      maxWidth: "460px"
-    }}>
-      <CardMedia title="">
-        {!colors ? (
-          <Image src="/qr/vcard+.png" height={220} width={460} alt="image"/>
-        ) : (
-          <Box sx={{ width: '460px', height: '120px', background: colors.p }}>
-            {url !== undefined && (<SpeedDial
-              ariaLabel="SpeedDial"
-              direction="down"
-              sx={{
-                position: 'absolute',
-                top: 32,
-                right: 16,
-                '& .MuiFab-primary': {
-                  backgroundColor: colors.s, color: colors.p,
-                  '&:hover': { backgroundColor: colors.s, color: colors.p }
-                }
-              }}
-              icon={<SpeedDialIcon />}
-            >
-              <SpeedDialAction
-                key="share"
-                onClick={handleShare}
-                icon={<RenderIcon icon="social" enabled />}
-                tooltipTitle="Share"
-              />
-            </SpeedDial>)}
-          </Box>
-        )}
-      </CardMedia>
-      {badge && (<Box style={{
+    <>
+      <Box sx={{ p: 0, m: 0, width: '100%', height: '158px', background: alpha(colors ? colors.p : DEFAULT_COLORS.p, 0.9) }} />
+      <Card sx={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        maxWidth: {md: '460px', xs: 'calc(100% - 25px)'}
+      }}>
+        <CardMedia title="">
+          {!colors ? (
+            <Image src="/qr/vcard+.png" height={220} width={460} alt="image"/>
+          ) : (
+            <Box sx={{width: '460px', height: '120px', background: colors.p}}>
+              {url !== undefined && (<SpeedDial
+                ariaLabel="SpeedDial"
+                direction="down"
+                sx={{
+                  position: 'absolute',
+                  top: 55,
+                  right: 16,
+                  '& .MuiFab-primary': {
+                    height: '45px',
+                    width: '45px',
+                    backgroundColor: colors.s, color: colors.p,
+                    '&:hover': {backgroundColor: colors.s, color: colors.p}
+                  }
+                }}
+                icon={<SpeedDialIcon/>}
+              >
+                <SpeedDialAction
+                  key="share"
+                  onClick={handleShare}
+                  icon={<RenderIcon icon="social" enabled/>}
+                  tooltipTitle="Share"
+                />
+              </SpeedDial>)}
+            </Box>
+          )}
+        </CardMedia>
+        {badge && (<Box style={{
           position: 'fixed',
           marginTop: '-52px',
           padding: '10px',
@@ -110,57 +120,61 @@ export default function MainMicrosite({children, colors, url, badge}: Microsites
           borderRadius: '5px',
           // @ts-ignore
           boxShadow: theme => `5px 5px 2px 1px ${theme.palette.text.disabled}`,
-          marginLeft: '10px'}}>
-          <Typography sx={{ color: colors?.p, fontWeight: 'bold' }}>{badge}</Typography>
+          marginLeft: '10px'
+        }}>
+          <Typography sx={{color: colors?.p, fontWeight: 'bold'}}>{badge}</Typography>
         </Box>)}
-      <Box sx={{ height: `calc(100vh - ${!colors ? 265 : 160}px)`, overflow: 'auto' }}>
-        {children}
-      </Box>
-      {share && colors && (
-        <Dialog onClose={handleShare} open={true}>
-          <DialogContent>
-            <Typography>{'Share this shortlink using...'}</Typography>
-            <Box sx={{ width: '300px' }}>
-              <Btn
-                primary={colors.p}
-                secondary={colors.s}
-                variant="contained"
-                startIcon={<FacebookIcon />}
-                onClick={() => handleNavigate('https://www.facebook.com/sharer/sharer.php?u=')}
-              >
-                {'Facebook'}
-              </Btn>
-              <Btn
-                primary={colors.p}
-                secondary={colors.s}
-                variant="contained"
-                onClick={() => handleNavigate('https://twitter.com/share?url=')}
-                startIcon={<TwitterIcon />}
-              >
-                {'Twitter'}
-              </Btn>
-              <Btn
-                primary={colors.p}
-                secondary={colors.s}
-                variant="contained"
-                onClick={() => handleNavigate('mailto:?body=')}
-                startIcon={<AlternateEmailIcon />}
-              >
-                {'Email'}
-              </Btn>
-              <Btn
-                primary={colors.p}
-                secondary={colors.s}
-                variant="contained"
-                onClick={copy}
-                startIcon={<ContentCopyIcon />}
-              >
-                {'Copy to clipboard'}
-              </Btn>
-            </Box>
-          </DialogContent>
-        </Dialog>
-      )}
-    </Card>
+        <Box sx={{height: `calc(100vh - ${!colors ? 265 : 160}px)`, overflow: 'auto'}}>
+          {children}
+        </Box>
+        {share && colors && (
+          <Dialog onClose={handleShare} open={true}>
+            <DialogTitle>
+              <Typography>{'Share this shortlink using...'}</Typography>
+            </DialogTitle>
+            <DialogContent>
+              <Box sx={{width: '300px'}}>
+                <Btn
+                  primary={colors.p}
+                  secondary={colors.s}
+                  variant="contained"
+                  startIcon={<FacebookIcon/>}
+                  onClick={() => handleNavigate('https://www.facebook.com/sharer/sharer.php?u=')}
+                >
+                  {'Facebook'}
+                </Btn>
+                <Btn
+                  primary={colors.p}
+                  secondary={colors.s}
+                  variant="contained"
+                  onClick={() => handleNavigate('https://twitter.com/share?url=')}
+                  startIcon={<TwitterIcon/>}
+                >
+                  {'Twitter'}
+                </Btn>
+                <Btn
+                  primary={colors.p}
+                  secondary={colors.s}
+                  variant="contained"
+                  onClick={() => handleNavigate('mailto:?body=')}
+                  startIcon={<AlternateEmailIcon/>}
+                >
+                  {'Email'}
+                </Btn>
+                <Btn
+                  primary={colors.p}
+                  secondary={colors.s}
+                  variant="contained"
+                  onClick={copy}
+                  startIcon={<ContentCopyIcon/>}
+                >
+                  {'Copy to clipboard'}
+                </Btn>
+              </Box>
+            </DialogContent>
+          </Dialog>
+        )}
+      </Card>
+    </>
   );
 }
