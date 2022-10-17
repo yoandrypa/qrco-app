@@ -27,7 +27,7 @@ function Common({ msg, children }: CommonProps) {
         return temp;
       });
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
