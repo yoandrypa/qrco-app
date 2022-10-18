@@ -24,6 +24,7 @@ import {DEFAULT_COLORS} from "../constants";
 
 interface MicrositesProps {
   children: ReactNode;
+  type?: string;
   colors?: ColorTypes;
   url?: string;
   badge?: string;
@@ -42,7 +43,7 @@ const Btn = styled(Button)(({primary, secondary}: BtnProps) => ({
   '&:hover': {color: secondary, background: primary}
 }));
 
-export default function MainMicrosite({children, colors, url, badge}: MicrositesProps) {
+export default function MainMicrosite({children, colors, url, badge, type}: MicrositesProps) {
   const [share, setShare] = useState<boolean>(false);
   const [navigate, setNavigate] = useState<string | null>(null);
 
@@ -109,6 +110,26 @@ export default function MainMicrosite({children, colors, url, badge}: Microsites
                 />
               </SpeedDial>)}
             </Box>
+          )}
+          {type !== undefined && (
+            <Typography
+              sx={{
+                position: 'absolute',
+                width: '100%',
+                marginTop: '-105px',
+                pr: 2,
+                display: 'flex',
+                justifyContent: 'right',
+                fontWeight: 'bold',
+                fontSize: '20px',
+                color: colors.s || DEFAULT_COLORS.s
+              }}
+            >
+              <Box sx={{ mr: '5px', mt: '2px' }}>
+                <RenderIcon icon={type} enabled color={colors.s || DEFAULT_COLORS.s} />
+              </Box>
+              {type.toUpperCase()}
+            </Typography>
           )}
         </CardMedia>
         {badge && (<Box style={{

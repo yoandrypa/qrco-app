@@ -9,7 +9,7 @@ interface SocialProps {
 
 export default function SocialInfo({newData}: SocialProps) {
   return (
-    <MainMicrosite>
+    <MainMicrosite type={newData.qrType} colors={colors} url={newData.shortlinkurl}>
       <CardContent>
         <Grid container spacing={1}>
           <RenderSocials newData={newData} />

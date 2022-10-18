@@ -45,7 +45,7 @@ export default function Business({newData}: BusinessProps) {
   }
 
   return (
-    <MainMicrosite colors={colors} url={newData.shortlinkurl}>
+    <MainMicrosite colors={colors} url={newData.shortlinkurl} type={newData.qrType}>
       <CardContent>
         <Grid container spacing={1}>
           {newData.company && <RenderField label="Company" value={newData.company} />}
