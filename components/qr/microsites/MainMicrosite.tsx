@@ -122,11 +122,11 @@ export default function MainMicrosite({children, colors, url, badge, type}: Micr
                 justifyContent: 'right',
                 fontWeight: 'bold',
                 fontSize: '20px',
-                color: colors.s || DEFAULT_COLORS.s
+                color: colors?.s || DEFAULT_COLORS.s
               }}
             >
               <Box sx={{ mr: '5px', mt: '2px' }}>
-                <RenderIcon icon={type} enabled color={colors.s || DEFAULT_COLORS.s} />
+                <RenderIcon icon={type} enabled color={colors?.s || DEFAULT_COLORS.s} />
               </Box>
               {type.toUpperCase()}
             </Typography>
