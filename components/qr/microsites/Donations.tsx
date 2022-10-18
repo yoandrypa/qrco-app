@@ -15,9 +15,25 @@ import Box from '@mui/material/Box'
 import { TextField } from "@mui/material";
 import Axios from 'axios'
 import MainMicrosite from "./MainMicrosite";
+
+
+import { Amplify, Auth } from "aws-amplify";
+import awsExports from "../../../libs/aws/aws-exports";
+
 interface DonationsProps {
   newData: any;
 }
+
+Amplify.configure(awsExports);
+
+Auth.currentSession().then(res=>{
+  let accessToken = res.getAccessToken()
+  let jwt = accessToken.getJwtToken()
+  //You can print them to see the full objects
+  // console.log(`myAccessToken: ${JSON.stringify(accessToken)}`)
+  // console.log(`myJwt: ${jwt}`)
+})
+
 
 type BoxOptions = 'first' | 'second' | 'third' | 'input';
 
