@@ -7,6 +7,7 @@ import {capitalize} from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import RenderIcon from "../../helperComponents/RenderIcon";
 import {SocialProps} from "../../types/types";
+import {PHONE, SOCIALS} from "../../constants";
 
 interface RenderSocialsProps {
   data: SocialProps;
@@ -16,29 +17,36 @@ interface RenderSocialsProps {
 
 const RenderSocials = ({data, setData, setIsWrong}: RenderSocialsProps) => {
   const handleValues = (item: string) => (event: ChangeEvent<HTMLInputElement>) => {
-    const {value} = event.target;
-    const tempo = JSON.parse(JSON.stringify(data));
-    if (value.length) {
-      // @ts-ignore
-      tempo[item] = value;
-      // @ts-ignore
-    } else if (tempo[item]) {
-      // @ts-ignore
-      delete tempo[item];
-    }
-    setData(tempo);
+    setData((prev: SocialProps) => ({...prev, [item]: event.target.value}));
   };
 
   const amount = useMemo(() => {
-    let count = Object.keys(data || {}).length;
-    if (data?.isDynamic) {
-      count -= 1;
+    return Object.keys(data || {}).filter((x: string) => SOCIALS.includes(x)).length;
+  }, [
+    data?.facebook,
+    data?.whatsapp,
+    data?.twitter,
+    data?.instagram,
+    data?.linkedin,
+    data?.pinterest,
+    data?.telegram,
+    data?.youtube
+  ]);
+
+  const columns = useMemo(() => {
+    switch (amount) {
+      case 1: {
+        return 12;
+      }
+      case 2:
+      case 4: {
+        return 6;
+      }
+      default: {
+        return 4;
+      }
     }
-    if (data?.qrName) {
-      count -= 1;
-    }
-    return count;
-  }, [data]);
+  }, [amount]);
 
   useEffect(() => {
     if (setIsWrong !== undefined) {
@@ -50,16 +58,14 @@ const RenderSocials = ({data, setData, setIsWrong}: RenderSocialsProps) => {
     // @ts-ignore
     if (data[item] !== undefined) {
       // @ts-ignore
-      const isError = !data[item].length;
+      let isError = !data[item].length;
 
-      let sm;
-      switch (amount) {
-        case 1: {  sm = 12; break; }
-        case 2: {  sm = 6; break; }
-        default: { sm = 4; break; }
+      // @ts-ignore
+      if (item === 'whatsapp' && !isError && !PHONE.test(data[item])) {
+        isError = true;
       }
 
-      return (<Grid item xs={12} sm={sm} style={{paddingTop: 0}}>
+      return (<Grid item xs={12} sm={columns} style={{paddingTop: 0}}>
         <TextField
           label={capitalize(item)}
           size="small"
@@ -72,10 +78,10 @@ const RenderSocials = ({data, setData, setIsWrong}: RenderSocialsProps) => {
           onChange={handleValues(item)}
           error={isError}
           InputProps={{
-            startAdornment: (<InputAdornment position="start"><RenderIcon icon={item} enabled/></InputAdornment>)
+            startAdornment: <InputAdornment position="start"><RenderIcon icon={item} enabled/></InputAdornment>
           }}
         />
-      </Grid>)
+      </Grid>);
     }
     return null;
   };
@@ -83,12 +89,14 @@ const RenderSocials = ({data, setData, setIsWrong}: RenderSocialsProps) => {
   const handleSelection = (item: string) => {
     // @ts-ignore
     if (data[item] === undefined) {
-      setData({...data, [item]: ''});
+      setData((prev: SocialProps) => ({...prev, [item]: ''}));
     } else {
-      const newData = {...data};
-      // @ts-ignore
-      delete newData[item];
-      setData(newData);
+      setData((prev: SocialProps) => {
+        const temp = {...prev};
+        // @ts-ignore
+        delete temp[item];
+        return temp;
+      });
     }
   }
 

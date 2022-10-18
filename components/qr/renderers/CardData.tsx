@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import Paper from "@mui/material/Paper";
 
 import Common from '../helperComponents/Common';
-import {CELL, EMAIL, PHONE_FAX, SOCIALS, ZIP} from "../constants";
+import {EMAIL, PHONE, SOCIALS, ZIP} from "../constants";
 
 import RenderSocials from "./helpers/RenderSocials";
 import Expander from "./helpers/Expander";
@@ -44,9 +44,9 @@ export default function CardData({data, setData, setIsWrong}: CardDataProps) {
     const value = data?.[item] || '' as string;
 
     if (value.trim().length) {
-      if (['phone', 'fax'].includes(item) && !PHONE_FAX.test(value)) {
+      if (['phone', 'fax'].includes(item) && !PHONE.test(value)) {
         isError = true;
-      } else if (item === 'cell' && !CELL.test(value)) {
+      } else if (item === 'cell' && !PHONE.test(value)) {
         isError = true;
       } else if (item === 'zip' && !ZIP.test(value)) {
         isError = true;
@@ -78,7 +78,7 @@ export default function CardData({data, setData, setIsWrong}: CardDataProps) {
       errors = true;
     }
     // @ts-ignore
-    if (!errors && data.cell?.trim().length && !CELL.test(data.cell)) {
+    if (!errors && data.cell?.trim().length && !PHONE.test(data.cell)) {
       errors = true;
     }
     // @ts-ignore
@@ -87,11 +87,11 @@ export default function CardData({data, setData, setIsWrong}: CardDataProps) {
     }
     // @ts-ignore
     if (!errors && data.web?.trim().length && !isValidUrl(data.web)) {
-      errors = false;
+      errors = true;
     }
     // @ts-ignore
     if (!errors && data.email?.trim().length && !EMAIL.test(data.email)) {
-      errors = false;
+      errors = true;
     }
 
     if (!errors && data?.isDynamic) {
@@ -103,10 +103,28 @@ export default function CardData({data, setData, setIsWrong}: CardDataProps) {
         }
         return true;
       });
+      // if (!errors && (data.web !== undefined && isValidUrl(data.web))) {
+      //   errors = true;
+      // }
     }
 
     setIsWrong(errors);
-  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    data.phone,
+    data.fax,
+    data.cell,
+    data.zip,
+    data.web,
+    data.email,
+    data.facebook,
+    data.whatsapp,
+    data.twitter,
+    data.instagram,
+    data.linkedin,
+    data.pinterest,
+    data.telegram,
+    data.youtube
+  ]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Common msg="Your contact details. Users can store your info or contact you right away.">
