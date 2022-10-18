@@ -189,7 +189,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
     }
   };
 
-  const renderBack = useCallback(() => (
+  const renderBack = () => (
     <StepperButtons
       variant="contained"
       startIcon={<ChevronLeftIcon />}
@@ -197,9 +197,9 @@ const QrWizard = ({ children }: QrWizardProps) => {
       onClick={handleBack}>
       {"Back"}
     </StepperButtons>
-  ), [loading, step, selected]); // eslint-disable-line react-hooks/exhaustive-deps
+  ); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const renderNext = useCallback(() => (
+  const renderNext = () => (
     <StepperButtons
       onClick={handleNext}
       endIcon={step >= 2 ? (isLogged ? <SaveIcon/> : <DoneIcon/>) : <ChevronRightIcon/>}
@@ -210,7 +210,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
       variant={step >= 2 ? "outlined" : "contained"}>
       {step >= 2 ? (isLogged ? (data.mode === undefined ? "Save" : "Update") : "Done") : "Next"}
     </StepperButtons>
-  ), [step, isLogged, loading, isWrong, isValidForm, selected, data?.qrName]); // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   const renderSteps = useCallback(() => (
     <Stepper

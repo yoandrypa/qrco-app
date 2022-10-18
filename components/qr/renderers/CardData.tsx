@@ -109,22 +109,8 @@ export default function CardData({data, setData, setIsWrong}: CardDataProps) {
     }
 
     setIsWrong(errors);
-  }, [
-    data.phone,
-    data.fax,
-    data.cell,
-    data.zip,
-    data.web,
-    data.email,
-    data.facebook,
-    data.whatsapp,
-    data.twitter,
-    data.instagram,
-    data.linkedin,
-    data.pinterest,
-    data.telegram,
-    data.youtube
-  ]); // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.phone, data.fax, data.cell, data.zip, data.web, data.email, data.facebook, data.whatsapp, data.twitter, data.instagram, data.linkedin, data.pinterest, data.telegram, data.youtube]);
 
   return (
     <Common msg="Your contact details. Users can store your info or contact you right away.">

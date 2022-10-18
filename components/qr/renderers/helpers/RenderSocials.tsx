@@ -22,16 +22,8 @@ const RenderSocials = ({data, setData, setIsWrong}: RenderSocialsProps) => {
 
   const amount = useMemo(() => {
     return Object.keys(data || {}).filter((x: string) => SOCIALS.includes(x)).length;
-  }, [
-    data?.facebook,
-    data?.whatsapp,
-    data?.twitter,
-    data?.instagram,
-    data?.linkedin,
-    data?.pinterest,
-    data?.telegram,
-    data?.youtube
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ data?.facebook, data?.whatsapp, data?.twitter, data?.instagram, data?.linkedin, data?.pinterest, data?.telegram, data?.youtube ]);
 
   const columns = useMemo(() => {
     switch (amount) {
