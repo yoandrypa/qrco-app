@@ -70,11 +70,11 @@ export default function CardData({data, setData, setIsWrong}: CardDataProps) {
   useEffect(() => {
     let errors = false;
     // @ts-ignore
-    if (data.phone?.trim().length && !PHONE_FAX.test(data.phone)) {
+    if (data.phone?.trim().length && !PHONE.test(data.phone)) {
       errors = true;
     }
     // @ts-ignore
-    if (!errors && data.fax?.trim().length && !PHONE_FAX.test(data.fax)) {
+    if (!errors && data.fax?.trim().length && !PHONE.test(data.fax)) {
       errors = true;
     }
     // @ts-ignore
