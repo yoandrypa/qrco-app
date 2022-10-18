@@ -154,7 +154,7 @@ const Generator = ({ forceOverride }: GenProps) => {
   };
 
   const handleFrame = (item: string) => (payload: any) => {
-    let value = undefined;
+    let value;
     if (item !== 'text' && payload?.target?.checked !== undefined) {
       value = payload.target.checked;
     } else {
@@ -164,17 +164,15 @@ const Generator = ({ forceOverride }: GenProps) => {
   };
 
   const handleMainData = (item: string, payload: any, icon = null) => {
-    const opts = {...options};
     if (!payload?.fileContents) {
-      opts[item] = payload;
+      setOptions((prev: OptionsType) => ({ ...prev, [item]: payload }));
     } else {
       if (icon) {
-        opts.image = icon;
+        setOptions((prev: OptionsType) => ({ ...prev, image: icon }));
       } else {
-        opts.image = payload.fileContents;
+        setOptions((prev: OptionsType) => ({ ...prev, image: payload.fileContents }));
       }
     }
-    setOptions(opts);
   };
 
   const handleData = (item: string) => (payload: any) => {
