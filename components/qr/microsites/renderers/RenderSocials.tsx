@@ -52,7 +52,7 @@ export default function RenderSocials({newData}: RenderSocialsProps) {
       }
     }
 
-    url += value;
+    url += `${value}${item !== 'youtube' ? '' : '?sub_confirmation=1'}`;
 
     return (
       <Grid item xs={12} style={{paddingTop: 0}}>
