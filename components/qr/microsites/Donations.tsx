@@ -13,6 +13,8 @@ import EmojiFoodBeverageIcon from '@mui/icons-material/EmojiFoodBeverage';
 import SvgIcon from '@mui/material/SvgIcon'
 import Box from '@mui/material/Box'
 import { TextField } from "@mui/material";
+import Axios from 'axios'
+import MainMicrosite from "./MainMicrosite";
 interface DonationsProps {
   newData: any;
 }
@@ -24,6 +26,7 @@ export default function DonationsInfo({ newData }: DonationsProps) {
   const [selectedBox, setSelectedBox] = useState<BoxOptions>('first')
   const [inputValue, setInputValue] = useState<string>('5')
   const [donationAmount, setDonationAmount] = useState<number>(5)
+
   const handleBoxClick = (box: BoxOptions) => {
     if (box === 'first') {
       setSelectedBox('first')
@@ -57,6 +60,10 @@ export default function DonationsInfo({ newData }: DonationsProps) {
     
   }
 
+  const handleClick = ()=>{
+
+  }
+
   const theme = createTheme({
     palette: {
       primary: {
@@ -87,6 +94,7 @@ export default function DonationsInfo({ newData }: DonationsProps) {
 
   return (
     //TODO
+    <MainMicrosite>
     <CardContent>
       <Grid container
         display='flex'
@@ -94,16 +102,16 @@ export default function DonationsInfo({ newData }: DonationsProps) {
         alignItems="center"
         spacing={1}
       >
-        <Grid item xs={12} sm={3} md={3} sx={{ RoundedCorner: 2 }} >
+        <Grid item  sx={{ RoundedCorner: 2 }} >
           <Typography variant='h6' textAlign={'center'} padding={0} marginTop={2}>{newData?.title}</Typography>
           <Typography variant='h6' textAlign={'center'}>Would you like to buy me a coffie?</Typography>
-          <Stack direction="row" sx={{ marginTop: 2, display: 'flex', justifyContent: 'center', alignSelf: 'center' }}>
+          {/* <Stack direction="row" sx={{ marginTop: 2, display: 'flex', justifyContent: 'center', alignSelf: 'center' }}>
             <Avatar
               alt="Avatar"
               src="https://images.unsplash.com/photo-1518057111178-44a106bad636?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=388&q=80"
               sx={{ width: 100, height: 100, }}
             />
-          </Stack>
+          </Stack> */}
 
         </Grid>
         <Grid container sx={{ marginTop: 2, display: 'flex', justifyContent: 'center', alignContent: 'center' }}>
@@ -213,6 +221,6 @@ export default function DonationsInfo({ newData }: DonationsProps) {
         </Grid>
       </Grid>
     </CardContent>
-
+    </MainMicrosite>
   );
 }
