@@ -1,18 +1,18 @@
-import { ChangeEvent, useMemo, useState } from "react";
+import { ChangeEvent, useMemo, useState,useEffect } from "react";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
 import { getColors } from "./renderers/helper";
 import { ColorTypes } from "../types/types";
-import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import Avatar from '@mui/material/Avatar'
-import Button from "@mui/material/Button";
 import CardActions from "@mui/material/CardActions";
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import EmojiFoodBeverageIcon from '@mui/icons-material/EmojiFoodBeverage';
 import SvgIcon from '@mui/material/SvgIcon'
 import Box from '@mui/material/Box'
 import { TextField } from "@mui/material";
+import MainMicrosite from "./MainMicrosite";
+import  LoadingButton from "@mui/lab/LoadingButton";
+
 interface DonationsProps {
   newData: any;
 }
@@ -22,39 +22,81 @@ type BoxOptions = 'first' | 'second' | 'third' | 'input';
 export default function DonationsInfo({ newData }: DonationsProps) {
   const colors = useMemo(() => (getColors(newData)), []) as ColorTypes; // eslint-disable-line react-hooks/exhaustive-deps
   const [selectedBox, setSelectedBox] = useState<BoxOptions>('first')
-  const [inputValue, setInputValue] = useState<string>('5')
-  const [donationAmount, setDonationAmount] = useState<number>(5)
+  const [inputValue, setInputValue] = useState<string>('1')
+  const [donationAmount, setDonationAmount] = useState<number>(1)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  
+  useEffect(() => {
+    if (parseInt(inputValue) < 1){
+      setDonationAmount(parseInt(newData.donationUnitAmount))
+      setInputValue('1')
+    } else {
+      setDonationAmount(parseInt(inputValue) * newData.donationUnitAmount as number)
+    }
+  
+
+  }, [inputValue, newData.donationUnitAmount])
+  
+
   const handleBoxClick = (box: BoxOptions) => {
     if (box === 'first') {
       setSelectedBox('first')
-      setDonationAmount(newData.donationUnitAmount || 1)
+      setInputValue('1')
+      setDonationAmount(newData.donationUnitAmount )
     }
     if (box === 'second') {
       setSelectedBox('second')
-      setDonationAmount(3 * (newData.donationUnitAmount || 1))
+      setInputValue('3')
+      setDonationAmount(3 * newData.donationUnitAmount)
     }
     if (box === 'third') {
       setSelectedBox('third')
-      setDonationAmount(5 * (newData.donationUnitAmount || 1))
+      setInputValue('5')
+      setDonationAmount(5 * newData.donationUnitAmount )
     }
-    if (box === 'input') {
-      setSelectedBox('input')
-      setDonationAmount(parseInt(inputValue) * (newData.donationUnitAmount || 1))
-    }
+    // if (box === 'input') {
+    //   setSelectedBox('input')
+    //   setDonationAmount(parseInt(inputValue) * (newData.donationUnitAmount || 1))
+    // }
 
   }
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>)=>{
-    if (parseInt(inputValue,10) < 5){
-      console.log(inputValue + 'menor que 5'+ event.target.value)
-      setInputValue('5')
-      setDonationAmount(5 * (newData.donationUnitAmount || 1))
 
-    } else {
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>)=>{
+   
+    if (parseInt(event.target.value,10) < 1 ){
+      setInputValue('1')
+      setDonationAmount(newData.donationUnitAmount)
+      setSelectedBox('first')
+    } 
+    if (parseInt(event.target.value,10) === 1){
       setInputValue(event.target.value)
-      setDonationAmount(parseInt(inputValue) * (newData.donationUnitAmount || 1))
-    }
+      setSelectedBox('first')
+      setDonationAmount(1 * newData.donationUnitAmount)
+      } 
+      if (parseInt(event.target.value,10) === 5){
+        setSelectedBox('third')
+        setDonationAmount(5 * newData.donationUnitAmount)
+        setInputValue('5')
+      } else 
+      if (parseInt(event.target.value,10) === 3){
+          setInputValue(event.target.value)
+          setSelectedBox('second')
+          setDonationAmount(3 * newData.donationUnitAmount)
+      } else {
+        setSelectedBox('input')
+      }
+   
+      setInputValue(event.target.value)
+      setDonationAmount(parseInt(event.target.value) * newData.donationUnitAmount )
     
+    
+  }
+
+  const handleClick = ()=>{
+        setIsLoading(true)
   }
 
   const theme = createTheme({
@@ -87,6 +129,7 @@ export default function DonationsInfo({ newData }: DonationsProps) {
 
   return (
     //TODO
+    <MainMicrosite>
     <CardContent>
       <Grid container
         display='flex'
@@ -94,16 +137,16 @@ export default function DonationsInfo({ newData }: DonationsProps) {
         alignItems="center"
         spacing={1}
       >
-        <Grid item xs={12} sm={3} md={3} sx={{ RoundedCorner: 2 }} >
+        <Grid item  sx={{ RoundedCorner: 2 }} >
           <Typography variant='h6' textAlign={'center'} padding={0} marginTop={2}>{newData?.title}</Typography>
           <Typography variant='h6' textAlign={'center'}>Would you like to buy me a coffie?</Typography>
-          <Stack direction="row" sx={{ marginTop: 2, display: 'flex', justifyContent: 'center', alignSelf: 'center' }}>
+          {/* <Stack direction="row" sx={{ marginTop: 2, display: 'flex', justifyContent: 'center', alignSelf: 'center' }}>
             <Avatar
               alt="Avatar"
               src="https://images.unsplash.com/photo-1518057111178-44a106bad636?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=388&q=80"
               sx={{ width: 100, height: 100, }}
             />
-          </Stack>
+          </Stack> */}
 
         </Grid>
         <Grid container sx={{ marginTop: 2, display: 'flex', justifyContent: 'center', alignContent: 'center' }}>
@@ -204,15 +247,15 @@ export default function DonationsInfo({ newData }: DonationsProps) {
         </Grid>
         <Grid container sx={{ display: 'flex', justifyContent: 'center', alignContent: 'center' }}>
           <CardActions sx={{ marginTop: 2 }}>
-            <Button color="primary" variant="contained" sx={{ borderRadius: 2 }}>
+            <LoadingButton onClick={handleClick} loading={isLoading}  color="primary" variant="contained" sx={{ borderRadius: 2 }}>
               Donate
-            </Button>
+            </LoadingButton>
 
           </CardActions>
 
         </Grid>
       </Grid>
     </CardContent>
-
+    </MainMicrosite>
   );
 }
