@@ -6,10 +6,15 @@ import parse from 'html-react-parser';
 
 import { originalDimensions } from '../../helpers/qr/data';
 import {BackgroundType, CornersAndDotsType, FramesType, OptionsType} from './types/types';
-import { getFrame } from '../../helpers/qr/helpers';
+import {getBase64FromUrl, getFrame} from '../../helpers/qr/helpers';
 
 const handleQrData = (qrObject: OptionsType, overrideValue: string | null) => {
   const opts = JSON.parse(JSON.stringify(qrObject));
+
+  if (opts.image?.startsWith('/scan/scan')) {
+    getBase64FromUrl(opts.image).then((result: string) => { opts.image = result; });
+  }
+
   if (Boolean(overrideValue)) {
     opts.data = overrideValue;
   }
