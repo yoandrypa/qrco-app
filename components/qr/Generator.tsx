@@ -242,7 +242,7 @@ const Generator = ({ forceOverride }: GenProps) => {
 
   useEffect(() => {
     if (updating) {
-      setTimeout(() => { setUpdating(false); }, 350);
+      setTimeout(() => { setUpdating(false); }, 250);
     }
     if (!doneFirst.current) {
       doneFirst.current = true;
