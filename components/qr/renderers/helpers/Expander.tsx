@@ -11,9 +11,10 @@ interface ExpanderProps {
   item: string;
   title: string;
   bold?: boolean;
+  required?: boolean;
 }
 
-const Expander = ({expand, setExpand, item, title, bold}: ExpanderProps) => {
+const Expander = ({expand, setExpand, item, title, bold, required}: ExpanderProps) => {
   const handleExpand = () => {
     if (expand === item) {
       setExpand(null);
@@ -32,7 +33,10 @@ const Expander = ({expand, setExpand, item, title, bold}: ExpanderProps) => {
       }}
       onClick={handleExpand}
     >
-      <Typography sx={{fontWeight: bold ? 'bold' : 'normal'}}>{title}</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+        <Typography sx={{fontWeight: bold ? 'bold' : 'normal'}}>{title}</Typography>
+        {required && !expand && <Typography sx={{ mt: '3px'}} color="error">{'REQUIRED'}</Typography>}
+      </Box>
       <Tooltip title={expand === item ? "Collapse" : "Expand"}>
         <IconButton size="small">
           {expand === item ? <ExpandLessIcon fontSize="small"/> : <ExpandMoreIcon fontSize="small"/>}

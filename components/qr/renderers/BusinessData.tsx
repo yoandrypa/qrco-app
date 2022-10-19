@@ -13,29 +13,17 @@ import RenderOpeningTime from "./helpers/RenderOpeningTime";
 import Expander from "./helpers/Expander";
 import {DataType} from "../types/types";
 import {isValidUrl} from "../../../utils";
+import RenderTextFields from "./helpers/RenderTextFields";
 
 interface BusinessProps {
   data: DataType;
   setData: Function;
+  handleValues: Function;
   setIsWrong: (isWrong: boolean) => void;
 }
 
-export default function BusinessData({data, setData, setIsWrong}: BusinessProps) {
+export default function BusinessData({data, setData, handleValues, setIsWrong}: BusinessProps) {
   const [expander, setExpander] = useState<string | null>(null);
-
-  const handleValues = (item: string) => (event: ChangeEvent<HTMLInputElement>) => {
-    const {value} = event.target;
-    const tempo = JSON.parse(JSON.stringify(data));
-    if (value.length) {
-      // @ts-ignore
-      tempo[item] = value;
-      // @ts-ignore
-    } else if (tempo[item]) {
-      // @ts-ignore
-      delete tempo[item];
-    }
-    setData(tempo);
-  };
 
   const renderItem = (item: string, label: string) => {
     let isError = false as boolean;
@@ -47,26 +35,21 @@ export default function BusinessData({data, setData, setIsWrong}: BusinessProps)
       isError = true;
     }
 
-    return (<TextField
-      label={label}
-      size="small"
-      fullWidth
-      error={isError}
-      margin="dense"
-      value={value}
-      onChange={handleValues(item)}/>);
+    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={handleValues} />;
   };
 
   const handleOptionButton = () => {
-    const tempo = JSON.parse(JSON.stringify(data));
-    if (tempo.urlOptionLabel !== undefined) {
-      delete tempo.urlOptionLabel;
-      delete tempo.urlOptionLink;
-    } else {
-      tempo.urlOptionLabel = '';
-      tempo.urlOptionLink = '';
-    }
-    setData(tempo);
+    setData((prev: DataType) => {
+      const tempo = {...prev};
+      if (tempo.urlOptionLabel !== undefined) {
+        delete tempo.urlOptionLabel;
+        delete tempo.urlOptionLink;
+      } else {
+        tempo.urlOptionLabel = '';
+        tempo.urlOptionLink = '';
+      }
+      return tempo;
+    });
   };
 
   useEffect(() => {
@@ -160,7 +143,11 @@ export default function BusinessData({data, setData, setIsWrong}: BusinessProps)
       </Paper>
       <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
         <Expander expand={expander} setExpand={setExpander} item="socials" title="Social networks" />
-        {expander === "socials" && <Grid item xs={12}><RenderSocials data={data} setData={setData}/></Grid>}
+        {expander === "socials" && (
+          <Grid item xs={12}>
+            <RenderSocials data={data} setData={setData} />
+          </Grid>
+        )}
       </Paper>
     </Common>
   );

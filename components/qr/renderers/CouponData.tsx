@@ -1,64 +1,55 @@
 import {ChangeEvent, useEffect, useState} from "react";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
 
 import Common from '../helperComponents/Common';
 import {DataType} from "../types/types";
 import Expander from "./helpers/Expander";
-import Paper from "@mui/material/Paper";
 
 import RenderDateSelector from "./helpers/RenderDateSelector";
 import {isValidUrl} from "../../../utils";
 
+import {ZIP} from "../constants";
+import RenderTextFields from "./helpers/RenderTextFields";
+
 export type CouponProps = {
   data: DataType;
   setData: Function;
+  handleValues: Function;
   setIsWrong: (isWrong: boolean) => void;
 }
 
-const CouponData = ({data, setData, setIsWrong}: CouponProps) => {
+const CouponData = ({data, setData, handleValues, setIsWrong}: CouponProps) => {
   const [expander, setExpander] = useState<string | null>(null);
 
-  const handleValues = (item: string) => (event: ChangeEvent<HTMLInputElement>) => {
-    const {value} = event.target;
-    const tempo = JSON.parse(JSON.stringify(data));
-    if (value.length) {
-      // @ts-ignore
-      tempo[item] = value;
-      // @ts-ignore
-    } else if (tempo[item]) {
-      // @ts-ignore
-      delete tempo[item];
-    }
-    setData(tempo);
-  };
-
-  const renderItem = (item: string, label: string, placeholder?: string) => {
+  const renderItem = (item: string, label: string, required?: boolean, placeholder?: string) => {
     let isError = false as boolean;
     // @ts-ignore
     const value = data?.[item] || '' as string;
 
-    if ((value.trim().length === 0 && ['urlOptionLabel', 'urlOptionLink', 'title', 'name'].includes(item)) ||
-      (item === 'urlOptionLink' && !isValidUrl(value))) {
+    // @ts-ignore
+    if (data[item] !== undefined  && (item === 'zip' && !ZIP.test(value) || (item === 'urlOptionLink' && !isValidUrl(value)))) {
       isError = true;
     }
 
-    return (<TextField
-      label={label}
-      size="small"
-      fullWidth
-      error={isError}
-      margin="dense"
-      value={value}
-      placeholder={placeholder}
-      onChange={handleValues(item)}/>);
+    return (
+      <RenderTextFields
+        handleValues={handleValues}
+        value={value}
+        item={item}
+        label={label}
+        placeholder={placeholder}
+        isError={isError}
+        required={required}
+      />
+    );
   };
 
   useEffect(() => {
     let errors = false;
     if (!data.urlOptionLabel?.trim().length || !data.urlOptionLink?.trim().length || !isValidUrl(data.urlOptionLink) ||
-      !data.title?.trim().length || !data.name?.trim().length) {
+      !data.title?.trim().length || !data.name?.trim().length || (data.zip?.trim && !ZIP.test(data.zip))) {
       errors = true;
     }
     setIsWrong(errors);
@@ -74,7 +65,7 @@ const CouponData = ({data, setData, setIsWrong}: CouponProps) => {
           {renderItem('company', 'Company')}
         </Grid>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('title', 'Title')}
+          {renderItem('title', 'Title', true)}
         </Grid>
         <Grid item xs={12} style={{paddingTop: 0}}>
           {renderItem('about', 'Description')}
@@ -83,18 +74,18 @@ const CouponData = ({data, setData, setIsWrong}: CouponProps) => {
           {renderItem('prefix', 'Badge')}
         </Grid>
         <Grid item xs={6} style={{paddingTop: 0}}>
-          {renderItem('urlOptionLabel', 'Button text')}
+          {renderItem('urlOptionLabel', 'Button text', true)}
         </Grid>
         <Grid item xs={6} style={{paddingTop: 0}}>
-          {renderItem('urlOptionLink', 'Link')}
+          {renderItem('urlOptionLink', 'Link', true)}
         </Grid>
       </Grid>
       <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
-        <Expander expand={expander} setExpand={setExpander} item="coupon" title="Coupon data" />
+        <Expander expand={expander} setExpand={setExpander} item="coupon" title="Coupon data *" required={!data?.name?.length} />
         {expander === "coupon" && (
           <Grid container spacing={1}>
             <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-              {renderItem('name', 'Coupon code')}
+              {renderItem('name', 'Coupon code', true)}
             </Grid>
             <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
               <RenderDateSelector data={data} setData={setData} label="Valid until" />

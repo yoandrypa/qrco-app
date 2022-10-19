@@ -20,10 +20,12 @@ import BusinessIcon from '@mui/icons-material/Business';
 import MovieIcon from '@mui/icons-material/Movie';
 import ChairIcon from '@mui/icons-material/Chair';
 import AccessibleIcon from '@mui/icons-material/Accessible';
+import InfoIcon from '@mui/icons-material/Info';
 import WcIcon from '@mui/icons-material/Wc';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import ChildFriendlyIcon from '@mui/icons-material/ChildFriendly';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import EmailIcon from '@mui/icons-material/Email';
 import PetsIcon from '@mui/icons-material/Pets';
 import LocalParkingIcon from '@mui/icons-material/LocalParking';
 import ParkIcon from '@mui/icons-material/Park';
@@ -46,6 +48,8 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PhoneIcon from '@mui/icons-material/Phone';
 import SmartphoneIcon from '@mui/icons-material/Smartphone';
 import EmojiFoodBeverageIcon from '@mui/icons-material/EmojiFoodBeverage';
+import HttpIcon from '@mui/icons-material/Http';
+import PublicIcon from '@mui/icons-material/Public';
 
 import { grey } from "@mui/material/colors";
 
@@ -64,6 +68,7 @@ export default function RenderIcon({ icon, color, enabled, adjust }: RenderIconP
       case 'cell': { return <SmartphoneIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'location': { return <LocationOnIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'email': { return <AlternateEmailIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
+      case 'emailIcon': { return <EmailIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'facebook': { return <FacebookIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} /> }
       case 'sms': { return <SmsOutlinedIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'twitter': { return <TwitterIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} /> }
@@ -105,7 +110,11 @@ export default function RenderIcon({ icon, color, enabled, adjust }: RenderIconP
       case 'climate': { return <AcUnitIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'shower': { return <ShowerIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'training': { return <SchoolIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
+      case 'http': { return <HttpIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'donations': { return <EmojiFoodBeverageIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
+      case 'contact': { return <ContactPhoneIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
+      case 'about': { return <InfoIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
+      case 'world': { return <PublicIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       default: { return <TextSnippetOutlinedIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
     }
   };

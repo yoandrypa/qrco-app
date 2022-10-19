@@ -1,24 +1,29 @@
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 
-import {CardDataProps} from "../../types/types";
+import {CardDataProps, DataType} from "../../types/types";
 import SquareSelector from "../../helperComponents/SquareSelector";
 
-const RenderEasiness = ({data, setData}: CardDataProps) => {
+export default function RenderEasiness({data, setData}: CardDataProps) {
   const handleSelection = (item: string) => {
-    const x = JSON.parse(JSON.stringify(data));
-    if (!x.easiness) {
-      x.easiness = {};
-    }
-    if (!x.easiness[item]) {
-      x.easiness[item] = true;
-    } else {
-      delete x.easiness[item];
-      if (!Object.keys(x.easiness).length) {
-        delete x.easiness;
+    setData((prev: DataType) => {
+      const x = {...prev};
+      if (!x.easiness) {
+        x.easiness = {};
       }
-    }
-    setData(x);
+      // @ts-ignore
+      if (!x.easiness[item]) {
+        // @ts-ignore
+        x.easiness[item] = true;
+      } else {
+        // @ts-ignore
+        delete x.easiness[item];
+        if (!Object.keys(x.easiness).length) {
+          delete x.easiness;
+        }
+      }
+      return x;
+    });
   }
 
   return (
@@ -162,5 +167,3 @@ const RenderEasiness = ({data, setData}: CardDataProps) => {
     </Grid>
   );
 }
-
-export default RenderEasiness;
