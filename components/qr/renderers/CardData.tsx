@@ -1,7 +1,6 @@
 import {ChangeEvent, useMemo, useEffect, useState} from 'react';
 import Grid from '@mui/material/Grid';
 import Divider from '@mui/material/Divider';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Paper from "@mui/material/Paper";
 
@@ -12,29 +11,17 @@ import RenderSocials from "./helpers/RenderSocials";
 import Expander from "./helpers/Expander";
 import {DataType} from "../types/types";
 import {isValidUrl} from "../../../utils";
+import RenderTextFields from "./helpers/RenderTextFields";
 
 interface CardDataProps {
   data: DataType;
   setData: Function;
+  handleValues: Function;
   setIsWrong: (isWrong: boolean) => void;
 }
 
-export default function CardData({data, setData, setIsWrong}: CardDataProps) {
+export default function CardData({data, setData, handleValues, setIsWrong}: CardDataProps) {
   const [expander, setExpander] = useState<string | null>(null);
-
-  const handleValues = (item: string) => (event: ChangeEvent<HTMLInputElement>) => {
-    const {value} = event.target;
-    const tempo = JSON.parse(JSON.stringify(data));
-    if (value.length) {
-      // @ts-ignore
-      tempo[item] = value;
-      // @ts-ignore
-    } else if (tempo[item]) {
-      // @ts-ignore
-      delete tempo[item];
-    }
-    setData(tempo);
-  };
 
   const isDynamic = useMemo(() => Boolean(data?.isDynamic), []) as boolean;  // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -57,14 +44,7 @@ export default function CardData({data, setData, setIsWrong}: CardDataProps) {
       }
     }
 
-    return (<TextField
-      label={label}
-      size="small"
-      fullWidth
-      error={isError}
-      margin="dense"
-      value={value}
-      onChange={handleValues(item)}/>);
+    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={handleValues} />;
   };
 
   useEffect(() => {
@@ -183,7 +163,7 @@ export default function CardData({data, setData, setIsWrong}: CardDataProps) {
             <Divider sx={{my: 1}}/>
             <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
               <Expander expand={expander} setExpand={setExpander} item="socials" title="Social information" />
-              {expander === "socials" && <RenderSocials data={data} setData={setData}/>}
+              {expander === "socials" && <RenderSocials data={data} setData={setData} />}
             </Paper>
             <Divider sx={{my: 1}}/>
           </Grid>

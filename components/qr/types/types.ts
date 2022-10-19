@@ -164,8 +164,6 @@ export type SocialProps = {
   isDynamic?: boolean;
 }
 
-
-
 export type CardDataProps = {
   data: DataType;
   setData: Function;

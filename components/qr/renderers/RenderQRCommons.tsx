@@ -1,4 +1,4 @@
-import {useContext, useState} from "react";
+import {memo, useContext, useState} from "react";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
@@ -102,4 +102,9 @@ function RenderQRCommons({omitColorSel, qrName, primary, secondary, handleValue}
   );
 }
 
-export default RenderQRCommons;
+// @ts-ignore
+function notIf(curr, next) {
+  return curr.qrName === next.qrName && curr.primary === next.primary && curr.secondary === next.secondary;
+}
+
+export default memo(RenderQRCommons, notIf);

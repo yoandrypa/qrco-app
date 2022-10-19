@@ -79,7 +79,7 @@ export default function MainMicrosite({children, colors, url, badge, type}: Micr
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        maxWidth: {md: '460px', xs: 'calc(100% - 25px)'}
+        maxWidth: {md: '460px', xs: '100%'}
       }}>
         <CardMedia title="">
           {!colors ? (
@@ -145,7 +145,7 @@ export default function MainMicrosite({children, colors, url, badge, type}: Micr
         }}>
           <Typography sx={{color: colors?.p, fontWeight: 'bold'}}>{badge}</Typography>
         </Box>)}
-        <Box sx={{height: `calc(100vh - ${!colors ? 265 : 160}px)`, overflow: 'auto'}}>
+        <Box sx={{ height: { sm: `calc(100vh - ${!colors ? 265 : 160}px)`, xs: `calc(100vh - ${!colors ? 225 : 120}px)` }, overflow: 'auto'}}>
           {children}
         </Box>
         {share && colors && (

@@ -1,4 +1,4 @@
-import {useContext} from 'react';
+import {ChangeEvent, useCallback, useContext} from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -34,6 +34,22 @@ type QrContentHandlerProps = {
 const QrContentHandler = () => {
   // @ts-ignore
   const { data, setData, selected, isWrong, setIsWrong }: QrContentHandlerProps = useContext(Context);
+
+  const handleValues = useCallback((item: string) => (event: ChangeEvent<HTMLInputElement>) => {
+    const {value} = event.target;
+    if (value.length) {
+      // @ts-ignore
+      setData((prev: DataType) => ({...prev, [item]: value}));
+      // @ts-ignore
+    } else if (data[item]) {
+      setData((prev: DataType) => {
+        const temp = {...prev};
+        // @ts-ignore
+        delete temp[item];
+        return temp;
+      });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderSel = () => {
     if (!selected) {
@@ -73,13 +89,13 @@ const QrContentHandler = () => {
       }
       case 'vcard+':
       case 'vcard': {
-        return <CardData data={data} setData={(payload: CardDataProps) => setData(payload)} setIsWrong={setIsWrong} />;
+        return <CardData data={data} setData={(payload: CardDataProps) => setData(payload)} setIsWrong={setIsWrong} handleValues={handleValues} />;
       }
       case 'coupon': {
-        return <CouponData data={data} setData={(payload: CouponProps) => setData(payload)} setIsWrong={setIsWrong}  />;
+        return <CouponData data={data} setData={(payload: CouponProps) => setData(payload)} setIsWrong={setIsWrong} handleValues={handleValues} />;
       }
       case 'business': {
-        return <BusinessData data={data} setData={(payload: CardDataProps) => setData(payload)} setIsWrong={setIsWrong}  />;
+        return <BusinessData data={data} setData={(payload: CardDataProps) => setData(payload)} setIsWrong={setIsWrong} handleValues={handleValues}/>;
       }
       case 'email': {
         return <EmailData data={data} setData={(payload: EmailDataProps) => setData(payload)} />;
@@ -112,7 +128,7 @@ const QrContentHandler = () => {
   };
 
   return (
-    <Box>
+    <>
       <Box sx={{ display: 'inline' }}>
         <RenderIcon icon={selected || ''} enabled adjust />
       </Box>
@@ -123,7 +139,7 @@ const QrContentHandler = () => {
       <Box sx={{ textAlign: 'left', width: '100%' }}>
         {renderSel()}
       </Box>
-    </Box>
+    </>
   );
 }
 
