@@ -17,7 +17,7 @@ export default function Coupons({newData}: CouponProps) {
   const colors = useMemo(() => (getColors(newData)), []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <MainMicrosite colors={colors} url={newData.shortlinkurl} badge={newData.prefix}>
+    <MainMicrosite colors={colors} url={newData.shortlinkurl} badge={newData.prefix} type={newData.qrType}>
       <CardContent>
         <Grid container spacing={1}>
           {newData.company && <RenderField label="Company" value={newData.company} />}

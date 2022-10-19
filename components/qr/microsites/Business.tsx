@@ -1,5 +1,4 @@
 import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 import MainMicrosite from "./MainMicrosite";
@@ -17,12 +16,15 @@ interface BusinessProps {
 }
 
 export default function Business({newData}: BusinessProps) {
+  const colors = useMemo(() => (getColors(newData)), []) as ColorTypes; // eslint-disable-line react-hooks/exhaustive-deps
+
   const renderEasiness = (item: string, label: string) => (
     <SquareSelector
       selected={false}
       tooltips
       item={item}
       label={label}
+      colors={colors}
     />
   );
 
@@ -42,10 +44,8 @@ export default function Business({newData}: BusinessProps) {
     return `${hours}:${minutes}`;
   }
 
-  const colors = useMemo(() => (getColors(newData)), []) as ColorTypes; // eslint-disable-line react-hooks/exhaustive-deps
-
   return (
-    <MainMicrosite colors={colors} url={newData.shortlinkurl}>
+    <MainMicrosite colors={colors} url={newData.shortlinkurl} type={newData.qrType}>
       <CardContent>
         <Grid container spacing={1}>
           {newData.company && <RenderField label="Company" value={newData.company} />}

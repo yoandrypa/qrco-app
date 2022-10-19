@@ -60,7 +60,7 @@ function Images({newData}: ImageProps) {
   }
 
   return (
-    <MainMicrosite colors={colors} url={newData.shortlinkurl}>
+    <MainMicrosite colors={colors} url={newData.shortlinkurl} type={newData.qrType}>
       <Box sx={{width: '100%', textAlign: 'center', mt: '-35px', color: colors.s}}>
         {images.current.length ? (
           <Typography sx={{fontWeight: 'bold'}}>

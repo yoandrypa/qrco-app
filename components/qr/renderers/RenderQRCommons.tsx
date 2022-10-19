@@ -28,7 +28,7 @@ const colors = [DEFAULT_COLORS, {p: '#187510', s: '#9ece99'}, {p: '#aa8412', s: 
 function RenderQRCommons({omitColorSel, qrName, primary, secondary, handleValue}: QRCommonsProps) {
   // @ts-ignore
   const {userInfo} = useContext(Context);
-  const [expander, setExpander] = useState<string | null>(null);
+  const [expander, setExpander] = useState<string | null>('design');
 
   const renderColors = () => (
     <>
@@ -86,7 +86,7 @@ function RenderQRCommons({omitColorSel, qrName, primary, secondary, handleValue}
         InputProps={{
           endAdornment: (
             !Boolean(qrName?.trim().length) ? (<InputAdornment position="end">
-              <Typography color="error">REQUIRED</Typography>
+              <Typography color="error">{'REQUIRED'}</Typography>
             </InputAdornment>) : null
           )
         }}

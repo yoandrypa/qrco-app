@@ -6,7 +6,7 @@ import {DEFAULT_COLORS} from "../../constants";
 
 interface RenderFieldProps {
   size?: number;
-  label: string;
+  label?: string;
   value: string;
   icon?: string;
   color?: string;
@@ -14,10 +14,10 @@ interface RenderFieldProps {
 
 export default function RenderField({size, label, value, icon, color}: RenderFieldProps) {
   return (
-    <Grid item xs={size || 12} sx={{pt: 0, border: `solid 1px rgba(0,0,0,0.05)`}}>
+    <Grid item xs={size || 12} sx={{pt: 0, border: `solid 1px rgba(0,0,0,0.03)`}}>
       <TextField
         sx={{ mt: '-1px' }}
-        label={label}
+        label={label || ''}
         size="small"
         fullWidth
         margin="dense"
@@ -27,7 +27,7 @@ export default function RenderField({size, label, value, icon, color}: RenderFie
           disableUnderline: true,
           startAdornment: icon ? (
             <InputAdornment position="start">
-              <RenderIcon icon="cell" enabled color={color || DEFAULT_COLORS.s}/>
+              <RenderIcon icon={icon} enabled color={color || DEFAULT_COLORS.s}/>
             </InputAdornment>
           ) : undefined
         }}
