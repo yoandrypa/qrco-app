@@ -1,9 +1,10 @@
-import axios from 'axios'
+simport axios from 'axios'
 
 import { Auth } from 'aws-amplify';
 
 const SERVER_URL = process.env.DEVELOPMENT_MODE ? 'https://ebanux.com' : 'https://dev.ebanux.link'
 const cognitoSession = await Auth.currentSession();
+const cognitoUser = await Auth.currentUserInfo()
 
 const APIv1 = axios.create({
     baseURL: `${SERVER_URL}/api/v1`,
@@ -21,7 +22,11 @@ export const APIv2 = axios.create({
     }
 });
 
-export const createEbanuxDonationPrice = () => {
+export const createEbanuxDonationCoffiePrice = (cognitoUserId: string, unitAmountUSD: number, quantity: number) => {
 
+    APIv1.post('/donation', {
+        cognitoUserId:
+        
+    })
 
 }
