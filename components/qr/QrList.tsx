@@ -22,6 +22,7 @@ import Context from "../context/Context";
 import RenderNewQrButton from "../renderers/RenderNewQrButton";
 import RenderPreview from "./renderers/RenderPreview";
 import {capitalize} from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -67,6 +68,10 @@ const QrList = ({qrs}: any) => {
     }
   };
 
+  const handleDashboard = async () => {    
+  //TODO
+  }
+
   const handleCancelDeletion = useCallback(() => {
     setDeleteConfirm(null);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -83,9 +88,14 @@ const QrList = ({qrs}: any) => {
       <IconButton color="error" disabled={isLoading} onClick={() => showConfirmationDialog(qr.id, qr.userId)}>
         <DeleteOutlineRounded/>
       </IconButton>
-     { <IconButton color="info" disabled={isLoading} onClick={() =>{}}>
-        <DashboardIcon/>
-      </IconButton>} 
+     {qr.qrType === 'donations' && 
+      (
+        <Tooltip title='Go to Dashboard'>
+          <IconButton color="info" disabled={isLoading} onClick={() =>{}}>
+            <DashboardIcon/>
+          </IconButton>
+        </Tooltip>
+    )}
     </Stack>
   );
 

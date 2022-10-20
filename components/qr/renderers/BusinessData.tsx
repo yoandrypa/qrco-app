@@ -1,9 +1,8 @@
-import {ChangeEvent, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 
 import Common from '../helperComponents/Common';
@@ -13,29 +12,18 @@ import RenderOpeningTime from "./helpers/RenderOpeningTime";
 import Expander from "./helpers/Expander";
 import {DataType} from "../types/types";
 import {isValidUrl} from "../../../utils";
+import RenderTextFields from "./helpers/RenderTextFields";
+import {EMAIL, PHONE, ZIP} from "../constants";
 
 interface BusinessProps {
   data: DataType;
   setData: Function;
+  handleValues: Function;
   setIsWrong: (isWrong: boolean) => void;
 }
 
-export default function BusinessData({data, setData, setIsWrong}: BusinessProps) {
+export default function BusinessData({data, setData, handleValues, setIsWrong}: BusinessProps) {
   const [expander, setExpander] = useState<string | null>(null);
-
-  const handleValues = (item: string) => (event: ChangeEvent<HTMLInputElement>) => {
-    const {value} = event.target;
-    const tempo = JSON.parse(JSON.stringify(data));
-    if (value.length) {
-      // @ts-ignore
-      tempo[item] = value;
-      // @ts-ignore
-    } else if (tempo[item]) {
-      // @ts-ignore
-      delete tempo[item];
-    }
-    setData(tempo);
-  };
 
   const renderItem = (item: string, label: string) => {
     let isError = false as boolean;
@@ -45,28 +33,27 @@ export default function BusinessData({data, setData, setIsWrong}: BusinessProps)
     if ((value.trim().length === 0 && ['urlOptionLabel', 'urlOptionLink'].includes(item)) ||
       (item === 'urlOptionLink' && !isValidUrl(value))) {
       isError = true;
+    } else if (value.trim().length && ((item === 'web' && !isValidUrl(value)) ||
+      (item === 'email' && !EMAIL.test(value)) || (item === 'phone' && !PHONE.test(value)) ||
+      (item === 'zip' && !ZIP.test(value)))) {
+        isError = true;
     }
 
-    return (<TextField
-      label={label}
-      size="small"
-      fullWidth
-      error={isError}
-      margin="dense"
-      value={value}
-      onChange={handleValues(item)}/>);
+    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={handleValues} />;
   };
 
   const handleOptionButton = () => {
-    const tempo = JSON.parse(JSON.stringify(data));
-    if (tempo.urlOptionLabel !== undefined) {
-      delete tempo.urlOptionLabel;
-      delete tempo.urlOptionLink;
-    } else {
-      tempo.urlOptionLabel = '';
-      tempo.urlOptionLink = '';
-    }
-    setData(tempo);
+    setData((prev: DataType) => {
+      const tempo = {...prev};
+      if (tempo.urlOptionLabel !== undefined) {
+        delete tempo.urlOptionLabel;
+        delete tempo.urlOptionLink;
+      } else {
+        tempo.urlOptionLabel = '';
+        tempo.urlOptionLink = '';
+      }
+      return tempo;
+    });
   };
 
   useEffect(() => {
@@ -75,6 +62,11 @@ export default function BusinessData({data, setData, setIsWrong}: BusinessProps)
       if (!data.urlOptionLabel.trim().length || !data.urlOptionLink.trim().length || !isValidUrl(data.urlOptionLink)) {
         errors = true;
       }
+    }
+    if (!errors && ((data.web?.trim().length && !isValidUrl(data.web)) ||
+      (data.email?.trim().length && !EMAIL.test(data.email)) || (data.phone?.trim().length && !PHONE.test(data.phone)) ||
+      (data.zip?.trim().length && !ZIP.test(data.zip)))) {
+      errors = true;
     }
     setIsWrong(errors);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -160,7 +152,11 @@ export default function BusinessData({data, setData, setIsWrong}: BusinessProps)
       </Paper>
       <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
         <Expander expand={expander} setExpand={setExpander} item="socials" title="Social networks" />
-        {expander === "socials" && <Grid item xs={12}><RenderSocials data={data} setData={setData}/></Grid>}
+        {expander === "socials" && (
+          <Grid item xs={12}>
+            <RenderSocials data={data} setData={setData} />
+          </Grid>
+        )}
       </Paper>
     </Common>
   );

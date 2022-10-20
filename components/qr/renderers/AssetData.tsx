@@ -1,30 +1,14 @@
 import Common from "../helperComponents/Common";
-import Button from "@mui/material/Button";
 import FileUpload from "react-material-file-upload";
-import React, { ChangeEvent, ReactNode, useContext, useEffect, useState } from "react";
-import Divider from "@mui/material/Divider";
+import React, { useContext, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import { ListItemAvatar } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
-import { Delete, UploadRounded } from "@mui/icons-material";
-import { humanDate } from "../../helpers/generalFunctions";
-import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS, PRIMARY_LIGHT_COLOR } from "../../../consts";
-import { fixArticles, formatBytes, toBytes } from "../../../utils";
+import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS } from "../../../consts";
+import { toBytes } from "../../../utils";
 
-import PhotoIcon from "@mui/icons-material/Photo";
-import MovieIcon from "@mui/icons-material/Movie";
-import VolumeUpIcon from "@mui/icons-material/VolumeUp";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import IconButton from "@mui/material/IconButton";
 import Notifications from "../../notifications/Notifications";
-import { unstable_capitalize } from "@mui/utils";
 
 import pluralize from "pluralize";
 import Context from "../../context/Context";
-import Box from "@mui/material/Box";
 
 export type AssetDataProps = {
   type: "image" | "video" | "pdf" | "audio";
@@ -32,10 +16,9 @@ export type AssetDataProps = {
     files?: File[];
   };
   setData: Function;
-  setIsValidForm?: (isValidForm: boolean) => void;
 }
 
-const validateFile = (files: File[], type: string, total: number) => {
+/*const validateFile = (files: File[], type: string, total: number) => {
   let errors = [];
   // @ts-ignore
   if (files.length + total > FILE_LIMITS[type].totalFiles) {
@@ -51,24 +34,10 @@ const validateFile = (files: File[], type: string, total: number) => {
   });
 
   return errors.join("\n");
-};
-
-const getIconByType = (type: string): ReactNode => {
-  switch (type) {
-    case "pdf":
-      return <PictureAsPdfIcon />;
-    case "image":
-      return <PhotoIcon />;
-    case "audio":
-      return <VolumeUpIcon />;
-    case "video":
-      return <MovieIcon />;
-  }
-};
+};*/
 
 const AssetData = ({ type, data, setData }: AssetDataProps) => {
   const [alertMessage, setAlertMessage] = useState("");
-  const [file, setFile] = useState(null);
 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === "clickaway") {
@@ -77,14 +46,14 @@ const AssetData = ({ type, data, setData }: AssetDataProps) => {
     setAlertMessage("");
   };
   // @ts-ignore
-  const { setIsValidForm } = useContext(Context);
+  const { setIsWrong } = useContext(Context);
 
   useEffect(() => {
     // @ts-ignore
-    setIsValidForm(data["files"]?.length > 0);
-  }, [data["files"]?.length]); // eslint-disable-line react-hooks/exhaustive-deps
+    setIsWrong(!data["files"] || data["files"].length === 0);
+  }, [data]);
 
-  const handleValues = (files: File[]) => {
+  /*const handleValues = (files: File[]) => {
     //const { files } = event.target;
     const tempo = { ...data };
     if (files?.length) {
@@ -114,18 +83,17 @@ const AssetData = ({ type, data, setData }: AssetDataProps) => {
       // @ts-ignore
     }
     setData(tempo);
-  };
+  };*/
 
   const handleChange = (files: File[]) => {
     setData({ ...data, files });
   };
 
-  const handleDelete = (index: number) => {
+  /*const handleDelete = (index: number) => {
     const tempo = { ...data };
     tempo["files"]?.splice(index, 1);
     setData(tempo);
-  };
-  const fileTypes = ["JPG", "JPEG", "PNG", "GIF"];
+  };*/
 
   return (
     <Common

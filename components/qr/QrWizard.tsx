@@ -43,7 +43,6 @@ interface StepsProps {
   dotsData: CornersAndDotsType;
   setOptions: (opt: OptionsType) => void;
   isWrong: boolean;
-  isValidForm: boolean;
   loading: boolean;
   setLoading: (isLoading: boolean) => void;
 }
@@ -57,7 +56,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   // @ts-ignore
   const {
     selected, step, setStep, data, userInfo, options, frame, background, cornersData,
-    dotsData, isWrong, isValidForm, loading, setOptions, setLoading
+    dotsData, isWrong, loading, setOptions, setLoading
   }: StepsProps = useContext(Context);
 
   const router = useRouter();
@@ -78,7 +77,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
     } else if (step === 1 && isLogged && data.isDynamic && !Boolean(options.id) && options.mode === undefined) {
       const id = getUuid();
       const shortCode = await generateId();
-      setOptions({ ...options, id, shortCode, data: generateShortLink(shortCode) });
+      setOptions({ ...options, id, shortCode, data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN) });
       setStep(2);
     } else if (step === 2 && isLogged) {
 
@@ -204,7 +203,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
       onClick={handleNext}
       endIcon={step >= 2 ? (isLogged ? <SaveIcon/> : <DoneIcon/>) : <ChevronRightIcon/>}
       disabled={
-        loading || isWrong|| !isValidForm || !selected ||
+        loading || isWrong || !selected ||
         (step === 1 && isLogged && !Boolean(data?.qrName?.trim()?.length))
       }
       variant={step >= 2 ? "outlined" : "contained"}>
