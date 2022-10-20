@@ -90,7 +90,7 @@ const [inputAmount, setInputAmount] = useState<string>('1')
       <TextField label='Name'
          sx={{marginTop: 2, width:300 }}
          placeholder='Paul Smith'
-         value={data?.title}
+         value={data?.title || ''}
          onChange={handleValues('title')}
          size='small'
        /> 
@@ -120,7 +120,7 @@ const [inputAmount, setInputAmount] = useState<string>('1')
 <TextField label='Website or social link'
 sx={{marginTop: 2, width:300 }}
 placeholder='https://www.example.com'
-value={data?.web}
+value={data?.web || ''}
 onChange={handleValues('web')}
 size='small'
 />   
@@ -141,7 +141,7 @@ size='small'
       sx={{width: 140, marginBottom:2}}
       placeholder='10'
       size='small'
-      value={inputAmount}
+      value={data.donationUnitAmount?.toString() || inputAmount}
       onChange={handleValues('donationUnitAmount')}
       error={isError}
     />
