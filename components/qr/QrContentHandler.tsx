@@ -1,4 +1,4 @@
-import {ChangeEvent, useCallback, useContext} from 'react';
+import {ChangeEvent, useContext} from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -35,7 +35,7 @@ const QrContentHandler = () => {
   // @ts-ignore
   const { data, setData, selected, isWrong, setIsWrong }: QrContentHandlerProps = useContext(Context);
 
-  const handleValues = useCallback((item: string) => (event: ChangeEvent<HTMLInputElement>) => {
+  const handleValues = (item: string) => (event: ChangeEvent<HTMLInputElement>) => {
     const {value} = event.target;
     if (value.length) {
       // @ts-ignore
@@ -49,7 +49,7 @@ const QrContentHandler = () => {
         return temp;
       });
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  };
 
   const renderSel = () => {
     if (!selected) {
