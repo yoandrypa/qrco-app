@@ -78,7 +78,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
     } else if (step === 1 && isLogged && data.isDynamic && !Boolean(options.id) && options.mode === undefined) {
       const id = getUuid();
       const shortCode = await generateId();
-      setOptions({ ...options, id, shortCode, data: generateShortLink(shortCode) });
+      setOptions({ ...options, id, shortCode, data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN) });
       setStep(2);
     } else if (step === 2 && isLogged) {
 
