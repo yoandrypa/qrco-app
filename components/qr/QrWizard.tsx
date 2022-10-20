@@ -22,6 +22,7 @@ import { initialBackground, initialFrame } from "../../helpers/qr/data";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { getUuid } from "../../helpers/qr/helpers";
 import * as StorageHandler from "../../handlers/storage";
+import * as EbanuxHandler from "../../handlers/ebanux"
 import Notifications from "../notifications/Notifications";
 
 const steps = ["Type", "Content", "Design"];
@@ -84,6 +85,11 @@ const QrWizard = ({ children }: QrWizardProps) => {
       if (["pdf", "audio", "image", "video"].includes(selected)) {
         // @ts-ignore
         data["files"] = await StorageHandler.upload(data["files"], `${userInfo.attributes.sub}/${selected}s`);
+      }
+  
+      if ("donations".includes(selected)){
+        console.log(userInfo.attributes.sub)
+        // await EbanuxHandler.createEbanuxDonationCoffiePrice(userInfo.attributes.sub, data.donationUnitAmount || 1 )
       }
 
       const qrData = { ...data, qrType: selected };
