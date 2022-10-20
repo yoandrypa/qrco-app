@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { CustomError } from "../utils";
 import { Auth } from 'aws-amplify';
 
 const SERVER_URL = process.env.DEVELOPMENT_MODE ? 'https://ebanux.com' : 'https://dev.ebanux.link'
@@ -27,19 +28,21 @@ export const APIv2 = axios.create({
  * @param quantity 
  */
 export const createEbanuxDonationCoffiePrice = async (
-    { userId, unitAmountUSD, quantity, redirect = null }:
-        {
-            userId: string;
-            unitAmountUSD: number;
-            quantity: number;
-            redirect?: string | null;
-        }
+    userId: string,
+    unitAmountUSD: number,
 ) => {
+    console.log('executing handler', userId, unitAmountUSD)
+    //handle errors        
+    try {
+        const response = await APIv1.post('/donation',
+            {//data
+                cognitoUserId: userId,
+                amount: unitAmountUSD
+            })
 
-    const response = await APIv1.post('/donation', {
-        cognitoUserId: userId,
-        amount: unitAmountUSD
-    })
+    } catch (error) {
+        throw new CustomError("Error uploading files", 500, error);
+    }
 }
 
 export const updateCoffieDonationPrice = async () => {
