@@ -1,9 +1,8 @@
-import {ChangeEvent, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 
 import Common from '../helperComponents/Common';
@@ -14,6 +13,7 @@ import Expander from "./helpers/Expander";
 import {DataType} from "../types/types";
 import {isValidUrl} from "../../../utils";
 import RenderTextFields from "./helpers/RenderTextFields";
+import {EMAIL, PHONE, ZIP} from "../constants";
 
 interface BusinessProps {
   data: DataType;
@@ -33,6 +33,10 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
     if ((value.trim().length === 0 && ['urlOptionLabel', 'urlOptionLink'].includes(item)) ||
       (item === 'urlOptionLink' && !isValidUrl(value))) {
       isError = true;
+    } else if (value.trim().length && ((item === 'web' && !isValidUrl(value)) ||
+      (item === 'email' && !EMAIL.test(value)) || (item === 'phone' && !PHONE.test(value)) ||
+      (item === 'zip' && !ZIP.test(value)))) {
+        isError = true;
     }
 
     return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={handleValues} />;
@@ -58,6 +62,11 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
       if (!data.urlOptionLabel.trim().length || !data.urlOptionLink.trim().length || !isValidUrl(data.urlOptionLink)) {
         errors = true;
       }
+    }
+    if (!errors && ((data.web?.trim().length && !isValidUrl(data.web)) ||
+      (data.email?.trim().length && !EMAIL.test(data.email)) || (data.phone?.trim().length && !PHONE.test(data.phone)) ||
+      (data.zip?.trim().length && !ZIP.test(data.zip)))) {
+      errors = true;
     }
     setIsWrong(errors);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
