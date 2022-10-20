@@ -129,7 +129,7 @@ export default function DonationsInfo({ newData }: DonationsProps) {
 
   return (
     //TODO
-    <MainMicrosite>
+    <MainMicrosite url={newData.shortlinkurl} >
     <CardContent>
       <Grid container
         display='flex'
