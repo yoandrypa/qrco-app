@@ -141,6 +141,8 @@ export type DataType = {
     taxi?: boolean;
     wifi?: boolean;
   } | undefined;
+  primary?: string;
+  secondary?: string;
   isDynamic?: boolean;
   files?: File[];
 };
@@ -195,4 +197,6 @@ export type EditType = {
   isDynamic?: boolean;
   qrOptionsId?: any;
   value?: string;
+  primary?: string;
+  secondary?: string;
 };
