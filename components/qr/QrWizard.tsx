@@ -119,32 +119,17 @@ const QrWizard = ({ children }: QrWizardProps) => {
         qrDesign.id = qrDesignId;
       }
 
-      if (!areEquals(frame, initialFrame)) {
-        // @ts-ignore
-        qrDesign.frame = frame;
-      }
-      if (!areEquals(background, initialBackground)) {
-        // @ts-ignore
-        qrDesign.background = background;
-      }
-      if (cornersData !== null) {
-        // @ts-ignore
-        qrDesign.corners = cornersData;
-      }
-      if (dotsData !== null) {
-        // @ts-ignore
-        qrDesign.cornersDot = dotsData;
-      }
-
-      if (!qrDesign.cornersDotOptions.type) {
-        qrDesign.cornersDotOptions.type = '';
-      }
-      if (!qrDesign.cornersSquareOptions.type) {
-        qrDesign.cornersSquareOptions.type = '';
-      }
-      if (qrDesign.mode !== undefined) {
-        delete qrDesign.mode;
-      }
+      // @ts-ignore
+      if (!areEquals(frame, initialFrame)) { qrDesign.frame = frame; }
+      // @ts-ignore
+      if (!areEquals(background, initialBackground)) { qrDesign.background = background; }
+      // @ts-ignore
+      if (cornersData !== null) { qrDesign.corners = cornersData; }
+      // @ts-ignore
+      if (dotsData !== null) { qrDesign.cornersDot = dotsData; }
+      if (!qrDesign.cornersDotOptions.type) { qrDesign.cornersDotOptions.type = ''; }
+      if (!qrDesign.cornersSquareOptions.type) { qrDesign.cornersSquareOptions.type = ''; }
+      if (qrDesign.mode !== undefined) { delete qrDesign.mode; }
 
       try {
         if (data.mode === undefined) {
@@ -157,8 +142,9 @@ const QrWizard = ({ children }: QrWizardProps) => {
             qrName: qrData.qrName
           } as EditType;
 
+          if (qrData.primary) { objToEdit.primary = qrData.primary; }
+          if (qrData.secondary) { objToEdit.primary = qrData.secondary; }
           if (qrData.value) { objToEdit.value = qrData.value; }
-
           if (qrDesign.qrType) { delete qrDesign.qrType; }
           if (qrDesign.id) { delete qrDesign.id; }
           if (qrDesign.userId) { delete qrDesign.userId; }
@@ -168,10 +154,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           if (qrData.updatedAt) { delete qrData.updatedAt; }
 
           objToEdit.qrOptionsId = qrDesign;
-
-          if (data.isDynamic) {
-            objToEdit.isDynamic = true;
-          }
+          if (data.isDynamic) { objToEdit.isDynamic = true; }
 
           await QrHandler.edit(objToEdit);
         }

@@ -51,7 +51,7 @@ const AssetData = ({ type, data, setData }: AssetDataProps) => {
   useEffect(() => {
     // @ts-ignore
     setIsWrong(!data["files"] || data["files"].length === 0);
-  }, [data]);
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /*const handleValues = (files: File[]) => {
     //const { files } = event.target;
