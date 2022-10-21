@@ -123,10 +123,13 @@ const QrWizard = ({ children }: QrWizardProps) => {
       if (!areEquals(frame, initialFrame)) { qrDesign.frame = frame; }
       // @ts-ignore
       if (!areEquals(background, initialBackground)) { qrDesign.background = background; }
+
       // @ts-ignore
       if (cornersData !== null) { qrDesign.corners = cornersData; }
+
       // @ts-ignore
       if (dotsData !== null) { qrDesign.cornersDot = dotsData; }
+
       if (!qrDesign.cornersDotOptions.type) { qrDesign.cornersDotOptions.type = ''; }
       if (!qrDesign.cornersSquareOptions.type) { qrDesign.cornersSquareOptions.type = ''; }
       if (qrDesign.mode !== undefined) { delete qrDesign.mode; }

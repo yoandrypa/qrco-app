@@ -96,7 +96,7 @@ const QrOptionsSchema = new dynamoose.Schema({
     required: false,
     schema: CornersSchema
   },
-  cornersDots: {
+  cornersDot: {
     type: Object,
     required: false,
     schema: CornersSchema
