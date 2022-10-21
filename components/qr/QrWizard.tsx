@@ -36,7 +36,10 @@ interface StepsProps {
   setStep: Function;
   selected: string;
   data: DataType;
-  userInfo: { attributes: {sub: string} };
+  userInfo: { attributes: {sub: string},
+              signInUserSession: { accessToken: {
+                jwtToken: string
+              } } };
   options: OptionsType;
   frame: FramesType;
   background: BackgroundType;
@@ -87,9 +90,14 @@ const QrWizard = ({ children }: QrWizardProps) => {
         data["files"] = await StorageHandler.upload(data["files"], `${userInfo.attributes.sub}/${selected}s`);
       }
   
-      if ("donations".includes(selected)){
-        console.log(userInfo.attributes.sub)
-        // await EbanuxHandler.createEbanuxDonationCoffiePrice(userInfo.attributes.sub, data.donationUnitAmount || 1 )
+      if ("donations".includes(selected)){   
+        console.log(userInfo.signInUserSession) 
+        try {
+          const result = await EbanuxHandler.createEbanuxDonationCoffiePrice(userInfo.attributes.sub, data.donationUnitAmount || 1, userInfo.signInUserSession.accessToken.jwtToken )
+          console.log(result)
+        } catch (error) {
+          console.error(error)
+        }    
       }
 
       const qrData = { ...data, qrType: selected };
