@@ -57,13 +57,13 @@ const AppContextProvider = (props: ContextProps) => {
   const clearData = useCallback((keepType?: boolean, item?: 'value' | 'message', value?: string) => {
     setForceClear(false);
 
-    if (item === undefined) {
+    if (!keepType) {
       setSelected(null);
-      setBackground(initialBackground);
-      setFrame(initialFrame);
-      setDotsData(null);
-      setCornersData(null);
     }
+    setBackground(initialBackground);
+    setFrame(initialFrame);
+    setDotsData(null);
+    setCornersData(null);
 
     setIsWrong(false);
     setLoading(false);
@@ -96,6 +96,8 @@ const AppContextProvider = (props: ContextProps) => {
         } else if (selected === "text") {
           clearData(true, 'value', 'Enter any text here');
           // setData({ ...data, value: "Enter any text here" });
+        } else {
+          clearData(true);
         }
       } else {
         clearData(true);
