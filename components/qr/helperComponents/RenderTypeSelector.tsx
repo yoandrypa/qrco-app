@@ -93,7 +93,7 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
           {renderTypeSelector('business', 'Business', 'Describe your business or company', true)}
           {renderTypeSelector("social", "Social networks", "Share your social networks information", true)}
           {renderTypeSelector("coupon", "Coupon", "Share a coupon", true)}
-          {renderTypeSelector("donations", "Donations", "Get donations from your supporters worldwide.", true)}
+          {process.env.DEVELOPMENT_MODE && renderTypeSelector("donations", "Donations", "Get donations from your supporters worldwide.", true)}
         </>)
       }
       {renderTypeSelector("twitter", "Twitter", "Post a tweet", true)}
