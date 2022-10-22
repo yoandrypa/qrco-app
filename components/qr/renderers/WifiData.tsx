@@ -30,7 +30,7 @@ function WifiData({ data, setData }: WifiDataProps) {
     const tempo = { ...data };
     if (item !== 'hidden') {
       const { value } = event.target;
-      if (!value.length) {
+      if (value.length) {
         tempo[item] = value;
       } else if (tempo[item]) {
         delete tempo[item];
