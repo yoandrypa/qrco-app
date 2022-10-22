@@ -37,7 +37,7 @@ interface StepsProps {
   selected: string;
   data: DataType;
   userInfo: { attributes: {sub: string},
-              signInUserSession: { accessToken: {
+              signInUserSession: { idToken: {
                 jwtToken: string
               } } };
   options: OptionsType;
@@ -90,13 +90,15 @@ const QrWizard = ({ children }: QrWizardProps) => {
         data["files"] = await StorageHandler.upload(data["files"], `${userInfo.attributes.sub}/${selected}s`);
       }
   
-      if ("donations".includes(selected)){   
-        console.log(userInfo.signInUserSession) 
+      if (selected === 'donations'){   
+        console.log(userInfo.signInUserSession.idToken.jwtToken) 
         try {
-          const result = await EbanuxHandler.createEbanuxDonationCoffiePrice(userInfo.attributes.sub, data.donationUnitAmount || 1, userInfo.signInUserSession.accessToken.jwtToken )
-          console.log(result)
+          const price = await EbanuxHandler.createEbanuxDonationPrice(userInfo.attributes.sub,
+            userInfo.signInUserSession.idToken.jwtToken ,
+             data.donationUnitAmount || 1)
+          console.log(price)
         } catch (error) {
-          console.error(error)
+          console.error('error en el handler ',error)
         }    
       }
 
