@@ -137,8 +137,6 @@ const QrWizard = ({ children }: QrWizardProps) => {
         if (data.mode === undefined) {
           await QrHandler.create({shortLink, qrDesign, qrData});
         } else {
-          debugger;
-
           const objToEdit = {
             ...qrData,
             userId: qrDesign.userId,
