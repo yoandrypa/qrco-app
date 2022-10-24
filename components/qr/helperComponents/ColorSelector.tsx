@@ -83,7 +83,7 @@ const ColorSelector = ({ color, handleData, label, property }: ColorSelProps) =>
         margin="dense"
         variant="outlined"
         label={label}
-        value={value?.slice(1) || '#000000'}
+        value={value?.slice(1) || '000000'}
         onChange={handleChange}
         onPaste={handlePaste}
         inputProps={{ ref }}

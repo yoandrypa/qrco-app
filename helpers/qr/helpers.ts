@@ -238,23 +238,23 @@ export const downloadAsPNG = async (svgData: { outerHTML: string | number | bool
 
 export const getFrame = (frame: FramesType): string => {
   let result = null;
-  const defaultText:string = 'SCAN ME';
-  const defaultColor:string = '#000000'
+  const defaultColor:string = '#000000';
+  const renderFrameText = () => frame.text !== undefined ? frame.text : 'SCAN ME' as string;
 
   if (frame.type === '/frame/frame0.svg') {
     result = frame0(frame.color);
   } else if (frame.type === '/frame/frame1.svg') {
-    result = frame1(frame.color, frame.text || defaultText, frame.textColor || '#ffffff', frame.textUp);
+    result = frame1(frame.color, renderFrameText(), frame.textColor || '#ffffff', frame.textUp);
   } else if (frame.type === '/frame/frame2.svg') {
-    result = frame2(frame.color, frame.text || defaultText, frame.textColor || defaultColor, frame.textUp);
+    result = frame2(frame.color, renderFrameText(), frame.textColor || defaultColor, frame.textUp);
   } else if (frame.type === '/frame/frame3.svg') {
-    result = frame3(frame.color, frame.text || defaultText, frame.textColor || defaultColor, frame.textUp);
+    result = frame3(frame.color, renderFrameText(), frame.textColor || defaultColor, frame.textUp);
   } else if (frame.type === '/frame/frame4.svg') {
-    result = frame4(frame.color, frame.text || defaultText, frame.textColor || defaultColor, frame.textUp);
+    result = frame4(frame.color, renderFrameText(), frame.textColor || defaultColor, frame.textUp);
   } else if (frame.type === '/frame/frame5.svg') {
     result = frame5(frame.color);
   } else if (frame.type === '/frame/frame6.svg') {
-    result = frame6(frame.color, frame.text || defaultText, frame.textColor || defaultColor);
+    result = frame6(frame.color, renderFrameText(), frame.textColor || defaultColor);
   } else {
     result = frame7(frame.color);
   }
