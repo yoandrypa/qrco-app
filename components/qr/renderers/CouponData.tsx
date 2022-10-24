@@ -1,5 +1,4 @@
-import {ChangeEvent, useEffect, useState} from "react";
-import Typography from "@mui/material/Typography";
+import {useEffect, useState} from "react";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 
@@ -12,6 +11,7 @@ import {isValidUrl} from "../../../utils";
 
 import {ZIP} from "../constants";
 import RenderTextFields from "./helpers/RenderTextFields";
+import Topics from "./helpers/Topics";
 
 export type CouponProps = {
   data: DataType;
@@ -59,7 +59,7 @@ const CouponData = ({data, setData, handleValues, setIsWrong}: CouponProps) => {
 
   return (
     <Common msg="Share a coupon.">
-      <Typography sx={{fontWeight: 'bold'}}>{'Offer information'}</Typography>
+      <Topics message={'Offer information'} />
       <Grid container spacing={1}>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
           {renderItem('company', 'Company')}

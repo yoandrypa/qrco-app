@@ -1,7 +1,6 @@
-import {ChangeEvent, useMemo, useEffect, useState} from 'react';
+import {useMemo, useEffect, useState} from 'react';
 import Grid from '@mui/material/Grid';
 import Divider from '@mui/material/Divider';
-import Typography from '@mui/material/Typography';
 import Paper from "@mui/material/Paper";
 
 import Common from '../helperComponents/Common';
@@ -12,6 +11,7 @@ import Expander from "./helpers/Expander";
 import {DataType} from "../types/types";
 import {isValidUrl} from "../../../utils";
 import RenderTextFields from "./helpers/RenderTextFields";
+import Topics from "./helpers/Topics";
 
 interface CardDataProps {
   data: DataType;
@@ -94,7 +94,7 @@ export default function CardData({data, setData, handleValues, setIsWrong}: Card
 
   return (
     <Common msg="Your contact details. Users can store your info or contact you right away.">
-      <Typography sx={{fontWeight: 'bold'}}>{'Presentation'}</Typography>
+      <Topics message={'Presentation'}/>
       <Grid container spacing={1}>
         <Grid item sm={2} xs={12} style={{paddingTop: 0}}>
           {renderItem('prefix', 'Prefix')}
@@ -106,7 +106,7 @@ export default function CardData({data, setData, handleValues, setIsWrong}: Card
           {renderItem('lastName', 'Last name')}
         </Grid>
       </Grid>
-      <Typography sx={{fontWeight: 'bold'}}>{'Phones'}</Typography>
+      <Topics message={'Phones'} />
       <Grid container spacing={1}>
         <Grid item sm={4} xs={12} style={{paddingTop: 0}}>
           {renderItem('cell', 'Cell number')}
@@ -118,7 +118,7 @@ export default function CardData({data, setData, handleValues, setIsWrong}: Card
           {renderItem('fax', 'Fax')}
         </Grid>
       </Grid>
-      <Typography sx={{fontWeight: 'bold'}}>{'Organization'}</Typography>
+      <Topics message={'Organization'}/>
       <Grid container spacing={1}>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
           {renderItem('organization', 'Organization')}
