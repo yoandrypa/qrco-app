@@ -23,6 +23,7 @@ import Context from '../context/Context';
 import RenderNoUserWarning from "./helperComponents/RenderNoUserWarning";
 import NotifyDynamic from "./helperComponents/NotifyDynamic";
 import Notifications from "../../components/notifications/Notifications";
+import {FRAMES_LENGTH} from "./constants";
 
 interface GeneratorProps {
   options: OptionsType;
@@ -158,7 +159,8 @@ const Generator = ({ forceOverride }: GenProps) => {
     if (item !== 'text' && payload?.target?.checked !== undefined) {
       value = payload.target.checked;
     } else {
-      value = payload?.target?.value || payload?.color || payload?.textColor || payload;
+      const val = payload?.target?.value;
+      value = val !== undefined ? val.slice(0, FRAMES_LENGTH) : payload?.color || payload?.textColor || payload;
     }
     handleMainFrame(item, value);
   };

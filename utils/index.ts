@@ -64,8 +64,8 @@ export const addProtocol = (url: string): string => {
 };
 
 export const isValidUrl = (urlString: string) => {
-  const urlPattern = new RegExp('^(https?:\\/\\/)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+
-    '((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*(\\?[;&a-z\\d%_.~+=-]*)?(\\#[-a-z\\d_]*)?$','i');
+  const urlPattern = new RegExp("^(https?:\\/\\/)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" +
+    "((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*(\\?[;&a-z\\d%_.~+=-]*)?(\\#[-a-z\\d_]*)?$", "i");
   return urlPattern.test(urlString);
 };
 
@@ -213,4 +213,13 @@ export const toBytes = (size: number, type: "B" | "KB" | "MB" | "GB" | "TB") => 
     return size * 1024 ** key;
   }
   return "invalid type: type must be GB/KB/MB etc.";
+};
+
+export const conjunctMethods = {
+  "intersection": (A: Array<any>, B: Array<any>, compareFunction: Function) => {
+    return A.filter(a => B.some(b => compareFunction(a, b)));
+  },
+  "difference": (A: Array<any>, B: Array<any>, compareFunction: Function) => {
+    return A.filter(a => !B.some(b => compareFunction(a, b)));
+  }
 };

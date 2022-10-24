@@ -8,12 +8,16 @@ import Switch from '@mui/material/Switch';
 import ColorSelector from '../helperComponents/ColorSelector';
 import SectionSelector from '../helperComponents/SectionSelector';
 import { FramesType } from '../types/types';
+import InputAdornment from "@mui/material/InputAdornment";
+import Typography from "@mui/material/Typography";
+import {FRAMES_LENGTH} from "../constants";
+import pluralize from "pluralize";
 
 interface FramesProps {
   frame: FramesType;
   handleFrame: Function;
   handleMainFrame: Function;
-};
+}
 
 const Frames = ({ frame, handleFrame, handleMainFrame }: FramesProps) => {
   const isOnlyColor = ['/frame/frame0.svg', '/frame/frame5.svg', '/frame/frame7.svg'].includes(frame.type || '');
@@ -96,12 +100,19 @@ const Frames = ({ frame, handleFrame, handleMainFrame }: FramesProps) => {
                 label="Frame text"
                 onChange={handleFrame('text')}
                 value={frame.text}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Typography>{`${pluralize('char', (FRAMES_LENGTH - (frame?.text?.length || 0)), true)} left`}</Typography>
+                    </InputAdornment>
+                  )
+                }}
               />
             </Grid>
             {frame?.type !== '/frame/frame6.svg' && (
               <Grid item sm={4} xs={12}>
                 <FormControlLabel
-                  sx={{ mt: { sm: '7px', xs: 0 } }}
+                  sx={{ mt: { sm: '7px', xs: 0 }, float: 'right' }}
                   control={<Switch checked={frame.textUp || false} onChange={handleFrame('textUp')} />}
                   label="Text up" />
               </Grid>

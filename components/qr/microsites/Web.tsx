@@ -2,12 +2,12 @@ import { useEffect } from 'react';
 import PleaseWait from '../../PleaseWait';
 
 interface WebProps {
-  newData: any;
+  urlString: string;
 }
 
-export default function Web({newData}: WebProps) {
+export default function Web({urlString}: WebProps) {
   useEffect(() => {
-    window.location.replace(newData.value);
+    window.location.replace(urlString);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
