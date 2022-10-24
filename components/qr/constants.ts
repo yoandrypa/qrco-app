@@ -21,4 +21,6 @@ export const DAYS = {
   sat: 'Saturday'
 } as object;
 
+export const FRAMES_LENGTH = 10 as number;
+
 export const DEFAULT_COLORS = { p: '#0f4d8c', s: '#99c4f0' } as ColorTypes;
