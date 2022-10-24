@@ -14,6 +14,7 @@ import {DataType} from "../types/types";
 import {isValidUrl} from "../../../utils";
 import RenderTextFields from "./helpers/RenderTextFields";
 import {EMAIL, PHONE, ZIP} from "../constants";
+import Topics from "./helpers/Topics";
 
 interface BusinessProps {
   data: DataType;
@@ -74,7 +75,7 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
   return (
     <Common
       msg="Your business or company details. Users can contact your business or company right the way.">
-      <Typography sx={{fontWeight: 'bold'}}>{'Business info'}</Typography>
+      <Topics message={'Business info'}/>
       <Grid container spacing={1}>
         <Grid item xs={12} style={{paddingTop: 0}}>
           {renderItem('company', 'Company')}
