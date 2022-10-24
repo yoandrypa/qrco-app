@@ -149,9 +149,9 @@ const QrWizard = ({ children }: QrWizardProps) => {
           if (objToEdit.createdAt) { delete objToEdit.createdAt; }
           // @ts-ignore
           if (objToEdit.updatedAt) { delete objToEdit.updatedAt; }
+          if (data.isDynamic) { objToEdit.isDynamic = true; }
 
           objToEdit.qrOptionsId = qrDesign;
-          if (data.isDynamic) { objToEdit.isDynamic = true; }
 
           await QrHandler.edit(objToEdit);
         }
