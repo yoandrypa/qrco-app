@@ -80,7 +80,6 @@ const QrWizard = ({ children }: QrWizardProps) => {
       setOptions({ ...options, id, shortCode, data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN) });
       setStep(2);
     } else if (step === 2 && isLogged) {
-
       //Process assets before saving de QR Data
       if (["pdf", "audio", "image", "video"].includes(selected)) {
         // @ts-ignore
@@ -139,22 +138,17 @@ const QrWizard = ({ children }: QrWizardProps) => {
           await QrHandler.create({shortLink, qrDesign, qrData});
         } else {
           const objToEdit = {
+            ...qrData,
             userId: qrDesign.userId,
             id: qrDesign.id,
             qrType: qrData.qrType,
             qrName: qrData.qrName
           } as EditType;
 
-          if (qrData.primary) { objToEdit.primary = qrData.primary; }
-          if (qrData.secondary) { objToEdit.primary = qrData.secondary; }
-          if (qrData.value) { objToEdit.value = qrData.value; }
-          if (qrDesign.qrType) { delete qrDesign.qrType; }
-          if (qrDesign.id) { delete qrDesign.id; }
-          if (qrDesign.userId) { delete qrDesign.userId; }
           // @ts-ignore
-          if (qrData.createdAt) { delete qrData.createdAt; }
+          if (objToEdit.createdAt) { delete objToEdit.createdAt; }
           // @ts-ignore
-          if (qrData.updatedAt) { delete qrData.updatedAt; }
+          if (objToEdit.updatedAt) { delete objToEdit.updatedAt; }
 
           objToEdit.qrOptionsId = qrDesign;
           if (data.isDynamic) { objToEdit.isDynamic = true; }
