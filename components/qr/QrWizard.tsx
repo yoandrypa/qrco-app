@@ -153,8 +153,6 @@ const QrWizard = ({ children }: QrWizardProps) => {
           objToEdit.qrOptionsId = qrDesign;
           if (data.isDynamic) { objToEdit.isDynamic = true; }
 
-          console.log(objToEdit);
-
           await QrHandler.edit(objToEdit);
         }
 
