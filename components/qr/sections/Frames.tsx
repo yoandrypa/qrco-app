@@ -11,6 +11,7 @@ import { FramesType } from '../types/types';
 import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
 import {FRAMES_LENGTH} from "../constants";
+import pluralize from "pluralize";
 
 interface FramesProps {
   frame: FramesType;
@@ -102,7 +103,7 @@ const Frames = ({ frame, handleFrame, handleMainFrame }: FramesProps) => {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <Typography>{`${(FRAMES_LENGTH - (frame?.text?.length || 0))} chars left`}</Typography>
+                      <Typography>{`${pluralize('char', (FRAMES_LENGTH - (frame?.text?.length || 0)), true)} left`}</Typography>
                     </InputAdornment>
                   )
                 }}
