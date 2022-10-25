@@ -4,7 +4,7 @@ import Divider from '@mui/material/Divider';
 import Paper from "@mui/material/Paper";
 
 import Common from '../helperComponents/Common';
-import {EMAIL, PHONE, SOCIALS, ZIP} from "../constants";
+import {EMAIL, PHONE, ZIP} from "../constants";
 
 import RenderSocials from "./helpers/RenderSocials";
 import Expander from "./helpers/Expander";
@@ -12,6 +12,7 @@ import {DataType} from "../types/types";
 import {isValidUrl} from "../../../utils";
 import RenderTextFields from "./helpers/RenderTextFields";
 import Topics from "./helpers/Topics";
+import socialsAreValid from "./validator";
 
 interface CardDataProps {
   data: DataType;
@@ -57,14 +58,7 @@ export default function CardData({data, setData, handleValues, isWrong, setIsWro
       (data.email?.trim().length && !EMAIL.test(data.email))) {
       errors = true;
     } else if (data?.isDynamic) {
-      SOCIALS.every((x: string) => {
-        // @ts-ignore
-        if (data[x] !== undefined && !data[x].trim().length) {
-          errors = true;
-          return false;
-        }
-        return true;
-      });
+      errors = !socialsAreValid(data);
     }
 
     setIsWrong(errors);
@@ -143,7 +137,7 @@ export default function CardData({data, setData, handleValues, isWrong, setIsWro
             <Paper elevation={2} sx={{p: 1, mt: 1}}>
               <Expander expand={expander} setExpand={setExpander} item="socials" title="Social information"/>
               {expander === "socials" &&
-                <RenderSocials data={data} setData={setData} setIsWrong={setIsWrong} isWrong={isWrong}/>}
+                <RenderSocials data={data} setData={setData} />}
             </Paper>
             <Divider sx={{my: 1}}/>
           </Grid>
