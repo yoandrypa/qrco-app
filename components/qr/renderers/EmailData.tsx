@@ -1,6 +1,8 @@
+import {useEffect} from 'react';
 import TextField from '@mui/material/TextField';
 import Common from '../helperComponents/Common';
 import MultiLineDetails from '../helperComponents/MultiLineDetails';
+import {EMAIL} from "../constants";
 
 export type EmailDataProps = {
   data: {
@@ -9,9 +11,10 @@ export type EmailDataProps = {
     body?: string;
   };
   setData: Function;
+  setIsWrong: (isWrong: boolean) => void;
 };
 
-export default function EmailData({ data, setData }: EmailDataProps) {
+export default function EmailData({ data, setData, setIsWrong }: EmailDataProps) {
   const handleValues = (item: 'email' | 'subject' | 'body') => (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const tempo = { ...data };
@@ -23,6 +26,14 @@ export default function EmailData({ data, setData }: EmailDataProps) {
     setData(tempo);
   };
 
+  useEffect(() => {
+    let isWrong = false;
+    if ((!data.email?.trim().length || !EMAIL.test(data.email)) || (!data.subject?.trim().length && !data.body?.trim().length)) {
+      isWrong = true;
+    }
+    setIsWrong(isWrong);
+  }, [data.email, data.subject, data.body]);
+
   return (
     <Common msg="You can send emails in the addresss you provide. Also you can enter a short subject and a message up to 200 characters.">
       <>
@@ -30,8 +41,11 @@ export default function EmailData({ data, setData }: EmailDataProps) {
           label="Email"
           size="small"
           fullWidth
+          required
           margin="dense"
           value={data?.email || ''}
+          // @ts-ignore
+          error={data?.email && !EMAIL.test(data.email)}
           onChange={handleValues('email')} />
         <TextField
           label="Subject"
