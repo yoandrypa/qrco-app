@@ -82,20 +82,20 @@ const QrContentHandler = () => {
       }
       case 'facebook': {
         // @ts-ignore
-        return <FacebookData data={data} setData={(payload: FacebookDataProps) => setData(payload)} setIsWrong={setIsWrong} isWrong={isWrong} />;
+        return (<FacebookData data={data} setData={(payload: FacebookDataProps) => setData(payload)} setIsWrong={setIsWrong} isWrong={isWrong} />);
       }
       case 'wifi': {
         return <WifiData data={data} setData={(payload: WifiDataProps) => setData(payload)} />;
       }
       case 'vcard+':
       case 'vcard': {
-        return <CardData data={data} setData={(payload: CardDataProps) => setData(payload)} setIsWrong={setIsWrong} handleValues={handleValues} />;
+        return <CardData data={data} setData={(payload: CardDataProps) => setData(payload)} isWrong={isWrong} setIsWrong={setIsWrong} handleValues={handleValues} />;
       }
       case 'coupon': {
         return <CouponData data={data} setData={(payload: CouponProps) => setData(payload)} setIsWrong={setIsWrong} handleValues={handleValues} />;
       }
       case 'business': {
-        return <BusinessData data={data} setData={(payload: CardDataProps) => setData(payload)} setIsWrong={setIsWrong} handleValues={handleValues}/>;
+        return <BusinessData data={data} setData={(payload: CardDataProps) => setData(payload)} isWrong={isWrong} setIsWrong={setIsWrong} handleValues={handleValues}/>;
       }
       case 'email': {
         return <EmailData data={data} setData={(payload: EmailDataProps) => setData(payload)} />;

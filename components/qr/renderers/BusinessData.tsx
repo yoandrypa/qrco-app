@@ -20,10 +20,11 @@ interface BusinessProps {
   data: DataType;
   setData: Function;
   handleValues: Function;
+  isWrong: boolean;
   setIsWrong: (isWrong: boolean) => void;
 }
 
-export default function BusinessData({data, setData, handleValues, setIsWrong}: BusinessProps) {
+export default function BusinessData({data, setData, handleValues, isWrong, setIsWrong}: BusinessProps) {
   const [expander, setExpander] = useState<string | null>(null);
 
   const renderItem = (item: string, label: string) => {
@@ -155,7 +156,7 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
         <Expander expand={expander} setExpand={setExpander} item="socials" title="Social networks" />
         {expander === "socials" && (
           <Grid item xs={12}>
-            <RenderSocials data={data} setData={setData} />
+            <RenderSocials data={data} setData={setData} setIsWrong={setIsWrong} isWrong={isWrong} />
           </Grid>
         )}
       </Paper>

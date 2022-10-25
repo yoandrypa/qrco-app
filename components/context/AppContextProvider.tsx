@@ -85,17 +85,14 @@ const AppContextProvider = (props: ContextProps) => {
   }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (doneInitialRender.current && router.pathname === QR_TYPE_ROUTE) {
+    if (doneInitialRender.current && (router.pathname === QR_TYPE_ROUTE || (router.pathname === '/' && !isUserInfo))) {
       if (selected !== null) {
         if (selected === "web") {
           clearData(true, 'value', 'https://www.example.com');
-          // setData({ ...data, value: "https://www.example.com" });
         } else if (selected === "facebook") {
           clearData(true, 'message', 'https://www.example.com');
-          // setData({ ...data, message: "https://www.example.com" });
         } else if (selected === "text") {
           clearData(true, 'value', 'Enter any text here');
-          // setData({ ...data, value: "Enter any text here" });
         } else {
           clearData(true);
         }
