@@ -40,7 +40,7 @@ export default function VCard({newData}: VCardProps) {
               <Grid item xs={11}>
                 <Grid container spacing={1}>
                   {newData.prefix && <RenderField label="Prefix" value={newData.prefix}/>}
-                  {newData.firstName && <RenderField label="First name"value={newData.firstName}/>}
+                  {newData.firstName && <RenderField label="First name" value={newData.firstName}/>}
                   {newData.lastName && <RenderField label="Last name" value={newData.lastName}/>}
                 </Grid>
               </Grid>
@@ -93,7 +93,11 @@ export default function VCard({newData}: VCardProps) {
         </Grid>
       </CardContent>
       <CardActions>
-        <Button variant="outlined" sx={{mt: "10px"}} onClick={downloadFile}>Get Contact</Button>
+        <Button
+          variant="contained"
+          sx={{mt: "10px", color: colors.s, background: colors.p, '&:hover': {color: colors.p, background: colors.s} }}
+          onClick={downloadFile}
+        >{'Get Contact'}</Button>
       </CardActions>
     </MainMicrosite>
   );
