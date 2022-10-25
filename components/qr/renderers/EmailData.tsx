@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {ChangeEvent, useEffect} from 'react';
 import TextField from '@mui/material/TextField';
 import Common from '../helperComponents/Common';
 import MultiLineDetails from '../helperComponents/MultiLineDetails';
@@ -15,7 +15,7 @@ export type EmailDataProps = {
 };
 
 export default function EmailData({ data, setData, setIsWrong }: EmailDataProps) {
-  const handleValues = (item: 'email' | 'subject' | 'body') => (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleValues = (item: 'email' | 'subject' | 'body') => (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const tempo = { ...data };
     if (value.length) {
