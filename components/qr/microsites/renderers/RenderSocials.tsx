@@ -7,8 +7,10 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import IconButton from "@mui/material/IconButton";
 import ForwardIcon from "@mui/icons-material/Forward";
 import GroupsIcon from '@mui/icons-material/Groups';
+import {capitalize} from "@mui/material";
 
-import {DEFAULT_COLORS} from "../../constants";
+import {DEFAULT_COLORS, SOCIALS} from "../../constants";
+import {SocialsType} from "../../types/types";
 
 interface RenderSocialsProps {
   newData: any;
@@ -23,7 +25,7 @@ export default function RenderSocials({newData}: RenderSocialsProps) {
     }
   }
 
-  const renderSocials = (item: string, label: string) => {
+  const renderSocials = (item: string) => {
     let value = newData[item] as string;
     value = value.slice(value.indexOf(':') + 1);
 
@@ -64,59 +66,57 @@ export default function RenderSocials({newData}: RenderSocialsProps) {
     }
 
     url += `${value}${item !== 'youtube' ? '' : '?sub_confirmation=1'}`;
+    let label = item !== 'linkedin' ? capitalize(item) : 'LinkedIn';
 
     return (
-      <Grid item xs={12} style={{paddingTop: 0}}>
-        <TextField
-          variant="standard"
-          label=""
-          size="small"
-          fullWidth
-          margin="dense"
-          // @ts-ignore
-          value={value}
-          InputProps={{
-            disableUnderline: true,
-            startAdornment: (
-              <InputAdornment position="start">
-                <RenderIcon icon={item} enabled color={newData.secondary || DEFAULT_COLORS.s}/>
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment position="end">
-                <Tooltip title={`Copy ${label} contact info to clipboard`}>
-                  <IconButton onClick={() => handleCopy(url)}>
-                    <ContentCopyIcon sx={{ color: newData.secondary || DEFAULT_COLORS.s }} />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={`Go to ${label}`}>
-                  <IconButton target="_blank" component="a" href={url}>
-                    <ForwardIcon sx={{ color: newData.secondary || DEFAULT_COLORS.s }} />
-                  </IconButton>
-                </Tooltip>
-              </InputAdornment>
-            )
-          }}
-        />
-      </Grid>
+      <TextField
+        variant="standard"
+        label=""
+        size="small"
+        fullWidth
+        margin="dense"
+        // @ts-ignore
+        value={value}
+        InputProps={{
+          disableUnderline: true,
+          startAdornment: (
+            <InputAdornment position="start">
+              <RenderIcon icon={item} enabled color={newData.secondary || DEFAULT_COLORS.s}/>
+            </InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
+              <Tooltip title={`Copy ${label} contact info to clipboard`}>
+                <IconButton onClick={() => handleCopy(url)}>
+                  <ContentCopyIcon sx={{color: newData.secondary || DEFAULT_COLORS.s}}/>
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={`Go to ${label}`}>
+                <IconButton target="_blank" component="a" href={url}>
+                  <ForwardIcon sx={{color: newData.secondary || DEFAULT_COLORS.s}}/>
+                </IconButton>
+              </Tooltip>
+            </InputAdornment>
+          )
+        }}
+      />
     );
   }
+
 
   return (
     <>
       {(newData.facebook || newData.whatsapp || newData.twitter || newData.linkedin || newData.instagram ||
         newData.youtube || newData.pinterest || newData.telegram) && (<>
-          <Grid item xs={1}><GroupsIcon sx={{ color: newData.primary || DEFAULT_COLORS.p }} /></Grid>
+          <Grid item xs={1}><GroupsIcon sx={{color: newData.primary || DEFAULT_COLORS.p}}/></Grid>
           <Grid item xs={11}>
             <Grid container spacing={1}>
-              {newData.facebook && renderSocials('facebook', 'Facebook')}
-              {newData.whatsapp && renderSocials('whatsapp', 'Whatsapp')}
-              {newData.twitter && renderSocials('twitter', 'Twitter')}
-              {newData.linkedin && renderSocials('linkedin', 'LinkedIn')}
-              {newData.instagram && renderSocials('instagram', 'Instagram')}
-              {newData.youtube && renderSocials('youtube', 'Youtube')}
-              {newData.pinterest && renderSocials('pinterest', 'Pinterest')}
-              {newData.telegram && renderSocials('telegram', 'Telegram')}
+              {/* @ts-ignore */}
+              {Object.keys(newData).filter((x: string) => SOCIALS.includes(x)).map((x: SocialsType) => (
+                <Grid item xs={12} style={{paddingTop: 0}} key={`socialnw${x}`}>
+                  {renderSocials(x)}
+                </Grid>
+              ))}
             </Grid>
           </Grid>
         </>
