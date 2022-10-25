@@ -85,7 +85,7 @@ const QrContentHandler = () => {
         return (<FacebookData data={data} setData={(payload: FacebookDataProps) => setData(payload)} setIsWrong={setIsWrong} isWrong={isWrong} />);
       }
       case 'wifi': {
-        return <WifiData data={data} setData={(payload: WifiDataProps) => setData(payload)} />;
+        return <WifiData data={data} setData={(payload: WifiDataProps) => setData(payload)} setIsWrong={setIsWrong}  />;
       }
       case 'vcard+':
       case 'vcard': {
