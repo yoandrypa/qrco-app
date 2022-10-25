@@ -101,7 +101,7 @@ const QrContentHandler = () => {
         return <EmailData data={data} setData={(payload: EmailDataProps) => setData(payload)} setIsWrong={setIsWrong} />;
       }
       case 'sms': {
-        return <SMSData data={data} setData={(payload: SMSDataProps) => setData(payload)} />;
+        return <SMSData data={data} setData={(payload: SMSDataProps) => setData(payload)} setIsWrong={setIsWrong} />;
       }
       case 'twitter': {
         return <TwitterData data={data} setData={(payload: TwitterDataProps) => setData(payload)} setIsWrong={setIsWrong}/>;
