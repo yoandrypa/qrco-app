@@ -107,6 +107,7 @@ export default function MainMicrosite({children, colors, url, badge, type}: Micr
                   onClick={handleShare}
                   icon={<RenderIcon icon="social" enabled/>}
                   tooltipTitle="Share"
+                  sx={{ color: colors.p }}
                 />
               </SpeedDial>)}
             </Box>
