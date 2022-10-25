@@ -69,7 +69,8 @@ const QrList = ({qrs}: any) => {
   };
 
   const handleDashboard = async () => {    
-  //TODO
+  const dashBaseUrl = !process.env.NEXT_PUBLIC_DEVELOPMENT_MODE ? 'https://app.ebanux.com/checkouts' : 'https://dev-app.ebanux.com/checkouts'
+  router.push(dashBaseUrl)
   }
 
   const handleCancelDeletion = useCallback(() => {
@@ -88,10 +89,10 @@ const QrList = ({qrs}: any) => {
       <IconButton color="error" disabled={isLoading} onClick={() => showConfirmationDialog(qr.id, qr.userId)}>
         <DeleteOutlineRounded/>
       </IconButton>
-     {qr.qrType === 'donations' && 
+     {(qr.qrType === 'donations' && !!qr.donationProductId) && 
       (
         <Tooltip title='Go to Dashboard'>
-          <IconButton color="info" disabled={isLoading} onClick={() =>{}}>
+          <IconButton color="info" disabled={isLoading} onClick={handleDashboard}>
             <DashboardIcon/>
           </IconButton>
         </Tooltip>
