@@ -15,6 +15,7 @@ import {isValidUrl} from "../../../utils";
 import RenderTextFields from "./helpers/RenderTextFields";
 import {EMAIL, PHONE, ZIP} from "../constants";
 import Topics from "./helpers/Topics";
+import socialsAreValid from "./validator";
 
 interface BusinessProps {
   data: DataType;
@@ -64,11 +65,12 @@ export default function BusinessData({data, setData, handleValues, isWrong, setI
       if (!data.urlOptionLabel.trim().length || !data.urlOptionLink.trim().length || !isValidUrl(data.urlOptionLink)) {
         errors = true;
       }
-    }
-    if (!errors && ((data.web?.trim().length && !isValidUrl(data.web)) ||
+    } else if ((data.web?.trim().length && !isValidUrl(data.web)) ||
       (data.email?.trim().length && !EMAIL.test(data.email)) || (data.phone?.trim().length && !PHONE.test(data.phone)) ||
-      (data.zip?.trim().length && !ZIP.test(data.zip)))) {
+      (data.zip?.trim().length && !ZIP.test(data.zip))) {
       errors = true;
+    } else {
+      errors = !socialsAreValid(data);
     }
     setIsWrong(errors);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -156,7 +158,7 @@ export default function BusinessData({data, setData, handleValues, isWrong, setI
         <Expander expand={expander} setExpand={setExpander} item="socials" title="Social networks" />
         {expander === "socials" && (
           <Grid item xs={12}>
-            <RenderSocials data={data} setData={setData} setIsWrong={setIsWrong} isWrong={isWrong} />
+            <RenderSocials data={data} setData={setData} />
           </Grid>
         )}
       </Paper>

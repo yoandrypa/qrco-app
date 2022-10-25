@@ -12,11 +12,9 @@ import {PHONE, SOCIALS} from "../../constants";
 interface RenderSocialsProps {
   data: SocialProps;
   setData: Function;
-  isWrong?: boolean;
-  setIsWrong?: (isWrong: boolean) => void;
 }
 
-const RenderSocials = ({data, isWrong, setData, setIsWrong}: RenderSocialsProps) => {
+const RenderSocials = ({data, setData}: RenderSocialsProps) => {
   const selection = useRef<SocialsType | null>(null);
   const errorDetected = useRef(false);
 
@@ -27,7 +25,7 @@ const RenderSocials = ({data, isWrong, setData, setIsWrong}: RenderSocialsProps)
   const amount = useMemo(() => {
     return Object.keys(data || {}).filter((x: string) => SOCIALS.includes(x)).length;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.facebook, data?.whatsapp, data?.twitter, data?.instagram, data?.linkedin, data?.pinterest, data?.telegram, data?.youtube]);
+  }, [data?.facebook !== undefined, data?.whatsapp !== undefined, data?.twitter !== undefined, data?.instagram !== undefined, data?.linkedin !== undefined, data?.pinterest !== undefined, data?.telegram !== undefined, data?.youtube !== undefined]);
 
   const columns = useMemo(() => {
     switch (amount) {
@@ -50,11 +48,6 @@ const RenderSocials = ({data, isWrong, setData, setIsWrong}: RenderSocialsProps)
 
       if (item === 'whatsapp' && !isError && !PHONE.test(data[item] || '')) {
         isError = true;
-      }
-
-      if (setIsWrong !== undefined && !isWrong && !errorDetected.current) {
-        errorDetected.current = true;
-        setIsWrong(isError);
       }
 
       return (

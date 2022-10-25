@@ -122,7 +122,7 @@ const QrContentHandler = () => {
         return <DonationsData data={data} setData={(payload: AssetDataProps) => setData(payload)}/>
       }
       default: {
-        return <NetworksData data={data} setData={(payload: SocialProps) => setData(payload)} />
+        return <NetworksData data={data} setData={(payload: SocialProps) => setData(payload)} setIsWrong={setIsWrong} />
       }
     }
   };
