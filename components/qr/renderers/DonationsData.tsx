@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useState } from 'react'
+import React, {ChangeEvent, useEffect, useState } from 'react'
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -8,41 +8,45 @@ import { Stack, Avatar, SvgIcon } from '@mui/material';
 import UploadRounded from '@mui/icons-material/UploadRounded'
 import Common from '../helperComponents/Common'
 import EmojiFoodBeverageIcon from '@mui/icons-material/EmojiFoodBeverage';
-interface DonationsProps {
+
+
+ export interface DonationsProps {
     data: {
       title?: string,
       avatarImage?: string,
       message?: string,
       web?: string,
-      donationUnitAmount?: number ,
+      donationUnitAmount?: number,
+      donationPriceId?: string,
+      donationProductId?: string,
     },
-    setData: Function
+    setData: Function,
+    setIsWrong: Function
 }
 
 type Options = 'message' | 'title' |'avatarImage' | 'web' | 'donationUnitAmount'
 
-const  DonationsData = ({data,setData }: DonationsProps) => {
+const  DonationsData = ({data,setData,setIsWrong }: DonationsProps) => {
+
 const [isError,setIsError] = useState<boolean>(false)
 const [inputAmount, setInputAmount] = useState<string>('1')
+
   const handleValues = (item: Options) => (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    const temp = { ...data };
-    if (value.length) {
-      if (value.length) {
+    const temp = {...data };
+    if (value.length) {   
         if (item === 'donationUnitAmount'){
+          temp[item] =  parseInt(value)
           if (parseInt(value) < 1){
-            setInputAmount('1')
+            setIsWrong(true)
             setIsError(true)
-            temp[item] = 1
-            setData(temp);
           } else {
-            setInputAmount(value)
+            setIsWrong(false)            
             temp[item] = parseInt(value);
             setIsError(false)
-            setData(temp);
-          }             
-        }
-      
+          }   
+                  
+        }        
         // @ts-ignore
         temp[item] = value;
         // @ts-ignore
@@ -50,10 +54,10 @@ const [inputAmount, setInputAmount] = useState<string>('1')
         // @ts-ignore
         delete temp[item];
       }
-
+    
     setData(temp);
   };
-}
+
 
   return (
     <Common msg='Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.'>
@@ -119,15 +123,14 @@ const [inputAmount, setInputAmount] = useState<string>('1')
 
 <TextField label='Website or social link'
 sx={{marginTop: 2, width:300 }}
-placeholder='https://www.example.com'
-value={data?.web || ''}
+value={data?.web || 'https://www.example.com'}
 onChange={handleValues('web')}
 size='small'
 />   
 </Grid>
 
   <Grid container spacing={2}
-    sx={{marginTop: 1,marginBottom:2, display: 'flex', alignItems: "center",justifyContent: "center"}}>
+    sx={{marginTop: 1, display: 'flex', alignItems: "center",justifyContent: "center"}}>
     <Grid item>
    <SvgIcon>
    <EmojiFoodBeverageIcon color='primary'/>
@@ -141,15 +144,17 @@ size='small'
       sx={{width: 140, marginBottom:2}}
       placeholder='10'
       size='small'
-      value={data.donationUnitAmount?.toString() || inputAmount}
+      value={data.donationUnitAmount || '5'}
       onChange={handleValues('donationUnitAmount')}
       error={isError}
     />
-   {isError && <Typography align='center' color='red'>
-    Hey, minimum of $1 for a coffie.
-    </Typography>} 
+  
     </Grid>
-
+    </Grid>
+    <Grid sx={{marginBottom:2,  display: 'flex', alignItems: "center",justifyContent: "center"}}>
+    {isError && <Typography  marginBottom={2} align='center' color='red' variant='caption'>
+    Hey, minimum of $1 USD for a coffie.
+    </Typography>} 
     </Grid>
 
    </Paper>
