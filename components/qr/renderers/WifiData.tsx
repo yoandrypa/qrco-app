@@ -11,7 +11,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Common from '../helperComponents/Common';
-import {PHONE} from "../constants";
 
 export type WifiDataProps = {
   data: {
