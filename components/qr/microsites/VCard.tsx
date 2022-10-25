@@ -32,7 +32,7 @@ export default function VCard({newData}: VCardProps) {
     <MainMicrosite colors={colors} url={newData.shortlinkurl} type={newData.qrType}>
       <CardContent>
         <Grid container spacing={1}>
-          {(newData.prefix || newData.firsName || newData.lastName) && (
+          {(newData.prefix || newData.firstName || newData.lastName) && (
             <>
               <Grid item xs={1}>
                 <AccountBoxIcon sx={{ color: colors.p }} />
