@@ -73,7 +73,7 @@ const Plans = (props: Props) => {
         <BillingPortal customerId={props.profile?.customerId}/>
       }
       
-      //TODO  add logic for customer portal here
+      //TODO add logic for customer portal here
     }
   }, [userInfo,props.logged,props.profile]);
 
@@ -237,7 +237,7 @@ const Plans = (props: Props) => {
       
     
          {/* {startTrialDate && <TrialCountDown dateFrom={startTrialDate}/>} */}
-          {startTrialDate && <CountDown startDate={startTrialDate}/>}
+         {/* {startTrialDate && <CountDown startDate={startTrialDate}/>}*/}
 
         <Box sx={{ alignContent: 'center', display: 'flex', spacing: 3, justifyContent: 'center' }}>
         <Tabs value={activeTab} onChange={handleTabChange}>
