@@ -17,10 +17,11 @@ interface CardDataProps {
   data: DataType;
   setData: Function;
   handleValues: Function;
+  isWrong: boolean;
   setIsWrong: (isWrong: boolean) => void;
 }
 
-export default function CardData({data, setData, handleValues, setIsWrong}: CardDataProps) {
+export default function CardData({data, setData, handleValues, isWrong, setIsWrong}: CardDataProps) {
   const [expander, setExpander] = useState<string | null>(null);
 
   const isDynamic = useMemo(() => Boolean(data?.isDynamic), []) as boolean;  // eslint-disable-line react-hooks/exhaustive-deps
@@ -163,7 +164,7 @@ export default function CardData({data, setData, handleValues, setIsWrong}: Card
             <Divider sx={{my: 1}}/>
             <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
               <Expander expand={expander} setExpand={setExpander} item="socials" title="Social information" />
-              {expander === "socials" && <RenderSocials data={data} setData={setData} />}
+              {expander === "socials" && <RenderSocials data={data} setData={setData} setIsWrong={setIsWrong} isWrong={isWrong} />}
             </Paper>
             <Divider sx={{my: 1}}/>
           </Grid>

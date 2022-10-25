@@ -1,4 +1,4 @@
-import {ChangeEvent, useEffect, useMemo} from "react";
+import {ChangeEvent, useCallback, useMemo, useRef} from "react";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import SquareSelector from "../../helperComponents/SquareSelector";
@@ -6,16 +6,19 @@ import TextField from "@mui/material/TextField";
 import {capitalize} from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import RenderIcon from "../../helperComponents/RenderIcon";
-import {SocialProps} from "../../types/types";
+import {SocialProps, SocialsType} from "../../types/types";
 import {PHONE, SOCIALS} from "../../constants";
 
 interface RenderSocialsProps {
   data: SocialProps;
   setData: Function;
+  isWrong?: boolean;
   setIsWrong?: (isWrong: boolean) => void;
 }
 
-const RenderSocials = ({data, setData, setIsWrong}: RenderSocialsProps) => {
+const RenderSocials = ({data, isWrong, setData, setIsWrong}: RenderSocialsProps) => {
+  const selection = useRef<SocialsType | null>(null);
+
   const handleValues = (item: string) => (event: ChangeEvent<HTMLInputElement>) => {
     setData((prev: SocialProps) => ({...prev, [item]: event.target.value}));
   };
@@ -23,7 +26,7 @@ const RenderSocials = ({data, setData, setIsWrong}: RenderSocialsProps) => {
   const amount = useMemo(() => {
     return Object.keys(data || {}).filter((x: string) => SOCIALS.includes(x)).length;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ data?.facebook, data?.whatsapp, data?.twitter, data?.instagram, data?.linkedin, data?.pinterest, data?.telegram, data?.youtube ]);
+  }, [data?.facebook, data?.whatsapp, data?.twitter, data?.instagram, data?.linkedin, data?.pinterest, data?.telegram, data?.youtube]);
 
   const columns = useMemo(() => {
     switch (amount) {
@@ -40,56 +43,59 @@ const RenderSocials = ({data, setData, setIsWrong}: RenderSocialsProps) => {
     }
   }, [amount]);
 
-  useEffect(() => {
-    if (setIsWrong !== undefined) {
-      setIsWrong(amount === 0);
-    }
-  }, [amount]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const renderSocial = (item: string) => {
-    // @ts-ignore
+  const renderSocial = (item: SocialsType) => {
     if (data[item] !== undefined) {
-      // @ts-ignore
-      let isError = !data[item].length;
+      let isError = !data[item]?.length;
 
-      // @ts-ignore
-      if (item === 'whatsapp' && !isError && !PHONE.test(data[item])) {
+      if (item === 'whatsapp' && !isError && !PHONE.test(data[item] || '')) {
         isError = true;
       }
 
-      return (<Grid item xs={12} sm={columns} style={{paddingTop: 0}}>
+      if (setIsWrong !== undefined && !isWrong) {
+        setIsWrong(isError);
+      }
+
+      return (
         <TextField
           label={capitalize(item)}
+          autoFocus={item === selection.current}
           size="small"
           fullWidth
           placeholder={`Enter just your ${item !== 'whatsapp' ? 'username' : 'cell number'}`}
           margin="dense"
-          // @ts-ignore
           value={data?.[item] || ''}
-          // @ts-ignore
           onChange={handleValues(item)}
           error={isError}
           InputProps={{
             startAdornment: <InputAdornment position="start"><RenderIcon icon={item} enabled/></InputAdornment>
           }}
         />
-      </Grid>);
+      );
     }
     return null;
   };
 
-  const handleSelection = (item: string) => {
+  const renderSocialNetworks = useCallback(() => {
     // @ts-ignore
-    if (data[item] === undefined) {
-      setData((prev: SocialProps) => ({...prev, [item]: ''}));
-    } else {
-      setData((prev: SocialProps) => {
-        const temp = {...prev};
-        // @ts-ignore
+    return Object.keys(data || {}).filter((x: string) => SOCIALS.includes(x)).map((x: SocialsType) => (
+      <Grid item xs={12} sm={columns} style={{paddingTop: 0}} key={`socialnetwork${x}`}>
+        {renderSocial(x)}
+      </Grid>
+    ));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.facebook, data?.whatsapp, data?.twitter, data?.instagram, data?.linkedin, data?.pinterest, data?.telegram, data?.youtube]);
+
+  const handleSelection = (item: SocialsType) => {
+    selection.current = item;
+    setData((prev: SocialProps) => {
+      const temp = {...prev};
+      if (temp[item] === undefined) {
+        temp[item] = '';
+      } else {
         delete temp[item];
-        return temp;
-      });
-    }
+      }
+      return temp;
+    });
   }
 
   return (
@@ -138,14 +144,7 @@ const RenderSocials = ({data, setData, setIsWrong}: RenderSocialsProps) => {
             handleSelection={handleSelection}/>
         </Box>
       </Grid>
-      {renderSocial('facebook')}
-      {renderSocial('whatsapp')}
-      {renderSocial('twitter')}
-      {renderSocial('instagram')}
-      {renderSocial('youtube')}
-      {renderSocial('linkedin')}
-      {renderSocial('pinterest')}
-      {renderSocial('telegram')}
+      {renderSocialNetworks()}
     </Grid>
   );
 }

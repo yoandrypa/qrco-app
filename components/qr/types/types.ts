@@ -153,6 +153,8 @@ export type DonationsData ={
   shortText: string
 }
 
+export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram';
+
 export type SocialProps = {
   facebook?: string;
   whatsapp?: string;
