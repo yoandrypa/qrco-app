@@ -98,7 +98,7 @@ const QrContentHandler = () => {
         return <BusinessData data={data} setData={(payload: CardDataProps) => setData(payload)} isWrong={isWrong} setIsWrong={setIsWrong} handleValues={handleValues}/>;
       }
       case 'email': {
-        return <EmailData data={data} setData={(payload: EmailDataProps) => setData(payload)} />;
+        return <EmailData data={data} setData={(payload: EmailDataProps) => setData(payload)} setIsWrong={setIsWrong} />;
       }
       case 'sms': {
         return <SMSData data={data} setData={(payload: SMSDataProps) => setData(payload)} />;
