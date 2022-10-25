@@ -18,6 +18,7 @@ interface RenderSocialsProps {
 
 const RenderSocials = ({data, isWrong, setData, setIsWrong}: RenderSocialsProps) => {
   const selection = useRef<SocialsType | null>(null);
+  const errorDetected = useRef(false);
 
   const handleValues = (item: string) => (event: ChangeEvent<HTMLInputElement>) => {
     setData((prev: SocialProps) => ({...prev, [item]: event.target.value}));
@@ -51,7 +52,8 @@ const RenderSocials = ({data, isWrong, setData, setIsWrong}: RenderSocialsProps)
         isError = true;
       }
 
-      if (setIsWrong !== undefined && !isWrong) {
+      if (setIsWrong !== undefined && !isWrong && !errorDetected.current) {
+        errorDetected.current = true;
         setIsWrong(isError);
       }
 
@@ -76,6 +78,7 @@ const RenderSocials = ({data, isWrong, setData, setIsWrong}: RenderSocialsProps)
   };
 
   const renderSocialNetworks = useCallback(() => {
+    errorDetected.current = false;
     // @ts-ignore
     return Object.keys(data || {}).filter((x: string) => SOCIALS.includes(x)).map((x: SocialsType) => (
       <Grid item xs={12} sm={columns} style={{paddingTop: 0}} key={`socialnetwork${x}`}>

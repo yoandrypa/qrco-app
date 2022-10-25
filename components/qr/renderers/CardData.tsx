@@ -45,37 +45,18 @@ export default function CardData({data, setData, handleValues, isWrong, setIsWro
       }
     }
 
-    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={handleValues} />;
+    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={handleValues}
+                             required={item === 'firstName'}/>;
   };
 
   useEffect(() => {
     let errors = false;
-    // @ts-ignore
-    if (data.phone?.trim().length && !PHONE.test(data.phone)) {
+    if (!data.firstName?.trim().length || (data.phone?.trim().length && !PHONE.test(data.phone)) ||
+      (data.fax?.trim().length && !PHONE.test(data.fax)) || (data.cell?.trim().length && !PHONE.test(data.cell)) ||
+      (data.zip?.trim().length && !ZIP.test(data.zip)) || (data.web?.trim().length && !isValidUrl(data.web)) ||
+      (data.email?.trim().length && !EMAIL.test(data.email))) {
       errors = true;
-    }
-    // @ts-ignore
-    if (!errors && data.fax?.trim().length && !PHONE.test(data.fax)) {
-      errors = true;
-    }
-    // @ts-ignore
-    if (!errors && data.cell?.trim().length && !PHONE.test(data.cell)) {
-      errors = true;
-    }
-    // @ts-ignore
-    if (!errors && data.zip?.trim().length && !ZIP.test(data.zip)) {
-      errors = true;
-    }
-    // @ts-ignore
-    if (!errors && data.web?.trim().length && !isValidUrl(data.web)) {
-      errors = true;
-    }
-    // @ts-ignore
-    if (!errors && data.email?.trim().length && !EMAIL.test(data.email)) {
-      errors = true;
-    }
-
-    if (!errors && data?.isDynamic) {
+    } else if (data?.isDynamic) {
       SOCIALS.every((x: string) => {
         // @ts-ignore
         if (data[x] !== undefined && !data[x].trim().length) {
@@ -84,14 +65,11 @@ export default function CardData({data, setData, handleValues, isWrong, setIsWro
         }
         return true;
       });
-      // if (!errors && (data.web !== undefined && isValidUrl(data.web))) {
-      //   errors = true;
-      // }
     }
 
     setIsWrong(errors);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.phone, data.fax, data.cell, data.zip, data.web, data.email, data.facebook, data.whatsapp, data.twitter, data.instagram, data.linkedin, data.pinterest, data.telegram, data.youtube]);
+  }, [data.firstName, data.phone, data.fax, data.cell, data.zip, data.web, data.email, data.facebook, data.whatsapp, data.twitter, data.instagram, data.linkedin, data.pinterest, data.telegram, data.youtube]);
 
   return (
     <Common msg="Your contact details. Users can store your info or contact you right away.">
@@ -107,7 +85,7 @@ export default function CardData({data, setData, handleValues, isWrong, setIsWro
           {renderItem('lastName', 'Last name')}
         </Grid>
       </Grid>
-      <Topics message={'Phones'} />
+      <Topics message={'Phones'}/>
       <Grid container spacing={1}>
         <Grid item sm={4} xs={12} style={{paddingTop: 0}}>
           {renderItem('cell', 'Cell number')}
@@ -130,8 +108,8 @@ export default function CardData({data, setData, handleValues, isWrong, setIsWro
       </Grid>
       <Grid container spacing={1}>
         <Grid item xs={12}>
-          <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
-            <Expander expand={expander} setExpand={setExpander} item="other" title="Other info" />
+          <Paper elevation={2} sx={{p: 1, mt: 1}}>
+            <Expander expand={expander} setExpand={setExpander} item="other" title="Other info"/>
             {expander === "other" && (
               <Grid container spacing={1}>
                 <Grid item sm={8} xs={12} style={{paddingTop: 0}}>
@@ -162,9 +140,10 @@ export default function CardData({data, setData, handleValues, isWrong, setIsWro
         {isDynamic && (
           <Grid item xs={12}>
             <Divider sx={{my: 1}}/>
-            <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
-              <Expander expand={expander} setExpand={setExpander} item="socials" title="Social information" />
-              {expander === "socials" && <RenderSocials data={data} setData={setData} setIsWrong={setIsWrong} isWrong={isWrong} />}
+            <Paper elevation={2} sx={{p: 1, mt: 1}}>
+              <Expander expand={expander} setExpand={setExpander} item="socials" title="Social information"/>
+              {expander === "socials" &&
+                <RenderSocials data={data} setData={setData} setIsWrong={setIsWrong} isWrong={isWrong}/>}
             </Paper>
             <Divider sx={{my: 1}}/>
           </Grid>

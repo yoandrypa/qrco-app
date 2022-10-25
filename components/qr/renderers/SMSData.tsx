@@ -1,7 +1,9 @@
+import {ChangeEvent, useEffect} from "react";
 import TextField from '@mui/material/TextField';
 
 import Common from '../helperComponents/Common';
 import MultiLineDetails from '../helperComponents/MultiLineDetails';
+import {PHONE} from "../constants";
 
 export type SMSDataProps = {
   data: {
@@ -9,10 +11,11 @@ export type SMSDataProps = {
     message?: string;
   };
   setData: Function;
+  setIsWrong: (isWrong: boolean) => void;
 };
 
-const SMSData = ({ data, setData }: SMSDataProps) => {
-  const handleValues = (item: 'message' | 'number') => (event: React.ChangeEvent<HTMLInputElement>) => {
+const SMSData = ({ data, setData, setIsWrong }: SMSDataProps) => {
+  const handleValues = (item: 'message' | 'number') => (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const tempo = { ...data };
     if (value.length) {
@@ -23,6 +26,14 @@ const SMSData = ({ data, setData }: SMSDataProps) => {
     setData(tempo);
   };
 
+  useEffect(() => {
+    let isWrong = false;
+    if ((!data.number?.trim().length || !PHONE.test(data.number)) || !data.message?.trim().length) {
+      isWrong = true;
+    }
+    setIsWrong(isWrong);
+  }, [data.number, data.message]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <Common msg="You can send SMSs in the number you provide. The message max size is up to 160 characters.">
       <>
@@ -30,6 +41,9 @@ const SMSData = ({ data, setData }: SMSDataProps) => {
           label="Number"
           size="small"
           fullWidth
+          // @ts-ignore
+          error={data?.number && !PHONE.test(data.number)}
+          required
           margin="dense"
           value={data?.number || ''}
           onChange={handleValues('number')} />
@@ -37,6 +51,7 @@ const SMSData = ({ data, setData }: SMSDataProps) => {
           label="Message"
           size="small"
           fullWidth
+          required
           margin="dense"
           value={data?.message || ''}
           onChange={handleValues('message')} />

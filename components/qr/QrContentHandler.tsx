@@ -78,14 +78,14 @@ const QrContentHandler = () => {
         />);
       }
       case 'whatsapp': {
-        return <WhatsAppData data={data} setData={(payload: WhatsAppProps) => setData(payload)} />;
+        return <WhatsAppData data={data} setData={(payload: WhatsAppProps) => setData(payload)} setIsWrong={setIsWrong} />;
       }
       case 'facebook': {
         // @ts-ignore
         return (<FacebookData data={data} setData={(payload: FacebookDataProps) => setData(payload)} setIsWrong={setIsWrong} isWrong={isWrong} />);
       }
       case 'wifi': {
-        return <WifiData data={data} setData={(payload: WifiDataProps) => setData(payload)} />;
+        return <WifiData data={data} setData={(payload: WifiDataProps) => setData(payload)} setIsWrong={setIsWrong} />;
       }
       case 'vcard+':
       case 'vcard': {
@@ -101,7 +101,7 @@ const QrContentHandler = () => {
         return <EmailData data={data} setData={(payload: EmailDataProps) => setData(payload)} setIsWrong={setIsWrong} />;
       }
       case 'sms': {
-        return <SMSData data={data} setData={(payload: SMSDataProps) => setData(payload)} />;
+        return <SMSData data={data} setData={(payload: SMSDataProps) => setData(payload)} setIsWrong={setIsWrong} />;
       }
       case 'twitter': {
         return <TwitterData data={data} setData={(payload: TwitterDataProps) => setData(payload)} setIsWrong={setIsWrong}/>;

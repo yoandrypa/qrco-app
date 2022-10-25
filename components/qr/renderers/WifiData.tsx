@@ -1,5 +1,4 @@
-// @ts-nocheck
-import React from 'react';
+import {ChangeEvent, useEffect, useState} from 'react';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -21,12 +20,13 @@ export type WifiDataProps = {
     password?: string;
   };
   setData: Function;
+  setIsWrong: (isWrong: boolean) => void;
 }
 
-function WifiData({ data, setData }: WifiDataProps) {
-  const [show, setShow] = React.useState(false);
+function WifiData({ data, setData, setIsWrong }: WifiDataProps) {
+  const [show, setShow] = useState(false);
 
-  const handleValues = (item: 'name' | 'hidden' | 'encription' | 'password') => (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleValues = (item: 'name' | 'hidden' | 'encription' | 'password') => (event: ChangeEvent<HTMLInputElement>) => {
     const tempo = { ...data };
     if (item !== 'hidden') {
       const { value } = event.target;
@@ -43,6 +43,10 @@ function WifiData({ data, setData }: WifiDataProps) {
     }
     setData(tempo);
   };
+
+  useEffect(() => {
+    setIsWrong(!data.name?.trim().length);
+  }, [data.name]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Common msg="Provide your wireless network access data.">
@@ -66,6 +70,7 @@ function WifiData({ data, setData }: WifiDataProps) {
             id="select-Enc"
             value={data?.encription || 'none'}
             label="Encription"
+            // @ts-ignore
             onChange={handleValues('encription')}
           >
             <MenuItem value='none'>None</MenuItem>
@@ -91,7 +96,8 @@ function WifiData({ data, setData }: WifiDataProps) {
             )
           }} />
       </>
-    </Common>);
-};
+    </Common>
+  );
+}
 
 export default WifiData;
