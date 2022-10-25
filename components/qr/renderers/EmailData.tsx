@@ -32,7 +32,7 @@ export default function EmailData({ data, setData, setIsWrong }: EmailDataProps)
       isWrong = true;
     }
     setIsWrong(isWrong);
-  }, [data.email, data.subject, data.body]);
+  }, [data.email, data.subject, data.body]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Common msg="You can send emails in the addresss you provide. Also you can enter a short subject and a message up to 200 characters.">
