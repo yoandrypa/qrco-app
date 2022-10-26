@@ -119,7 +119,7 @@ export default function AppWrapper(props: AppWrapperProps) {
         }
       }).catch(console.error);
     }
-  }, [userInfo]);
+  }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
