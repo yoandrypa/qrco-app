@@ -30,7 +30,6 @@ type Options = 'message' | 'title' |'avatarImage' | 'web' | 'donationUnitAmount'
 const  DonationsData = ({data,setData,setIsWrong }: DonationsProps) => {
 
 const [isError,setIsError] = useState<boolean>(false)
-const [inputAmount, setInputAmount] = useState<string>('1')
 const [webError, setWebError] = useState<boolean>(false)
 
   const handleValues = (item: Options) => (event: ChangeEvent<HTMLInputElement>) => {
