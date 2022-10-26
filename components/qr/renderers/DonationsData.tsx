@@ -3,13 +3,14 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button'
 import { Stack, Avatar, SvgIcon } from '@mui/material';
-import UploadRounded from '@mui/icons-material/UploadRounded'
 import Common from '../helperComponents/Common'
 import EmojiFoodBeverageIcon from '@mui/icons-material/EmojiFoodBeverage';
-
-
+import Alert from '@mui/material/Alert';
+import {isValidUrl} from "../../../utils";
+import FileUpload from "react-material-file-upload";
+import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS } from "../../../consts";
+import { toBytes } from "../../../utils";
  export interface DonationsProps {
     data: {
       title?: string,
@@ -30,11 +31,16 @@ const  DonationsData = ({data,setData,setIsWrong }: DonationsProps) => {
 
 const [isError,setIsError] = useState<boolean>(false)
 const [inputAmount, setInputAmount] = useState<string>('1')
+const [webError, setWebError] = useState<boolean>(false)
 
   const handleValues = (item: Options) => (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const temp = {...data };
-    if (value.length) {   
+    if (item === "web"){
+      setWebError(!isValidUrl(value))
+      setIsWrong(webError)
+    }
+    if (value.length) {  
         if (item === 'donationUnitAmount'){
           temp[item] =  parseInt(value)
           if (parseInt(value) < 1){
@@ -44,9 +50,10 @@ const [inputAmount, setInputAmount] = useState<string>('1')
             setIsWrong(false)            
             temp[item] = parseInt(value);
             setIsError(false)
-          }   
+          }       
                   
-        }        
+        }       
+      
         // @ts-ignore
         temp[item] = value;
         // @ts-ignore
@@ -58,36 +65,45 @@ const [inputAmount, setInputAmount] = useState<string>('1')
     setData(temp);
   };
 
+  const handleWebInputBlur = (event: React.FocusEvent<HTMLInputElement>) =>{
+   if (event.target.value.length > 0) {
+    setWebError(!isValidUrl(event.target.value));
+   } else {
+    setWebError(false);
+   }
+   setIsWrong(webError)
+  }
+
 
   return (
-    <Common msg='Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.'>
-    <Paper>  
+   
+  <Common msg='Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.'>
+    <Paper>     
    <Typography variant='h6' textAlign={'center'} marginTop={2}>Customize your donation page</Typography>    
    <Grid container sx={{ display: 'flex', justifyContent: 'center',alignContent:'center' }}>
     <Grid item>      
     </Grid>
     <Grid item>
     <Stack direction="row" sx={{marginTop:2, display: 'flex', justifyContent: 'center',alignSelf:'center' }}>
-      <Avatar        
-        alt="avatar"
-        src="https://images.unsplash.com/photo-1518057111178-44a106bad636?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=388&q=80"
-        sx={{ width: 100, height: 100,}}
-      />
+    <FileUpload
+            sx={{border: 4, borderStyle: 'dashed', backgroundColor: 'lightgray'}}
+            onChange={()=>{}}
+            accept={ALLOWED_FILE_EXTENSIONS['image']}
+            multiple={false}
+            // @ts-ignore
+            value={data["files"]}
+            maxFiles={1}
+            // @ts-ignore
+            maxSize={toBytes(5, "MB")}
+          />
      </Stack> 
     </Grid>
     <Grid item>        
     </Grid>
    </Grid>
    <Grid container sx={{ display: 'flex', justifyContent: 'center',alignContent:'center' }}>
-    <Button 
-    sx={{marginTop:2, display: 'flex', justifyContent: 'center',alignSelf:'center' }}
-    startIcon={<UploadRounded/>}
-     variant="outlined">
-        Upload Image
-    </Button>
-    </Grid>
 
-  
+    </Grid>  
    <Grid sx={{display: 'flex', alignItems: "center",
            justifyContent: "center"}}>
    
@@ -117,14 +133,20 @@ const [inputAmount, setInputAmount] = useState<string>('1')
         placeholder='Hey there! Would you like to buy me a coffie?'
        />
   </Grid>
+  <Alert severity='info' sx={{margin: 2}}>
+  Note: When you receive a donation, your supporters will be redirected to this website or social link page,
+   you can use this to provide some content as a sign of appreciation or just leave it blank and they 
+   will be redirected to a &quot;thank you page&quot;.
+  </Alert>
   <Grid 
   sx={{display: 'flex', alignItems: "center",
         justifyContent: "center"}}>
-
 <TextField label='Website or social link'
 sx={{marginTop: 2, width:300 }}
-value={data?.web || 'https://www.example.com'}
+value={data?.web || ''}
 onChange={handleValues('web')}
+onBlur={handleWebInputBlur}
+error={webError}
 size='small'
 />   
 </Grid>
