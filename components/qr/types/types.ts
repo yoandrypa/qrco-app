@@ -73,6 +73,8 @@ export type DataType = {
   avatarImage?: string;
   bannerImage?: string;
   donationUnitAmount?: number;
+  donationPriceId?: string;
+  donationProductId?: string;
   message?: string;
   subject?: string;
   body?: string;
@@ -147,13 +149,20 @@ export type DataType = {
   files?: File[];
 };
 
-export type DonationsData ={
+export type DonationsData = {
   name: string,
   image?: string,
   shortText: string
 }
 
+
 export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram';
+
+export type EbanuxDonationPriceData = {
+  name: string,
+  unitAmountUSD: number,
+  redirectUrl: string,
+}
 
 export type SocialProps = {
   facebook?: string;

@@ -15,13 +15,14 @@ import { useRouter } from "next/router";
 
 import { generateId, generateShortLink } from "../../utils";
 import * as QrHandler from "../../handlers/qrs";
-import { BackgroundType, CornersAndDotsType, DataType, EditType, FramesType, OptionsType } from "./types/types";
+import { BackgroundType, CornersAndDotsType, DataType, EbanuxDonationPriceData, EditType, FramesType, OptionsType } from "./types/types";
 import { QR_TYPE_ROUTE } from "./constants";
 import { areEquals } from "../helpers/generalFunctions";
 import { initialBackground, initialFrame } from "../../helpers/qr/data";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { getUuid } from "../../helpers/qr/helpers";
 import * as StorageHandler from "../../handlers/storage";
+import * as EbanuxHandler from "../../handlers/ebanux"
 import Notifications from "../notifications/Notifications";
 
 const steps = ["Type", "Content", "Design"];
@@ -35,7 +36,10 @@ interface StepsProps {
   setStep: Function;
   selected: string;
   data: DataType;
-  userInfo: { attributes: {sub: string} };
+  userInfo: { attributes: {sub: string},
+              signInUserSession: { accessToken: {
+                jwtToken: string
+              } } };
   options: OptionsType;
   frame: FramesType;
   background: BackgroundType;
@@ -85,6 +89,30 @@ const QrWizard = ({ children }: QrWizardProps) => {
         // @ts-ignore
         data["files"] = await StorageHandler.upload(data["files"], `${userInfo.attributes.sub}/${selected}s`);
       }
+  
+      if (selected === 'donations'){ 
+        let priceData: EbanuxDonationPriceData;
+        priceData = {
+           name: `Donate ${data["title"]}` || 'Donation',
+           unitAmountUSD: data["donationUnitAmount"] || 1,
+           redirectUrl: data["web"] || ''
+       }  
+        if(data["donationPriceId"]){
+        
+        } else {
+          try {
+            const price = await EbanuxHandler.createEbanuxDonationPrice(userInfo.attributes.sub,
+              userInfo.signInUserSession.accessToken.jwtToken ,
+              priceData)
+            console.log(price)
+            data["donationPriceId"] = price.data.result.price.id;
+            data["donationProductId"] = price.data.result.product.id
+          } catch (error) {
+            
+            setIsError(true)
+          }    
+        }
+        }  
 
       const qrData = { ...data, qrType: selected };
       let shortLink;
