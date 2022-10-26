@@ -1,7 +1,37 @@
+export type CornersAndDotsType = {
+  topL: string;
+  topR: string;
+  bottom: string;
+} | null;
+
+export type BackgroundType = {
+  type: string | null;
+  opacity: number;
+  size: number;
+  file: string | null;
+  x: number;
+  y: number;
+  imgSize: number;
+  invert?: boolean | false;
+  backColor?: string | null;
+};
+
+export type FramesType = {
+  type: string | null;
+  text: string;
+  color: string;
+  textColor: string;
+  textUp?: boolean | false;
+};
+
 export type OptionsType = {
   isDynamic?: boolean;
   qrType?: string;
   mode?: string;
+  cornersDot?: CornersAndDotsType;
+  corners?: CornersAndDotsType;
+  frame?: FramesType;
+  background?: BackgroundType;
   userId?: string;
   id?: string;
   shortCode?: string;
@@ -17,32 +47,6 @@ export type OptionsType = {
   backgroundOptions: { color: string; };
   cornersSquareOptions: { color: string; type: string | null; };
   cornersDotOptions: { color: string; type: string | null; };
-};
-
-export type BackgroundType = {
-  type: string | null;
-  opacity: number;
-  size: number;
-  file: string | null;
-  x: number;
-  y: number;
-  imgSize: number;
-  invert?: boolean | false;
-  backColor?: string | null;
-};
-
-export type CornersAndDotsType = {
-  topL: string;
-  topR: string;
-  bottom: string;
-} | null;
-
-export type FramesType = {
-  type: string | null;
-  text: string;
-  color: string;
-  textColor: string;
-  textUp?: boolean | false;
 };
 
 export type OpeningObjType = {
@@ -210,4 +214,6 @@ export type EditType = {
   value?: string;
   primary?: string;
   secondary?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
