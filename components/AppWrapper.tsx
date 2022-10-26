@@ -61,8 +61,7 @@ export default function AppWrapper(props: AppWrapperProps) {
   const { children, userInfo, handleLogout, clearData, setLoading } = props;
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-  const dateData = new Date()
-  const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(dateData.setDate(dateData.getDate() - 13));
+  const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
 
   const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
