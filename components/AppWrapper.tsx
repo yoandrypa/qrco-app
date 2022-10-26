@@ -26,9 +26,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
 import RenderNewQrButton from "./renderers/RenderNewQrButton";
 import CountDown from "./countdown/CountDown";
-import BillingPortal from "./billing/BillingPortal";
 import { find as findUser } from "../handlers/users";
-
 
 interface Props {
   window?: () => Window;
@@ -55,10 +53,11 @@ interface AppWrapperProps {
   handleLogout?: () => void;
   clearData?: (keep: boolean) => void;
   setLoading?: (loading: boolean) => void;
+  setIsTrialMode?: (isTrialMode: boolean) => void;
 }
 
 export default function AppWrapper(props: AppWrapperProps) {
-  const { children, userInfo, handleLogout, clearData, setLoading } = props;
+  const { children, userInfo, handleLogout, clearData, setLoading, setIsTrialMode } = props;
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
@@ -106,11 +105,17 @@ export default function AppWrapper(props: AppWrapperProps) {
       };
 
       fetchUser().then(profile => {
-        console.debug({ createdAt: profile?.createdAt });
+        // console.debug({ createdAt: profile?.createdAt });
+        let isInTrialMode = false;
         //@ts-ignore
-        if (profile?.createdAt != null && !profile?.customerId) {
+        if (profile?.createdAt !== null && !profile?.customerId) {
+          isInTrialMode = true;
           //@ts-ignore
           setStartTrialDate(profile.createdAt);
+        }
+
+        if (setIsTrialMode !== undefined) {
+          setIsTrialMode(isInTrialMode);
         }
       }).catch(console.error);
     }

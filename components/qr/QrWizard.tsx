@@ -61,6 +61,7 @@ interface StepsProps {
   isWrong: boolean;
   loading: boolean;
   setLoading: (isLoading: boolean) => void;
+  isTrialMode?: boolean;
 }
 
 const StepperButtons = styled(Button)(() => ({width: "120px", height: "30px"}));
@@ -72,7 +73,7 @@ const QrWizard = ({children}: QrWizardProps) => {
   // @ts-ignore
   const {
     selected, step, setStep, data, userInfo, options, frame, background, cornersData,
-    dotsData, isWrong, loading, setOptions, setLoading
+    dotsData, isWrong, loading, setOptions, setLoading, isTrialMode
   }: StepsProps = useContext(Context);
 
   const router = useRouter();
@@ -265,7 +266,7 @@ const QrWizard = ({children}: QrWizardProps) => {
 
   return (
     <>
-      <Box sx={{minHeight: "calc(100vh - 195px)"}}>
+      <Box sx={{minHeight: `calc(100vh - ${isTrialMode ? 207 : 195}px)`}}>
         {children}
       </Box>
       {isWide ? (
