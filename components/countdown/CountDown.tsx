@@ -4,6 +4,7 @@ import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 import Router from "next/router";
 import Stack from "@mui/material/Stack";
+import pluralize from "pluralize";
 
 type Props = {
   /**
@@ -88,8 +89,8 @@ const CountDown = (props: Props) => {
                       <div className={style.top}>{days % 10}</div>
                       <div className={style.bottom}>{days % 10}</div>
                     </div>
-                    <div> </div>
-                    <Typography>Days</Typography>
+                    <div></div>
+                    <Typography>{pluralize("Day", days)}</Typography>
                   </div>
                 </div>
                 <div className={style.container_segment}>
@@ -102,8 +103,8 @@ const CountDown = (props: Props) => {
                       <div className={style.top}>{hours % 10}</div>
                       <div className={style.bottom}>{hours % 10}</div>
                     </div>
-                    <div> </div>
-                    <Typography>Hours</Typography>
+                    <div></div>
+                    <Typography>{pluralize("Hour", hours)}</Typography>
                   </div>
                 </div>
                 <div className={style.container_segment}>
@@ -116,8 +117,8 @@ const CountDown = (props: Props) => {
                       <div className={style.top}>{minutes % 10}</div>
                       <div className={style.bottom}>{minutes % 10}</div>
                     </div>
-                    <div> </div>
-                    <Typography>Minutes</Typography>
+                    <div></div>
+                    <Typography>{pluralize("Minute", minutes)}</Typography>
                   </div>
                 </div>
                 <div className={style.container_segment}>
@@ -130,8 +131,8 @@ const CountDown = (props: Props) => {
                       <div className={style.top}>{seconds % 10}</div>
                       <div className={style.bottom}>{seconds % 10}</div>
                     </div>
-                    <div> </div>
-                    <Typography>Seconds</Typography>
+                    <div></div>
+                    <Typography>{pluralize("Second", seconds)}</Typography>
                   </div>
                 </div>
               </div>
