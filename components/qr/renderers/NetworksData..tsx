@@ -6,6 +6,7 @@ import RenderSocials from "./helpers/RenderSocials";
 
 import {SocialProps} from "../types/types";
 import socialsAreValid from "./validator";
+import {SOCIALS} from "../constants";
 
 interface NetWorksProps {
   data: SocialProps;
@@ -16,7 +17,7 @@ interface NetWorksProps {
 const NetworksData = ({data, setData, setIsWrong}: NetWorksProps) => {
   useEffect(() => {
   if (setIsWrong !== undefined) {
-    setIsWrong(!socialsAreValid(data));
+    setIsWrong(!Object.keys(data || {}).filter((x: string) => SOCIALS.includes(x)).length || !socialsAreValid(data));
   }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.facebook, data.whatsapp, data.twitter, data.instagram, data.linkedin, data.pinterest, data.telegram, data.youtube]);
