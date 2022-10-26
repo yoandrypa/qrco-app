@@ -79,7 +79,7 @@ const CountDown = (props: Props) => {
             </Typography>
             <div className={".MuiAlert-standardWarning"}>
               <div className={style.container}>
-                <div className={style.container_segment}>
+                {days > 0 && <div className={style.container_segment}>
                   <div className={style.segment}>
                     <div className={style.flip_card} data-days-tens>
                       <div className={style.top}>{Math.floor(days / 10)}</div>
@@ -92,8 +92,8 @@ const CountDown = (props: Props) => {
                     <div></div>
                     <Typography>{pluralize("Day", days)}</Typography>
                   </div>
-                </div>
-                <div className={style.container_segment}>
+                </div>}
+                {(days > 0 || hours > 0) && <div className={style.container_segment}>
                   <div className={style.segment}>
                     <div className={style.flip_card} data-hours-tens>
                       <div className={style.top}>{Math.floor(hours / 10)}</div>
@@ -106,8 +106,8 @@ const CountDown = (props: Props) => {
                     <div></div>
                     <Typography>{pluralize("Hour", hours)}</Typography>
                   </div>
-                </div>
-                <div className={style.container_segment}>
+                </div>}
+                {(days > 0 || hours > 0 || minutes > 0) && <div className={style.container_segment}>
                   <div className={style.segment}>
                     <div className={style.flip_card} data-minutes-tens>
                       <div className={style.top}>{Math.floor(minutes / 10)}</div>
@@ -120,8 +120,8 @@ const CountDown = (props: Props) => {
                     <div></div>
                     <Typography>{pluralize("Minute", minutes)}</Typography>
                   </div>
-                </div>
-                <div className={style.container_segment}>
+                </div>}
+                {(days > 0 || hours > 0 || minutes > 0 || seconds > 0) && <div className={style.container_segment}>
                   <div className={style.segment}>
                     <div className={style.flip_card} data-seconds-tens>
                       <div className={style.top}>{Math.floor(seconds / 10)}</div>
@@ -134,7 +134,7 @@ const CountDown = (props: Props) => {
                     <div></div>
                     <Typography>{pluralize("Second", seconds)}</Typography>
                   </div>
-                </div>
+                </div>}
               </div>
             </div>
           </Stack>
