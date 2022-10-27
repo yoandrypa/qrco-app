@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import { Stack, Avatar, SvgIcon } from '@mui/material';
+import { Stack, SvgIcon } from '@mui/material';
 import Common from '../helperComponents/Common'
 import EmojiFoodBeverageIcon from '@mui/icons-material/EmojiFoodBeverage';
 import Alert from '@mui/material/Alert';
@@ -11,6 +11,7 @@ import {isValidUrl} from "../../../utils";
 import FileUpload from "react-material-file-upload";
 import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS } from "../../../consts";
 import { toBytes } from "../../../utils";
+import CoffeeIcon from '@mui/icons-material/Coffee';
  export interface DonationsProps {
     data: {
       title?: string,
@@ -31,6 +32,20 @@ const  DonationsData = ({data,setData,setIsWrong }: DonationsProps) => {
 
 const [isError,setIsError] = useState<boolean>(false)
 const [webError, setWebError] = useState<boolean>(false)
+const [coffeePrice, setCoffeePrice] = useState<number>(1)
+
+useEffect(()=>{
+  const temp = {...data}
+if (coffeePrice < 1 ){
+  setCoffeePrice(1) 
+  temp["donationUnitAmount"] = 1
+  temp["donationUnitAmount"] = coffeePrice
+} else{
+  temp["donationUnitAmount"] = coffeePrice
+}
+ 
+}
+,[coffeePrice, data])
 
   const handleValues = (item: Options) => (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -41,17 +56,17 @@ const [webError, setWebError] = useState<boolean>(false)
     }
     if (value.length) {  
         if (item === 'donationUnitAmount'){
-          temp[item] =  parseInt(value)
+          setCoffeePrice(parseInt(value))
           if (parseInt(value) < 1){
             setIsWrong(true)
-            setIsError(true)
+            setIsError(true)        
           } else {
+            temp[item] =  parseInt(value)
             setIsWrong(false)            
-            temp[item] = parseInt(value);
             setIsError(false)
-          }       
+          }     
                   
-        }       
+        }             
       
         // @ts-ignore
         temp[item] = value;
@@ -84,7 +99,7 @@ const [webError, setWebError] = useState<boolean>(false)
     </Grid>
     <Grid item>
     <Stack direction="row" sx={{marginTop:2, display: 'flex', justifyContent: 'center',alignSelf:'center' }}>
-    <FileUpload
+    {/* <FileUpload
             sx={{border: 4, borderStyle: 'dashed', backgroundColor: 'lightgray'}}
             onChange={()=>{}}
             accept={ALLOWED_FILE_EXTENSIONS['image']}
@@ -94,7 +109,7 @@ const [webError, setWebError] = useState<boolean>(false)
             maxFiles={1}
             // @ts-ignore
             maxSize={toBytes(5, "MB")}
-          />
+          /> */}
      </Stack> 
     </Grid>
     <Grid item>        
@@ -129,7 +144,7 @@ const [webError, setWebError] = useState<boolean>(false)
         sx={{width: 300, display: 'flex', alignItems: "center",
         justifyContent: "center"}}
         rows={5}
-        placeholder='Hey there! Would you like to buy me a coffie?'
+        placeholder='Hey there! Would you like to buy me a coffee?'
        />
   </Grid>
   <Alert severity='info' sx={{margin: 2}}>
@@ -154,18 +169,18 @@ size='small'
     sx={{marginTop: 1, display: 'flex', alignItems: "center",justifyContent: "center"}}>
     <Grid item>
    <SvgIcon>
-   <EmojiFoodBeverageIcon color='primary'/>
+   <CoffeeIcon color='primary'/>
    </SvgIcon>  
    </Grid>
     <Grid item>
     <TextField 
       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} 
       type='number'
-      label='Coffie Price' 
+      label='Coffee Price' 
       sx={{width: 140, marginBottom:2}}
       placeholder='10'
       size='small'
-      value={data.donationUnitAmount || '5'}
+      value={coffeePrice}
       onChange={handleValues('donationUnitAmount')}
       error={isError}
     />
@@ -174,7 +189,7 @@ size='small'
     </Grid>
     <Grid sx={{marginBottom:2,  display: 'flex', alignItems: "center",justifyContent: "center"}}>
     {isError && <Typography  marginBottom={2} align='center' color='red' variant='caption'>
-    Hey, minimum of $1 USD for a coffie.
+    Hey, minimum of $1 USD for a coffee.
     </Typography>} 
     </Grid>
 
