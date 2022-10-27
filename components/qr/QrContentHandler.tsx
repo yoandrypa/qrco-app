@@ -111,7 +111,7 @@ const QrContentHandler = () => {
       case 'twitter': {
         return <TwitterData data={data} setData={handlePayload} setIsWrong={setIsWrong}/>;
       }
-      case 'image':
+      case 'gallery':
       case 'pdf':
       case 'audio':
       case 'video': {
