@@ -14,9 +14,10 @@ import {SocialsType} from "../../types/types";
 
 interface RenderSocialsProps {
   newData: any;
+  onlyIcons?: boolean;
 }
 
-export default function RenderSocials({newData}: RenderSocialsProps) {
+export default function RenderSocials({newData, onlyIcons}: RenderSocialsProps) {
   const handleCopy = (data: string) => {
     try {
       navigator.clipboard.writeText(data);
@@ -68,6 +69,16 @@ export default function RenderSocials({newData}: RenderSocialsProps) {
     url += `${value}${item !== 'youtube' ? '' : '?sub_confirmation=1'}`;
     let label = item !== 'linkedin' ? capitalize(item) : 'LinkedIn';
 
+    if (onlyIcons) {
+      return (
+        <Tooltip title={`Go to ${label}`}>
+          <IconButton target="_blank" component="a" href={url}>
+            <RenderIcon icon={item} enabled color={newData.primary || DEFAULT_COLORS.p} />
+          </IconButton>
+        </Tooltip>
+      );
+    }
+
     return (
       <TextField
         variant="standard"
@@ -108,17 +119,30 @@ export default function RenderSocials({newData}: RenderSocialsProps) {
     <>
       {(newData.facebook || newData.whatsapp || newData.twitter || newData.linkedin || newData.instagram ||
         newData.youtube || newData.pinterest || newData.telegram) && (<>
-          <Grid item xs={1}><GroupsIcon sx={{color: newData.primary || DEFAULT_COLORS.p}}/></Grid>
-          <Grid item xs={11}>
-            <Grid container spacing={1}>
+          {!onlyIcons ? (
+            <>
+              <Grid item xs={1}><GroupsIcon sx={{color: newData.primary || DEFAULT_COLORS.p}}/></Grid>
+              <Grid item xs={11}>
+                <Grid container spacing={1}>
+                  {/* @ts-ignore */}
+                  {Object.keys(newData).filter((x: string) => SOCIALS.includes(x)).map((x: SocialsType) => (
+                    <Grid item xs={12} style={{paddingTop: 0}} key={`socialnw${x}`}>
+                      {renderSocials(x)}
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
+            </>
+          ) : (
+            <>
               {/* @ts-ignore */}
               {Object.keys(newData).filter((x: string) => SOCIALS.includes(x)).map((x: SocialsType) => (
-                <Grid item xs={12} style={{paddingTop: 0}} key={`socialnw${x}`}>
+                <>
                   {renderSocials(x)}
-                </Grid>
+                </>
               ))}
-            </Grid>
-          </Grid>
+            </>
+          )}
         </>
       )}
     </>
