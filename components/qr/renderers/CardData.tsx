@@ -18,11 +18,10 @@ interface CardDataProps {
   data: DataType;
   setData: Function;
   handleValues: Function;
-  isWrong: boolean;
   setIsWrong: (isWrong: boolean) => void;
 }
 
-export default function CardData({data, setData, handleValues, isWrong, setIsWrong}: CardDataProps) {
+export default function CardData({data, setData, handleValues, setIsWrong}: CardDataProps) {
   const [expander, setExpander] = useState<string | null>(null);
 
   const isDynamic = useMemo(() => Boolean(data?.isDynamic), []) as boolean;  // eslint-disable-line react-hooks/exhaustive-deps

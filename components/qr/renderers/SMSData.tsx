@@ -5,7 +5,7 @@ import Common from '../helperComponents/Common';
 import MultiLineDetails from '../helperComponents/MultiLineDetails';
 import {PHONE} from "../constants";
 
-export type SMSDataProps = {
+type SMSDataProps = {
   data: {
     number?: string;
     message?: string;

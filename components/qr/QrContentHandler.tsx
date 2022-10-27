@@ -7,21 +7,22 @@ import RenderIcon from './helperComponents/RenderIcon';
 
 import Context from '../context/Context';
 import SingleData from './renderers/SingleData';
-import WhatsAppData, {WhatsAppProps} from './renderers/WhatsAppData';
-import FacebookData, {FacebookDataProps} from './renderers/FacebookData';
-import WifiData, {WifiDataProps} from './renderers/WifiData';
+import WhatsAppData from './renderers/WhatsAppData';
+import FacebookData from './renderers/FacebookData';
+import WifiData from './renderers/WifiData';
 import CardData from './renderers/CardData';
-import EmailData, {EmailDataProps} from './renderers/EmailData';
-import SMSData, {SMSDataProps} from './renderers/SMSData';
-import TwitterData, {TwitterDataProps} from './renderers/TwitterData';
-import AssetData , {AssetDataProps} from './renderers/AssetData';
+import EmailData from './renderers/EmailData';
+import SMSData from './renderers/SMSData';
+import TwitterData from './renderers/TwitterData';
+import AssetData from './renderers/AssetData';
 import NotifyDynamic from "./helperComponents/NotifyDynamic";
 import BusinessData from "./renderers/BusinessData";
 import NetworksData from "./renderers/NetworksData.";
-import CouponData, {CouponProps} from "./renderers/CouponData";
+import CouponData from "./renderers/CouponData";
 import DonationsData, { DonationsProps } from './renderers/DonationsData';
 
-import {CardDataProps, DataType, SocialProps} from './types/types';
+import {DataType, SocialProps} from './types/types';
+import LinksData from "./renderers/LinksData";
 
 type QrContentHandlerProps = {
   data: DataType;
@@ -38,7 +39,6 @@ const QrContentHandler = () => {
   const handleValues = (item: string) => (event: ChangeEvent<HTMLInputElement>) => {
     const {value} = event.target;
     if (value.length) {
-      // @ts-ignore
       setData((prev: DataType) => ({...prev, [item]: value}));
       // @ts-ignore
     } else if (data[item]) {
@@ -49,6 +49,10 @@ const QrContentHandler = () => {
         return temp;
       });
     }
+  };
+
+  const handlePayload = (payload: DataType | SocialProps) => {
+    setData(payload);
   };
 
   const renderSel = () => {
@@ -62,8 +66,7 @@ const QrContentHandler = () => {
           setIsWrong={setIsWrong}
           label="Website"
           msg="Type in the website to link the QR Code."
-          // @ts-ignore
-          data={data} setData={payload => setData(payload)}
+          data={data} setData={handlePayload}
         />);
       }
       case 'text': {
@@ -73,56 +76,52 @@ const QrContentHandler = () => {
           label="Message"
           limit={300}
           msg="Type any message up to 300 characters."
-          // @ts-ignore
-          data={data} setData={payload => setData(payload)}
+          data={data} setData={handlePayload}
         />);
       }
       case 'whatsapp': {
-        return <WhatsAppData data={data} setData={(payload: WhatsAppProps) => setData(payload)} setIsWrong={setIsWrong} />;
+        return <WhatsAppData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
       }
       case 'facebook': {
         // @ts-ignore
-        return (<FacebookData data={data} setData={(payload: FacebookDataProps) => setData(payload)} setIsWrong={setIsWrong} isWrong={isWrong} />);
+        return (<FacebookData data={data} setData={handlePayload} setIsWrong={setIsWrong} isWrong={isWrong} />);
       }
       case 'wifi': {
-        return <WifiData data={data} setData={(payload: WifiDataProps) => setData(payload)} setIsWrong={setIsWrong} />;
+        return <WifiData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
       }
       case 'vcard+':
       case 'vcard': {
-        return <CardData data={data} setData={(payload: CardDataProps) => setData(payload)} isWrong={isWrong} setIsWrong={setIsWrong} handleValues={handleValues} />;
+        return <CardData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />;
+      }
+      case 'link': {
+        return <LinksData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />;
       }
       case 'coupon': {
-        return <CouponData data={data} setData={(payload: CouponProps) => setData(payload)} setIsWrong={setIsWrong} handleValues={handleValues} />;
+        return <CouponData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />;
       }
       case 'business': {
-        return <BusinessData data={data} setData={(payload: CardDataProps) => setData(payload)} isWrong={isWrong} setIsWrong={setIsWrong} handleValues={handleValues}/>;
+        return <BusinessData data={data} setData={handlePayload} isWrong={isWrong} setIsWrong={setIsWrong} handleValues={handleValues}/>;
       }
       case 'email': {
-        return <EmailData data={data} setData={(payload: EmailDataProps) => setData(payload)} setIsWrong={setIsWrong} />;
+        return <EmailData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
       }
       case 'sms': {
-        return <SMSData data={data} setData={(payload: SMSDataProps) => setData(payload)} setIsWrong={setIsWrong} />;
+        return <SMSData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
       }
       case 'twitter': {
-        return <TwitterData data={data} setData={(payload: TwitterDataProps) => setData(payload)} setIsWrong={setIsWrong}/>;
+        return <TwitterData data={data} setData={handlePayload} setIsWrong={setIsWrong}/>;
       }
-      case 'image': {
-        return <AssetData type={selected} data={data} setData={(payload: AssetDataProps) => setData(payload)} />;
-      }
-      case 'pdf': {
-        return <AssetData type={selected} data={data} setData={(payload: AssetDataProps) => setData(payload)} />;
-      }
-      case 'audio': {
-        return <AssetData type={selected} data={data} setData={(payload: AssetDataProps) => setData(payload)} />;
-      }
+      case 'image':
+      case 'pdf':
+      case 'audio':
       case 'video': {
-        return <AssetData type={selected} data={data} setData={(payload: AssetDataProps) => setData(payload)} />;
+        return <AssetData type={selected} data={data} setData={handlePayload} />;
       }
       case 'donations': {
         return <DonationsData data={data} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong}/>
       }
       default: {
-        return <NetworksData data={data} setData={(payload: SocialProps) => setData(payload)} setIsWrong={setIsWrong} />
+        return <NetworksData data={data} setData={handlePayload} setIsWrong={setIsWrong} />
       }
     }
   };

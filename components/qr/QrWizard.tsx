@@ -266,7 +266,7 @@ const QrWizard = ({children}: QrWizardProps) => {
 
   return (
     <>
-      <Box sx={{minHeight: `calc(100vh - ${isTrialMode ? 207 : 195}px)`}}>
+      <Box sx={{minHeight: `calc(100vh - ${isTrialMode ? (step === 0 ? 207 : 215) : 195}px)`}}>
         {children}
       </Box>
       {isWide ? (

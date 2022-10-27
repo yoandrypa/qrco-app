@@ -13,7 +13,7 @@ import {ZIP} from "../constants";
 import RenderTextFields from "./helpers/RenderTextFields";
 import Topics from "./helpers/Topics";
 
-export type CouponProps = {
+type CouponProps = {
   data: DataType;
   setData: Function;
   handleValues: Function;

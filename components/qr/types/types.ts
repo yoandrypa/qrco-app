@@ -68,6 +68,11 @@ export type OpeningType = {
   sat?: OpeningDaysType;
 } | {} | null;
 
+export type LinkType = {
+  label: string;
+  link: string;
+}
+
 export type DataType = {
   mode?: string;
   userId?: string;
@@ -123,6 +128,7 @@ export type DataType = {
   openingTime?: OpeningType;
   urlOptionLabel?: string;
   urlOptionLink?: string;
+  links?: LinkType[];
   easiness?: {
     accessible?: boolean;
     toilet?: boolean;

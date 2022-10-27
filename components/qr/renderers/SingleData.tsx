@@ -10,7 +10,7 @@ type SingleDataProps = {
   limit?: number;
   msg: string;
   label: string;
-  data: { value: string };
+  data: DataType | { value: string };
   setData: (value: DataType) => void;
   isWrong: boolean;
   setIsWrong: (isWrong: boolean) => void;

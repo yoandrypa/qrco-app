@@ -11,6 +11,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import LinkIcon from '@mui/icons-material/Link';
 import PhotoIcon from '@mui/icons-material/Photo';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import PinterestIcon from '@mui/icons-material/Pinterest';
@@ -115,6 +116,7 @@ export default function RenderIcon({ icon, color, enabled, adjust }: RenderIconP
       case 'contact': { return <ContactPhoneIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'about': { return <InfoIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'world': { return <PublicIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
+      case 'link': { return <LinkIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       default: { return <TextSnippetOutlinedIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
     }
   };
