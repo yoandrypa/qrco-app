@@ -45,7 +45,7 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
 
   const handleChange = useCallback((event: SelectChangeEvent) => {
     setData((prev: DataType) => ({...prev, position: event.target.value}));
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const add = useCallback(() => {
     setData((prev: DataType) => {
@@ -53,7 +53,7 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
       tempo.links?.push({label: '', link: ''});
       return tempo;
     });
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const remove = useCallback((index: number) => () => {
     setData((prev: DataType) => {
@@ -61,7 +61,7 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
       tempo.links?.splice(index, 1);
       return tempo;
     });
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleChangeValue = useCallback((item: string, index: number) => (event: ChangeEvent<HTMLInputElement>) => {
     setData((prev: DataType) => {
@@ -70,7 +70,7 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
       tempo.links[index][item] = event.target.value;
       return tempo;
     });
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const amount = useMemo(() => {
     return Object.keys(data || {}).filter((x: string) => SOCIALS.includes(x)).length;
@@ -82,7 +82,7 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
     if (x === 'under') { return `Under the ${pluralize('URL', linksAmount)}`; }
     if (x === 'over') { return `Over the ${pluralize('URL', linksAmount)}`; }
     return 'In the middle of the URLs';
-  }, [linksAmount, amount]);
+  }, [linksAmount, amount]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     let isWrong = false;
@@ -91,13 +91,13 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
       isWrong = true;
     }
     setIsWrong(isWrong);
-  }, [data]);
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!data.links?.length) {
       setData((prev: DataType) => ({...prev, links: [{label: '', link: ''}]}));
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Common msg="Your contact details. Users can store your info or contact you right away.">
@@ -117,7 +117,7 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
         <Table size="small">
           <TableBody>
             {data.links?.length && data.links.map((x: LinkType, index: number) => (
-              <TableRow sx={{p: 0, width: '100%'}}>
+              <TableRow sx={{p: 0, width: '100%'}} key={`trow${index}`}>
                 <TableCell sx={{p: 0, pr: 1, width: '50%', borderBottom: 'none'}}>
                   <RenderTextFields
                     required
