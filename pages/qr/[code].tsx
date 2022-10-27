@@ -2,6 +2,9 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { QrDataModel } from "../../models/qr/QrDataModel";
 
 import Box from "@mui/material/Box";
+import Typography from '@mui/material/Typography';
+import DangerousIcon from '@mui/icons-material/Dangerous';
+import EngineeringIcon from '@mui/icons-material/Engineering';
 
 import VCard from "../../components/qr/microsites/VCard";
 import Web from "../../components/qr/microsites/Web";
@@ -11,13 +14,26 @@ import SocialInfo from "../../components/qr/microsites/SocialInfo";
 import FileMicro from "../../components/qr/microsites/FileMicro";
 import Images from "../../components/qr/microsites/Images";
 import Donations from "../../components/qr/microsites/Donations"
+import LinksMicro from "../../components/qr/microsites/LinksMicro";
 import {generateShortLink} from "../../utils";
 import {handleDesignerString} from "../../helpers/qr/helpers";
 
 // @ts-ignore
 export default function Handler({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   if (data === "NO DATA") {
-    return <>{"Ops! Unable to process your request."}</>;
+    return (
+      <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+          <DangerousIcon color="error" sx={{mx: 'auto', fontSize: '50px'}}/>
+          <Typography>{'Ops! Something went wrong and we are unable to process your request at this time.'}</Typography>
+          <Typography sx={{color: theme => theme.palette.text.disabled, mx: 'auto'}}>
+            {'Please, contact support by clicking '}
+            <a target="_blank" href="mailto:info@ebanux.com" rel="noopener noreferrer" style={{color: 'royalblue'}}>{'here'}</a>
+            {'.'}
+          </Typography>
+        </Box>
+      </Box>
+    );
   }
 
   const newData = JSON.parse(data);
@@ -54,9 +70,17 @@ export default function Handler({ data }: InferGetServerSidePropsType<typeof get
     return (<Donations newData={newData} />);
   }
 
+  if (newData.qrType === 'link') {
+    return (<LinksMicro newData={newData} />);
+  }
+
   return (
     <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
-      {"We are working on this. Come back soon."}
+      <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+        <EngineeringIcon color="primary" sx={{mx: 'auto', fontSize: '50px'}}/>
+        <Typography sx={{mx: 'auto'}}>{'Work in progress.'}</Typography>
+        <Typography sx={{color: theme => theme.palette.text.disabled, mx: 'auto'}}>{'This is going to be ready very soon.'}</Typography>
+      </Box>
     </Box>
   );
 }
