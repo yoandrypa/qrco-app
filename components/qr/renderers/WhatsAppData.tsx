@@ -5,7 +5,7 @@ import Common from '../helperComponents/Common';
 import MultiLineDetails from '../helperComponents/MultiLineDetails';
 import {PHONE} from "../constants";
 
-export type WhatsAppProps = {
+type WhatsAppProps = {
   data: { number?: string, message?: string };
   setData: Function;
   setIsWrong: (isWrong: boolean) => void;

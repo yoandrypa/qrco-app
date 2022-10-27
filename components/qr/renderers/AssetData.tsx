@@ -5,12 +5,10 @@ import Grid from "@mui/material/Grid";
 import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS } from "../../../consts";
 import { conjunctMethods, toBytes } from "../../../utils";
 
-import Notifications from "../../notifications/Notifications";
-
 import pluralize from "pluralize";
 import Context from "../../context/Context";
 
-export type AssetDataProps = {
+type AssetDataProps = {
   type: "image" | "video" | "pdf" | "audio";
   data: {
     files?: File[];

@@ -12,8 +12,9 @@ import {isValidUrl} from "../../../utils";
 import {ZIP} from "../constants";
 import RenderTextFields from "./helpers/RenderTextFields";
 import Topics from "./helpers/Topics";
+import socialsAreValid from "./validator";
 
-export type CouponProps = {
+type CouponProps = {
   data: DataType;
   setData: Function;
   handleValues: Function;
@@ -48,8 +49,9 @@ const CouponData = ({data, setData, handleValues, setIsWrong}: CouponProps) => {
 
   useEffect(() => {
     let errors = false;
-    if (!data.urlOptionLabel?.trim().length || !data.urlOptionLink?.trim().length || !isValidUrl(data.urlOptionLink) ||
-      !data.title?.trim().length || !data.name?.trim().length || (data.zip?.trim && !ZIP.test(data.zip))) {
+    if (!data.urlOptionLabel?.trim().length || !data.urlOptionLink?.trim().length ||
+      !isValidUrl(data.urlOptionLink) || !data.title?.trim().length || !data.name?.trim().length ||
+      (data.zip?.trim && !ZIP.test(data.zip)) || !socialsAreValid(data)) {
       errors = true;
     }
     setIsWrong(errors);

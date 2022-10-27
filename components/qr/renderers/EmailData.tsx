@@ -4,7 +4,7 @@ import Common from '../helperComponents/Common';
 import MultiLineDetails from '../helperComponents/MultiLineDetails';
 import {EMAIL} from "../constants";
 
-export type EmailDataProps = {
+type EmailDataProps = {
   data: {
     email?: string;
     subject?: string;

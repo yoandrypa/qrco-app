@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Common from '../helperComponents/Common';
 import {isValidUrl} from "../../../utils";
 
-export type TwitterDataProps = {
+type TwitterDataProps = {
   data: {
     text?: string;
     via?: string;
