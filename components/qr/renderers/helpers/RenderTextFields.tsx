@@ -10,12 +10,12 @@ interface RenderTextFieldsProps {
   handleValues: Function;
   isError?: boolean;
   value: string;
-  item: string;
+  item?: string;
 }
 
 const RenderTextFields = ({value, handleValues, placeholder, label, item, required, isError}: RenderTextFieldsProps) => (
   <TextField
-    label={label}
+    label={label || ''}
     size="small"
     fullWidth
     required={required || false}
@@ -23,7 +23,7 @@ const RenderTextFields = ({value, handleValues, placeholder, label, item, requir
     margin="dense"
     value={value || ''}
     placeholder={placeholder}
-    onChange={handleValues(item)}
+    onChange={item !== undefined ? handleValues(item) : handleValues}
     InputProps={{
       endAdornment: (
         required && !value.trim().length ? (
