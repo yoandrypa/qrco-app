@@ -93,7 +93,7 @@ const CountDown = (props: Props) => {
                     <Typography>{pluralize("Day", days)}</Typography>
                   </div>
                 </div>}
-                {(days > 0 || hours > 0) && <div className={style.container_segment}>
+                {days === 0 && hours > 0 && <div className={style.container_segment}>
                   <div className={style.segment}>
                     <div className={style.flip_card} data-hours-tens>
                       <div className={style.top}>{Math.floor(hours / 10)}</div>
@@ -107,7 +107,7 @@ const CountDown = (props: Props) => {
                     <Typography>{pluralize("Hour", hours)}</Typography>
                   </div>
                 </div>}
-                {(days > 0 || hours > 0 || minutes > 0) && <div className={style.container_segment}>
+                {days === 0 && (hours > 0 || minutes > 0) && <div className={style.container_segment}>
                   <div className={style.segment}>
                     <div className={style.flip_card} data-minutes-tens>
                       <div className={style.top}>{Math.floor(minutes / 10)}</div>
@@ -121,7 +121,7 @@ const CountDown = (props: Props) => {
                     <Typography>{pluralize("Minute", minutes)}</Typography>
                   </div>
                 </div>}
-                {(days > 0 || hours > 0 || minutes > 0 || seconds > 0) && <div className={style.container_segment}>
+                {days === 0 && (hours > 0 || minutes > 0 || seconds > 0) && <div className={style.container_segment}>
                   <div className={style.segment}>
                     <div className={style.flip_card} data-seconds-tens>
                       <div className={style.top}>{Math.floor(seconds / 10)}</div>
