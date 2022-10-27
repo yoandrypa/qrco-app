@@ -1,5 +1,5 @@
 import axios from 'axios'
-const SERVER_URL = process.env.NEXT_PUBLIC_DEVELOPMENT_MODE ? 'https://dev.ebanux.link' : 'https://ebanux.link'
+const SERVER_URL = process.env.REACT_NODE_ENV === 'develop' ? 'https://dev.ebanux.link' : 'https://ebanux.link'
 import { EbanuxDonationPriceData } from '../components/qr/types/types';
 
 const APIv1 = axios.create({
