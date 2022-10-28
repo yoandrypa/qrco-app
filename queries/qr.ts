@@ -135,6 +135,12 @@ export const remove = async (match: Partial<QrDataType>) => {
     if (["video", "gallery", "pdf", "audio"].includes(qr.qrType)) {
       promises.push(StorageHandler.remove(qr.files));
     }
+    if (qr.backgndImg) {
+     promises.push(StorageHandler.remove(qr.backgndImg));
+    }
+    if (qr.foregndImg) {
+      promises.push(StorageHandler.remove(qr.foregndImg));
+    }
 
     return Promise.all(promises).then(() => {
       return true;

@@ -110,6 +110,15 @@ const QrWizard = ({children}: QrWizardProps) => {
         data["files"] = await StorageHandler.upload(data["files"], `${userInfo.attributes.sub}/${selected}s`);
       }
 
+      if (data.backgndImg !== undefined) {
+        // @ts-ignore
+        data.backgndImg = await StorageHandler.upload([data.backgndImg], `${userInfo.attributes.sub}/backgndImg`);
+      }
+      if (data.foregndImg !== undefined) {
+        // @ts-ignore
+        data.foregndImg = await StorageHandler.upload([data.foregndImg], `${userInfo.attributes.sub}/foregndImg`);
+      }
+
       if (selected === 'donations') {
         let priceData: EbanuxDonationPriceData;
         priceData = {
