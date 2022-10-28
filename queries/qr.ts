@@ -4,6 +4,7 @@ import { CustomError } from "../utils";
 import { LinkModel } from "../models/link";
 import { QrOptionsModel } from "../models/qr/QrOptionsModel";
 import { ObjectType } from "dynamoose/dist/General";
+import * as StorageHandler from "../handlers/storage";
 
 interface TotalParams {
   search?: string;
@@ -130,10 +131,19 @@ export const remove = async (match: Partial<QrDataType>) => {
       transactions.push(QrOptionsModel.transaction.delete(qr.qrOptionsId));
     }
     transactions.push(QrDataModel.transaction.delete(qr.id));
+    const promises = [dynamoose.transaction(transactions)];
+    if (["video", "gallery", "pdf", "audio"].includes(qr.qrType)) {
+      promises.push(StorageHandler.remove(qr.files));
+    }
 
-    const deleteCascade = await dynamoose.transaction(transactions);
-
-    return !deleteCascade;
+    return Promise.all(promises).then(() => {
+      return true;
+    }).catch(e => {
+      if (e.message == "key is undefined") {
+        return true;
+      }
+      throw e;
+    });
   } catch (e) {
     // @ts-ignore
     throw new CustomError(e.message, 500, e);
