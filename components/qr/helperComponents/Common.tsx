@@ -15,7 +15,13 @@ function Common({ msg, children }: CommonProps) {
   const { selected, data, setData } = useContext(Context);
 
   const handleValue = useCallback((prop: string) => (payload: any) => {
-    if (prop !== 'both') {
+    if (payload === undefined) {
+      setData((prev: any) => {
+        const tempo = {...prev};
+        delete tempo[prop];
+        return tempo;
+      })
+    } else if (prop !== 'both') {
       setData((prev: any) => ({ ...prev, [prop]: payload.target?.value !== undefined ? payload.target.value : payload}));
     } else if (payload.p !== DEFAULT_COLORS.p || payload.s !== DEFAULT_COLORS.s) {
       setData((prev: any) => ({ ...prev, primary: payload.p, secondary: payload.s }));
@@ -34,7 +40,9 @@ function Common({ msg, children }: CommonProps) {
       <RenderQRCommons
         handleValue={handleValue}
         qrName={data?.qrName}
-        omitColorSel={['web', 'facebook', 'twitter', 'whatsapp'].includes(selected) || !data?.isDynamic}
+        omitDesign={['web', 'facebook', 'twitter', 'whatsapp'].includes(selected) || !data?.isDynamic}
+        backgndImg={data?.backgndImg}
+        foregndImg={data?.foregndImg}
         primary={data?.primary}
         secondary={data.secondary} />
       <Typography>{msg}</Typography>

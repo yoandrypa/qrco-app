@@ -156,6 +156,8 @@ export type DataType = {
   primary?: string;
   secondary?: string;
   isDynamic?: boolean;
+  backgndImg?: File | string;
+  foregndImg?: File | string;
   files?: File[];
 };
 
