@@ -5,7 +5,7 @@ module.exports = {
   swcMinify: true,
   webpack: (config) => {
     // Fixes yarn packages that depend on `fs` module
-    config.resolve.fallback = {fs: false};
+    config.resolve.fallback = { fs: false };
     config.experiments = {
       topLevelAwait: true, // Fix top-level-await experiment enable
       layers: true // Fix layers experiment enable
@@ -13,7 +13,7 @@ module.exports = {
     return config;
   },
   images: {
-    domains: ['dev-qrco.s3.amazonaws.com']
+    domains: ["dev-qrco.s3.amazonaws.com"]
   },
   env: {
     REACT_APP_COOKIES_DOMAIN: process.env.REACT_APP_COOKIES_DOMAIN,

@@ -1,17 +1,23 @@
-import { CustomError } from "../utils";
+import { CustomError, formatBytes, toBytes } from "../utils";
 import queries from "../queries";
 
 export const upload = async (assets: File[], path = "") => {
   try {
     let files: any[] = [];
     for (const asset of assets) {
-      // @ts-ignore
-      const res = await queries.storage.upload(asset, path);
-      files.push(res);
+      const sizeInMB = parseFloat(formatBytes(asset.size).split(" ")[0]);
+      if (sizeInMB < 100) {
+        // @ts-ignore
+        const res = await queries.storage.upload(asset, path + "/" + asset.name);
+        files.push(res);
+      } else {
+        files.push(await queries.storage.multipartUpload(asset, path + "/" + asset.name));
+      }
     }
     return files;
   } catch (e) {
-    throw new CustomError("Error uploading files", 500, e);
+    // @ts-ignore
+    throw new CustomError(e.message, 500, e);
   }
 };
 
