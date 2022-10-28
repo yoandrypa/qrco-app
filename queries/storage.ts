@@ -1,16 +1,22 @@
 import { s3Client } from "../libs";
-import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import {
+  PutObjectCommand,
+  PutObjectCommandInput,
+  GetObjectCommand,
+  GetObjectCommandInput,
+  DeleteObjectCommand, DeleteObjectCommandInput
+} from "@aws-sdk/client-s3";
 
 export const upload = async (file: File, path: string = "") => {
   try {
-    const uploadParams = {
+    const uploadParams: PutObjectCommandInput = {
       Bucket: String(process.env.REACT_AWS_BUCKET_NAME),
       Body: file,
       Key: path + "/" + file.name,
       ContentLength: file.size,
       ContentType: file.type
     };
-    const command = new PutObjectCommand(uploadParams);
+    const command: PutObjectCommand = new PutObjectCommand(uploadParams);
     const response = await s3Client.send(command);
     return {
       ...response,
@@ -23,17 +29,26 @@ export const upload = async (file: File, path: string = "") => {
 
 export const download = async (key: string) => {
   try {
-    const downloadParams = {
+    const downloadParams: GetObjectCommandInput = {
       Key: key,
       Bucket: String(process.env.REACT_AWS_BUCKET_NAME)
     };
-    const command = new GetObjectCommand(downloadParams);
+    const command: GetObjectCommand = new GetObjectCommand(downloadParams);
     return await s3Client.send(command);
   } catch (e) {
     return e;
   }
 };
 
-export const remove = (_key: string) => {
-  //TODO
+export const remove = async (key: string) => {
+  try {
+    const deleteParams: DeleteObjectCommandInput = {
+      Key: key,
+      Bucket: String(process.env.REACT_AWS_BUCKET_NAME)
+    };
+    const command: DeleteObjectCommand = new DeleteObjectCommand(deleteParams);
+    return await s3Client.send(command);
+  } catch (e) {
+    return e;
+  }
 };
