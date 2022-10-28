@@ -4,7 +4,8 @@ import {
   PutObjectCommandInput,
   GetObjectCommand,
   GetObjectCommandInput,
-  DeleteObjectCommand, DeleteObjectCommandInput
+  DeleteObjectsCommand,
+  DeleteObjectsCommandInput, ObjectIdentifier
 } from "@aws-sdk/client-s3";
 
 export const upload = async (file: File, path: string = "") => {
@@ -40,13 +41,16 @@ export const download = async (key: string) => {
   }
 };
 
-export const remove = async (key: string) => {
+export const remove = async (keys: ObjectIdentifier[]) => {
   try {
-    const deleteParams: DeleteObjectCommandInput = {
-      Key: key,
-      Bucket: String(process.env.REACT_AWS_BUCKET_NAME)
+    const deleteParams: DeleteObjectsCommandInput = {
+      Bucket: String(process.env.REACT_AWS_BUCKET_NAME),
+      Delete: {
+        Objects: keys,
+        Quiet: true
+      }
     };
-    const command: DeleteObjectCommand = new DeleteObjectCommand(deleteParams);
+    const command: DeleteObjectsCommand = new DeleteObjectsCommand(deleteParams);
     return await s3Client.send(command);
   } catch (e) {
     return e;

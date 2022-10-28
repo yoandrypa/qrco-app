@@ -105,7 +105,7 @@ const QrWizard = ({children}: QrWizardProps) => {
       setStep(2);
     } else if (step === 2 && isLogged) {
       //Process assets before saving de QR Data
-      if (["pdf", "audio", "image", "video"].includes(selected)) {
+      if (["pdf", "audio", "gallery", "video"].includes(selected)) {
         // @ts-ignore
         data["files"] = await StorageHandler.upload(data["files"], `${userInfo.attributes.sub}/${selected}s`);
       }

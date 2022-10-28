@@ -63,7 +63,7 @@ const AssetData = ({ type, data, setData }: AssetDataProps) => {
           <FileUpload
             onChange={handleChange}
             accept={ALLOWED_FILE_EXTENSIONS[type]}
-            multiple={["image", "video"].includes(type)}
+            multiple={["gallery", "video"].includes(type)}
             // @ts-ignore
             disabled={data["files"]?.length >= totalFiles}
             // @ts-ignore

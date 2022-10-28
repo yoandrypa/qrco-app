@@ -19,7 +19,7 @@ export const download = async (key: string) => {
   try {
     const data = queries.storage.download(key);
 
-    let type = '';
+    let type = "";
 
     return await data.then((response) => {
       // @ts-ignore
@@ -55,5 +55,17 @@ export const download = async (key: string) => {
       .catch((err) => console.error(err));
   } catch (e) {
     throw new CustomError("Error downloading file", 500, e);
+  }
+};
+
+export const remove = async (keys: { Key: string }[]) => {
+  try {
+    return await queries.storage.remove(keys.map(key => {
+      return {
+        Key: key.Key
+      };
+    }));
+  } catch (e) {
+    throw e;
   }
 };
