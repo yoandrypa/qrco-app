@@ -41,6 +41,7 @@ function Common({ msg, children }: CommonProps) {
         handleValue={handleValue}
         qrName={data?.qrName}
         omitDesign={['web', 'facebook', 'twitter', 'whatsapp'].includes(selected) || !data?.isDynamic}
+        omitPrimaryImg={!['vcard+', 'link', 'business', 'social', 'donations'].includes(selected) || !data?.isDynamic}
         backgndImg={data?.backgndImg}
         foregndImg={data?.foregndImg}
         primary={data?.primary}
