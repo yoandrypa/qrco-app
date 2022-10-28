@@ -25,13 +25,13 @@ export const PLAN_LIVE_MODE_PRICES = {
 };
 export const ALLOWED_FILE_EXTENSIONS = {
   pdf: ".pdf",
-  image: [".jpg", ".jpeg", ".png", ".svg", ".gif"],
+  gallery: [".jpg", ".jpeg", ".png", ".svg", ".gif"],
   audio: ".mp3",
   video: ".mp4"
 };
 export const FILE_LIMITS = {
   pdf: { totalFiles: 1, totalMbPerFile: 200 },
-  image: { totalFiles: 25, totalMbPerFile: 20 },
+  gallery: { totalFiles: 25, totalMbPerFile: 20 },
   audio: { totalFiles: 1, totalMbPerFile: 30 },
   video: { totalFiles: 4, totalMbPerFile: 300 },
 };

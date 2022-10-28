@@ -9,7 +9,7 @@ import pluralize from "pluralize";
 import Context from "../../context/Context";
 
 type AssetDataProps = {
-  type: "image" | "video" | "pdf" | "audio";
+  type: "gallery" | "video" | "pdf" | "audio";
   data: {
     files?: File[];
   };
