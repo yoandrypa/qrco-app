@@ -14,7 +14,7 @@ export const APIv2 = axios.create({
 
 export const createEbanuxDonationPrice = async (userId: string, token: string, data: EbanuxDonationPriceData) => {
     const result = await APIv1.post('/donation', {
-        amount: data.unitAmountUSD * 100,
+        amount: data.unitAmountUSD,
         cognitoUserId: userId
     }, {
         headers: {
