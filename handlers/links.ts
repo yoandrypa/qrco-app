@@ -189,10 +189,6 @@ export const redirect = async (params, req) => {
     }
 
     // 7. Create link visit
-    console.debug({
-      userId: link.userId,
-      isBot
-    });
     if (link.userId && !isBot) {
       await VisitHandler.add({
         headers: req.headers,

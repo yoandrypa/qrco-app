@@ -105,7 +105,6 @@ export default function AppWrapper(props: AppWrapperProps) {
       };
 
       fetchUser().then(profile => {
-        // console.debug({ createdAt: profile?.createdAt });
         let isInTrialMode = false;
         //@ts-ignore
         if (profile?.createdAt !== null && !profile?.customerId) {
