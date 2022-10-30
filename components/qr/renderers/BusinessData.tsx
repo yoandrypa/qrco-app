@@ -15,15 +15,17 @@ import {isValidUrl} from "../../../utils";
 import RenderTextFields from "./helpers/RenderTextFields";
 import {EMAIL, PHONE, ZIP} from "../constants";
 import Topics from "./helpers/Topics";
+import socialsAreValid from "./validator";
 
 interface BusinessProps {
   data: DataType;
   setData: Function;
   handleValues: Function;
+  isWrong: boolean;
   setIsWrong: (isWrong: boolean) => void;
 }
 
-export default function BusinessData({data, setData, handleValues, setIsWrong}: BusinessProps) {
+export default function BusinessData({data, setData, handleValues, isWrong, setIsWrong}: BusinessProps) {
   const [expander, setExpander] = useState<string | null>(null);
 
   const renderItem = (item: string, label: string) => {
@@ -63,11 +65,12 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
       if (!data.urlOptionLabel.trim().length || !data.urlOptionLink.trim().length || !isValidUrl(data.urlOptionLink)) {
         errors = true;
       }
-    }
-    if (!errors && ((data.web?.trim().length && !isValidUrl(data.web)) ||
+    } else if ((data.web?.trim().length && !isValidUrl(data.web)) ||
       (data.email?.trim().length && !EMAIL.test(data.email)) || (data.phone?.trim().length && !PHONE.test(data.phone)) ||
-      (data.zip?.trim().length && !ZIP.test(data.zip)))) {
+      (data.zip?.trim().length && !ZIP.test(data.zip))) {
       errors = true;
+    } else {
+      errors = !socialsAreValid(data);
     }
     setIsWrong(errors);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps

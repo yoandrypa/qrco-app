@@ -92,8 +92,9 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
           {renderTypeSelector("vcard+", "VCard Plus", "Share your contact and social details", true)}
           {renderTypeSelector('business', 'Business', 'Describe your business or company', true)}
           {renderTypeSelector("social", "Social networks", "Share your social networks information", true)}
+          {renderTypeSelector("link", "Links", "Share your own links, including social info", true)}
           {renderTypeSelector("coupon", "Coupon", "Share a coupon", true)}
-          {renderTypeSelector("donations", "Donations", "Get donations from your supporters worldwide.", true)}
+          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("donations", "Donations", "Get donations from your supporters worldwide", true)}
         </>)
       }
       {renderTypeSelector("twitter", "Twitter", "Post a tweet", true)}
@@ -102,8 +103,8 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
       {isDynamic ? (<>
         {renderTypeSelector("pdf", "PDF file", "Share a PDF file", true)}
         {renderTypeSelector("audio", "Audio file", "Share an audio file", true)}
-        {renderTypeSelector("image", "Image file", "Share image files", true)}
-        {renderTypeSelector("video", "Video file", "Share video files", true)}
+        {renderTypeSelector("gallery", "Gallery", "Share a gallery of images", true)}
+        {renderTypeSelector("video", "Video files", "Share video files", true)}
       </>) : null}
     </Grid>
   );

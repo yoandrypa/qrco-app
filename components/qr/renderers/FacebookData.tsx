@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import Common from "../helperComponents/Common";
 import {isValidUrl} from "../../../utils";
 
-export type FacebookDataProps = {
+type FacebookDataProps = {
   data: { message: string; };
   setData: Function;
   isWrong: boolean;

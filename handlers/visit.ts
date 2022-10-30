@@ -20,11 +20,6 @@ const filterInOs = (agent: { os: { name: string; }; }) => (item: string) =>
 export const add = async (data: any) => {
   const tasks = [];
 
-  console.debug({
-    visitCount: data.link.visitCount,
-    limit: getStatsLimit()
-  });
-
   if (data.link.visitCount < getStatsLimit()) {
     tasks.push(query.link.increamentVisit({ id: data.link.id }));
     const agent = parser(data.headers["user-agent"]);
@@ -44,8 +39,6 @@ export const add = async (data: any) => {
       })
     );
   }
-
-  console.debug({ tasks });
 
   return Promise.all(tasks);
 };

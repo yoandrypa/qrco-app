@@ -5,13 +5,11 @@ import Grid from "@mui/material/Grid";
 import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS } from "../../../consts";
 import { conjunctMethods, toBytes } from "../../../utils";
 
-import Notifications from "../../notifications/Notifications";
-
 import pluralize from "pluralize";
 import Context from "../../context/Context";
 
-export type AssetDataProps = {
-  type: "image" | "video" | "pdf" | "audio";
+type AssetDataProps = {
+  type: "gallery" | "video" | "pdf" | "audio";
   data: {
     files?: File[];
   };
@@ -51,19 +49,27 @@ const AssetData = ({ type, data, setData }: AssetDataProps) => {
     setData({ ...data, files: C });
   };
 
+  const totalFiles = FILE_LIMITS[type].totalFiles;
+  let title = "Drag 'n' drop some files here, or click to select files.";
+  if (totalFiles > 1) {
+    title += ` Selected ${data["files"]?.length || 0} of ${totalFiles} allowed`;
+  }
+
   return (
     <Common
-      msg={`You can upload a maximum of ${pluralize("file", FILE_LIMITS[type].totalFiles, true)} of size ${FILE_LIMITS[type].totalMbPerFile} MBs.`}>
+      msg={`You can upload a maximum of ${pluralize("file", totalFiles, true)} of size ${FILE_LIMITS[type].totalMbPerFile} MBs.`}>
       <Grid container>
         <Grid item xs={12}>
           <FileUpload
             onChange={handleChange}
             accept={ALLOWED_FILE_EXTENSIONS[type]}
-            multiple={["image", "video"].includes(type)}
+            multiple={["gallery", "video"].includes(type)}
+            // @ts-ignore
+            disabled={data["files"]?.length >= totalFiles}
             // @ts-ignore
             value={data["files"]}
+            title={title}
             maxFiles={FILE_LIMITS[type].totalFiles}
-            // @ts-ignore
             maxSize={toBytes(FILE_LIMITS[type].totalMbPerFile, "MB")}
           />
         </Grid>

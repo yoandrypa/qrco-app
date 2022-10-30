@@ -36,6 +36,7 @@ const AppContextProvider = (props: ContextProps) => {
   const [background, setBackground] = useState<BackgroundType>(initialBackground);
   const [frame, setFrame] = useState<FramesType>(initialFrame);
   const [data, setData] = useState<DataType>(initialData);
+  const [isTrialMode, setIsTrialMode] = useState<boolean>(false);
 
   const [selected, setSelected] = useState<string | null>(null);
   const [step, setStep] = useState<number>(0);
@@ -233,7 +234,7 @@ const AppContextProvider = (props: ContextProps) => {
       }
     } else {
       return (
-        <AppWrapper userInfo={userInfo} handleLogout={logout} clearData={clearData} setLoading={setLoading}>
+        <AppWrapper userInfo={userInfo} handleLogout={logout} clearData={clearData} setLoading={setLoading} setIsTrialMode={setIsTrialMode}>
           {children}
         </AppWrapper>
       );
@@ -249,7 +250,7 @@ const AppContextProvider = (props: ContextProps) => {
         background, setBackground,
         options, setOptions,
         selected, setSelected,
-        data, setData,
+        data, setData, isTrialMode,
         userInfo, setUserInfo,
         step, setStep, setForceClear,
         loading, setLoading,

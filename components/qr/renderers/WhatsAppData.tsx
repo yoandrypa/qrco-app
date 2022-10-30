@@ -1,15 +1,18 @@
+import {ChangeEvent, useEffect} from 'react';
 import TextField from '@mui/material/TextField';
 import Common from '../helperComponents/Common';
 
 import MultiLineDetails from '../helperComponents/MultiLineDetails';
+import {PHONE} from "../constants";
 
-export type WhatsAppProps = {
+type WhatsAppProps = {
   data: { number?: string, message?: string };
-  setData: Function
+  setData: Function;
+  setIsWrong: (isWrong: boolean) => void;
 };
 
-function WhatsAppData({ data, setData }: WhatsAppProps) {
-  const handleValues = (item: 'number' | 'message') => (event: React.ChangeEvent<HTMLInputElement>) => {
+function WhatsAppData({ data, setData, setIsWrong }: WhatsAppProps) {
+  const handleValues = (item: 'number' | 'message') => (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const tempo = { ...data };
     if (value.length) {
@@ -20,6 +23,14 @@ function WhatsAppData({ data, setData }: WhatsAppProps) {
     setData(tempo);
   };
 
+  useEffect(() => {
+    let isWrong = false;
+    if ((!data.number?.trim().length || !PHONE.test(data.number)) || !data.message?.trim().length) {
+      isWrong = true;
+    }
+    setIsWrong(isWrong);
+  }, [data.number, data.message]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <Common msg="Enter the message you will send through Whatsapp, up to 500 chatacters.">
       <>
@@ -28,12 +39,15 @@ function WhatsAppData({ data, setData }: WhatsAppProps) {
           size="small"
           required
           fullWidth
+          // @ts-ignore
+          error={data?.number && !PHONE.test(data.number)}
           margin="dense"
           value={data?.number || ''}
           onChange={handleValues('number')} />
         <TextField
           rows={3}
           multiline={true}
+          required
           label="Message"
           size="small"
           fullWidth

@@ -207,12 +207,12 @@ export const formatBytes = (bytes: number, decimals = 2) => {
 export const toBytes = (size: number, type: "B" | "KB" | "MB" | "GB" | "TB") => {
   const types = ["B", "KB", "MB", "GB", "TB"];
 
-  const key = types.indexOf(type.toUpperCase());
+  const key = types.indexOf(type);
 
   if (typeof key !== "boolean") {
     return size * 1024 ** key;
   }
-  return "invalid type: type must be GB/KB/MB etc.";
+  return undefined;
 };
 
 export const conjunctMethods = {

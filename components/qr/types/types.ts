@@ -1,7 +1,37 @@
+export type CornersAndDotsType = {
+  topL: string;
+  topR: string;
+  bottom: string;
+} | null;
+
+export type BackgroundType = {
+  type: string | null;
+  opacity: number;
+  size: number;
+  file: string | null;
+  x: number;
+  y: number;
+  imgSize: number;
+  invert?: boolean | false;
+  backColor?: string | null;
+};
+
+export type FramesType = {
+  type: string | null;
+  text: string;
+  color: string;
+  textColor: string;
+  textUp?: boolean | false;
+};
+
 export type OptionsType = {
   isDynamic?: boolean;
   qrType?: string;
   mode?: string;
+  cornersDot?: CornersAndDotsType;
+  corners?: CornersAndDotsType;
+  frame?: FramesType;
+  background?: BackgroundType;
   userId?: string;
   id?: string;
   shortCode?: string;
@@ -17,32 +47,6 @@ export type OptionsType = {
   backgroundOptions: { color: string; };
   cornersSquareOptions: { color: string; type: string | null; };
   cornersDotOptions: { color: string; type: string | null; };
-};
-
-export type BackgroundType = {
-  type: string | null;
-  opacity: number;
-  size: number;
-  file: string | null;
-  x: number;
-  y: number;
-  imgSize: number;
-  invert?: boolean | false;
-  backColor?: string | null;
-};
-
-export type CornersAndDotsType = {
-  topL: string;
-  topR: string;
-  bottom: string;
-} | null;
-
-export type FramesType = {
-  type: string | null;
-  text: string;
-  color: string;
-  textColor: string;
-  textUp?: boolean | false;
 };
 
 export type OpeningObjType = {
@@ -64,6 +68,11 @@ export type OpeningType = {
   sat?: OpeningDaysType;
 } | {} | null;
 
+export type LinkType = {
+  label: string;
+  link: string;
+}
+
 export type DataType = {
   mode?: string;
   userId?: string;
@@ -73,6 +82,8 @@ export type DataType = {
   avatarImage?: string;
   bannerImage?: string;
   donationUnitAmount?: number;
+  donationPriceId?: string;
+  donationProductId?: string;
   message?: string;
   subject?: string;
   body?: string;
@@ -117,6 +128,7 @@ export type DataType = {
   openingTime?: OpeningType;
   urlOptionLabel?: string;
   urlOptionLink?: string;
+  links?: LinkType[];
   easiness?: {
     accessible?: boolean;
     toilet?: boolean;
@@ -144,13 +156,24 @@ export type DataType = {
   primary?: string;
   secondary?: string;
   isDynamic?: boolean;
+  backgndImg?: File | string;
+  foregndImg?: File | string;
   files?: File[];
 };
 
-export type DonationsData ={
+export type DonationsData = {
   name: string,
   image?: string,
   shortText: string
+}
+
+
+export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram';
+
+export type EbanuxDonationPriceData = {
+  name: string,
+  unitAmountUSD: number,
+  redirectUrl: string,
 }
 
 export type SocialProps = {
@@ -199,4 +222,6 @@ export type EditType = {
   value?: string;
   primary?: string;
   secondary?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };

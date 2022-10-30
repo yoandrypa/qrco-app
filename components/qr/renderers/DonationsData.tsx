@@ -1,47 +1,72 @@
-import React, {ChangeEvent, useState } from 'react'
+import React, {ChangeEvent, useEffect, useState } from 'react'
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button'
-import { Stack, Avatar, SvgIcon } from '@mui/material';
-import UploadRounded from '@mui/icons-material/UploadRounded'
+import { Stack, SvgIcon } from '@mui/material';
 import Common from '../helperComponents/Common'
 import EmojiFoodBeverageIcon from '@mui/icons-material/EmojiFoodBeverage';
-interface DonationsProps {
+import Alert from '@mui/material/Alert';
+import {isValidUrl} from "../../../utils";
+import FileUpload from "react-material-file-upload";
+import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS } from "../../../consts";
+import { toBytes } from "../../../utils";
+import CoffeeIcon from '@mui/icons-material/Coffee';
+ export interface DonationsProps {
     data: {
       title?: string,
       avatarImage?: string,
       message?: string,
       web?: string,
-      donationUnitAmount?: number ,
+      donationUnitAmount?: number,
+      donationPriceId?: string,
+      donationProductId?: string,
     },
-    setData: Function
+    setData: Function,
+    setIsWrong: Function
 }
 
 type Options = 'message' | 'title' |'avatarImage' | 'web' | 'donationUnitAmount'
 
-const  DonationsData = ({data,setData }: DonationsProps) => {
+const  DonationsData = ({data,setData,setIsWrong }: DonationsProps) => {
+
 const [isError,setIsError] = useState<boolean>(false)
-const [inputAmount, setInputAmount] = useState<string>('1')
+const [webError, setWebError] = useState<boolean>(false)
+const [coffeePrice, setCoffeePrice] = useState<number>(1)
+
+useEffect(()=>{
+  const temp = {...data}
+if (coffeePrice < 1 ){
+  setCoffeePrice(1) 
+  temp["donationUnitAmount"] = 1
+  temp["donationUnitAmount"] = coffeePrice
+} else{
+  temp["donationUnitAmount"] = coffeePrice
+}
+ 
+}
+,[coffeePrice, data])
+
   const handleValues = (item: Options) => (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    const temp = { ...data };
-    if (value.length) {
-      if (value.length) {
+    const temp = {...data };
+    if (item === "web"){
+      setWebError(!isValidUrl(value))
+      setIsWrong(webError)
+    }
+    if (value.length) {  
         if (item === 'donationUnitAmount'){
+          setCoffeePrice(parseInt(value))
           if (parseInt(value) < 1){
-            setInputAmount('1')
-            setIsError(true)
-            temp[item] = 1
-            setData(temp);
+            setIsWrong(true)
+            setIsError(true)        
           } else {
-            setInputAmount(value)
-            temp[item] = parseInt(value);
+            temp[item] =  parseInt(value)
+            setIsWrong(false)            
             setIsError(false)
-            setData(temp);
-          }             
-        }
+          }     
+                  
+        }             
       
         // @ts-ignore
         temp[item] = value;
@@ -50,47 +75,56 @@ const [inputAmount, setInputAmount] = useState<string>('1')
         // @ts-ignore
         delete temp[item];
       }
-
+    
     setData(temp);
   };
-}
+
+  const handleWebInputBlur = (event: React.FocusEvent<HTMLInputElement>) =>{
+   if (event.target.value.length > 0) {
+    setWebError(!isValidUrl(event.target.value));
+   } else {
+    setWebError(false);
+   }
+   setIsWrong(webError)
+  }
+
 
   return (
-    <Common msg='Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.'>
-    <Paper>  
+   
+  <Common msg='Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.'>
+    <Paper>     
    <Typography variant='h6' textAlign={'center'} marginTop={2}>Customize your donation page</Typography>    
    <Grid container sx={{ display: 'flex', justifyContent: 'center',alignContent:'center' }}>
     <Grid item>      
     </Grid>
     <Grid item>
     <Stack direction="row" sx={{marginTop:2, display: 'flex', justifyContent: 'center',alignSelf:'center' }}>
-      <Avatar        
-        alt="avatar"
-        src="https://images.unsplash.com/photo-1518057111178-44a106bad636?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=388&q=80"
-        sx={{ width: 100, height: 100,}}
-      />
+    {/* <FileUpload
+            sx={{border: 4, borderStyle: 'dashed', backgroundColor: 'lightgray'}}
+            onChange={()=>{}}
+            accept={ALLOWED_FILE_EXTENSIONS['image']}
+            multiple={false}
+            // @ts-ignore
+            value={data["files"]}
+            maxFiles={1}
+            // @ts-ignore
+            maxSize={toBytes(5, "MB")}
+          /> */}
      </Stack> 
     </Grid>
     <Grid item>        
     </Grid>
    </Grid>
    <Grid container sx={{ display: 'flex', justifyContent: 'center',alignContent:'center' }}>
-    <Button 
-    sx={{marginTop:2, display: 'flex', justifyContent: 'center',alignSelf:'center' }}
-    startIcon={<UploadRounded/>}
-     variant="outlined">
-        Upload Image
-    </Button>
-    </Grid>
 
-  
+    </Grid>  
    <Grid sx={{display: 'flex', alignItems: "center",
            justifyContent: "center"}}>
    
-      <TextField label='Name'
+      <TextField label='Your Name'
          sx={{marginTop: 2, width:300 }}
          placeholder='Paul Smith'
-         value={data?.title}
+         value={data?.title || ''}
          onChange={handleValues('title')}
          size='small'
        /> 
@@ -110,46 +144,53 @@ const [inputAmount, setInputAmount] = useState<string>('1')
         sx={{width: 300, display: 'flex', alignItems: "center",
         justifyContent: "center"}}
         rows={5}
-        placeholder='Hey there! Would you like to buy me a coffie?'
+        placeholder='Hey there! Would you like to buy me a coffee?'
        />
   </Grid>
+  <Alert severity='info' sx={{margin: 2}}>
+  Note: When you receive a donation, your supporters will be redirected to this website or social link page,
+   you can use this to provide some content as a sign of appreciation or just leave it blank and they 
+   will be redirected to a &quot;thank you page&quot;.
+  </Alert>
   <Grid 
   sx={{display: 'flex', alignItems: "center",
         justifyContent: "center"}}>
-
 <TextField label='Website or social link'
 sx={{marginTop: 2, width:300 }}
-placeholder='https://www.example.com'
-value={data?.web}
+value={data?.web || ''}
 onChange={handleValues('web')}
+onBlur={handleWebInputBlur}
+error={webError}
 size='small'
 />   
 </Grid>
 
   <Grid container spacing={2}
-    sx={{marginTop: 1,marginBottom:2, display: 'flex', alignItems: "center",justifyContent: "center"}}>
+    sx={{marginTop: 1, display: 'flex', alignItems: "center",justifyContent: "center"}}>
     <Grid item>
    <SvgIcon>
-   <EmojiFoodBeverageIcon color='primary'/>
+   <CoffeeIcon color='primary'/>
    </SvgIcon>  
    </Grid>
     <Grid item>
     <TextField 
       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} 
       type='number'
-      label='Coffie Price' 
+      label='Coffee Price' 
       sx={{width: 140, marginBottom:2}}
       placeholder='10'
       size='small'
-      value={inputAmount}
+      value={coffeePrice}
       onChange={handleValues('donationUnitAmount')}
       error={isError}
     />
-   {isError && <Typography align='center' color='red'>
-    Hey, minimum of $1 for a coffie.
-    </Typography>} 
+  
     </Grid>
-
+    </Grid>
+    <Grid sx={{marginBottom:2,  display: 'flex', alignItems: "center",justifyContent: "center"}}>
+    {isError && <Typography  marginBottom={2} align='center' color='red' variant='caption'>
+    Hey, minimum of $1 USD for a coffee.
+    </Typography>} 
     </Grid>
 
    </Paper>

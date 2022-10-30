@@ -1,11 +1,11 @@
-import {ChangeEvent, useState, useEffect} from 'react';
+import {ChangeEvent, useEffect} from 'react';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import Common from '../helperComponents/Common';
 import {isValidUrl} from "../../../utils";
 
-export type TwitterDataProps = {
+type TwitterDataProps = {
   data: {
     text?: string;
     via?: string;
@@ -16,24 +16,17 @@ export type TwitterDataProps = {
   setData: Function;
 };
 
-export const availableTwittChars = (data: {text?: string; via?: string; hashtags?: string; url?: string;}) => {
+export const availableTwittChars = (data: { text?: string; via?: string; hashtags?: string; url?: string; }) => {
   return 280 - ((data?.text || '').length + (data?.via ? `@${data?.via}` : '').length +
     (data?.url || '').length + (data?.hashtags ? data.hashtags.split(',').map((x: string) => `#${x}`).join(' ') : '').length);
 }
 
-const TwitterData = ({ data, setData, setIsWrong }: TwitterDataProps) => {
-  const [error, setError] = useState<boolean>(false);
-
+const TwitterData = ({data, setData, setIsWrong}: TwitterDataProps) => {
   const handleValues = (item: 'text' | 'via' | 'hashtags' | 'url') => (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    const tempo = { ...data };
+    const {value} = event.target;
+    const tempo = {...data};
     if (value.length) {
       tempo[item] = value;
-      let wrong = false;
-      if (item === 'url' && !isValidUrl(value)) {
-        wrong = true;
-      }
-      setError(wrong);
     } else if (tempo[item]) {
       delete tempo[item];
     }
@@ -49,13 +42,9 @@ const TwitterData = ({ data, setData, setIsWrong }: TwitterDataProps) => {
   };
 
   useEffect(() => {
-    let wrong = false;
-    if (!data?.text?.trim().length && !data?.via?.trim().length && !data?.hashtags?.trim().length &&
-      (!data?.url?.trim().length || error)) {
-      wrong = true;
-    }
-    setIsWrong(wrong);
-  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+    // @ts-ignore
+    setIsWrong(!data.text?.trim().length && !data.via?.trim().length && !data.hashtags?.trim().length && !data.url?.trim().length || (data.url?.trim().length && !isValidUrl(data.url)));
+  }, [data.text, data.via, data.hashtags, data.url]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Common msg="You can post a tweet with a link, an user's reference and a list of hashtags.">
@@ -66,29 +55,30 @@ const TwitterData = ({ data, setData, setIsWrong }: TwitterDataProps) => {
           fullWidth
           margin="dense"
           value={data?.text || ''}
-          onChange={handleValues('text')} />
+          onChange={handleValues('text')}/>
         <TextField
           label="Mention username (do not include the @ symbol)"
           size="small"
           fullWidth
           margin="dense"
           value={data?.via || ''}
-          onChange={handleValues('via')} />
+          onChange={handleValues('via')}/>
         <TextField
           label="Hashtags (comma separated, do not include the # symbol)"
           size="small"
           fullWidth
           margin="dense"
           value={data?.hashtags || ''}
-          onChange={handleValues('hashtags')} />
+          onChange={handleValues('hashtags')}/>
         <TextField
           label="URL"
           size="small"
           fullWidth
           margin="dense"
-          error={error}
+          // @ts-ignore
+          error={data?.url && !isValidUrl(data.url)}
           value={data?.url || ''}
-          onChange={handleValues('url')} />
+          onChange={handleValues('url')}/>
         {renderAvailability()}
       </>
     </Common>);
