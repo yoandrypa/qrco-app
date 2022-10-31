@@ -158,6 +158,7 @@ export type DataType = {
   isDynamic?: boolean;
   backgndImg?: File | string;
   foregndImg?: File | string;
+  foregndImgType?: 'circle' | 'smooth' | 'square' | null;
   files?: File[];
 };
 

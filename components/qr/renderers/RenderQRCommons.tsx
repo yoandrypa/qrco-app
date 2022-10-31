@@ -22,6 +22,7 @@ import {DEFAULT_COLORS} from "../constants";
 import RenderImagePicker from "./helpers/RenderImagePicker";
 import Tooltip from "@mui/material/Tooltip";
 import RenderImgPreview from "./helpers/RenderImgPreview";
+import RenderForeImgTypePicker from "./helpers/RenderForeImgTypePicker";
 
 interface QRCommonsProps {
   omitDesign?: boolean;
@@ -31,13 +32,14 @@ interface QRCommonsProps {
   secondary?: string;
   backgndImg?: File;
   foregndImg?: File;
+  foregndImgType?: string;
   handleValue: Function;
 }
 
 const colors = [DEFAULT_COLORS, {p: '#187510', s: '#9ece99'}, {p: '#aa8412', s: '#d7c89a'},
   {p: '#b30909', s: '#dba8a8'}, {p: '#8c0f4a', s: '#dd9ebc'}, {p: '#40310f', s: '#a8a6a1'}] as ColorTypes[];
 
-function RenderQRCommons({omitDesign, omitPrimaryImg, qrName, primary, foregndImg, backgndImg, secondary, handleValue}: QRCommonsProps) {
+function RenderQRCommons({omitDesign, omitPrimaryImg, qrName, primary, foregndImg, foregndImgType, backgndImg, secondary, handleValue}: QRCommonsProps) {
   // @ts-ignore
   const {userInfo} = useContext(Context);
   const [expander, setExpander] = useState<string | null>('design');
@@ -101,6 +103,7 @@ function RenderQRCommons({omitDesign, omitPrimaryImg, qrName, primary, foregndIm
           <SearchIcon/>
         </Button>
       </Tooltip>
+      {kind === 'foregndImg' && <RenderForeImgTypePicker handleValue={handleValue} foregndImgType={foregndImgType} />}
       <Tooltip title="Remove">
         <Button sx={{width: '40px'}} variant="contained" color="error" onClick={() => handleValue(kind)(undefined)}>
           <ClearIcon/>
@@ -190,7 +193,8 @@ function RenderQRCommons({omitDesign, omitPrimaryImg, qrName, primary, foregndIm
 // @ts-ignore
 function notIf(curr, next) {
   return curr.qrName === next.qrName && curr.primary === next.primary && curr.secondary === next.secondary &&
-    curr.backgndImg === next.backgndImg && curr.foregndImg === next.foregndImg;
+    curr.backgndImg === next.backgndImg && curr.foregndImg === next.foregndImg &&
+    curr.foregndImgType === next.foregndImgType;
 }
 
 export default memo(RenderQRCommons, notIf);

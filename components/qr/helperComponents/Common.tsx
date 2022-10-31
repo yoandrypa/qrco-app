@@ -44,6 +44,7 @@ function Common({ msg, children }: CommonProps) {
         omitPrimaryImg={!['vcard+', 'link', 'business', 'social', 'donations'].includes(selected) || !data?.isDynamic}
         backgndImg={data?.backgndImg}
         foregndImg={data?.foregndImg}
+        foregndImgType={data?.foregndImgType}
         primary={data?.primary}
         secondary={data.secondary} />
       <Typography>{msg}</Typography>
