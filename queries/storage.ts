@@ -12,20 +12,36 @@ import {
   CreateMultipartUploadCommand,
   CreateMultipartUploadCommandInput,
   UploadPartCommand,
-  UploadPartCommandInput, CompleteMultipartUploadCommandOutput
+  UploadPartCommandInput, CompleteMultipartUploadCommandOutput, HeadObjectCommandInput, HeadObjectCommand
 } from "@aws-sdk/client-s3";
+
+export const checkIfExist = async (key: string) => {
+  try {
+    const input: HeadObjectCommandInput = {
+      Bucket: String(process.env.REACT_AWS_BUCKET_NAME),
+      Key: key
+    };
+    const command: HeadObjectCommand = new HeadObjectCommand(input);
+    return await s3Client.send(command);
+  } catch (e) {
+    throw e;
+  }
+};
 
 export const upload = async (file: File, key = "") => {
   try {
-    const uploadParams: PutObjectCommandInput = {
-      Bucket: String(process.env.REACT_AWS_BUCKET_NAME),
-      Body: Buffer.from(await file.arrayBuffer()),
-      Key: key,
-      ContentLength: file.size,
-      ContentType: file.type
-    };
-    const command: PutObjectCommand = new PutObjectCommand(uploadParams);
-    const response = await s3Client.send(command);
+    let response = await checkIfExist(key);
+    if (response.$metadata.httpStatusCode === 404) {
+      const input: PutObjectCommandInput = {
+        Bucket: String(process.env.REACT_AWS_BUCKET_NAME),
+        Body: Buffer.from(await file.arrayBuffer()),
+        Key: key,
+        ContentLength: file.size,
+        ContentType: file.type
+      };
+      const command: PutObjectCommand = new PutObjectCommand(input);
+      response = await s3Client.send(command);
+    }
     return {
       ...response,
       Key: key
@@ -37,15 +53,22 @@ export const upload = async (file: File, key = "") => {
 
 export const multipartUpload = async (file: File, key = ""): Promise<CompleteMultipartUploadCommandOutput> => {
   try {
+    let response = await checkIfExist(key);
+    if (response.$metadata.httpStatusCode === 200) {
+      return {
+        ...response,
+        Key: key
+      };
+    }
     const Bucket = String(process.env.REACT_AWS_BUCKET_NAME);
     const Key = key;
-    const createParams: CreateMultipartUploadCommandInput = {
+    const input: CreateMultipartUploadCommandInput = {
       Bucket,
       Key,
       ContentType: file.type
     };
     const createUploadResponse = await s3Client.send(
-      new CreateMultipartUploadCommand(createParams)
+      new CreateMultipartUploadCommand(input)
     );
     const { UploadId } = createUploadResponse;
     console.log("Upload initiated. Upload ID: ", UploadId);
@@ -73,7 +96,7 @@ export const multipartUpload = async (file: File, key = ""): Promise<CompleteMul
 
       const uploadParams: UploadPartCommandInput = {
         // add 1 to endOfPart due to slice end being non-inclusive
-        Body: buffer.slice(startOfPart, endOfPart + 1),
+        Body: buffer.subarray(startOfPart, endOfPart + 1),
         Bucket,
         Key,
         UploadId,
