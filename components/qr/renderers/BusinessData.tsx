@@ -16,16 +16,16 @@ import RenderTextFields from "./helpers/RenderTextFields";
 import {EMAIL, PHONE, ZIP} from "../constants";
 import Topics from "./helpers/Topics";
 import socialsAreValid from "./validator";
+import RenderProposalsTextFields from "./helpers/RenderProposalsTextFields";
 
 interface BusinessProps {
   data: DataType;
   setData: Function;
   handleValues: Function;
-  isWrong: boolean;
   setIsWrong: (isWrong: boolean) => void;
 }
 
-export default function BusinessData({data, setData, handleValues, isWrong, setIsWrong}: BusinessProps) {
+export default function BusinessData({data, setData, handleValues, setIsWrong}: BusinessProps) {
   const [expander, setExpander] = useState<string | null>(null);
 
   const renderItem = (item: string, label: string) => {
@@ -40,6 +40,17 @@ export default function BusinessData({data, setData, handleValues, isWrong, setI
       (item === 'email' && !EMAIL.test(value)) || (item === 'phone' && !PHONE.test(value)) ||
       (item === 'zip' && !ZIP.test(value)))) {
         isError = true;
+    }
+
+    if (item === 'urlOptionLabel') {
+      return (<RenderProposalsTextFields
+        options={['View menu', 'Shop online', 'Book now', 'Apply now', 'Learn more']}
+        value={value}
+        item={item}
+        label={label}
+        isError={isError}
+        handleValues={handleValues}
+      />);
     }
 
     return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={handleValues} />;
@@ -110,15 +121,15 @@ export default function BusinessData({data, setData, handleValues, isWrong, setI
           <Typography sx={{ my: 'auto' }}>{'Option button'}</Typography>
           <Button sx={{ mb: '5px' }} variant="contained"
             color={data.urlOptionLabel === undefined ? 'primary' : 'error'} onClick={handleOptionButton}>
-            {data.urlOptionLabel === undefined ? 'Add new option button' : 'Remove option button'}
+            {data.urlOptionLabel === undefined ? 'Add an option button' : 'Remove option button'}
           </Button>
         </Box>
         {data.urlOptionLabel !== undefined && (
           <Grid container spacing={1}>
-            <Grid item sm={4} xs={12} style={{paddingTop: 0}}>
+            <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
               {renderItem('urlOptionLabel', 'Label')}
             </Grid>
-            <Grid item sm={8} xs={12} style={{paddingTop: 0}}>
+            <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
               {renderItem('urlOptionLink', 'Link')}
             </Grid>
           </Grid>

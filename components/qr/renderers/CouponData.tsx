@@ -13,6 +13,7 @@ import {ZIP} from "../constants";
 import RenderTextFields from "./helpers/RenderTextFields";
 import Topics from "./helpers/Topics";
 import socialsAreValid from "./validator";
+import RenderProposalsTextFields from "./helpers/RenderProposalsTextFields";
 
 type CouponProps = {
   data: DataType;
@@ -32,6 +33,18 @@ const CouponData = ({data, setData, handleValues, setIsWrong}: CouponProps) => {
     // @ts-ignore
     if (data[item] !== undefined  && (item === 'zip' && !ZIP.test(value) || (item === 'urlOptionLink' && !isValidUrl(value)))) {
       isError = true;
+    }
+
+    if (item === 'prefix') {
+      return (<RenderProposalsTextFields
+        options={['Shop online', 'Buy online', 'Get a discount', 'Buy & get a discount']}
+        value={value}
+        item={item}
+        label={label}
+        placeholder={placeholder}
+        isError={isError}
+        handleValues={handleValues}
+      />);
     }
 
     return (

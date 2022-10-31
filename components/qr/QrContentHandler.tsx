@@ -36,8 +36,9 @@ const QrContentHandler = () => {
   // @ts-ignore
   const { data, setData, selected, isWrong, setIsWrong }: QrContentHandlerProps = useContext(Context);
 
-  const handleValues = (item: string) => (event: ChangeEvent<HTMLInputElement>) => {
-    const {value} = event.target;
+  const handleValues = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string) => {
+    const value = typeof payload !== 'string' ? payload.target.value : payload;
+
     if (value.length) {
       setData((prev: DataType) => ({...prev, [item]: value}));
       // @ts-ignore
@@ -100,7 +101,7 @@ const QrContentHandler = () => {
         return <CouponData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />;
       }
       case 'business': {
-        return <BusinessData data={data} setData={handlePayload} isWrong={isWrong} setIsWrong={setIsWrong} handleValues={handleValues}/>;
+        return <BusinessData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />;
       }
       case 'email': {
         return <EmailData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
@@ -109,7 +110,7 @@ const QrContentHandler = () => {
         return <SMSData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
       }
       case 'twitter': {
-        return <TwitterData data={data} setData={handlePayload} setIsWrong={setIsWrong}/>;
+        return <TwitterData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
       }
       case 'gallery':
       case 'pdf':
