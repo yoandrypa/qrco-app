@@ -29,7 +29,6 @@ const CountDown = (props: Props) => {
     // console.log(days, hours, minutes,seconds)
   }
 
-
   useLayoutEffect(() => {
     const initialDate = new Date(props.startDate);
     const countToDate = (initialDate.setDate(initialDate.getDate() + 14)); //new Date().setDate(new Date().getDate() + 14)
@@ -62,11 +61,15 @@ const CountDown = (props: Props) => {
 // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trialIsOver]);
 
-  if (trialIsOver === true) {
+  if (trialIsOver) {
     return (
       <Alert severity="error" onClick={() => Router.push(`/plans`)}>
-        Your 14 days of free trial has endded. You must buy a plan to keep using the platform. Click here to go to the
-        pricing page
+        <Typography sx={{ display: {xs: 'none', lg: 'block'}}}>
+          {'Your 14 days of free trial has ended. You must buy a plan to keep using the platform. Click here to go to the pricing page.'}
+        </Typography>
+        <Typography sx={{ display: {lg: 'none', xs: 'block'}}}>
+          {'Free trial ended. Go to pricing.'}
+        </Typography>
       </Alert>
     );
   } else {
