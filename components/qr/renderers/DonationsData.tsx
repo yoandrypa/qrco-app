@@ -138,14 +138,14 @@ if (coffeePrice < 1 ){
         size="small"
         fullWidth
         margin="dense"
-        value={data?.message || ''}
+        value={data?.message || 'Would you like to buy me a coffee?'}
         onChange={handleValues('message')} 
         multiline
         sx={{width: 300, display: 'flex', alignItems: "center",
         justifyContent: "center"}}
         rows={5}
-        placeholder='Hey there! Would you like to buy me a coffee?'
-       />
+        >
+        </TextField>
   </Grid>
   <Alert severity='info' sx={{margin: 2}}>
   Note: When you receive a donation, your supporters will be redirected to this website or social link page,
