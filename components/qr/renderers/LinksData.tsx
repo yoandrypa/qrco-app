@@ -32,6 +32,7 @@ import RenderSocials from "./helpers/RenderSocials";
 import pluralize from "pluralize";
 import socialsAreValid from "./validator";
 import {SOCIALS} from "../constants";
+import RenderProposalsTextFields from "./helpers/RenderProposalsTextFields";
 
 interface LinksDataProps {
   data: DataType;
@@ -63,11 +64,11 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleChangeValue = useCallback((item: string, index: number) => (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeValue = useCallback((item: string, index: number) => (payload: ChangeEvent<HTMLInputElement> | string) => {
     setData((prev: DataType) => {
       const tempo = {...prev};
       // @ts-ignore
-      tempo.links[index][item] = event.target.value;
+      tempo.links[index][item] = payload.target?.value !== undefined ? payload.target.value : payload;
       return tempo;
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -119,9 +120,10 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
             {data.links?.length && data.links.map((x: LinkType, index: number) => (
               <TableRow sx={{p: 0, width: '100%'}} key={`trow${index}`}>
                 <TableCell sx={{p: 0, pr: 1, width: '50%', borderBottom: 'none'}}>
-                  <RenderTextFields
+                  <RenderProposalsTextFields
                     required
-                    placeholder="Enter the label here"
+                    options={['My website', 'My youtube channel', 'My blog', 'My portfolio', 'My podcast', 'My store']}
+                    placeholder="Label here"
                     value={x.label}
                     handleValues={handleChangeValue('label', index)}
                   />
@@ -129,7 +131,7 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
                 <TableCell sx={{p: 0, width: '50%', borderBottom: 'none'}}>
                   <RenderTextFields
                     required
-                    placeholder="Enter the URL link here"
+                    placeholder="Link here"
                     value={x.link}
                     handleValues={handleChangeValue('link', index)}
                     isError={x.link.trim().length > 0 && !isValidUrl(x.link)}
