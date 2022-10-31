@@ -17,7 +17,12 @@ interface RenderTextFieldsProps {
 
 const RenderProposalsTextFields = ({ value, handleValues, placeholder, label, item, required, isError, options }: RenderTextFieldsProps) => {
   const handleBefore = (newValue: string | null) => {
-    handleValues(item !== undefined ? item : newValue || '');
+    const value = newValue || '';
+    if (item !== undefined) {
+      handleValues(item)(value);
+    } else {
+      handleValues(value || '');
+    }
   }
 
   return (
