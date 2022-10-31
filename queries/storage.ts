@@ -12,10 +12,13 @@ import {
   CreateMultipartUploadCommand,
   CreateMultipartUploadCommandInput,
   UploadPartCommand,
-  UploadPartCommandInput, CompleteMultipartUploadCommandOutput, HeadObjectCommandInput, HeadObjectCommand
+  UploadPartCommandInput,
+  CompleteMultipartUploadCommandOutput,
+  HeadObjectCommandInput,
+  HeadObjectCommand
 } from "@aws-sdk/client-s3";
 
-export const checkIfExist = async (key: string) => {
+export const checkIfExist: (key: string) => Promise<any> = async (key: string) => {
   try {
     const input: HeadObjectCommandInput = {
       Bucket: String(process.env.REACT_AWS_BUCKET_NAME),
@@ -24,7 +27,7 @@ export const checkIfExist = async (key: string) => {
     const command: HeadObjectCommand = new HeadObjectCommand(input);
     return await s3Client.send(command);
   } catch (e) {
-    throw e;
+    return e;
   }
 };
 
