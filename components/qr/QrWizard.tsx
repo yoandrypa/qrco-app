@@ -112,11 +112,11 @@ const QrWizard = ({children}: QrWizardProps) => {
 
       if (data.backgndImg !== undefined) {
         // @ts-ignore
-        data.backgndImg = await StorageHandler.upload([data.backgndImg], `${userInfo.attributes.sub}/backgndImg`);
+        data.backgndImg = await StorageHandler.upload([data.backgndImg], `${userInfo.attributes.sub}/${selected}s/design`);
       }
       if (data.foregndImg !== undefined) {
         // @ts-ignore
-        data.foregndImg = await StorageHandler.upload([data.foregndImg], `${userInfo.attributes.sub}/foregndImg`);
+        data.foregndImg = await StorageHandler.upload([data.foregndImg], `${userInfo.attributes.sub}/${selected}s/design`);
       }
 
       if (selected === 'donations') {
