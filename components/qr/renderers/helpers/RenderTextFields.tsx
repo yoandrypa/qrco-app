@@ -15,7 +15,7 @@ interface RenderTextFieldsProps {
 
 const RenderTextFields = ({value, handleValues, placeholder, label, item, required, isError}: RenderTextFieldsProps) => (
   <TextField
-    label={label || ''}
+    label={label}
     size="small"
     fullWidth
     required={required || false}
