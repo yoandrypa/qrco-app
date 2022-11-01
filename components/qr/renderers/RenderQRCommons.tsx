@@ -23,6 +23,7 @@ import RenderImagePicker from "./helpers/RenderImagePicker";
 import Tooltip from "@mui/material/Tooltip";
 import RenderImgPreview from "./helpers/RenderImgPreview";
 import RenderForeImgTypePicker from "./helpers/RenderForeImgTypePicker";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface QRCommonsProps {
   omitDesign?: boolean;
@@ -30,8 +31,9 @@ interface QRCommonsProps {
   qrName?: string;
   primary?: string;
   secondary?: string;
-  backgndImg?: File;
-  foregndImg?: File;
+  loading?: boolean;
+  backgndImg?: File | string;
+  foregndImg?: File | string;
   foregndImgType?: string;
   handleValue: Function;
 }
@@ -39,7 +41,7 @@ interface QRCommonsProps {
 const colors = [DEFAULT_COLORS, {p: '#187510', s: '#9ece99'}, {p: '#aa8412', s: '#d7c89a'},
   {p: '#b30909', s: '#dba8a8'}, {p: '#8c0f4a', s: '#dd9ebc'}, {p: '#40310f', s: '#a8a6a1'}] as ColorTypes[];
 
-function RenderQRCommons({omitDesign, omitPrimaryImg, qrName, primary, foregndImg, foregndImgType, backgndImg, secondary, handleValue}: QRCommonsProps) {
+function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, foregndImg, foregndImgType, backgndImg, secondary, handleValue}: QRCommonsProps) {
   // @ts-ignore
   const {userInfo} = useContext(Context);
   const [expander, setExpander] = useState<string | null>('design');
@@ -110,7 +112,7 @@ function RenderQRCommons({omitDesign, omitPrimaryImg, qrName, primary, foregndIm
         </Button>
       </Tooltip>
     </>
-  )
+  );
 
   return (
     <>
@@ -136,26 +138,35 @@ function RenderQRCommons({omitDesign, omitPrimaryImg, qrName, primary, foregndIm
           {expander === "design" && (
             <>
               {renderColors()}
+              {loading && (
+                <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center', position: 'absolute' }}>
+                  <CircularProgress size={20} sx={{ mr: '5px' }} />
+                  <Typography sx={{ fontSize: 'small', color: theme => theme.palette.text.disabled}}>
+                    {'Loading data. Please wait...'}
+                  </Typography>
+                </Box>
+              )}
               <Box sx={{
                 width: '100%',
                 display: 'flex',
                 textAlign: 'center',
                 flexDirection: {md: "row", xs: "column"},
-                mt: 2
+                mt: !loading? 2 : 3
               }}>
                 <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
                   <Tooltip title="Click for selecting the background image">
                     <Button
                       sx={{width: '100%'}}
+                      disabled={loading}
                       startIcon={<WallpaperIcon/>}
                       variant="outlined"
                       color="primary"
                       onClick={handleSelectFile('backgndImg')}
                     >
-                      {`${backgndImg ? 'Image loaded /' : 'Select'} background image`}
+                      {`${backgndImg && !loading ? 'Image loaded /' : 'Select'} background image`}
                     </Button>
                   </Tooltip>
-                  {backgndImg && renderOptions('backgndImg')}
+                  {backgndImg && !loading && renderOptions('backgndImg')}
                 </ButtonGroup>
                 {!omitPrimaryImg && (
                   <ButtonGroup sx={{mt: {xs: 1, md: 0}, width: '100%'}}>
@@ -164,13 +175,14 @@ function RenderQRCommons({omitDesign, omitPrimaryImg, qrName, primary, foregndIm
                         sx={{width: '100%'}}
                         startIcon={<ImageIcon/>}
                         variant="outlined"
+                        disabled={loading}
                         onClick={handleSelectFile('foregndImg')}
                         color="primary"
                       >
-                        {`${foregndImg ? 'Image loaded /' : 'Select'} main image`}
+                        {`${foregndImg && !loading ? 'Image loaded /' : 'Select'} main image`}
                       </Button>
                     </Tooltip>
-                    {foregndImg && renderOptions('foregndImg')}
+                    {foregndImg && !loading && renderOptions('foregndImg')}
                   </ButtonGroup>
                 )}
               </Box>
@@ -197,7 +209,7 @@ function RenderQRCommons({omitDesign, omitPrimaryImg, qrName, primary, foregndIm
 // @ts-ignore
 function notIf(curr, next) {
   return curr.qrName === next.qrName && curr.primary === next.primary && curr.secondary === next.secondary &&
-    curr.backgndImg === next.backgndImg && curr.foregndImg === next.foregndImg &&
+    curr.backgndImg === next.backgndImg && curr.foregndImg === next.foregndImg && curr.loading === next.loading &&
     curr.foregndImgType === next.foregndImgType;
 }
 

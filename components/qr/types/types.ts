@@ -220,6 +220,8 @@ export type EditType = {
   qrName: string;
   isDynamic?: boolean;
   qrOptionsId?: any;
+  backgndImg?: any;
+  foregndImg?: any;
   value?: string;
   primary?: string;
   secondary?: string;
