@@ -144,28 +144,32 @@ function RenderQRCommons({omitDesign, omitPrimaryImg, qrName, primary, foregndIm
                 mt: 2
               }}>
                 <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
-                  <Button
-                    sx={{width: '100%'}}
-                    startIcon={<WallpaperIcon/>}
-                    variant="outlined"
-                    color="primary"
-                    onClick={handleSelectFile('backgndImg')}
-                  >
-                    {'Select background image'}
-                  </Button>
+                  <Tooltip title="Click for selecting the background image">
+                    <Button
+                      sx={{width: '100%'}}
+                      startIcon={<WallpaperIcon/>}
+                      variant="outlined"
+                      color="primary"
+                      onClick={handleSelectFile('backgndImg')}
+                    >
+                      {`${backgndImg ? 'Image loaded /' : 'Select'} background image`}
+                    </Button>
+                  </Tooltip>
                   {backgndImg && renderOptions('backgndImg')}
                 </ButtonGroup>
                 {!omitPrimaryImg && (
                   <ButtonGroup sx={{mt: {xs: 1, md: 0}, width: '100%'}}>
-                    <Button
-                      sx={{width: '100%'}}
-                      startIcon={<ImageIcon/>}
-                      variant="outlined"
-                      onClick={handleSelectFile('foregndImg')}
-                      color="primary"
-                    >
-                      {'Select main image'}
-                    </Button>
+                    <Tooltip title="Click for selecting the main image">
+                      <Button
+                        sx={{width: '100%'}}
+                        startIcon={<ImageIcon/>}
+                        variant="outlined"
+                        onClick={handleSelectFile('foregndImg')}
+                        color="primary"
+                      >
+                        {`${foregndImg ? 'Image loaded /' : 'Select'} main image`}
+                      </Button>
+                    </Tooltip>
                     {foregndImg && renderOptions('foregndImg')}
                   </ButtonGroup>
                 )}
