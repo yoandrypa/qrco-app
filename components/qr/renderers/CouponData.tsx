@@ -35,9 +35,9 @@ const CouponData = ({data, setData, handleValues, setIsWrong}: CouponProps) => {
       isError = true;
     }
 
-    if (item === 'prefix') {
+    if (['prefix', 'urlOptionLabel'].includes(item)) {
       return (<RenderProposalsTextFields
-        options={['Shop online', 'Buy online', 'Get a discount', 'Buy & get a discount']}
+        options={item === 'prefix' ? ['Get coupon', '10% off', 'Get for free'] : ['Shop online', 'Buy online', 'Get a discount', 'Buy & get a discount']}
         value={value}
         item={item}
         label={label}
