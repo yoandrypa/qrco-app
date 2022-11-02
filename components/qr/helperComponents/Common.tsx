@@ -1,10 +1,11 @@
-import {ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
+import {ReactNode, useCallback, useContext, useEffect, useState} from "react";
 import Typography from "@mui/material/Typography";
 import Context from "../../context/Context";
 import RenderQRCommons from "../renderers/RenderQRCommons";
 
 import {DEFAULT_COLORS} from "../constants";
 import {download} from "../../../handlers/storage";
+import Notifications from "../../notifications/Notifications";
 
 interface CommonProps {
   msg: string;
@@ -18,6 +19,7 @@ function Common({ msg, children }: CommonProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [backImg, setBackImg] = useState<any>(undefined);
   const [foreImg, setForeImg] = useState<any>(undefined);
+  const [error, setError] = useState<boolean>(false);
 
   const handleValue = useCallback((prop: string) => (payload: any) => {
     if (prop === 'backgndImg' && backImg !== undefined) {
@@ -57,6 +59,7 @@ function Common({ msg, children }: CommonProps) {
         setForeImg(fileData.content);
       }
     } catch {
+      setError(true);
       if ((item === 'backgndImg' && data.foregndImg && foreImg !== undefined) || (item === 'foregndImg' && data.backgndImg && backImg !== undefined)) {
         setLoading(false);
       }
@@ -84,6 +87,15 @@ function Common({ msg, children }: CommonProps) {
 
   return (
     <>
+      {error && (
+        <Notifications
+          title="Something went wrong"
+          message="There was an error loading the background/main images"
+          onClose={() => setError(false)}
+          vertical="bottom"
+          horizontal="center"
+        />
+      )}
       <RenderQRCommons
         handleValue={handleValue}
         qrName={data?.qrName}
