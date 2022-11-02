@@ -23,7 +23,7 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
 
   const handleLoadedImage = (f: File[]) => {
     if (f.length) {
-      if (f[0].size <= 100000) {
+      if (f[0].size <= 1000000) {
         handleAcept(f[0], kind);
       } else {
         setError(true);
@@ -47,7 +47,7 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
             multiple={false}
             maxFiles={1}
             accept={ALLOWED_FILE_EXTENSIONS.gallery}
-            title="Select the image or drag and drop"
+            title="Select the image or drag and drop it here"
           />
         </Paper>
       </DialogContent>
@@ -59,7 +59,7 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
           onClose={() => setError(false)}
           title="Too heavy"
           vertical="bottom"
-          message="The selected file is larger than 100 kilobytes." />
+          message="The selected file is larger than 1 megabyte." />
       )}
   </Dialog>
   );

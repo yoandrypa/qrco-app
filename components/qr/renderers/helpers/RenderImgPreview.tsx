@@ -6,13 +6,13 @@ import Button from "@mui/material/Button";
 
 interface RenderImgPrevProps {
   handleClose: () => void;
-  file: File;
+  file: File | string;
 }
 
 const RenderImgPreview = ({handleClose, file}: RenderImgPrevProps) => (
   <Dialog onClose={handleClose} open={true}>
     <DialogContent>
-      <Box component="img" sx={{display: 'flex', width: '370px'}} alt="EBANUX" src={URL.createObjectURL(file)}/>
+      <Box component="img" sx={{display: 'flex', width: '370px'}} alt="EBANUX" src={typeof file !== 'string' ? URL.createObjectURL(file) : file}/>
     </DialogContent>
     <DialogActions sx={{p: 2}}>
       <Button variant="outlined" onClick={handleClose}>Close</Button>
