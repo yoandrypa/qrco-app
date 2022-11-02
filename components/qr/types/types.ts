@@ -156,6 +156,8 @@ export type DataType = {
   primary?: string;
   secondary?: string;
   isDynamic?: boolean;
+  prevBackImg?: string;
+  prevForeImg?: string;
   backgndImg?: File | string;
   foregndImg?: File | string;
   foregndImgType?: 'circle' | 'smooth' | 'square' | null;
@@ -228,3 +230,8 @@ export type EditType = {
   createdAt?: string;
   updatedAt?: string;
 };
+
+export type ProcessHanldlerType = {
+  value: string;
+  status?: boolean;
+}
