@@ -22,6 +22,8 @@ import {DEFAULT_COLORS} from "../constants";
 import RenderImagePicker from "./helpers/RenderImagePicker";
 import Tooltip from "@mui/material/Tooltip";
 import RenderImgPreview from "./helpers/RenderImgPreview";
+import RenderForeImgTypePicker from "./helpers/RenderForeImgTypePicker";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface QRCommonsProps {
   omitDesign?: boolean;
@@ -29,15 +31,17 @@ interface QRCommonsProps {
   qrName?: string;
   primary?: string;
   secondary?: string;
-  backgndImg?: File;
-  foregndImg?: File;
+  loading?: boolean;
+  backgndImg?: File | string;
+  foregndImg?: File | string;
+  foregndImgType?: string;
   handleValue: Function;
 }
 
 const colors = [DEFAULT_COLORS, {p: '#187510', s: '#9ece99'}, {p: '#aa8412', s: '#d7c89a'},
   {p: '#b30909', s: '#dba8a8'}, {p: '#8c0f4a', s: '#dd9ebc'}, {p: '#40310f', s: '#a8a6a1'}] as ColorTypes[];
 
-function RenderQRCommons({omitDesign, omitPrimaryImg, qrName, primary, foregndImg, backgndImg, secondary, handleValue}: QRCommonsProps) {
+function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, foregndImg, foregndImgType, backgndImg, secondary, handleValue}: QRCommonsProps) {
   // @ts-ignore
   const {userInfo} = useContext(Context);
   const [expander, setExpander] = useState<string | null>('design');
@@ -101,13 +105,14 @@ function RenderQRCommons({omitDesign, omitPrimaryImg, qrName, primary, foregndIm
           <SearchIcon/>
         </Button>
       </Tooltip>
+      {kind === 'foregndImg' && <RenderForeImgTypePicker handleValue={handleValue} foregndImgType={foregndImgType} />}
       <Tooltip title="Remove">
         <Button sx={{width: '40px'}} variant="contained" color="error" onClick={() => handleValue(kind)(undefined)}>
           <ClearIcon/>
         </Button>
       </Tooltip>
     </>
-  )
+  );
 
   return (
     <>
@@ -133,37 +138,51 @@ function RenderQRCommons({omitDesign, omitPrimaryImg, qrName, primary, foregndIm
           {expander === "design" && (
             <>
               {renderColors()}
+              {loading && (
+                <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center', position: 'absolute' }}>
+                  <CircularProgress size={20} sx={{ mr: '5px' }} />
+                  <Typography sx={{ fontSize: 'small', color: theme => theme.palette.text.disabled}}>
+                    {'Loading data. Please wait...'}
+                  </Typography>
+                </Box>
+              )}
               <Box sx={{
                 width: '100%',
                 display: 'flex',
                 textAlign: 'center',
                 flexDirection: {md: "row", xs: "column"},
-                mt: 2
+                mt: !loading? 2 : 3
               }}>
                 <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
-                  <Button
-                    sx={{width: '100%'}}
-                    startIcon={<WallpaperIcon/>}
-                    variant="outlined"
-                    color="primary"
-                    onClick={handleSelectFile('backgndImg')}
-                  >
-                    {'Select background image'}
-                  </Button>
-                  {backgndImg && renderOptions('backgndImg')}
+                  <Tooltip title="Click for selecting the background image">
+                    <Button
+                      sx={{width: '100%'}}
+                      disabled={loading}
+                      startIcon={<WallpaperIcon/>}
+                      variant="outlined"
+                      color="primary"
+                      onClick={handleSelectFile('backgndImg')}
+                    >
+                      {`${backgndImg && !loading ? 'Image loaded /' : 'Select'} background image`}
+                    </Button>
+                  </Tooltip>
+                  {backgndImg && !loading && renderOptions('backgndImg')}
                 </ButtonGroup>
                 {!omitPrimaryImg && (
                   <ButtonGroup sx={{mt: {xs: 1, md: 0}, width: '100%'}}>
-                    <Button
-                      sx={{width: '100%'}}
-                      startIcon={<ImageIcon/>}
-                      variant="outlined"
-                      onClick={handleSelectFile('foregndImg')}
-                      color="primary"
-                    >
-                      {'Select main image'}
-                    </Button>
-                    {foregndImg && renderOptions('foregndImg')}
+                    <Tooltip title="Click for selecting the main image">
+                      <Button
+                        sx={{width: '100%'}}
+                        startIcon={<ImageIcon/>}
+                        variant="outlined"
+                        disabled={loading}
+                        onClick={handleSelectFile('foregndImg')}
+                        color="primary"
+                      >
+                        {`${foregndImg && !loading ? 'Image loaded /' : 'Select'} main image`}
+                      </Button>
+                    </Tooltip>
+                    {foregndImg && !loading && renderOptions('foregndImg')}
                   </ButtonGroup>
                 )}
               </Box>
@@ -190,7 +209,8 @@ function RenderQRCommons({omitDesign, omitPrimaryImg, qrName, primary, foregndIm
 // @ts-ignore
 function notIf(curr, next) {
   return curr.qrName === next.qrName && curr.primary === next.primary && curr.secondary === next.secondary &&
-    curr.backgndImg === next.backgndImg && curr.foregndImg === next.foregndImg;
+    curr.backgndImg === next.backgndImg && curr.foregndImg === next.foregndImg && curr.loading === next.loading &&
+    curr.foregndImgType === next.foregndImgType;
 }
 
 export default memo(RenderQRCommons, notIf);

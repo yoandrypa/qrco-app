@@ -1,4 +1,4 @@
-import { CustomError, formatBytes, toBytes } from "../utils";
+import { CustomError, formatBytes } from "../utils";
 import queries from "../queries";
 
 export const upload = async (assets: File[], path = "") => {

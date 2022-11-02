@@ -14,7 +14,7 @@ export const APIv2 = axios.create({
 
 export const createEbanuxDonationPrice = async (userId: string, token: string, data: EbanuxDonationPriceData) => {
     const result = await APIv1.post('/donation', {
-        amount: data.unitAmountUSD * 100,
+        amount: data.unitAmountUSD,
         cognitoUserId: userId
     }, {
         headers: {
@@ -25,5 +25,13 @@ export const createEbanuxDonationPrice = async (userId: string, token: string, d
 }
 
 async function updateEbanuxDonationPrice(userId: string, token: string, priceId: string, data: EbanuxDonationPriceData) {
-    //TODO
+    const result = await APIv1.put('/donation', {
+        amount: data.unitAmountUSD,
+        cognitoUserId: userId
+    }, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    return result;
 }

@@ -158,6 +158,7 @@ export type DataType = {
   isDynamic?: boolean;
   backgndImg?: File | string;
   foregndImg?: File | string;
+  foregndImgType?: 'circle' | 'smooth' | 'square' | null;
   files?: File[];
 };
 
@@ -219,6 +220,8 @@ export type EditType = {
   qrName: string;
   isDynamic?: boolean;
   qrOptionsId?: any;
+  backgndImg?: any;
+  foregndImg?: any;
   value?: string;
   primary?: string;
   secondary?: string;
