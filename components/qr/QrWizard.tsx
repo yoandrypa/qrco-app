@@ -1,4 +1,4 @@
-import {ReactNode, useCallback, useContext, useState} from "react";
+import {ReactNode, useCallback, useContext, useRef, useState} from "react";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -10,28 +10,23 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DoneIcon from "@mui/icons-material/Done";
 import SaveIcon from "@mui/icons-material/Save";
 import {styled} from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import {useRouter} from "next/router";
 
 import {generateId, generateShortLink} from "../../utils";
-import * as QrHandler from "../../handlers/qrs";
 import {
-  BackgroundType,
-  CornersAndDotsType,
-  DataType,
-  EbanuxDonationPriceData,
-  EditType,
-  FramesType,
-  OptionsType
+  BackgroundType, CornersAndDotsType, DataType, EbanuxDonationPriceData, EditType, FramesType, OptionsType, ProcessHanldlerType
 } from "./types/types";
 import {QR_TYPE_ROUTE} from "./constants";
 import {areEquals} from "../helpers/generalFunctions";
 import {initialBackground, initialFrame} from "../../helpers/qr/data";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import {getUuid} from "../../helpers/qr/helpers";
+import * as QrHandler from "../../handlers/qrs";
 import * as StorageHandler from "../../handlers/storage";
 import * as EbanuxHandler from "../../handlers/ebanux"
 import Notifications from "../notifications/Notifications";
+import ProcessHandler from "./renderers/ProcessHandler";
 
 const steps = ["Type", "Content", "Design"];
 
@@ -68,6 +63,12 @@ const StepperButtons = styled(Button)(() => ({width: "120px", height: "30px"}));
 
 const QrWizard = ({children}: QrWizardProps) => {
   const [isError, setIsError] = useState<boolean>(false);
+  const [, setUnusedState] = useState();
+
+  // @ts-ignore
+  const forceUpdate = useCallback(() => setUnusedState({}), []);
+
+  const dataInfo = useRef<ProcessHanldlerType[]>([]);
   const isWide = useMediaQuery("(min-width:600px)", {noSsr: true});
 
   // @ts-ignore
@@ -83,6 +84,15 @@ const QrWizard = ({children}: QrWizardProps) => {
   };
 
   const isLogged = Boolean(userInfo);
+
+  const updatingHandler = (value: string | null, status?: boolean) => {
+    if (value !== null) {
+      dataInfo.current.push({value});
+    } else {
+      dataInfo.current[dataInfo.current.length - 1].status = status;
+    }
+    forceUpdate();
+  }
 
   const handleNext = async () => {
     setLoading(true);
@@ -106,17 +116,61 @@ const QrWizard = ({children}: QrWizardProps) => {
     } else if (step === 2 && isLogged) {
       //Process assets before saving de QR Data
       if (["pdf", "audio", "gallery", "video"].includes(selected)) {
-        // @ts-ignore
-        data["files"] = await StorageHandler.upload(data["files"], `${userInfo.attributes.sub}/${selected}s`);
+        updatingHandler('Uploading assets');
+        try { // @ts-ignore
+          data["files"] = await StorageHandler.upload(data["files"], `${userInfo.attributes.sub}/${selected}s`);
+          updatingHandler(null, true);
+        } catch {
+          updatingHandler(null, false);
+        }
       }
 
-      if (data.backgndImg !== undefined && !Array.isArray(data.backgndImg)) {
-        // @ts-ignore
-        data.backgndImg = await StorageHandler.upload([data.backgndImg], `${userInfo.attributes.sub}/${selected}s/design`);
+      if (data.backgndImg !== undefined) {
+        if (!Array.isArray(data.backgndImg)) {
+          updatingHandler('Uploading background image');
+          try { // @ts-ignore
+            data.backgndImg = await StorageHandler.upload([data.backgndImg], `${userInfo.attributes.sub}/${selected}s/design`);
+            updatingHandler(null, true);
+          } catch {
+            updatingHandler(null, false);
+          }
+        } else {
+          delete data.backgndImg;
+        }
       }
-      if (data.foregndImg !== undefined && !Array.isArray(data.foregndImg)) {
-        // @ts-ignore
-        data.foregndImg = await StorageHandler.upload([data.foregndImg], `${userInfo.attributes.sub}/${selected}s/design`);
+      if (data.prevBackImg !== undefined) {
+        updatingHandler('Removing previous background image');
+        try {
+          await StorageHandler.remove([{Key: data.prevBackImg}]);
+          delete data.prevBackImg;
+          updatingHandler(null, true);
+        } catch {
+          updatingHandler(null, false);
+        }
+      }
+
+      if (data.foregndImg !== undefined) {
+        if (!Array.isArray(data.foregndImg)) {
+          updatingHandler('Uploading main image');
+          try { // @ts-ignore
+            data.foregndImg = await StorageHandler.upload([data.foregndImg], `${userInfo.attributes.sub}/${selected}s/design`);
+            updatingHandler(null, true);
+          } catch {
+            updatingHandler(null, false);
+          }
+        } else {
+          delete data.foregndImg;
+        }
+      }
+      if (data.prevForeImg !== undefined) {
+        updatingHandler('Deleting previous main image');
+        try {
+          await StorageHandler.remove([{Key: data.prevForeImg}]);
+          delete data.prevForeImg;
+          updatingHandler(null, true);
+        } catch {
+          updatingHandler(null, true);
+        }
       }
 
       if (selected === 'donations') {
@@ -196,9 +250,16 @@ const QrWizard = ({children}: QrWizardProps) => {
       }
 
       try {
+        debugger;
         if (data.mode === undefined) {
+          if (dataInfo.current.length) {
+            updatingHandler('Saving QR Code data');
+          }
           await QrHandler.create({shortLink, qrDesign, qrData});
         } else {
+          if (dataInfo.current.length) {
+            updatingHandler('Updating QR Code data');
+          }
           const objToEdit = {
             ...qrData,
             userId: qrDesign.userId,
@@ -222,12 +283,22 @@ const QrWizard = ({children}: QrWizardProps) => {
           await QrHandler.edit(objToEdit);
         }
 
-        router.replace("/").then(() => {
-          setLoading(false);
-        });
+        if (dataInfo.current.length) {
+          updatingHandler(null, true);
+        } else {
+          router.replace("/").then(() => {
+            setLoading(false);
+          });
+        }
       } catch {
+        if (dataInfo.current.length) {
+          updatingHandler(null, false);
+        }
         setIsError(true);
         setLoading(false);
+      }
+      if (dataInfo.current.length) {
+        updatingHandler('done');
       }
     } else if (step === 2 && !isLogged) {
       await router.push(QR_TYPE_ROUTE, undefined, {shallow: true});
@@ -278,6 +349,18 @@ const QrWizard = ({children}: QrWizardProps) => {
       <Box sx={{minHeight: `calc(100vh - ${isTrialMode ? (step === 0 ? 207 : 215) : 195}px)`}}>
         {children}
       </Box>
+      {dataInfo.current.length ? <ProcessHandler process={dataInfo.current} handleCommand={
+        (isError?: boolean) => {
+          dataInfo.current = [];
+          if (!isError) {
+            router.replace("/").then(() => {
+              setLoading(false);
+            });
+          } else {
+            forceUpdate();
+          }
+        }
+      } /> : null}
       {isWide ? (
         <Box sx={{width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between", pt: 2}}>
           {renderBack()}

@@ -1,10 +1,12 @@
-import {ReactNode, useCallback, useContext, useEffect, useMemo, useState} from "react";
+import {ReactNode, useCallback, useContext, useEffect, useState} from "react";
 import Typography from "@mui/material/Typography";
 import Context from "../../context/Context";
 import RenderQRCommons from "../renderers/RenderQRCommons";
 
 import {DEFAULT_COLORS} from "../constants";
 import {download} from "../../../handlers/storage";
+import Notifications from "../../notifications/Notifications";
+import {DataType} from "../types/types";
 
 interface CommonProps {
   msg: string;
@@ -18,14 +20,9 @@ function Common({ msg, children }: CommonProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [backImg, setBackImg] = useState<any>(undefined);
   const [foreImg, setForeImg] = useState<any>(undefined);
+  const [error, setError] = useState<boolean>(false);
 
   const handleValue = useCallback((prop: string) => (payload: any) => {
-    if (prop === 'backgndImg' && backImg !== undefined) {
-      setBackImg(undefined);
-    } else if (prop === 'foregndImg' && foreImg !== undefined) {
-      setForeImg(undefined);
-    }
-
     if (payload === undefined) {
       setData((prev: any) => {
         const tempo = {...prev};
@@ -33,7 +30,15 @@ function Common({ msg, children }: CommonProps) {
         return tempo;
       })
     } else if (prop !== 'both') {
-      setData((prev: any) => ({ ...prev, [prop]: payload.target?.value !== undefined ? payload.target.value : payload}));
+      if (prop === 'backgndImg' && backImg !== undefined) {
+        setBackImg(undefined); // @ts-ignore
+        setData((prev: DataType) => ({...prev, backgndImg: payload, prevBackImg: prev.backgndImg[0].Key}));
+      } else if (prop === 'foregndImg' && foreImg !== undefined) {
+        setForeImg(undefined); // @ts-ignore
+        setData((prev: DataType) => ({...prev, foregndImg: payload, prevForeImg: prev.foregndImg[0].Key}));
+      } else {
+        setData((prev: any) => ({ ...prev, [prop]: payload.target?.value !== undefined ? payload.target.value : payload }));
+      }
     } else if (payload.p !== DEFAULT_COLORS.p || payload.s !== DEFAULT_COLORS.s) {
       setData((prev: any) => ({ ...prev, primary: payload.p, secondary: payload.s }));
     } else {
@@ -44,7 +49,7 @@ function Common({ msg, children }: CommonProps) {
         return temp;
       });
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [backImg, foreImg]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getFiles = useCallback(async (key: string, item: string) => {
     try {
@@ -57,6 +62,7 @@ function Common({ msg, children }: CommonProps) {
         setForeImg(fileData.content);
       }
     } catch {
+      setError(true);
       if ((item === 'backgndImg' && data.foregndImg && foreImg !== undefined) || (item === 'foregndImg' && data.backgndImg && backImg !== undefined)) {
         setLoading(false);
       }
@@ -84,6 +90,15 @@ function Common({ msg, children }: CommonProps) {
 
   return (
     <>
+      {error && (
+        <Notifications
+          title="Something went wrong"
+          message="There was an error loading the background/main images"
+          onClose={() => setError(false)}
+          vertical="bottom"
+          horizontal="center"
+        />
+      )}
       <RenderQRCommons
         handleValue={handleValue}
         qrName={data?.qrName}
