@@ -110,13 +110,21 @@ const QrWizard = ({children}: QrWizardProps) => {
         data["files"] = await StorageHandler.upload(data["files"], `${userInfo.attributes.sub}/${selected}s`);
       }
 
-      if (data.backgndImg !== undefined && !Array.isArray(data.backgndImg)) {
-        // @ts-ignore
-        data.backgndImg = await StorageHandler.upload([data.backgndImg], `${userInfo.attributes.sub}/${selected}s/design`);
+      if (data.backgndImg !== undefined) {
+        if (!Array.isArray(data.backgndImg)) {
+          // @ts-ignore
+          data.backgndImg = await StorageHandler.upload([data.backgndImg], `${userInfo.attributes.sub}/${selected}s/design`);
+        } else {
+          delete data.backgndImg;
+        }
       }
-      if (data.foregndImg !== undefined && !Array.isArray(data.foregndImg)) {
-        // @ts-ignore
-        data.foregndImg = await StorageHandler.upload([data.foregndImg], `${userInfo.attributes.sub}/${selected}s/design`);
+      if (data.foregndImg !== undefined) {
+        if (!Array.isArray(data.foregndImg)) {
+          // @ts-ignore
+          data.foregndImg = await StorageHandler.upload([data.foregndImg], `${userInfo.attributes.sub}/${selected}s/design`);
+        } else {
+          delete data.foregndImg;
+        }
       }
 
       if (selected === 'donations') {
