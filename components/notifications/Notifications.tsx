@@ -32,10 +32,11 @@ interface NotificationsProps {
   vertical?: "bottom" | "top" | undefined;
   horizontal?: "left" | "right" | "center" | undefined;
   title?: string | undefined;
+  showProgress?: boolean;
 }
 
 // @ts-ignore
-const Notifications = ({severity, message, autoHideDuration, onClose, vertical, horizontal, title}: NotificationsProps) => (
+const Notifications = ({severity, message, showProgress, autoHideDuration, onClose, vertical, horizontal, title}: NotificationsProps) => (
   <Portal>
     <Stack spacing={2} sx={{ width: '100%' }}>
       <Snackbar
@@ -48,13 +49,13 @@ const Notifications = ({severity, message, autoHideDuration, onClose, vertical, 
         <Alert onClose={onClose} severity={severity || 'error'} sx={{ width: '100%' }}>
           {title && <AlertTitle>{title}</AlertTitle>}
           {message}
-          {autoHideDuration && (
+          {showProgress && (
             <Progress
               color={severity || 'error'}
               // @ts-ignore
-              time={(autoHideDuration / 1000)}
+              time={((autoHideDuration || 5000) / 1000)}
               variant="indeterminate"
-              sx={{ mr: '-40px', mt: 1 }}
+              sx={{ mr: '-40px', mt: 1, width: '100%' }}
             />
           )}
         </Alert>
