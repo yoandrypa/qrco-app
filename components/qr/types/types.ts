@@ -75,6 +75,7 @@ export type LinkType = {
 
 export type DataType = {
   mode?: string;
+  prevNetworks?: string[];
   userId?: string;
   id?: string;
   qrName?: string;
@@ -170,7 +171,6 @@ export type DonationsData = {
   shortText: string
 }
 
-
 export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram';
 
 export type EbanuxDonationPriceData = {
@@ -190,7 +190,7 @@ export type SocialProps = {
   twitter?: string;
   qrName?: string;
   isDynamic?: boolean;
-}
+};
 
 export type CardDataProps = {
   data: DataType;
@@ -210,14 +210,10 @@ export type ColorTypes = {
   s: string
 };
 
-export type FileType = {
-  content: string;
-  type: string;
-};
-
 export type EditType = {
   userId: string;
   id: string;
+  prevNetworks?: string[];
   qrType: string;
   qrName: string;
   isDynamic?: boolean;
@@ -234,4 +230,4 @@ export type EditType = {
 export type ProcessHanldlerType = {
   value: string;
   status?: boolean;
-}
+};
