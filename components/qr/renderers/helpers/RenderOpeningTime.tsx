@@ -96,8 +96,10 @@ export default function RenderOpeningTime({data, setData}: CardDataProps) {
       {Object.keys(data.openingTime || {}).length ? (
         <Grid item xs={12}>
           <Grid container spacing={1}>
-            {/* @ts-ignore */}
-            {Object.keys(data.openingTime).map((x: string) => {
+            {['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map((x: string) => { // @ts-ignore
+              if (!data.openingTime[x]) {
+                return null;
+              }
               // @ts-ignore
               const values = data.openingTime?.[x] || [] as OpeningType;
               // @ts-ignore
