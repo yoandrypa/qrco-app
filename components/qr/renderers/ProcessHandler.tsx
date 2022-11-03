@@ -25,7 +25,7 @@ const ProcessHandler = ({process, handleCommand}: ProcessHandlerProps) => {
     <Dialog open={true} disableEscapeKeyDown>
       <DialogContent sx={{ width: '450px' }}>
         {!isDone ? <Typography>Please, wait...</Typography> :
-          <Typography>{`Completed${isError ? ' with errors' : ''}`}</Typography>}
+          <Typography>{`Completed${isError ? ' with errors' : '... Redirecting...'}`}</Typography>}
         <Grid container spacing={2} sx={{ mt: 2 }}>
           {process.filter((x: ProcessHanldlerType) => x.value !== 'done').map((x: ProcessHanldlerType, index: number) => {
             return (
