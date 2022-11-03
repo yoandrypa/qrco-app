@@ -16,9 +16,10 @@ interface RenderImageProps {
   handleAcept: (file: File, kind: string) => void;
   title: string;
   kind: string;
+  wasError?: boolean;
 }
 
-export default function RenderImagePicker({title, kind, handleClose, handleAcept}: RenderImageProps) {
+export default function RenderImagePicker({title, kind, handleClose, handleAcept, wasError}: RenderImageProps) {
   const [error, setError] = useState<boolean>(false);
 
   const handleLoadedImage = (f: File[]) => {
@@ -34,10 +35,19 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
   return (
     <Dialog onClose={handleClose} open={true}>
       <DialogContent>
-        <Box sx={{ mb: 2, display: 'flex' }}>
-          <Typography>{'Please, select the'}</Typography>
-          <Typography sx={{fontWeight: 'bold', mx: '5px'}}>{`${title}`}</Typography>
-          <Typography>{'image.'}</Typography>
+        {wasError && (
+          <Box sx={{ width: '100%', textAlign: 'center'}}>
+            <Typography sx={{ color: theme => theme.palette.error.dark, mb: 2, fontWeight: 'bold' }}>
+              {`The ${title} image failed. Be advised.`}
+            </Typography>
+          </Box>
+        )}
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+          <Box sx={{ mb: 2, display: 'flex' }}>
+            <Typography>{'Please, select the'}</Typography>
+            <Typography sx={{fontWeight: 'bold', mx: '5px'}}>{`${title}`}</Typography>
+            <Typography>{'image.'}</Typography>
+          </Box>
         </Box>
         <Paper sx={{ width: 370, height: 'auto', p: 1 }}>
           <FileUpload

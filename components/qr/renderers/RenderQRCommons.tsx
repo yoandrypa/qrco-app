@@ -35,13 +35,16 @@ interface QRCommonsProps {
   backgndImg?: File | string;
   foregndImg?: File | string;
   foregndImgType?: string;
+  backError?: boolean;
+  foreError?: boolean;
   handleValue: Function;
 }
 
 const colors = [DEFAULT_COLORS, {p: '#187510', s: '#9ece99'}, {p: '#aa8412', s: '#d7c89a'},
   {p: '#b30909', s: '#dba8a8'}, {p: '#8c0f4a', s: '#dd9ebc'}, {p: '#40310f', s: '#a8a6a1'}] as ColorTypes[];
 
-function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, foregndImg, foregndImgType, backgndImg, secondary, handleValue}: QRCommonsProps) {
+function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, foregndImg, foregndImgType, backgndImg,
+                           backError, foreError, secondary, handleValue}: QRCommonsProps) {
   // @ts-ignore
   const {userInfo} = useContext(Context);
   const [expander, setExpander] = useState<string | null>('design');
@@ -158,7 +161,7 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
                     <Button
                       sx={{width: '100%'}}
                       disabled={loading}
-                      startIcon={<WallpaperIcon/>}
+                      startIcon={<WallpaperIcon sx={{ color: theme => backError ? theme.palette.error.dark : undefined }}/>}
                       variant="outlined"
                       color="primary"
                       onClick={handleSelectFile('backgndImg')}
@@ -173,7 +176,7 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
                     <Tooltip title="Click for selecting the main image">
                       <Button
                         sx={{width: '100%'}}
-                        startIcon={<ImageIcon/>}
+                        startIcon={<ImageIcon sx={{ color: theme => foreError ? theme.palette.error.dark : undefined }}/>}
                         variant="outlined"
                         disabled={loading}
                         onClick={handleSelectFile('foregndImg')}
@@ -196,7 +199,9 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
           handleClose={() => setSelectFile(null)}
           title={selectFile === 'foregndImg' ? 'main' : 'background'}
           kind={selectFile}
-          handleAcept={handleAccept}/>
+          handleAcept={handleAccept}
+          wasError={(selectFile === 'foregndImg' && foreError) || (selectFile === 'backgndImg' && backError)}
+        />
       )}
       {preview !== null && (
         // @ts-ignore
@@ -210,7 +215,7 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
 function notIf(curr, next) {
   return curr.qrName === next.qrName && curr.primary === next.primary && curr.secondary === next.secondary &&
     curr.backgndImg === next.backgndImg && curr.foregndImg === next.foregndImg && curr.loading === next.loading &&
-    curr.foregndImgType === next.foregndImgType;
+    curr.foregndImgType === next.foregndImgType && curr.backError === next.backError && curr.foreError === next.foreError;
 }
 
 export default memo(RenderQRCommons, notIf);

@@ -16,7 +16,14 @@ import {useRouter} from "next/router";
 
 import {generateId, generateShortLink} from "../../utils";
 import {
-  BackgroundType, CornersAndDotsType, DataType, EbanuxDonationPriceData, EditType, FramesType, OptionsType, ProcessHanldlerType
+  BackgroundType,
+  CornersAndDotsType,
+  DataType,
+  EbanuxDonationPriceData,
+  EditType,
+  FramesType,
+  OptionsType,
+  ProcessHanldlerType
 } from "./types/types";
 import {QR_TYPE_ROUTE} from "./constants";
 import {areEquals} from "../helpers/generalFunctions";
@@ -196,6 +203,7 @@ const QrWizard = ({children}: QrWizardProps) => {
       }
 
       const qrData = {...data, qrType: selected};
+
       let shortLink;
 
       const qrDesign = {...options};
@@ -259,6 +267,7 @@ const QrWizard = ({children}: QrWizardProps) => {
           if (dataInfo.current.length) {
             updatingHandler('Updating QR Code data');
           }
+
           const objToEdit = {
             ...qrData,
             userId: qrDesign.userId,
@@ -266,6 +275,16 @@ const QrWizard = ({children}: QrWizardProps) => {
             qrType: qrData.qrType,
             qrName: qrData.qrName
           } as EditType;
+
+          if (objToEdit.prevNetworks) {
+            // TODO: uncomment this once the update function is ready
+            // objToEdit.prevNetworks.forEach((x: string) => { // @ts-ignore
+            //   if (!objToEdit[x]) { // @ts-ignore
+            //     objToEdit[x] = undefined;
+            //   }
+            // });
+            delete objToEdit.prevNetworks;
+          }
 
           if (objToEdit.createdAt) {
             delete objToEdit.createdAt;
