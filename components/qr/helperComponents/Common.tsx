@@ -62,10 +62,12 @@ function Common({ msg, children }: CommonProps) {
         setForeImg(fileData.content);
       }
     } catch {
-      setError(true);
-      if ((item === 'backgndImg' && data.foregndImg && foreImg !== undefined) || (item === 'foregndImg' && data.backgndImg && backImg !== undefined)) {
-        setLoading(false);
+      if (item === 'backgndImg') {
+        setBackImg(null);
+      } else {
+        setForeImg(null);
       }
+      setError(true);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -83,7 +85,7 @@ function Common({ msg, children }: CommonProps) {
   }, [data.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if ((backImg && (!data?.foregndImg || foreImg)) || (foreImg && (!data?.backgndImg || backImg))) {
+    if ((backImg !== undefined && !data.foregndImg) || (foreImg !== undefined && !data.backgndImg) || (foreImg !== undefined && backImg !== undefined)) {
       setLoading(false);
     }
   }, [backImg, foreImg]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -97,6 +99,8 @@ function Common({ msg, children }: CommonProps) {
           onClose={() => setError(false)}
           vertical="bottom"
           horizontal="center"
+          showProgress
+          autoHideDuration={10500}
         />
       )}
       <RenderQRCommons
@@ -109,6 +113,8 @@ function Common({ msg, children }: CommonProps) {
         foregndImgType={data?.foregndImgType}
         primary={data?.primary}
         loading={loading}
+        foreError={foreImg === null}
+        backError={backImg === null}
         secondary={data.secondary} />
       <Typography>{msg}</Typography>
       {children}
