@@ -250,7 +250,6 @@ const QrWizard = ({children}: QrWizardProps) => {
       }
 
       try {
-        debugger;
         if (data.mode === undefined) {
           if (dataInfo.current.length) {
             updatingHandler('Saving QR Code data');
