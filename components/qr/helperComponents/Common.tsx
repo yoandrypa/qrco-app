@@ -88,7 +88,7 @@ function Common({ msg, children }: CommonProps) {
     if ((backImg !== undefined && !data.foregndImg) || (foreImg !== undefined && !data.backgndImg) || (foreImg !== undefined && backImg !== undefined)) {
       setLoading(false);
     }
-  }, [backImg, foreImg]);
+  }, [backImg, foreImg]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
