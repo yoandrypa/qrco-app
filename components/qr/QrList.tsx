@@ -32,6 +32,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import {humanDate} from "../helpers/generalFunctions";
 import {handleDesignerString, handleInitialData} from "../../helpers/qr/helpers";
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import {SOCIALS} from "./constants";
 
 const QrList = ({qrs}: any) => {
   const [deleteConfirm, setDeleteConfirm] = useState<{
@@ -48,6 +49,15 @@ const QrList = ({qrs}: any) => {
   const handleEdit = useCallback((qr: QrDataType) => {
     setLoading(true);
     const options = {...qr.qrOptionsId, ...qr, mode: 'edit'};
+    const keys = Object.keys(qr);
+    SOCIALS.forEach((x: string) => { // @ts-ignore
+      if (keys[x]) { // @ts-ignore
+        if (!options.prevNetworks) { // @ts-ignore
+          options.prevNetworks = [];
+        } // @ts-ignore
+        options.prevNetworks.push(x);
+      }
+    })
     setOptions(options);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -68,7 +78,7 @@ const QrList = ({qrs}: any) => {
     }
   };
 
-  const handleDashboard = async () => {    
+  const handleDashboard = async () => {
   const dashBaseUrl = !process.env.NEXT_PUBLIC_DEVELOPMENT_MODE ? 'https://app.ebanux.com/checkouts' : 'https://dev-app.ebanux.com/checkouts'
   router.push(dashBaseUrl)
   }
@@ -89,7 +99,7 @@ const QrList = ({qrs}: any) => {
       <IconButton color="error" disabled={isLoading} onClick={() => showConfirmationDialog(qr.id, qr.userId)}>
         <DeleteOutlineRounded/>
       </IconButton>
-     {(qr.qrType === 'donations' && !!qr.donationProductId) && 
+     {(qr.qrType === 'donations' && !!qr.donationProductId) &&
       (
         <Tooltip title='Go to Dashboard'>
           <IconButton color="info" disabled={isLoading} onClick={handleDashboard}>
