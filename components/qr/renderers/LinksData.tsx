@@ -21,6 +21,7 @@ import FormControl from '@mui/material/FormControl';
 import VerticalAlignCenterIcon from '@mui/icons-material/VerticalAlignCenter';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
@@ -129,12 +130,10 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
     <Common msg="Your contact details. Users can store your info or contact you right away.">
       <Topics message="Main info" top="3px"/>
       <Grid container spacing={1}>
-        <Grid item sm={4} xs={12} style={{paddingTop: 0}}>
-          {/* @ts-ignore */}
+        <Grid item sm={4} xs={12} style={{paddingTop: 0}}>{/* @ts-ignore */}
           <RenderTextFields item="title" label="Title" value={data?.title || ''} handleValues={handleValues} required/>
         </Grid>
-        <Grid item sm={8} xs={12} style={{paddingTop: 0}}>
-          {/* @ts-ignore */}
+        <Grid item sm={8} xs={12} style={{paddingTop: 0}}>{/* @ts-ignore */}
           <RenderTextFields item="about" label="Description" value={data?.about || ''} handleValues={handleValues}/>
         </Grid>
       </Grid>
@@ -156,7 +155,12 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}>
+                            style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}> {/* @ts-ignore */}
+                            {data.links.length > 1 && (
+                              <TableCell sx={{p: 0, pr: 1, width: '40px', borderBottom: 'none'}}>
+                                <DragIndicatorIcon sx={{ color: theme => theme.palette.text.disabled, mt: '8px' }} />
+                              </TableCell>
+                            )}
                             <TableCell sx={{p: 0, pr: 1, width: '50%', borderBottom: 'none'}}>
                               <RenderProposalsTextFields
                                 required
