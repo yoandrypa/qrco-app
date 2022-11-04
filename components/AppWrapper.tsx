@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode, cloneElement, useCallback, useState, MouseEvent, useEffect } from "react";
+import { ReactElement, ReactNode, cloneElement, useCallback, useState, MouseEvent, useEffect } from "react";
 
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import AppBar from "@mui/material/AppBar";
@@ -14,16 +14,16 @@ import QrCodeIcon from "@mui/icons-material/QrCode";
 import FirstPageIcon from "@mui/icons-material/FirstPage";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
-
-import { useRouter } from "next/router";
-import Link from "next/link";
-
-import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
+
+import { useRouter } from "next/router";
+import Link from "next/link";
+
+import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
 import RenderNewQrButton from "./renderers/RenderNewQrButton";
 import CountDown from "./countdown/CountDown";
 import { find as findUser } from "../handlers/users";
@@ -48,6 +48,7 @@ function ElevationScroll({ children, window }: Props) {
 }
 
 interface AppWrapperProps {
+  mode?: string;
   children: ReactNode;
   userInfo?: any;
   handleLogout?: () => void;
@@ -57,7 +58,7 @@ interface AppWrapperProps {
 }
 
 export default function AppWrapper(props: AppWrapperProps) {
-  const { children, userInfo, handleLogout, clearData, setLoading, setIsTrialMode } = props;
+  const { children, userInfo, handleLogout, clearData, setLoading, setIsTrialMode, mode } = props;
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
@@ -92,7 +93,8 @@ export default function AppWrapper(props: AppWrapperProps) {
       clearData(false);
     }
     handleLoading();
-    router.push((router.pathname === "/" ? QR_TYPE_ROUTE : "/"), undefined, { shallow: true }).then(() => {
+    router.push({ pathname: mode !== 'edit' && router.pathname === "/" ? QR_TYPE_ROUTE : "/", query: { mode } },
+      undefined, { shallow: true }).then(() => {
       handleLoading(false);
     });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
