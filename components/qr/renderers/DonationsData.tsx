@@ -1,105 +1,105 @@
-import React, {ChangeEvent, useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import { Stack, SvgIcon } from '@mui/material';
+import { Autocomplete, Stack, SvgIcon } from '@mui/material';
 import Common from '../helperComponents/Common'
-import EmojiFoodBeverageIcon from '@mui/icons-material/EmojiFoodBeverage';
 import Alert from '@mui/material/Alert';
-import {isValidUrl} from "../../../utils";
-import FileUpload from "react-material-file-upload";
-import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS } from "../../../consts";
-import { toBytes } from "../../../utils";
+import { isValidUrl } from "../../../utils";
 import CoffeeIcon from '@mui/icons-material/Coffee';
- export interface DonationsProps {
-    data: {
-      title?: string,
-      avatarImage?: string,
-      message?: string,
-      web?: string,
-      donationUnitAmount?: number,
-      donationPriceId?: string,
-      donationProductId?: string,
-    },
-    setData: Function,
-    setIsWrong: Function
+export interface DonationsProps {
+  data: {
+    title?: string,
+    avatarImage?: string,
+    message?: string,
+    web?: string,
+    donationUnitAmount?: number,
+    donationPriceId?: string,
+    donationProductId?: string,
+    urlOptionLabel?: string
+  },
+  setData: Function,
+  setIsWrong: Function
 }
 
-type Options = 'message' | 'title' |'avatarImage' | 'web' | 'donationUnitAmount'
+type Options = 'message' | 'title' | 'avatarImage' |
+  'web' | 'donationUnitAmount' | 'urlOptionLabel'
 
-const  DonationsData = ({data,setData,setIsWrong }: DonationsProps) => {
+const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
 
-const [isError,setIsError] = useState<boolean>(false)
-const [webError, setWebError] = useState<boolean>(false)
-const [coffeePrice, setCoffeePrice] = useState<number>(1)
+  const [isError, setIsError] = useState<boolean>(false)
+  const [webError, setWebError] = useState<boolean>(false)
+  const [coffeePrice, setCoffeePrice] = useState<number>(1)
 
-useEffect(()=>{
-  const temp = {...data}
-if (coffeePrice < 1 ){
-  setCoffeePrice(1) 
-  temp["donationUnitAmount"] = 1
-  temp["donationUnitAmount"] = coffeePrice
-} else{
-  temp["donationUnitAmount"] = coffeePrice
-}
- 
-}
-,[coffeePrice, data])
+  useEffect(() => {
+    const temp = { ...data }
+    if (coffeePrice < 1) {
+      setCoffeePrice(1)
+      temp["donationUnitAmount"] = 1
+      temp["donationUnitAmount"] = coffeePrice
+    } else {
+      temp["donationUnitAmount"] = coffeePrice
+    }
+
+  }
+    , [coffeePrice, data])
 
   const handleValues = (item: Options) => (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
-    const temp = {...data };
-    if (item === "web"){
+    const temp = { ...data };
+    if (item === "web") {
       setWebError(!isValidUrl(value))
       setIsWrong(webError)
     }
-    if (value.length) {  
-        if (item === 'donationUnitAmount'){
-          setCoffeePrice(parseInt(value))
-          if (parseInt(value) < 1){
-            setIsWrong(true)
-            setIsError(true)        
-          } else {
-            temp[item] =  parseInt(value)
-            setIsWrong(false)            
-            setIsError(false)
-          }     
-                  
-        }             
-      
-        // @ts-ignore
-        temp[item] = value;
-        // @ts-ignore
-      } else if (temp[item]) {
-        // @ts-ignore
-        delete temp[item];
+    if (value.length) {
+      if (item === 'donationUnitAmount') {
+        setCoffeePrice(parseInt(value))
+        if (parseInt(value) < 1) {
+          setIsWrong(true)
+          setIsError(true)
+        } else {
+          temp[item] = parseInt(value)
+          setIsWrong(false)
+          setIsError(false)
+        }
+
       }
-    
+
+      if (item === 'urlOptionLabel') console.log(value)
+
+      // @ts-ignore
+      temp[item] = value;
+      // @ts-ignore
+    } else if (temp[item]) {
+      // @ts-ignore
+      delete temp[item];
+    }
+
     setData(temp);
   };
 
-  const handleWebInputBlur = (event: React.FocusEvent<HTMLInputElement>) =>{
-   if (event.target.value.length > 0) {
-    setWebError(!isValidUrl(event.target.value));
-   } else {
-    setWebError(false);
-   }
-   setIsWrong(webError)
+  const handleWebInputBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    if (event.target.value.length > 0) {
+      setWebError(!isValidUrl(event.target.value));
+    } else {
+      setWebError(false);
+    }
+    setIsWrong(webError)
   }
 
 
   return (
-   
-  <Common msg='Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.'>
-    <Paper>     
-   <Typography variant='h6' textAlign={'center'} marginTop={2}>Customize your donation page</Typography>    
-   <Grid container sx={{ display: 'flex', justifyContent: 'center',alignContent:'center' }}>
-    <Grid item>      
-    </Grid>
-    <Grid item>
-    <Stack direction="row" sx={{marginTop:2, display: 'flex', justifyContent: 'center',alignSelf:'center' }}>
-    {/* <FileUpload
+
+    <Common msg='Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.'>
+      <Paper>
+        <Typography variant='h6' textAlign={'center'} marginTop={2}>Customize your donation page</Typography>
+        <Grid container sx={{ display: 'flex', justifyContent: 'center', alignContent: 'center' }}>
+          <Grid item>
+          </Grid>
+          <Grid item>
+            <Stack direction="row" sx={{ marginTop: 2, display: 'flex', justifyContent: 'center', alignSelf: 'center' }}>
+              {/* <FileUpload
             sx={{border: 4, borderStyle: 'dashed', backgroundColor: 'lightgray'}}
             onChange={()=>{}}
             accept={ALLOWED_FILE_EXTENSIONS['image']}
@@ -110,91 +110,126 @@ if (coffeePrice < 1 ){
             // @ts-ignore
             maxSize={toBytes(5, "MB")}
           /> */}
-     </Stack> 
-    </Grid>
-    <Grid item>        
-    </Grid>
-   </Grid>
-   <Grid container sx={{ display: 'flex', justifyContent: 'center',alignContent:'center' }}>
+            </Stack>
+          </Grid>
+          <Grid item>
+          </Grid>
+        </Grid>
+        <Grid container sx={{ display: 'flex', justifyContent: 'center', alignContent: 'center' }}>
 
-    </Grid>  
-   <Grid sx={{display: 'flex', alignItems: "center",
-           justifyContent: "center"}}>
-   
-      <TextField label='Your Name'
-         sx={{marginTop: 2, width:300 }}
-         placeholder='Paul Smith'
-         value={data?.title || ''}
-         onChange={handleValues('title')}
-         size='small'
-       /> 
-     </Grid>
+        </Grid>
+        <Grid sx={{
+          display: 'flex', alignItems: "center",
+          justifyContent: "center"
+        }}>
 
-  <Typography textAlign={'center'} marginTop={2}>Add a small text here</Typography>
-  <Grid  sx={{display: 'flex', alignItems: "center",
-        justifyContent: "center"}}>
-  <TextField
-        label="Make a good one"
-        size="small"
-        fullWidth
-        margin="dense"
-        value={data?.message || 'Would you like to buy me a coffee?'}
-        onChange={handleValues('message')} 
-        multiline
-        sx={{width: 300, display: 'flex', alignItems: "center",
-        justifyContent: "center"}}
-        rows={5}
-        >
-        </TextField>
-  </Grid>
-  <Alert severity='info' sx={{margin: 2}}>
-  Note: When you receive a donation, your supporters will be redirected to this website or social link page,
-   you can use this to provide some content as a sign of appreciation or just leave it blank and they 
-   will be redirected to a &quot;thank you page&quot;.
-  </Alert>
-  <Grid 
-  sx={{display: 'flex', alignItems: "center",
-        justifyContent: "center"}}>
-<TextField label='Website or social link'
-sx={{marginTop: 2, width:300 }}
-value={data?.web || ''}
-onChange={handleValues('web')}
-onBlur={handleWebInputBlur}
-error={webError}
-size='small'
-/>   
-</Grid>
+          <TextField label='Your Name'
+            sx={{ marginTop: 2, width: 300 }}
+            placeholder='Paul Smith'
+            value={data?.title || ''}
+            onChange={handleValues('title')}
+            size='small'
+          />
+        </Grid>
 
-  <Grid container spacing={2}
-    sx={{marginTop: 1, display: 'flex', alignItems: "center",justifyContent: "center"}}>
-    <Grid item>
-   <SvgIcon>
-   <CoffeeIcon color='primary'/>
-   </SvgIcon>  
-   </Grid>
-    <Grid item>
-    <TextField 
-      inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }} 
-      type='number'
-      label='Coffee Price' 
-      sx={{width: 140, marginBottom:2}}
-      placeholder='10'
-      size='small'
-      value={coffeePrice}
-      onChange={handleValues('donationUnitAmount')}
-      error={isError}
-    />
-  
-    </Grid>
-    </Grid>
-    <Grid sx={{marginBottom:2,  display: 'flex', alignItems: "center",justifyContent: "center"}}>
-    {isError && <Typography  marginBottom={2} align='center' color='red' variant='caption'>
-    Hey, minimum of $1 USD for a coffee.
-    </Typography>} 
-    </Grid>
+        <Typography textAlign={'center'} marginTop={2}>Add a small text here</Typography>
+        <Grid sx={{
+          display: 'flex', alignItems: "center",
+          justifyContent: "center"
+        }}>
+          <TextField
+            label="Make a good one"
+            size="small"
+            fullWidth
+            margin="dense"
+            value={data?.message || 'Would you like to buy me a coffee?'}
+            onChange={handleValues('message')}
+            multiline
+            sx={{
+              width: 300, display: 'flex', alignItems: "center",
+              justifyContent: "center"
+            }}
+            rows={5}
+          >
+          </TextField>
+        </Grid>
 
-   </Paper>
- </Common>
+
+        <Grid sx={{
+          display: 'flex', alignItems: "center",
+          justifyContent: "center"
+        }}>
+          <Autocomplete
+            freeSolo
+            sx={{ width: 300, marginTop: 2 }}
+            id="button-text-auto"
+            disableClearable
+            onChange={(event: any, newValue: string | null) => { handleValues('urlOptionLabel') }}
+            options={['Donate', 'Book', 'Pay']}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Button Text"
+                InputProps={{
+                  ...params.InputProps,
+                  type: 'search',
+                }}
+              />
+            )}
+          />
+
+        </Grid>
+
+        <Alert severity='info' sx={{ margin: 2 }}>
+          Note: When you receive a donation, your supporters will be redirected to this website or social link page,
+          you can use this to provide some content as a sign of appreciation or just leave it blank and they
+          will be redirected to a &quot;thank you page&quot;.
+        </Alert>
+        <Grid
+          sx={{
+            display: 'flex', alignItems: "center",
+            justifyContent: "center"
+          }}>
+          <TextField label='Website or social link'
+            sx={{ marginTop: 2, width: 300 }}
+            value={data?.web || ''}
+            onChange={handleValues('web')}
+            onBlur={handleWebInputBlur}
+            error={webError}
+            size='small'
+          />
+        </Grid>
+
+        <Grid container spacing={2}
+          sx={{ marginTop: 1, display: 'flex', alignItems: "center", justifyContent: "center" }}>
+          <Grid item>
+            <SvgIcon>
+              <CoffeeIcon color='primary' />
+            </SvgIcon>
+          </Grid>
+          <Grid item>
+            <TextField
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+              type='number'
+              label='Coffee Price'
+              sx={{ width: 140, marginBottom: 2 }}
+              placeholder='10'
+              size='small'
+              value={coffeePrice}
+              onChange={handleValues('donationUnitAmount')}
+              error={isError}
+            />
+
+          </Grid>
+        </Grid>
+        <Grid sx={{ marginBottom: 2, display: 'flex', alignItems: "center", justifyContent: "center" }}>
+          {isError && <Typography marginBottom={2} align='center' color='red' variant='caption'>
+            Hey, minimum of $1 USD for a coffee.
+          </Typography>}
+        </Grid>
+
+      </Paper>
+    </Common>
   )
 }
 
