@@ -142,7 +142,7 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
             <>
               {renderColors()}
               {loading && (
-                <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center', position: 'absolute' }}>
+                <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center', mt: '10px', mb: '-10px' }}>
                   <CircularProgress size={20} sx={{ mr: '5px' }} />
                   <Typography sx={{ fontSize: 'small', color: theme => theme.palette.text.disabled}}>
                     {'Loading data. Please wait...'}
@@ -154,7 +154,7 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
                 display: 'flex',
                 textAlign: 'center',
                 flexDirection: {md: "row", xs: "column"},
-                mt: !loading? 2 : 3
+                mt: 2
               }}>
                 <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
                   <Tooltip title="Click for selecting the background image">
