@@ -11,10 +11,11 @@ import Stack from '@mui/material/Stack';
 import Slider from "@mui/material/Slider";
 import CropIcon from '@mui/icons-material/Crop';
 import PhotoSizeSelectLargeIcon from '@mui/icons-material/PhotoSizeSelectLarge';
+import {getUuid} from "../../../../helpers/qr/helpers";
 
 interface ImageCropperProps {
   handleClose: () => void;
-  handleAccept: (file: File, kind: string) => void;
+  handleAccept: (newFile: File, kind: string) => void;
   file: File;
   kind: string;
 }
@@ -53,14 +54,14 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
         }
       }
     }
-  }
+  };
 
   const beforeSend = () => {
     const { type, name } = file;
     const canvas = canvasRef.current;
     if (canvas) {
       canvas.toBlob(blob => { // @ts-ignore
-        const newFile = new File([blob], name, {type});
+        const newFile = new File([blob], `${getUuid()}${name.slice(name.indexOf('.'))}`, {type});
         handleAccept(newFile, kind);
       }, type, 0.5);
     }
@@ -78,6 +79,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
 
   useEffect(() => {
     if (!initial.current) {
+      pos.current = {x: 0, y: 0};
       updateCanvas();
     }
   }, [zoom.selected]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -157,6 +159,10 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
           <Slider aria-label="Zoom" max={zoom.max} min={zoom.min} value={zoom.selected} onChange={handleChange} />
           <ZoomInIcon fontSize="large" color="primary" />
         </Stack>
+        <Box sx={{ mt: 2, display: 'flex', color: theme => theme.palette.text.disabled, width: '100%', justifyContent: 'center' }}>
+          <Typography sx={{ fontSize: 'small', fontWeight: 'bold', mr: '5px' }}>{'Note:'}</Typography>
+          <Typography sx={{ fontSize: 'small'}}>{'Image might have a tiny difference on microsite.'}</Typography>
+        </Box>
       </DialogContent>
       <DialogActions sx={{p: 2}}>
         <Button startIcon={<CropIcon />} variant="outlined" onClick={beforeSend}>Crop and use</Button>
