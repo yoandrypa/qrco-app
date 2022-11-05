@@ -24,6 +24,7 @@ import Tooltip from "@mui/material/Tooltip";
 import RenderImgPreview from "./helpers/RenderImgPreview";
 import RenderForeImgTypePicker from "./helpers/RenderForeImgTypePicker";
 import CircularProgress from "@mui/material/CircularProgress";
+import ImageCropper from "./helpers/ImageCropper";
 
 interface QRCommonsProps {
   omitDesign?: boolean;
@@ -49,6 +50,7 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
   const {userInfo} = useContext(Context);
   const [expander, setExpander] = useState<string | null>('design');
   const [selectFile, setSelectFile] = useState<string | null>(null);
+  const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
   const renderColors = () => (
@@ -97,8 +99,13 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
   };
 
   const handleAccept = (file: File, kind: string) => {
-    handleValue(kind)(file);
+    setCropper({file, kind});
     setSelectFile(null);
+  };
+
+  const handleSave = (file: File, kind: string) => {
+    handleValue(kind)(file);
+    setCropper(null);
   };
 
   const renderOptions = (kind: string) => (
@@ -203,9 +210,11 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
           wasError={(selectFile === 'foregndImg' && foreError) || (selectFile === 'backgndImg' && backError)}
         />
       )}
-      {preview !== null && (
-        // @ts-ignore
+      {preview !== null && ( // @ts-ignore
         <RenderImgPreview handleClose={() => setPreview(null)} file={preview === 'backgndImg' ? backgndImg : foregndImg} />
+      )}
+      {cropper !== null && (
+        <ImageCropper handleClose={() => setCropper(null)} file={cropper.file} kind={cropper.kind} handleAccept={handleSave} />
       )}
     </>
   );
