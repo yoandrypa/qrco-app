@@ -24,6 +24,7 @@ import Tooltip from "@mui/material/Tooltip";
 import RenderImgPreview from "./helpers/RenderImgPreview";
 import RenderForeImgTypePicker from "./helpers/RenderForeImgTypePicker";
 import CircularProgress from "@mui/material/CircularProgress";
+import ImageCropper from "./helpers/ImageCropper";
 
 interface QRCommonsProps {
   omitDesign?: boolean;
@@ -44,12 +45,16 @@ const colors = [DEFAULT_COLORS, {p: '#187510', s: '#9ece99'}, {p: '#aa8412', s: 
   {p: '#b30909', s: '#dba8a8'}, {p: '#8c0f4a', s: '#dd9ebc'}, {p: '#40310f', s: '#a8a6a1'}] as ColorTypes[];
 
 function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, foregndImg, foregndImgType, backgndImg,
-                           backError, foreError, secondary, handleValue}: QRCommonsProps) {
-  // @ts-ignore
+                           backError, foreError, secondary, handleValue}: QRCommonsProps) { // @ts-ignore
   const {userInfo} = useContext(Context);
   const [expander, setExpander] = useState<string | null>('design');
   const [selectFile, setSelectFile] = useState<string | null>(null);
+  const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+
+  if (!userInfo) {
+    return null;
+  }
 
   const renderColors = () => (
     <>
@@ -88,17 +93,18 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
     </>
   );
 
-  if (!userInfo) {
-    return null;
-  }
-
   const handleSelectFile = (kind: string) => () => {
     setSelectFile(kind);
   };
 
   const handleAccept = (file: File, kind: string) => {
-    handleValue(kind)(file);
+    setCropper({file, kind});
     setSelectFile(null);
+  };
+
+  const handleSave = (newFile: File, kind: string) => {
+    handleValue(kind)(newFile);
+    setCropper(null);
   };
 
   const renderOptions = (kind: string) => (
@@ -203,9 +209,11 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
           wasError={(selectFile === 'foregndImg' && foreError) || (selectFile === 'backgndImg' && backError)}
         />
       )}
-      {preview !== null && (
-        // @ts-ignore
+      {preview !== null && ( // @ts-ignore
         <RenderImgPreview handleClose={() => setPreview(null)} file={preview === 'backgndImg' ? backgndImg : foregndImg} />
+      )}
+      {cropper !== null && (
+        <ImageCropper handleClose={() => setCropper(null)} file={cropper.file} kind={cropper.kind} handleAccept={handleSave} />
       )}
     </>
   );

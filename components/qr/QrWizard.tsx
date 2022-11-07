@@ -364,7 +364,7 @@ const QrWizard = ({children}: QrWizardProps) => {
 
   return (
     <>
-      <Box sx={{minHeight: `calc(100vh - ${isTrialMode ? (step === 0 ? 207 : 215) : 195}px)`}}>
+      <Box sx={{minHeight: `calc(100vh - ${isTrialMode ? (step === 0 ? 207 : 215) : 207}px)`}}>
         {children}
       </Box>
       {dataInfo.current.length ? <ProcessHandler process={dataInfo.current} handleCommand={

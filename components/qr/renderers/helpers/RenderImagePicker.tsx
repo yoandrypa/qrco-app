@@ -34,7 +34,7 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
 
   return (
     <Dialog onClose={handleClose} open={true}>
-      <DialogContent>
+      <DialogContent dividers>
         {wasError && (
           <Box sx={{ width: '100%', textAlign: 'center'}}>
             <Typography sx={{ color: theme => theme.palette.error.dark, mb: 2, fontWeight: 'bold' }}>
