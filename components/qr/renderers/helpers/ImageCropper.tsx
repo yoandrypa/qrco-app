@@ -123,7 +123,8 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
         greaterHeight();
         handleZoom();
       } else {
-        setZoom({...zoom, min: Math.ceil(width > height ? canvasDimensions.current.width * 100 / width : canvasDimensions.current.height * 100 / height)})
+        const min = Math.ceil(width > height ? canvasDimensions.current.width * 100 / width : canvasDimensions.current.height * 100 / height);
+        setZoom({...zoom, min, selected: min });
       }
 
       dimensions.current = {height, width};
