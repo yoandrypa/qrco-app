@@ -102,11 +102,9 @@ const QrWizard = ({children}: QrWizardProps) => {
   }
 
   const handleNext = async () => {
-    setLoading(true);
-
-    // @ts-ignore
+    setLoading(true); // @ts-ignore
     if (step === 0 && data.isDynamic && !isLogged) {
-      router.push({pathname: "/", query: {path: router.pathname, login: true}}, "/")
+      router.push({pathname: "/", query: {path: router.pathname, login: true, selected}}, "/")
         .then(() => {
           setLoading(false);
         });
@@ -214,20 +212,16 @@ const QrWizard = ({children}: QrWizardProps) => {
         const shortLinkId = getUuid();
 
         // @ts-ignore
-        qrData.qrOptionsId = qrDesignId;
-        // @ts-ignore
-        qrData.id = qrId;
-        // @ts-ignore
-        qrData.userId = userInfo.attributes.sub;
-        // @ts-ignore
+        qrData.qrOptionsId = qrDesignId; // @ts-ignore
+        qrData.id = qrId; // @ts-ignore
+        qrData.userId = userInfo.attributes.sub; // @ts-ignore
         qrData.shortLinkId = {id: shortLinkId, userId: userInfo.attributes.sub};
 
         if (data.isDynamic) {
           shortLink = {
             id: shortLinkId,
             target: generateShortLink(`qr/${qrId}`),
-            address: options.shortCode || await generateId(),
-            // @ts-ignore
+            address: options.shortCode || await generateId(), // @ts-ignore
             userId: userInfo.attributes.sub
           };
         }
@@ -319,7 +313,7 @@ const QrWizard = ({children}: QrWizardProps) => {
         updatingHandler('done');
       }
     } else if (step === 2 && !isLogged) {
-      await router.push(QR_TYPE_ROUTE, undefined, {shallow: true});
+      await router.push(QR_TYPE_ROUTE, '/', {shallow: true});
     } else {
       setStep((prev: number) => prev + 1);
     }

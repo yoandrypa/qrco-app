@@ -41,7 +41,7 @@ const QrList = ({qrs}: any) => {
   } | null>(null);
 
   // @ts-ignore
-  const {isLoading, setLoading, setOptions} = useContext(Context);
+  const {isLoading, setLoading, setOptions, setStep} = useContext(Context);
   const router = useRouter();
 
   const isWide = useMediaQuery('(min-width:600px)', {noSsr: true});
@@ -62,7 +62,11 @@ const QrList = ({qrs}: any) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    setOptions(handleInitialData("Ebanux"));
+    if (router.query.selected) {
+      setStep(1);
+    } else {
+      setOptions(handleInitialData("Ebanux"));
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDelete = async () => {
@@ -132,16 +136,11 @@ const QrList = ({qrs}: any) => {
         {qrs?.length > 0 ? (
           <>
             <Typography variant="h6" style={{fontWeight: "bold"}}>My QR Codes</Typography>
-            {qrs.map((qr: any) => {
-              // @ts-ignore
-              const qrLink = sanitize.link(qr.shortLinkId || {});
-              // @ts-ignore
+            {qrs.map((qr: any) => { // @ts-ignore
+              const qrLink = sanitize.link(qr.shortLinkId || {}); // @ts-ignore
               return (
                 <Paper sx={{width: "100%", overflow: "hidden"}} elevation={3} key={qr.id}>
                   <Grid container justifyContent="flex-start" alignItems="center" spacing={2}>
-                    {/*<Grid item xs={0.1}>*/}
-                    {/*  <Checkbox />*/}
-                    {/*</Grid>*/}
                     <Grid item sm={5} xs={12}>
                       <Box sx={{display: "flex", justifyContent: 'space-between'}}>
                         <Box sx={{display: "flex"}}>
@@ -162,12 +161,10 @@ const QrList = ({qrs}: any) => {
                             <Typography variant="h6" sx={{fontWeight: "bold", mb: '-2px'}}>{qr.qrName}</Typography>
                             {isWide ? (
                               <Typography variant="caption" sx={{color: "gray"}}>
-                                {/*Created at: {format(new Date(qr.createdAt), "MMM d, yyyy")}*/}
                                 {`Created at: ${humanDate(new Date(qr.createdAt).getTime())}`}
                               </Typography>
                             ) : (
-                              <Typography variant="caption" sx={{color: "gray"}}>
-                                {/*@ts-ignore*/}
+                              <Typography variant="caption" sx={{color: "gray"}}>{/*@ts-ignore*/}
                                 <Link href={qrLink.link}>{qrLink.link}</Link>
                               </Typography>
                             )}
@@ -191,12 +188,10 @@ const QrList = ({qrs}: any) => {
                                sx={{ml: {xs: 2, sm: 0}}}>
                           {renderStaticDynamic(qr.isDynamic)}
                           {qrLink.address ? (
-                            <Typography variant="caption" sx={{color: "gray"}}>
-                              {/*@ts-ignore*/}
+                            <Typography variant="caption" sx={{color: "gray"}}>{/*@ts-ignore*/}
                               <Public fontSize="inherit"/> <Link href={qrLink.link}>{qrLink.link.split("//")[1]}</Link>
                             </Typography>) : <></>}
                           <Typography variant="caption" sx={{color: "gray"}}>
-                            {/*<Edit fontSize="inherit"/> Updated at: {format(new Date(qr.updatedAt), "MMM d, yyyy")}*/}
                             <Edit fontSize="inherit"/> {`Updated at: ${humanDate(new Date(qr.updatedAt).getTime())}`}
                           </Typography>
                         </Stack>
@@ -232,7 +227,7 @@ const QrList = ({qrs}: any) => {
           </Grid>
         )}
       </Stack>
-      {deleteConfirm !== null ?
+      {deleteConfirm !== null ? (
         <Dialog
           sx={{"& .MuiDialog-paper": {width: "80%", maxHeight: 435}}}
           maxWidth="xs"
@@ -251,7 +246,7 @@ const QrList = ({qrs}: any) => {
             </Button>
           </DialogActions>
         </Dialog>
-        : null}
+      ) : null}
     </>
   );
 };
