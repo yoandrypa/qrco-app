@@ -48,8 +48,9 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
       if (posX <= 0 && posY <= 0 && posX >= (canvasDimensions.current.width - dimensionW) && posY >= (canvasDimensions.current.height - dimensionH)) {
         pos.current = {x: posX, y: posY};
 
-        const context = canvas?.getContext('2d');
-        if (context) { // @ts-ignore
+        const context = canvas?.getContext('2d', { alpha: false, desynchronized: true });
+        if (context) {
+          context.imageSmoothingEnabled = true; // @ts-ignore
           context.drawImage(image.current, posX, posY, dimensionW, dimensionH);
         }
       }
