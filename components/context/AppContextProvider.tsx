@@ -176,17 +176,16 @@ const AppContextProvider = (props: ContextProps) => {
     }
   }, [forceClear]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const verify = async () => {
-    try {
-      const userData = await Auth.currentAuthenticatedUser();
-      setUserInfo(userData);
-    } catch {
-      setUserInfo(null);
-      setVerifying(false);
-    }
-  };
-
   useEffect(() => {
+    const verify = async () => {
+      try {
+        const userData = await Auth.currentAuthenticatedUser();
+        setUserInfo(userData);
+      } catch {
+        setUserInfo(null);
+        setVerifying(false);
+      }
+    };
     verify();
   }, []);
 
