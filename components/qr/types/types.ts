@@ -73,6 +73,22 @@ export type LinkType = {
   link: string;
 }
 
+export type SocialProps = {
+  facebook?: string;
+  whatsapp?: string;
+  linkedin?: string;
+  instagram?: string;
+  youtube?: string;
+  pinterest?: string;
+  telegram?: string;
+  twitter?: string;
+  qrName?: string;
+  isDynamic?: boolean;
+};
+
+export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram';
+export type SocialNetworksType = { network: SocialsType, value?: string };
+
 export type DataType = {
   qrType?: string;
   mode?: string;
@@ -117,14 +133,7 @@ export type DataType = {
   via?: string;
   hashtags?: string;
   text?: string;
-  facebook?: string;
-  whatsapp?: string;
-  linkedin?: string;
-  instagram?: string;
-  youtube?: string;
-  pinterest?: string;
-  telegram?: string;
-  twitter?: string;
+  socials?: SocialNetworksType[];
   value?: string;
   is12hours?: boolean;
   openingTime?: OpeningType;
@@ -172,26 +181,11 @@ export type DonationsData = {
   shortText: string
 }
 
-export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram';
-
 export type EbanuxDonationPriceData = {
   name: string,
   unitAmountUSD: number,
   redirectUrl: string,
 }
-
-export type SocialProps = {
-  facebook?: string;
-  whatsapp?: string;
-  linkedin?: string;
-  instagram?: string;
-  youtube?: string;
-  pinterest?: string;
-  telegram?: string;
-  twitter?: string;
-  qrName?: string;
-  isDynamic?: boolean;
-};
 
 export type CardDataProps = {
   data: DataType;

@@ -61,8 +61,7 @@ export default function CardData({data, setData, handleValues, setIsWrong}: Card
     }
 
     setIsWrong(errors);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.firstName, data.phone, data.fax, data.cell, data.zip, data.web, data.email, data.facebook, data.whatsapp, data.twitter, data.instagram, data.linkedin, data.pinterest, data.telegram, data.youtube]);
+  }, [data.socials]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Common msg="Your contact details. Users can store your info or contact you right away.">

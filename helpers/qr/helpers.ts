@@ -7,8 +7,22 @@ import frame4 from '../../components/qr/frames/frame4';
 import frame5 from '../../components/qr/frames/frame5';
 import frame6 from '../../components/qr/frames/frame6';
 import frame7 from '../../components/qr/frames/frame7';
-import { DataType, FramesType } from '../../components/qr/types/types';
+import {DataType, FramesType, SocialNetworksType, SocialsType} from '../../components/qr/types/types';
 import initialOptions from "./data";
+
+const exists = (socials: SocialNetworksType[] | undefined, item: SocialsType): boolean => (
+  socials !== undefined && socials.length > 0 && socials.some((x: SocialNetworksType) => x.network === item)
+);
+
+const getValue = (socials: SocialNetworksType[] | undefined, item: SocialsType): string => {
+  if (socials) {
+    const network = socials.find((x: SocialNetworksType) => x.network === item);
+    if (network) {
+      return network.value || '';
+    }
+  }
+  return '';
+};
 
 export const handleDesignerString = (selected: string | null | undefined, data: DataType): string => {
   let designerString = '';
@@ -53,14 +67,14 @@ export const handleDesignerString = (selected: string | null | undefined, data: 
       if (data.email) { designerString += `EMAIL:${data.email}\n`; }
       if (data.web) { designerString += `URL:${data.web}\n`; }
       designerString += 'VERSION:3.0\nEND:VCARD\n';
-      if (data.facebook) { designerString += `facebook:${data.facebook}\n` }
-      if (data.twitter) { designerString += `twitter:${data.twitter}\n` }
-      if (data.instagram) { designerString += `instagram:${data.instagram}\n` }
-      if (data.youtube) { designerString += `youtube:${data.youtube}\n` }
-      if (data.whatsapp) { designerString += `whatsapp:${data.whatsapp}\n` }
-      if (data.linkedin) { designerString += `linkedin:${data.linkedin}\n` }
-      if (data.pinterest) { designerString += `pinterest:${data.pinterest}\n` }
-      if (data.telegram) { designerString += `facebook:${data.telegram}\n` }
+      if (exists(data.socials, 'facebook')) { designerString += `facebook:${getValue(data.socials, 'facebook')}\n` }
+      if (exists(data.socials, 'twitter')) { designerString += `twitter:${getValue(data.socials, 'twitter')}\n` }
+      if (exists(data.socials, 'instagram')) { designerString += `instagram:${getValue(data.socials, 'instagram')}\n` }
+      if (exists(data.socials, 'youtube')) { designerString += `youtube:${getValue(data.socials, 'youtube')}\n` }
+      if (exists(data.socials, 'whatsapp')) { designerString += `whatsapp:${getValue(data.socials, 'whatsapp')}\n` }
+      if (exists(data.socials, 'linkedin')) { designerString += `linkedin:${getValue(data.socials, 'linkedin')}\n` }
+      if (exists(data.socials, 'pinterest')) { designerString += `pinterest:${getValue(data.socials, 'pinterest')}\n` }
+      if (exists(data.socials, 'telegram')) { designerString += `facebook:${getValue(data.socials, 'telegram')}\n` }
       break;
     }
     case 'twitter': {
@@ -237,7 +251,7 @@ export const downloadAsPNG = async (svgData: { outerHTML: string | number | bool
 };
 
 export const getFrame = (frame: FramesType): string => {
-  let result = null;
+  let result: string;
   const defaultColor:string = '#000000';
   const renderFrameText = () => frame.text !== undefined ? frame.text : 'SCAN ME' as string;
 
