@@ -34,7 +34,6 @@ import Expander from "./helpers/Expander";
 import RenderSocials from "./helpers/RenderSocials";
 import pluralize from "pluralize";
 import socialsAreValid from "./validator";
-import {SOCIALS} from "../constants";
 import RenderProposalsTextFields from "./helpers/RenderProposalsTextFields";
 
 interface LinksDataProps {
@@ -69,6 +68,9 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
     setData((prev: DataType) => {
       const tempo = {...prev};
       tempo.links?.splice(index, 1);
+      if (tempo.links?.length === 1 && data?.position === 'middle') {
+        delete data.position; // under by default
+      }
       return tempo;
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -82,10 +84,7 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const amount = useMemo(() => {
-    return Object.keys(data || {}).filter((x: string) => SOCIALS.includes(x)).length;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.facebook !== undefined, data?.whatsapp !== undefined, data?.twitter !== undefined, data?.instagram !== undefined, data?.linkedin !== undefined, data?.pinterest !== undefined, data?.telegram !== undefined, data?.youtube !== undefined]);
+  const amount = data.socials?.length || 0;
 
   const linksAmount = useMemo(() => data.links?.length || 0, [data.links?.length]);
   const getMessage = useCallback((x: string) => {
@@ -210,10 +209,10 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
               {amount > 0 && (
                 <Box sx={{display: 'flex', width: '100%', justifyContent: 'center'}}>
                   <Typography sx={{ my: 'auto' }}>{`Set the position of your social ${pluralize('networks', amount)}`}</Typography>
-                  <FormControl sx={{m: 1, width: 200}} size="small">
-                    <Select value={data?.position || 'under'} onChange={handleChange} renderValue={(x: string) => {
-                      return <Typography>{getMessage(x)}</Typography>;
-                    }}>
+                  <FormControl sx={{m: 1, width: 250}} size="small">
+                    <Select value={data?.position || 'under'} onChange={handleChange} renderValue={(x: string) => (
+                      <Typography>{getMessage(x)}</Typography>
+                    )}>
                       <MenuItem value="under">
                         <ListItemIcon>
                           <VerticalAlignBottomIcon color="primary" sx={{ mb: '2px', mr: '5px' }} />

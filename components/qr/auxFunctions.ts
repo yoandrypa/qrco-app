@@ -63,15 +63,6 @@ export const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign:
     qrName: qrData.qrName
   } as EditType;
 
-  if (objToEdit.prevNetworks) {
-    // TODO: uncomment this once the update function is ready
-    // objToEdit.prevNetworks.forEach((x: string) => { // @ts-ignore
-    //   if (!objToEdit[x]) { // @ts-ignore
-    //     objToEdit[x] = undefined;
-    //   }
-    // });
-    delete objToEdit.prevNetworks;
-  }
   if (objToEdit.updatedAt) {
     delete objToEdit.updatedAt;
   }
