@@ -15,55 +15,18 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import {useRouter} from "next/router";
 
 import {generateId, generateShortLink} from "../../utils";
-import {
-  BackgroundType,
-  CornersAndDotsType,
-  DataType,
-  EbanuxDonationPriceData,
-  EditType,
-  FramesType,
-  OptionsType,
-  ProcessHanldlerType
-} from "./types/types";
+import {EbanuxDonationPriceData, ProcessHanldlerType} from "./types/types";
 import {QR_TYPE_ROUTE} from "./constants";
-import {areEquals} from "../helpers/generalFunctions";
-import {initialBackground, initialFrame} from "../../helpers/qr/data";
 import {getUuid} from "../../helpers/qr/helpers";
 import * as QrHandler from "../../handlers/qrs";
 import * as StorageHandler from "../../handlers/storage";
 import * as EbanuxHandler from "../../handlers/ebanux"
 import Notifications from "../notifications/Notifications";
 import ProcessHandler from "./renderers/ProcessHandler";
-
-const steps = ["Type", "Content", "Design"];
+import {cleaner, generateObjectToEdit, steps, StepsProps} from "./auxFunctions";
 
 interface QrWizardProps {
   children: ReactNode;
-}
-
-interface StepsProps {
-  step: number;
-  setStep: Function;
-  selected: string;
-  data: DataType;
-  userInfo: {
-    attributes: { sub: string },
-    signInUserSession: {
-      accessToken: {
-        jwtToken: string
-      }
-    }
-  };
-  options: OptionsType;
-  frame: FramesType;
-  background: BackgroundType;
-  cornersData: CornersAndDotsType;
-  dotsData: CornersAndDotsType;
-  setOptions: (opt: OptionsType) => void;
-  isWrong: boolean;
-  loading: boolean;
-  setLoading: (isLoading: boolean) => void;
-  isTrialMode?: boolean;
 }
 
 const StepperButtons = styled(Button)(() => ({width: "120px", height: "30px"}));
@@ -229,27 +192,7 @@ const QrWizard = ({children}: QrWizardProps) => {
         qrDesign.id = qrDesignId;
       }
 
-      if (!areEquals(frame, initialFrame)) {
-        qrDesign.frame = frame;
-      }
-      if (!areEquals(background, initialBackground)) {
-        qrDesign.background = background;
-      }
-      if (cornersData !== null) {
-        qrDesign.corners = cornersData;
-      }
-      if (dotsData !== null) {
-        qrDesign.cornersDot = dotsData;
-      }
-      if (!qrDesign.cornersDotOptions.type) {
-        qrDesign.cornersDotOptions.type = '';
-      }
-      if (!qrDesign.cornersSquareOptions.type) {
-        qrDesign.cornersSquareOptions.type = '';
-      }
-      if (qrDesign.mode !== undefined) {
-        delete qrDesign.mode;
-      }
+      cleaner(qrDesign, background, frame, cornersData, dotsData);
 
       try {
         if (data.mode === undefined) {
@@ -262,35 +205,7 @@ const QrWizard = ({children}: QrWizardProps) => {
             updatingHandler('Updating QR Code data');
           }
 
-          const objToEdit = {
-            ...qrData,
-            userId: qrDesign.userId,
-            id: qrDesign.id,
-            qrType: qrData.qrType,
-            qrName: qrData.qrName
-          } as EditType;
-
-          if (objToEdit.prevNetworks) {
-            // TODO: uncomment this once the update function is ready
-            // objToEdit.prevNetworks.forEach((x: string) => { // @ts-ignore
-            //   if (!objToEdit[x]) { // @ts-ignore
-            //     objToEdit[x] = undefined;
-            //   }
-            // });
-            delete objToEdit.prevNetworks;
-          }
-
-          if (objToEdit.createdAt) {
-            delete objToEdit.createdAt;
-          }
-          if (objToEdit.updatedAt) {
-            delete objToEdit.updatedAt;
-          }
-          if (data.isDynamic) {
-            objToEdit.isDynamic = true;
-          }
-
-          objToEdit.qrOptionsId = qrDesign;
+          const objToEdit = generateObjectToEdit(qrData, data, qrDesign);
 
           await QrHandler.edit(objToEdit);
         }

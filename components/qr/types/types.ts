@@ -74,6 +74,7 @@ export type LinkType = {
 }
 
 export type DataType = {
+  qrType?: string;
   mode?: string;
   prevNetworks?: string[];
   userId?: string;
