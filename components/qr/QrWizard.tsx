@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useContext, useRef, useState } from "react";
+import {ReactNode, useCallback, useContext, useRef, useState} from "react";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -9,32 +9,21 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DoneIcon from "@mui/icons-material/Done";
 import SaveIcon from "@mui/icons-material/Save";
-import { styled } from "@mui/material/styles";
+import {styled} from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 
-import { generateId, generateShortLink } from "../../utils";
-import {
-  BackgroundType,
-  CornersAndDotsType,
-  DataType,
-  EbanuxDonationPriceData,
-  EditType,
-  FramesType,
-  OptionsType,
-  ProcessHanldlerType
-} from "./types/types";
-import { QR_TYPE_ROUTE } from "./constants";
-import { areEquals } from "../helpers/generalFunctions";
-import { initialBackground, initialFrame } from "../../helpers/qr/data";
-import { getUuid } from "../../helpers/qr/helpers";
+import {generateId, generateShortLink} from "../../utils";
+import {EbanuxDonationPriceData, ProcessHanldlerType} from "./types/types";
+import {QR_TYPE_ROUTE} from "./constants";
+import {getUuid} from "../../helpers/qr/helpers";
 import * as QrHandler from "../../handlers/qrs";
 import * as StorageHandler from "../../handlers/storage";
 import * as EbanuxHandler from "../../handlers/ebanux";
 import Notifications from "../notifications/Notifications";
 import ProcessHandler from "./renderers/ProcessHandler";
-import { cleaner, generateObjectToEdit, steps, StepsProps } from "./auxFunctions";
+import {cleaner, generateObjectToEdit, steps, StepsProps} from "./auxFunctions";
 
 interface QrWizardProps {
   children: ReactNode;
