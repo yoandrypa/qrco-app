@@ -123,8 +123,40 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
         greaterHeight();
         handleZoom();
       } else {
-        const min = Math.ceil(width > height ? canvasDimensions.current.width * 100 / width : canvasDimensions.current.height * 100 / height);
-        setZoom({...zoom, min, selected: min });
+        let max:number;
+        let h = height;
+        let w = width;
+
+        if (h > w) {
+          w = canvasDimensions.current.width;
+          h = Math.ceil(h * w / width) + 1;
+
+          if (h < canvasDimensions.current.height) {
+            const hh = canvasDimensions.current.height;
+            w = Math.ceil(hh * w / h) + 1;
+            h = hh;
+            max = Math.ceil(w * 100 / width) + 99;
+          } else {
+            max = Math.ceil(h * 100 / height) + 99;
+          }
+        } else {
+          h = canvasDimensions.current.height;
+          w = Math.ceil(h * w / height) + 1;
+
+          if (w < canvasDimensions.current.width) {
+            const ww = canvasDimensions.current.width;
+            h = Math.ceil(h * ww / w) + 1;
+            w = ww;
+            max = Math.ceil(h * 100 / height) + 99;
+           } else {
+            max = Math.ceil(w * 100 / width) + 99;
+          }
+        }
+
+        height = h;
+        width = w;
+
+        setZoom({...zoom, min: 100, max });
       }
 
       dimensions.current = {height, width};
@@ -134,6 +166,8 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
 
     initial.current = false;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  console.log(zoom)
 
   return (
     <Dialog onClose={handleClose} open={true}>
