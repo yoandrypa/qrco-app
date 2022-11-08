@@ -8,7 +8,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { formatRelative, subDays } from "date-fns";
 import Link from "next/link";
 import Stack from "@mui/material/Stack";
 import QrCodeIcon from "@mui/icons-material/QrCode";
@@ -131,14 +130,15 @@ const LinksTable = ({ domains, links, total, user }) => {
     bannedById: string | undefined,
     banned: boolean,
     description: string | undefined,
-    domainId: string | undefined,
+    domainId: { userId: string, createdAt: number } | undefined,
     expireIn: string | undefined,
     id: string,
     password: string | undefined,
     target: string,
     userId: string,
     visitCount: number,
-    link: string
+    link: string,
+    createdAt: number
   ): Data => {
     const actions = (
       <Stack direction="row" justifyContent="flex-end"
@@ -164,7 +164,7 @@ const LinksTable = ({ domains, links, total, user }) => {
         <IconButton size="small" onClick={() => alert("Banned link")}>
           <DoNotDisturbIcon fontSize="small" color="error" />
         </IconButton>
-        <IconButton size="small" onClick={() => deleteLink(id, userId)}>
+        <IconButton size="small" onClick={() => deleteLink(userId, createdAt)}>
           <DeleteIcon fontSize="small" color="error" />
         </IconButton>
       </Stack>
@@ -177,7 +177,6 @@ const LinksTable = ({ domains, links, total, user }) => {
       description,
       domainId,
       expireIn,
-      id,
       password,
       target,
       userId,
@@ -193,6 +192,7 @@ const LinksTable = ({ domains, links, total, user }) => {
       link.bannedById,
       link.banned,
       link.description,
+      // @ts-ignore
       link.domainId,
       link.expireIn,
       link.id,
@@ -201,7 +201,8 @@ const LinksTable = ({ domains, links, total, user }) => {
       link.userId,
       link.visitCount,
       // @ts-ignore
-      link.link
+      link.link,
+      link.createdAt
     );
   });
 
@@ -218,11 +219,15 @@ const LinksTable = ({ domains, links, total, user }) => {
     setValues({ ...values, [prop]: event.target.value });
   };
 
-  const deleteLink = async (linkId: string, userId: string) => {
-    setLoading(true);
-    const deleted = await LinkHandler.remove({ id: linkId, userId: userId });
-    if (deleted) {
-      Router.push("/links").then(() => setLoading(false));
+  const deleteLink = async (userId: string, createdAt: number) => {
+    try {
+      setLoading(true);
+      const deleted = await LinkHandler.remove({ userId, createdAt });
+      if (deleted) {
+        Router.push("/links").then(() => setLoading(false));
+      }
+    } catch {
+      setLoading(false);
     }
   };
 

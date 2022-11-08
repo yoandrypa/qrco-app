@@ -15,7 +15,7 @@ import QrGen from "./qr/type";
 
 Amplify.configure(awsExports);
 
-const noUser = 'noUser';
+const noUser = "noUser";
 
 export default function Index({ qrData }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function Index({ qrData }: InferGetServerSidePropsType<typeof get
   }
 
   if (qrData === noUser &&
-    ((!router.query.login && !router.query.qr_text) || (router.pathname === '/' && !router.query.login))) {
+    ((!router.query.login && !router.query.qr_text) || (router.pathname === "/" && !router.query.login))) {
     return <QrGen />;
   }
 
@@ -75,7 +75,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   // @ts-ignore
   const userData = JSON.parse(userInfo.userData as string);
   const userId = userData.UserAttributes[0].Value;
-  let user = await UserHandler.find(userId);
+  let user = await UserHandler.get(userId);
   if (!user) {
     user = await UserHandler.create({ id: userId });
   }
@@ -84,9 +84,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 
   // return only the list data
   return {
-    props: { qrData: JSON.parse(
-      // @ts-ignore
-      JSON.stringify(qrs.qrs.sort((itemA: QrDataType, itemB: QrDataType) => itemB.createdAt - itemA.createdAt))
-    )}
+    props: {
+      qrData: JSON.parse(
+        // @ts-ignore
+        JSON.stringify(qrs.qrs)
+      )
+    }
   };
 };

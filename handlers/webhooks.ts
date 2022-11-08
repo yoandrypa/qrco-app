@@ -1,6 +1,6 @@
 
 import Stripe from 'stripe'
-import {update as updateUserInDB, find, deleteUserSubscription} from '../handlers/users'
+import {update as updateUserInDB, deleteUserSubscription} from '../handlers/users'
 import { findByCustomerId as findUserByCustomerId } from '../handlers/users';
 import {PLAN_LIVE_MODE_PRICES,PLAN_TEST_MODE_PRICES} from '../consts'
 

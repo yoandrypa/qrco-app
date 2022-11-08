@@ -23,7 +23,7 @@ const DomainsCreateForm = ({ user }: any) => {
 
   const handleCreateDomain = async () => {
     try {
-      const domain = await DomainHandler.add({
+      const domain = await DomainHandler.create({
         // @ts-ignore
         body: {
           ...values,

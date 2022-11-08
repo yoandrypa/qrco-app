@@ -1,4 +1,4 @@
-import {ReactNode, useCallback, useContext, useRef, useState} from "react";
+import { ReactNode, useCallback, useContext, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -9,29 +9,40 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DoneIcon from "@mui/icons-material/Done";
 import SaveIcon from "@mui/icons-material/Save";
-import {styled} from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 
-import {generateId, generateShortLink} from "../../utils";
-import {EbanuxDonationPriceData, ProcessHanldlerType} from "./types/types";
-import {QR_TYPE_ROUTE} from "./constants";
-import {getUuid} from "../../helpers/qr/helpers";
+import { generateId, generateShortLink } from "../../utils";
+import {
+  BackgroundType,
+  CornersAndDotsType,
+  DataType,
+  EbanuxDonationPriceData,
+  EditType,
+  FramesType,
+  OptionsType,
+  ProcessHanldlerType
+} from "./types/types";
+import { QR_TYPE_ROUTE } from "./constants";
+import { areEquals } from "../helpers/generalFunctions";
+import { initialBackground, initialFrame } from "../../helpers/qr/data";
+import { getUuid } from "../../helpers/qr/helpers";
 import * as QrHandler from "../../handlers/qrs";
 import * as StorageHandler from "../../handlers/storage";
-import * as EbanuxHandler from "../../handlers/ebanux"
+import * as EbanuxHandler from "../../handlers/ebanux";
 import Notifications from "../notifications/Notifications";
 import ProcessHandler from "./renderers/ProcessHandler";
-import {cleaner, generateObjectToEdit, steps, StepsProps} from "./auxFunctions";
+import { cleaner, generateObjectToEdit, steps, StepsProps } from "./auxFunctions";
 
 interface QrWizardProps {
   children: ReactNode;
 }
 
-const StepperButtons = styled(Button)(() => ({width: "120px", height: "30px"}));
+const StepperButtons = styled(Button)(() => ({ width: "120px", height: "30px" }));
 
-const QrWizard = ({children}: QrWizardProps) => {
+const QrWizard = ({ children }: QrWizardProps) => {
   const [isError, setIsError] = useState<boolean>(false);
   const [, setUnusedState] = useState();
 
@@ -39,7 +50,7 @@ const QrWizard = ({children}: QrWizardProps) => {
   const forceUpdate = useCallback(() => setUnusedState({}), []);
 
   const dataInfo = useRef<ProcessHanldlerType[]>([]);
-  const isWide = useMediaQuery("(min-width:600px)", {noSsr: true});
+  const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
 
   // @ts-ignore
   const {
@@ -57,17 +68,17 @@ const QrWizard = ({children}: QrWizardProps) => {
 
   const updatingHandler = (value: string | null, status?: boolean) => {
     if (value !== null) {
-      dataInfo.current.push({value});
+      dataInfo.current.push({ value });
     } else {
       dataInfo.current[dataInfo.current.length - 1].status = status;
     }
     forceUpdate();
-  }
+  };
 
   const handleNext = async () => {
     setLoading(true); // @ts-ignore
     if (step === 0 && data.isDynamic && !isLogged) {
-      router.push({pathname: "/", query: {path: router.pathname, login: true, selected}}, "/")
+      router.push({ pathname: "/", query: { path: router.pathname, login: true, selected } }, "/")
         .then(() => {
           setLoading(false);
         });
@@ -84,7 +95,7 @@ const QrWizard = ({children}: QrWizardProps) => {
     } else if (step === 2 && isLogged) {
       //Process assets before saving de QR Data
       if (["pdf", "audio", "gallery", "video"].includes(selected)) {
-        updatingHandler('Uploading assets');
+        updatingHandler("Uploading assets");
         try { // @ts-ignore
           data["files"] = await StorageHandler.upload(data["files"], `${userInfo.attributes.sub}/${selected}s`);
           updatingHandler(null, true);
@@ -95,7 +106,7 @@ const QrWizard = ({children}: QrWizardProps) => {
 
       if (data.backgndImg !== undefined) {
         if (!Array.isArray(data.backgndImg)) {
-          updatingHandler('Uploading background image');
+          updatingHandler("Uploading background image");
           try { // @ts-ignore
             data.backgndImg = await StorageHandler.upload([data.backgndImg], `${userInfo.attributes.sub}/${selected}s/design`);
             updatingHandler(null, true);
@@ -107,9 +118,9 @@ const QrWizard = ({children}: QrWizardProps) => {
         }
       }
       if (data.prevBackImg !== undefined) {
-        updatingHandler('Removing previous background image');
+        updatingHandler("Removing previous background image");
         try {
-          await StorageHandler.remove([{Key: data.prevBackImg}]);
+          await StorageHandler.remove([{ Key: data.prevBackImg }]);
           delete data.prevBackImg;
           updatingHandler(null, true);
         } catch {
@@ -119,7 +130,7 @@ const QrWizard = ({children}: QrWizardProps) => {
 
       if (data.foregndImg !== undefined) {
         if (!Array.isArray(data.foregndImg)) {
-          updatingHandler('Uploading main image');
+          updatingHandler("Uploading main image");
           try { // @ts-ignore
             data.foregndImg = await StorageHandler.upload([data.foregndImg], `${userInfo.attributes.sub}/${selected}s/design`);
             updatingHandler(null, true);
@@ -131,9 +142,9 @@ const QrWizard = ({children}: QrWizardProps) => {
         }
       }
       if (data.prevForeImg !== undefined) {
-        updatingHandler('Deleting previous main image');
+        updatingHandler("Deleting previous main image");
         try {
-          await StorageHandler.remove([{Key: data.prevForeImg}]);
+          await StorageHandler.remove([{ Key: data.prevForeImg }]);
           delete data.prevForeImg;
           updatingHandler(null, true);
         } catch {
@@ -141,51 +152,50 @@ const QrWizard = ({children}: QrWizardProps) => {
         }
       }
 
-      if (selected === 'donations') {
+      if (selected === "donations") {
         let priceData: EbanuxDonationPriceData;
         priceData = {
-          name: `Donate ${data["title"]}` || 'Donation',
+          name: `Donate ${data["title"]}` || "Donation",
           unitAmountUSD: data["donationUnitAmount"] || 1,
-          redirectUrl: data["web"] || ''
-        }
+          redirectUrl: data["web"] || ""
+        };
         if (data["donationPriceId"]) {
 
         } else {
           try {
             const price = await EbanuxHandler.createEbanuxDonationPrice(userInfo.attributes.sub,
               userInfo.signInUserSession.accessToken.jwtToken,
-              priceData)
+              priceData);
             data["donationPriceId"] = price.data.result.price.id;
-            data["donationProductId"] = price.data.result.product.id
+            data["donationProductId"] = price.data.result.product.id;
           } catch (error) {
-            setIsError(true)
+            setIsError(true);
           }
         }
       }
 
-      const qrData = {...data, qrType: selected};
+      const qrData = { ...data, qrType: selected };
 
       let shortLink;
 
-      const qrDesign = {...options};
+      const qrDesign = { ...options };
 
       if (data.mode === undefined) {
         const qrDesignId = getUuid();
         const qrId = options.id || getUuid();
-        const shortLinkId = getUuid();
 
         // @ts-ignore
-        qrData.qrOptionsId = qrDesignId; // @ts-ignore
-        qrData.id = qrId; // @ts-ignore
-        qrData.userId = userInfo.attributes.sub; // @ts-ignore
-        qrData.shortLinkId = {id: shortLinkId, userId: userInfo.attributes.sub};
+        qrData.qrOptionsId = qrDesignId;
+        qrData.userId = userInfo.attributes.sub;
 
         if (data.isDynamic) {
+          // @ts-ignore
+          qrData.shortLinkId = { userId: userInfo.attributes.sub, createdAt: Date.now() };
           shortLink = {
-            id: shortLinkId,
             target: generateShortLink(`qr/${qrId}`),
-            address: options.shortCode || await generateId(), // @ts-ignore
-            userId: userInfo.attributes.sub
+            address: options.shortCode || await generateId(),
+            // @ts-ignore
+            ...qrData.shortLinkId
           };
         }
 
@@ -197,12 +207,12 @@ const QrWizard = ({children}: QrWizardProps) => {
       try {
         if (data.mode === undefined) {
           if (dataInfo.current.length) {
-            updatingHandler('Saving QR Code data');
+            updatingHandler("Saving QR Code data");
           }
-          await QrHandler.create({shortLink, qrDesign, qrData});
+          await QrHandler.create({ shortLink, qrDesign, qrData });
         } else {
           if (dataInfo.current.length) {
-            updatingHandler('Updating QR Code data');
+            updatingHandler("Updating QR Code data");
           }
 
           const objToEdit = generateObjectToEdit(qrData, data, qrDesign);
@@ -225,10 +235,10 @@ const QrWizard = ({children}: QrWizardProps) => {
         setLoading(false);
       }
       if (dataInfo.current.length) {
-        updatingHandler('done');
+        updatingHandler("done");
       }
     } else if (step === 2 && !isLogged) {
-      await router.push(QR_TYPE_ROUTE, '/', {shallow: true});
+      await router.push(QR_TYPE_ROUTE, "/", { shallow: true });
     } else {
       setStep((prev: number) => prev + 1);
     }
@@ -237,8 +247,8 @@ const QrWizard = ({children}: QrWizardProps) => {
   const renderBack = () => (
     <StepperButtons
       variant="contained"
-      startIcon={<ChevronLeftIcon/>}
-      disabled={loading || step === 0 || !selected || (data.mode === 'edit' && ((data.isDynamic && step <= 1) || (!data.isDynamic && step <= 2)))}
+      startIcon={<ChevronLeftIcon />}
+      disabled={loading || step === 0 || !selected || (data.mode === "edit" && ((data.isDynamic && step <= 1) || (!data.isDynamic && step <= 2)))}
       onClick={handleBack}>
       {"Back"}
     </StepperButtons>
@@ -247,7 +257,7 @@ const QrWizard = ({children}: QrWizardProps) => {
   const renderNext = () => (
     <StepperButtons
       onClick={handleNext}
-      endIcon={step >= 2 ? (isLogged ? <SaveIcon/> : <DoneIcon/>) : <ChevronRightIcon/>}
+      endIcon={step >= 2 ? (isLogged ? <SaveIcon /> : <DoneIcon />) : <ChevronRightIcon />}
       disabled={
         loading || isWrong || !selected ||
         (step === 1 && isLogged && !Boolean(data?.qrName?.trim()?.length))
@@ -261,7 +271,7 @@ const QrWizard = ({children}: QrWizardProps) => {
     <Stepper
       activeStep={step}
       alternativeLabel={!isWide}
-      sx={{width: "100%", mt: {xs: 2, sm: 0}, mb: {xs: 1, sm: 0}}}
+      sx={{ width: "100%", mt: { xs: 2, sm: 0 }, mb: { xs: 1, sm: 0 } }}
     >
       {steps.map((label: string) => (
         <Step key={label}>
@@ -273,7 +283,7 @@ const QrWizard = ({children}: QrWizardProps) => {
 
   return (
     <>
-      <Box sx={{minHeight: `calc(100vh - ${isTrialMode ? (step === 0 ? 207 : 215) : 207}px)`}}>
+      <Box sx={{ minHeight: `calc(100vh - ${isTrialMode ? (step === 0 ? 207 : 215) : 207}px)` }}>
         {children}
       </Box>
       {dataInfo.current.length ? <ProcessHandler process={dataInfo.current} handleCommand={
@@ -289,7 +299,7 @@ const QrWizard = ({children}: QrWizardProps) => {
         }
       } /> : null}
       {isWide ? (
-        <Box sx={{width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between", pt: 2}}>
+        <Box sx={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between", pt: 2 }}>
           {renderBack()}
           {renderSteps()}
           {renderNext()}
@@ -297,7 +307,7 @@ const QrWizard = ({children}: QrWizardProps) => {
       ) : (
         <>
           {renderSteps()}
-          <Box sx={{display: "flex", justifyContent: "space-between"}}>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             {renderBack()}
             {renderNext()}
           </Box>
@@ -306,7 +316,7 @@ const QrWizard = ({children}: QrWizardProps) => {
       {isError && (
         <Notifications autoHideDuration={3500} message="Error accessing data!" onClose={() => {
           setIsError(false);
-        }}/>
+        }} />
       )}
     </>
   );

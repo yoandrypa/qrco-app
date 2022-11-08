@@ -1,12 +1,12 @@
 import { customAlphabet } from "nanoid";
-import queries from "../queries";
+import * as LinkHandler from "../handlers/links";
 import {
   differenceInDays,
   differenceInHours,
   differenceInMonths
 } from "date-fns";
 
-export const generateShortLink = (id: string | undefined, customDomain?: string | undefined): string => {
+export const generateShortLink = (id: string | undefined, customDomain?: string | null): string => {
   const protocol =
     process.env.REACT_APP_CUSTOM_DOMAIN_USE_HTTPS === "true" || customDomain ? "https://" : "http://";
   const domain = process.env.REACT_APP_DEFAULT_DOMAIN;
@@ -14,29 +14,33 @@ export const generateShortLink = (id: string | undefined, customDomain?: string 
 };
 
 // @ts-ignore
-export const generateId = async (domainId: string | undefined = "") => {
-  const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
-    parseInt(`${process.env.REACT_APP_LINK_LENGTH}`));
+export const generateId = async (domainId: {userId: string, createdAt: number} | null = "") => {
+  try {
+    const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+      parseInt(`${process.env.REACT_APP_LINK_LENGTH}`));
 
-  const address = nanoid();
-  const link = await queries.link.find({
-    address: { contains: address },
-    domainId: { eq: domainId }
-  });
-  if (!link) return address;
-  return generateId(domainId);
+    const address = nanoid();
+    const link = await LinkHandler.findByAddress({
+      address: { eq: address },
+      domainId: { eq: domainId }
+    });
+    if (!link.length) return address;
+    return generateId(domainId);
+  } catch (e: any) {
+    throw new CustomError(e.message, 500, e);
+  }
 };
 
 export const sanitize = {
   //@ts_ignore
   domain: (domain: DomainType): DomainSanitizedType => ({
     ...domain,
-    id: domain.id,
     bannedById: undefined
   }),
   link: (link: LinkJoinedDomainType): LinkSanitizedType => <LinkSanitizedType>({
     ...link,
     bannedById: undefined,
+// @ts-ignore
     link: generateShortLink(link.address, link.domain || process.env.REACT_APP_SHORT_URL_DOMAIN)
   })
 };

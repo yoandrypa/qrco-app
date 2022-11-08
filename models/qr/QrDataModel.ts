@@ -4,21 +4,28 @@ import { LinkModel } from "../link";
 import { UserModel } from "../UserModel";
 
 const QrDataSchema = new dynamoose.Schema({
-  id: {
+  /*id: {
     hashKey: true,
     type: String
-  },
+  },*/
   qrName: { type: String, required: true },
   qrType: { type: String, required: true },
   isDynamic: { type: Boolean, default: false },
-  shortLinkId: { type: LinkModel },
-  userId: { type: UserModel, required: true },
+  shortLinkId: { type: [LinkModel, Object] },
+  userId: { type: UserModel, hashKey: true },
   qrOptionsId: {
     type: QrOptionsModel
+  },
+  createdAt: {
+    type: Date,
+    rangeKey: true
   }
 }, {
-  "saveUnknown": true,
-  "timestamps": true
+  "timestamps": {
+    createdAt: undefined,
+    updatedAt: "updatedAt"
+  },
+  saveUnknown: true
 });
 
 // create a model from schema and export it

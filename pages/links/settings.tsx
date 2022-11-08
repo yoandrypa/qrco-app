@@ -79,7 +79,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   // @ts-ignore
   const userData = JSON.parse(cookies.userData as string);
   const userId = userData.UserAttributes[0].Value;
-  let user = await UserHandler.find(userId);
+  let user = await UserHandler.get(userId);
   if (!user) {
     user = await UserHandler.create({ id: userId });
   }

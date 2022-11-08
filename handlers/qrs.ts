@@ -1,5 +1,4 @@
-import queries from "../queries";
-import { CreateQrDataType, UpdateQrDataType } from "./types";
+import * as Qr from "../queries/qr";
 import { CustomError } from "../utils";
 
 interface Query {
@@ -19,9 +18,8 @@ export const create = async (data) => {
       }
     }
 
-    return await queries.qr.create(data);
-  } catch (e) {
-    // @ts-ignore
+    return await Qr.create(data);
+  } catch (e: any) {
     throw new CustomError(e.message);
   }
 };
@@ -35,7 +33,7 @@ export const list = async (query: Query) => {
     };
 
     // @ts-ignore
-    const [qrs, total] = await queries.qr.get(match, { limit, search, skip });
+    const [qrs, total] = await Qr.list(match, { limit, search, skip });
     // @ts-ignore
 
     for (const qr of qrs) {
@@ -52,17 +50,15 @@ export const list = async (query: Query) => {
       // @ts-ignore
       qrs
     };
-  } catch (e) {
-    // @ts-ignore
+  } catch (e: any) {
     throw new CustomError(e.message);
   }
 };
 
-export const get = async (id: string) => {
+export const get = async (key: { userId: string, createdAt: number }) => {
   try {
-    return await queries.qr.find({ id: { eq: id } });
-  } catch (e) {
-    // @ts-ignore
+    return await Qr.get(key);
+  } catch (e: any) {
     throw new CustomError(e.message);
   }
 };
@@ -71,46 +67,46 @@ export const get = async (id: string) => {
 // @ts-ignore
 export const edit = async (data) => {
   try {
-    const { id, userId } = data;
+    let { userId, createdAt, ...rest } = data;
 
-    const qr = await queries.qr.find({
-      id: { eq: id },
-      userId: { eq: userId }
-    });
+    if (typeof createdAt === "string") {
+      createdAt = (new Date(createdAt)).getTime();
+    }
+
+    const qr = await Qr.get({ userId, createdAt });
 
     if (!qr) {
       throw new CustomError("QR code was not found.");
     }
-    data.qrOptionsId.id = qr.qrOptionsId;
-    if (data.shortLinkId) {
-      data.shortLinkId.id = qr.shortLinkId;
+    rest.qrOptionsId.id = qr.qrOptionsId;
+    if (rest.shortLinkId) {
+      rest.shortLinkId.id = qr.shortLinkId;
     }
 
     // Update QR
-    const updatedLink = await queries.qr.update(data);
+    const updatedLink = Qr.update({ userId, createdAt, ...rest });
 
     // @ts-ignore
     return { ...qr, ...updatedLink };
-  } catch (e) {
-    // @ts-ignore
+  } catch (e: any) {
     throw new CustomError(e.message, 500, e);
   }
 };
 
-export const remove = async (params: { id: any; userId?: any; }) => {
+export const remove = async (key: { userId: string, createdAt: number }) => {
   try {
-    const qr = await queries.qr.remove({
-      id: params.id,
-      userId: params.userId
-    });
+    if (typeof key["createdAt"] === "string") {
+      key["createdAt"] = (new Date(key["createdAt"])).getTime();
+    }
+
+    const qr = await Qr.remove(key);
 
     if (!qr) {
       throw new CustomError("Could not delete the qr");
     }
 
     return { message: "Qr has been deleted successfully." };
-  } catch (e) {
-    // @ts-ignore
+  } catch (e: any) {
     throw new CustomError(e.message);
   }
 };
