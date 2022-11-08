@@ -1,6 +1,6 @@
-import {BackgroundType, CornersAndDotsType, DataType, EditType, FramesType, OptionsType} from "./types/types";
-import {areEquals} from "../helpers/generalFunctions";
-import {initialBackground, initialFrame} from "../../helpers/qr/data";
+import { BackgroundType, CornersAndDotsType, DataType, EditType, FramesType, OptionsType } from "./types/types";
+import { areEquals } from "../helpers/generalFunctions";
+import { initialBackground, initialFrame } from "../../helpers/qr/data";
 
 export interface StepsProps {
   step: number;
@@ -44,10 +44,10 @@ export const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame
     qrDesign.cornersDot = dotsData;
   }
   if (!qrDesign.cornersDotOptions.type) {
-    qrDesign.cornersDotOptions.type = '';
+    qrDesign.cornersDotOptions.type = "";
   }
   if (!qrDesign.cornersSquareOptions.type) {
-    qrDesign.cornersSquareOptions.type = '';
+    qrDesign.cornersSquareOptions.type = "";
   }
   if (qrDesign.mode !== undefined) {
     delete qrDesign.mode;
@@ -72,10 +72,6 @@ export const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign:
     // });
     delete objToEdit.prevNetworks;
   }
-
-  if (objToEdit.createdAt) {
-    delete objToEdit.createdAt;
-  }
   if (objToEdit.updatedAt) {
     delete objToEdit.updatedAt;
   }
@@ -86,4 +82,4 @@ export const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign:
   objToEdit.qrOptionsId = qrDesign;
 
   return objToEdit;
-}
+};

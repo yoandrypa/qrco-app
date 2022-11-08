@@ -29,7 +29,7 @@ export default function LinkEditForm({ open, setOpen, linkForEdit, user }: any) 
   const handleUpdateLink = async () => {
     try {
       setLoading(true);
-      const userData = await UserHandler.find(user?.attributes?.sub);
+      const userData = await UserHandler.get(user?.attributes?.sub);
       //const domain = await DomainHandler.find({ id: values.domain }) || null;
       const link = await LinkHandler.edit({
         body: {

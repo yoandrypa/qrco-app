@@ -4,7 +4,6 @@ import * as ip from "./ip";
 import * as user from "./user";
 import * as domain from "./domain";
 import * as host from "./host";
-import * as visit from "./visit";
 import * as storage from "./storage";
 
 export default {
@@ -14,6 +13,5 @@ export default {
   user,
   domain,
   host,
-  visit,
   storage,
 };

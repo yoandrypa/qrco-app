@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import Stripe from 'stripe'
-import {update, find} from '../../../handlers/users'
+import {update, get} from '../../../handlers/users'
 import {PLAN_TEST_MODE_PRICES,PLAN_LIVE_MODE_PRICES} from '../../../consts'
 //init stripe
 const stripe = new Stripe(process.env.REACT_STRIPE_SECRET_KEY || 'sk_test_51Ksb3LCHh3XhfaZr2tgzaQKAQtuTF9vRtgdXBS7X2rAaPC6FNoLQ3hyPFVmlnRhsif0FDdbi5cdgEh7Y1Wt9Umo900w9YPUGo6', {
@@ -88,7 +88,7 @@ async function createCheckoutSession(
       
       
 
-      const userData = await find(req.body.id)  
+      const userData = await get(req.body.id)
       if(!userData){
         return res.status(404).send(`No user found for this id ${req.body.id}` )
       }
@@ -115,7 +115,7 @@ async function createCheckoutSession(
           } 
           //create checkout session
           try {
-           const {id} = await find(req.body.id)
+           const {id} = await get(req.body.id)
            const result =  await update({id: id},{planType: req.body.plan_type})
            if(!result  || result == 'undefined'){
             return res.status(500).json({error: true, message: `Could not save user plan in id: ${id} plan : ${req.body.plan_type}`})

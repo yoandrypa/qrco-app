@@ -4,26 +4,12 @@ interface Add extends Partial<HostType> {
   address: string;
 }
 
-export const find = async (match: Partial<HostQueryType>): Promise<HostType> => {
-  /*if (match.address) {
-    const cachedHost = await redis.get(
-      redis.key.host(Object.values(match.address)[0])
-    );
-    if (cachedHost) return JSON.parse(cachedHost);
-  }*/
-
-  const host = await HostModel.findOne(match);
-
-  /*if (host) {
-    redis.set(
-      redis.key.host(host.address),
-      JSON.stringify(host),
-      "EX",
-      60 * 60 * 6
-    );
-  }*/
-
-  return host;
+export const find = async (match: Partial<HostQueryType>): Promise<any> => {
+  try {
+    return await HostModel.query(match).exec();
+  } catch (e) {
+    throw e;
+  }
 };
 
 export const add = async (params: Add) => {

@@ -1,27 +1,29 @@
 import dynamoose from "../../libs/dynamoose";
-//const Unique = require("./unique");
 import { UserModel } from "../UserModel";
 import { DomainModel } from "./DomainModel";
-import { getUuid } from "../../helpers/qr/helpers";
 
 // instantiate a dynamoose schema
 const LinkSchema = new dynamoose.Schema({
-  id: {
+  /*id: {
     type: String,
-    hashKey: true,
+    //rangeKey: true
     default: getUuid()
-  },
+  },*/
   type: {
     type: String,
-    enum: ["short_link", "qr_link", "download_link"],
-    default: "short_link"
+    enum: ["redirect_link", "qr_link", "download_link"],
+    default: "qr_link"
   },
   address: {
     type: String,
-    required: true
+    required: true,
+    index: {
+      name: "addressIndex",
+      type: "global"
+    }
   },
   description: {
-    type: [String, dynamoose.NULL]
+    type: [String, dynamoose.type.NULL]
   },
   banned: {
     type: Boolean,
@@ -32,13 +34,13 @@ const LinkSchema = new dynamoose.Schema({
     type: UserModel
   },
   domainId: {
-    type: [DomainModel, dynamoose.NULL]
+    type: [DomainModel, dynamoose.type.NULL]
   },
   password: {
-    type: [String, dynamoose.NULL]
+    type: [String, dynamoose.type.NULL]
   },
   expireIn: {
-    type: [Date, dynamoose.NULL]
+    type: [Date, dynamoose.type.NULL]
   },
   target: {
     type: String,
@@ -46,15 +48,25 @@ const LinkSchema = new dynamoose.Schema({
     required: true
   },
   userId: {
-    type: UserModel
+    type: UserModel,
+    hashKey: true
     //TODO delete in cascade if user reference is deleted
   },
   visitCount: {
     type: Number,
     required: true,
     default: 0
+  },
+  createdAt: {
+    type: Date,
+    rangeKey: true
   }
-}, { "timestamps": true });
+}, {
+  "timestamps": {
+    createdAt: undefined,
+    updatedAt: "updatedAt"
+  }
+});
 
 // create a model from schema and export it
 export const LinkModel = dynamoose.model("links", LinkSchema);

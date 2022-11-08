@@ -1,27 +1,51 @@
-import query from "../queries";
+import * as User from "../queries/user";
+import { CustomError } from "../utils";
 
 export const create = async (data: UserType) => {
-  return await query.user.create(data);
+  try {
+    return await User.create(data);
+  } catch (e: any) {
+    throw new CustomError(e.message, 500, e);
+  }
 };
 
-export const find = async (userId: string) => {
-  return await query.user.find({ id: { eq: userId } })
+export const get = async (id: string) => {
+  try {
+    return await User.get(id);
+  } catch (e: any) {
+    throw new CustomError(e.message, 500, e);
+  }
 };
 
 export const remove = async (userId: string) => {
-  await query.user.remove(userId);
-  return "OK";
+  try {
+    await User.remove(userId);
+    return "OK";
+  } catch (e: any) {
+    throw new CustomError(e.message, 500, e);
+  }
 };
 
-export const update = async (user: Match<UserType>, data: Partial<UserType>) => {
-const updatedUser = await query.user.update(user,data)
-return updatedUser
-}
-
-export const findByCustomerId = async (customerId: string): Promise<UserType> => {
-  return await query.user.find({ customerId: { eq: customerId } })
+export const update = async (userData: Match<UserType>, data: Partial<UserType>) => {
+  try {
+    return await User.update(userData, data);
+  } catch (e: any) {
+    throw new CustomError(e.message, 500, e);
+  }
 };
 
-export const deleteUserSubscription = async (customerId: Match<UserType>) =>{
-  return await query.user.deleteSubscription({customerId: customerId})
-} 
+export const findByCustomerId = async (customerId: string): Promise<any> => {
+  try {
+    return await User.findByCustomerId({ customerId: { eq: customerId } });
+  } catch (e: any) {
+    throw new CustomError(e.message, 500, e);
+  }
+};
+
+export const deleteUserSubscription = async (customerId: Match<UserType>) => {
+  try {
+    return await User.deleteSubscription({ customerId: customerId });
+  } catch (e: any) {
+    throw new CustomError(e.message, 500, e);
+  }
+};

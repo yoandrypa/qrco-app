@@ -1,5 +1,5 @@
 import dynamoose from "../libs/dynamoose";
-import {getUuid} from "../helpers/qr/helpers";
+import { getUuid } from "../helpers/qr/helpers";
 
 // user schema
 const UserSchema = new dynamoose.Schema({
@@ -14,7 +14,7 @@ const UserSchema = new dynamoose.Schema({
     default: false
   },
   bannedById: {
-    type: dynamoose.THIS
+    type: dynamoose.type.THIS
   },
   coolDowns: {
     type: Array,
@@ -23,6 +23,9 @@ const UserSchema = new dynamoose.Schema({
   customerId: {
     type: String,
     required: false,
+    index: {
+      name: "customerIdIndex"
+    }
   },
   planType: {
     type: String
@@ -41,13 +44,14 @@ const UserSchema = new dynamoose.Schema({
       periodEndsAt: Number
     },
     required: false
-  },
-},{
-  "saveUnknown":[
+  }
+}, {
+  "saveUnknown": [
     "subscriptionData.**"
   ]
-,
- "timestamps": true });
+  ,
+  "timestamps": true
+});
 
 export const UserModel = dynamoose.model("users", UserSchema);
 

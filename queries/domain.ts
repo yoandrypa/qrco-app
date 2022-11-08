@@ -1,73 +1,69 @@
-import { DomainModel as DomainModel } from "../models/link";
-import { AnyDocument } from "dynamoose/dist/Document";
-import { ScanResponse } from "dynamoose/dist/DocumentRetriever";
-import { CustomError } from "../utils";
+import { DomainModel } from "../models/link";
 
-export const find = async (match: Partial<DomainQueryType>): Promise<DomainType> => {
-  return await DomainModel.findOne(match);
-};
-
-export const get = async (match: Partial<DomainQueryType>): Promise<ScanResponse<AnyDocument>> => {
-  return await DomainModel.scan(match).exec();
-};
-
-interface Add extends Partial<DomainType> {
+interface CreateDataType extends Partial<DomainType> {
   address: string;
 }
 
-export const add = async (params: Add) => {
-  params.address = params.address.toLowerCase();
-
-  const exists = await DomainModel.findOne({ address: { eq: params.address } });
-
-  const newDomain = {
-    address: params.address,
-    homepage: params.homepage || undefined,
-    userId: params.userId || "1234",
-    banned: !!params.banned
-  };
-
-  let domain: DomainType;
-  if (exists) {
-    // @ts-ignore
-    domain = await DomainModel.update(exists.id, {
-      ...newDomain
-    });
-  } else {
-    // @ts-ignore
-    domain = await DomainModel.create(newDomain);
-  }
-
-  return domain;
-};
-
-export const update = async (
-  match: Partial<DomainQueryType>,
-  update: Partial<DomainType>
-) => {
-  const domain = await DomainModel.update(match, {
-    ...update
-  });
-
-  return domain;
-};
-
-export const remove = async (match: Partial<DomainType>) => {
+export const create = async (params: CreateDataType) => {
   try {
-    const domain = await DomainModel.findOne({
-      id: { eq: match.id },
-      userId: { eq: match.userId }
-    });
+    params.address = params.address.toLowerCase();
 
-    if (!domain) {
-      throw new CustomError("domain was not found.");
+    const exists = await DomainModel.query({ address: { eq: params.address } }).using("addressIndex").exec();
+
+    const newDomain = {
+      address: params.address,
+      homepage: params.homepage || undefined,
+      userId: params.userId,
+      banned: !!params.banned
+    };
+
+    let domain: DomainType;
+    if (exists) {
+      // @ts-ignore
+      domain = await DomainModel.update({ userId: exists.userId, createdAt: exists.createdAt }, {
+        ...newDomain
+      });
+    } else {
+      // @ts-ignore
+      domain = await DomainModel.create({ createdAt: Date.now(), ...newDomain });
     }
 
-    const deletedDomain = await domain.delete();
-
-    return !deletedDomain;
+    return domain;
   } catch (e) {
-    // @ts-ignore
-    throw new CustomError(e.message);
+    throw e;
+  }
+};
+
+export const list = async (match: any): Promise<any> => {
+  try {
+    return await DomainModel.query(match).exec();
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const get = async (key: string): Promise<any> => {
+  try {
+    return await DomainModel.get(key);
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const find = async (params: any): Promise<any> => {
+  try {
+    return await DomainModel.query(params).exec();
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const remove = async (key: { userId: string, createdAt: number }) => {
+  try {
+    await DomainModel.delete(key);
+
+    return true;
+  } catch (e) {
+    throw e;
   }
 };

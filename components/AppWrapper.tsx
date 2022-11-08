@@ -26,7 +26,7 @@ import Link from "next/link";
 import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
 import RenderNewQrButton from "./renderers/RenderNewQrButton";
 import CountDown from "./countdown/CountDown";
-import { find as findUser } from "../handlers/users";
+import { get as getUser } from "../handlers/users";
 
 interface Props {
   window?: () => Window;
@@ -103,7 +103,7 @@ export default function AppWrapper(props: AppWrapperProps) {
   useEffect(() => {
     if (userInfo) {
       const fetchUser = async () => {
-        return await findUser(userInfo.attributes.sub);
+        return await getUser(userInfo.attributes.sub);
       };
 
       fetchUser().then(profile => {

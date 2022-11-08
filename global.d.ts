@@ -12,12 +12,12 @@ interface UserType {
   subscriptionData?: UserSubscription;
   customerId?: string;
   planType?: string;
-  
+
 }
 
 interface UserQueryType {
   id: object;
-  customerId: object
+  customerId: object;
 }
 
 interface UserJoinedType extends UserType {
@@ -32,18 +32,18 @@ interface UserSubscription {
   priceId: string,
   status: string,
   currency: string,
-  interval: 'day' | 'week' | 'month' | 'year' | null,
+  interval: "day" | "week" | "month" | "year" | null,
   intervalCount: number | undefined | null,
   createdDate: number,
   periodStartsAt: number,
   periodEndsAt: EpochTimeStamp
-} 
+}
 
-type PlanType = 'basic'      | 'business'        | 'premium' | 
-                'basicAnnual'| 'businessAnnual'  | 'premiumAnnual' | string;
+type PlanType = "basic" | "business" | "premium" |
+  "basicAnnual" | "businessAnnual" | "premiumAnnual" | string;
 
 
-type CognitoUserData = { 
+type CognitoUserData = {
   cid: string,
   idToken: string,
   accessToken: string,
@@ -51,36 +51,26 @@ type CognitoUserData = {
   clockDrift: number,
   LastAuthUser: string,
   userData: string,
-    UserAttributes : 
-      {
-        Name: string,
-        Value: string
-      }[]
-    ,
-    Username: string
+  UserAttributes:
+    {
+      Name: string,
+      Value: string
+    }[],
+  Username: string
 }
+
 interface DomainType {
-  id: string;
   address: string;
   banned?: boolean;
   bannedById?: string;
   homepage?: string;
-  userId?: string;
-}
-
-interface DomainQueryType {
-  id?: object;
-  address?: object;
-  banned?: object;
-  bannedById?: object;
-  homepage?: object;
-  userId?: object;
+  userId: string;
+  createdAt: number;
 }
 
 interface DomainSanitizedType {
   address: string;
-  userId?: string;
-  id: string;
+  userId: string;
   banned?: boolean;
   bannedById: undefined;
   homepage?: string;
@@ -94,7 +84,7 @@ interface HostType {
 }
 
 interface HostQueryType {
-  id: object;
+  userId: object;
   address: object;
   banned: object;
   bannedById?: object;
@@ -115,7 +105,7 @@ interface LinkType {
   bannedById?: string;
   banned: boolean;
   description?: string | undefined;
-  domainId?: string | undefined;
+  domainId?: { userId: string, createdAt: number } | null;
   expireIn?: string | undefined;
   id: string;
   password?: string | undefined;
@@ -123,6 +113,7 @@ interface LinkType {
   target: string;
   userId: string;
   visitCount: number;
+  createdAt: number;
 }
 
 interface QrDataType {
@@ -167,7 +158,7 @@ interface LinkSanitizedType {
 }
 
 interface LinkJoinedDomainType extends LinkType {
-  domain?: string | undefined;
+  domain?: string | object | undefined;
 }
 
 interface VisitType {
