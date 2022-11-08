@@ -27,7 +27,7 @@ dynamoose.Table.defaults.set({
   prefix: process.env.REACT_NODE_ENV === "production" ? "prd_" : "dev_",
   suffix: "",
   waitForActive: process.env.REACT_NODE_ENV !== "production",
-  update: true,
+  update: false,
   populate: false,
   expires: undefined
 });

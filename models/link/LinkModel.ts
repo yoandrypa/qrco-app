@@ -18,8 +18,7 @@ const LinkSchema = new dynamoose.Schema({
     type: String,
     required: true,
     index: {
-      name: "addressIndex",
-      type: "global"
+      name: "addressIndex"
     }
   },
   description: {
