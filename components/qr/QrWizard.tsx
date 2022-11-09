@@ -204,6 +204,9 @@ const QrWizard = ({ children }: QrWizardProps) => {
             updatingHandler("Updating QR Code data");
           }
 
+          delete data.mode;
+          delete qrData.mode;
+
           const objToEdit = generateObjectToEdit(qrData, data, qrDesign);
 
           await QrHandler.edit(objToEdit);
