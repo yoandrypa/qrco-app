@@ -26,11 +26,15 @@ export interface DonationsProps {
 type Options = 'message' | 'title' | 'avatarImage' |
   'web' | 'donationUnitAmount' | 'urlOptionLabel'
 
+const options = ['Donate', 'Contribute', 'Give'];
+
 const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
 
   const [isError, setIsError] = useState<boolean>(false)
   const [webError, setWebError] = useState<boolean>(false)
   const [coffeePrice, setCoffeePrice] = useState<number>(1)
+  const [Buttonvalue, setButtonValue] = React.useState<string | null>(options[0]);
+  const [inputButtonValue, setInputButtonValue] = React.useState('');
 
   useEffect(() => {
     const temp = { ...data }
@@ -43,7 +47,13 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
     }
 
   }
-    , [coffeePrice, data])
+    , [coffeePrice, data, inputButtonValue])
+
+  useEffect(() => {
+    const temp = { ...data }
+    temp["urlOptionLabel"] = inputButtonValue
+    console.log('saving state')
+  }, [inputButtonValue, data])
 
   const handleValues = (item: Options) => (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
@@ -86,6 +96,10 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
       setWebError(false);
     }
     setIsWrong(webError)
+  }
+
+  async function handleAutocomplete(event: any, newValue: string) {
+    console.log(event, newValue);
   }
 
 
@@ -140,27 +154,23 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
 
         <Grid sx={{
           display: 'flex', alignItems: "center",
-          justifyContent: "center"
+          justifyContent: "center", marginTop: 2
         }}>
           <Autocomplete
-            freeSolo
-            sx={{ width: 300, marginTop: 2 }}
-            id="button-text-auto"
-            disableClearable
-            onChange={(event: any, newValue: string | null) => { handleValues('urlOptionLabel') }}
-            options={['Donate', 'Send', 'Contribute']}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Button Text"
-                InputProps={{
-                  ...params.InputProps,
-                  type: 'search',
-                }}
-              />
-            )}
-          />
+            value={Buttonvalue}
+            onChange={(event: any, newValue: string | null) => {
+              setButtonValue(newValue);
+            }}
+            inputValue={inputButtonValue}
+            onInputChange={(event, newInputButtonValue) => {
+              setInputButtonValue(newInputButtonValue);
 
+            }}
+            id="donation-button-text"
+            options={options}
+            sx={{ width: 300 }}
+            renderInput={(params) => <TextField {...params} label="Button Text" />}
+          />
         </Grid>
 
         <Alert severity='info' sx={{ margin: 2 }}>
