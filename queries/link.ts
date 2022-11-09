@@ -27,6 +27,12 @@ export const create = async (params: Create) => {
   }
 };
 
+interface GetParams {
+  limit?: number;
+  search?: string;
+  skip?: number;
+}
+
 export const list = async (match: Partial<LinkQueryType>, params: GetParams) => {
   try {
     //TODO include the Skip param
@@ -120,13 +126,7 @@ export const remove = async (key: { userId: string, createdAt: number }) => { //
 //----------------------------------------------------------------------------------------------------------
 
 
-interface GetParams {
-  limit: number;
-  search?: string;
-  skip?: number;
-}
-
-export const get = async (match: Partial<LinkQueryType>, params: GetParams) => {
+/* export const get = async (match: Partial<LinkQueryType>, params: GetParams) => {
   //TODO include the Skip param
   try {
     const query = LinkModel.scan(match);
@@ -152,48 +152,10 @@ export const get = async (match: Partial<LinkQueryType>, params: GetParams) => {
   } catch (e) {
     throw e;
   }
-};
-
-export const batchUpdate = async (
-  match: string | Partial<LinkType>,
-  data: Partial<LinkType>
-) => {
-  try {
-    const links = await LinkModel.scan(match).exec();
-    links.forEach(link => {
-      update(link.id, data);
-    });
-    return true;
-  } catch (e) {
-    // @ts-ignore
-    throw new CustomError(e.message);
-  }
-};
-
-export const batchRemove = async (match: Match<LinkQueryType>) => {
-  await LinkModel.batchDeletes(match); //deleteQuery.delete();
-};
+};*/
 
 export const update = async (match: string | Partial<LinkType>, update: Partial<LinkType>
 ) => {
   // @ts-ignore
-  return await LinkModel.update(match, {
-    ...update
-  });
-};
-
-export const increamentVisit = async (match: Partial<LinkQueryType>) => {
-  try {
-    let link = await find(match);
-    if (!link) {
-      throw new CustomError("LinkModel was not found.");
-    }
-    const visitCount = link.visitCount + 1;
-    // @ts-ignore
-    link = await update(link.id, { visitCount });
-    return link.visitCount;
-  } catch (e) {
-    // @ts-ignore
-    throw new CustomError(e.message);
-  }
+  return await LinkModel.update(match, { ...update });
 };

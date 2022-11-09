@@ -54,9 +54,3 @@ const UserSchema = new dynamoose.Schema({
 });
 
 export const UserModel = dynamoose.model("users", UserSchema);
-
-UserModel.methods.set("findOne", async function(criteria: any) {
-  // @ts-ignore
-  const results = await this.scan(criteria).exec();
-  return results[0];
-});

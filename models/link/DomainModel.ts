@@ -47,9 +47,3 @@ const DomainSchema = new dynamoose.Schema({
 
 // create a model from schema and export it
 export const DomainModel = dynamoose.model("domains", DomainSchema);
-
-DomainModel.methods.set("findOne", async function(criteria: object) {
-  // @ts-ignore
-  const results = await this.scan(criteria).exec();
-  return results[0];
-});

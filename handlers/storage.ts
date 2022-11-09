@@ -1,17 +1,26 @@
-import { CustomError, formatBytes } from "../utils";
-import queries from "../queries";
+import { CustomError, toBytes } from "../utils";
+import * as Storage from "../queries/storage";
 
-export const upload = async (assets: File[], path = "") => {
+export const upload = async (assets: File[], customPath = "") => {
   try {
     let files: any[] = [];
     for (const asset of assets) {
-      const sizeInMB = parseFloat(formatBytes(asset.size).split(" ")[0]);
-      if (sizeInMB < 100) {
-        // @ts-ignore
-        const res = await queries.storage.upload(asset, path + "/" + asset.name);
-        files.push(res);
+      if (asset instanceof File) {
+        const limitLargeFile: number = toBytes(100, "MB");
+        let res;
+        if (asset.size < limitLargeFile) {
+          res = await Storage.upload(asset, customPath + "/" + asset.name);
+        } else {
+          res = await Storage.multipartUpload(asset, customPath + "/" + asset.name);
+        }
+        files.push({
+          Key: res.Key,
+          ContentLength: res.ContentLength,
+          ContentType: res.ContentType,
+          name: asset.name
+        });
       } else {
-        files.push(await queries.storage.multipartUpload(asset, path + "/" + asset.name));
+        files.push(asset);
       }
     }
     return files;
@@ -23,7 +32,7 @@ export const upload = async (assets: File[], path = "") => {
 
 export const download = async (key: string) => {
   try {
-    const data = queries.storage.download(key);
+    const data = Storage.download(key);
 
     let type = "";
 
@@ -66,7 +75,7 @@ export const download = async (key: string) => {
 
 export const remove = async (keys: { Key: string }[]) => {
   try {
-    return await queries.storage.remove(keys.map(key => {
+    return await Storage.remove(keys.map(key => {
       return {
         Key: key.Key
       };

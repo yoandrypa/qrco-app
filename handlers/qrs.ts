@@ -84,7 +84,7 @@ export const edit = async (data) => {
     }
 
     // Update QR
-    const updatedLink = Qr.update({ userId, createdAt, ...rest });
+    const updatedLink = await Qr.update({ userId, createdAt, ...rest });
 
     // @ts-ignore
     return { ...qr, ...updatedLink };

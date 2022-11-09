@@ -17,15 +17,6 @@ export const get = async (id: string) => {
   }
 };
 
-export const remove = async (userId: string) => {
-  try {
-    await User.remove(userId);
-    return "OK";
-  } catch (e: any) {
-    throw new CustomError(e.message, 500, e);
-  }
-};
-
 export const update = async (userData: Match<UserType>, data: Partial<UserType>) => {
   try {
     return await User.update(userData, data);

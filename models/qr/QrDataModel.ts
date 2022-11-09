@@ -30,9 +30,3 @@ const QrDataSchema = new dynamoose.Schema({
 
 // create a model from schema and export it
 export const QrDataModel = dynamoose.model("qr_data", QrDataSchema);
-
-QrDataModel.methods.set("findOne", async function(criteria: any) {
-  // @ts-ignore
-  const results = await this.scan(criteria).exec();
-  return results[0];
-});

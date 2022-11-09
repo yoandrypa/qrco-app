@@ -68,14 +68,6 @@ export const get = async (key: { userId: string, createdAt: number }) => {
   }
 };
 
-export const find = async (match: Partial<QrDataQueryType>): Promise<any> => {
-  try {
-    return await QrDataModel.findOne(match);
-  } catch (e) {
-    throw e;
-  }
-};
-
 // @ts-ignore
 export const update = async (data) => {
   try {
@@ -87,6 +79,16 @@ export const update = async (data) => {
     }
     if (qrOptionsId) {
       const { id, ...rest } = qrOptionsId;
+      let propsToRemove: string[] = [];
+      Object.keys(rest).forEach((key) => {
+        if (rest[key] === undefined) {
+          propsToRemove.push(key);
+          delete rest[key];
+        }
+      });
+      if (propsToRemove.length) {
+        rest["$REMOVE"] = propsToRemove;
+      }
       transactions.push(QrOptionsModel.transaction.update(id, rest));
     }
     if (qrData) {
