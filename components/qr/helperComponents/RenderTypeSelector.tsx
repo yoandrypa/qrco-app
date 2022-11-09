@@ -39,7 +39,7 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
     if (dynamic) {
       setData({ ...data, isDynamic: dynamic });
     } else if (data.isDynamic !== undefined) {
-      const tempoData:DataType = { ...data };
+      const tempoData: DataType = { ...data };
       delete tempoData.isDynamic;
       setData(tempoData);
     }
@@ -94,7 +94,7 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
           {renderTypeSelector("social", "Social networks", "Share your social networks information", true)}
           {renderTypeSelector("link", "Links", "Share your own links, including social info", true)}
           {renderTypeSelector("coupon", "Coupon", "Share a coupon", true)}
-          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("donations", "Donations", "Get donations from your supporters worldwide", true)}
+          {renderTypeSelector("donations", "Donations", "Get donations from your supporters worldwide", true)}
           {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("fundme", "Fund Me", "Start your own charity or fundraising campaign.", true)}
         </>)
       }

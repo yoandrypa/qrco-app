@@ -182,6 +182,8 @@ export type DonationsData = {
 }
 
 export type EbanuxDonationPriceData = {
+  priceId?: string,
+  productId?: string,
   name: string,
   unitAmountUSD: number,
   redirectUrl: string,

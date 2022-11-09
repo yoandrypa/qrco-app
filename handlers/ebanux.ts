@@ -25,9 +25,11 @@ export const createEbanuxDonationPrice = async (userId: string, token: string, d
 }
 
 async function updateEbanuxDonationPrice(userId: string, token: string, priceId: string, data: EbanuxDonationPriceData) {
-    const result = await APIv1.put('/donation', {
+    const result = await APIv1.patch('/donation', {
         amount: data.unitAmountUSD,
-        cognitoUserId: userId
+        cognitoUserId: userId,
+        priceId: data.priceId,
+        productId: data.productId
     }, {
         headers: {
             'Authorization': `Bearer ${token}`
