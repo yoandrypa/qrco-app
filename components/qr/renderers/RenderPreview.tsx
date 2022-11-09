@@ -31,10 +31,10 @@ const QRRender = ({ qrData, width, alt }: QRRenderProps) => (<img src={`data:ima
 
 interface PreviewProps {
   qrDesign: any;
-  name: string;
+  qr: any;
 }
 
-const RenderPreview = ({ qrDesign, name }: PreviewProps) => {
+const RenderPreview = ({ qrDesign, qr }: PreviewProps) => {
   const [preview, setPreview] = useState<boolean>(false);
   const [qrData, setQrData] = useState<any>(null);
   const [current, setCurrent] = useState<string | null>(null);
@@ -107,6 +107,18 @@ const RenderPreview = ({ qrDesign, name }: PreviewProps) => {
     generateQr();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const name = qr.name;
+
+  const getJson = (event: {key: string;}) => {
+    if (event.key === 'J') {
+      const newJson = {...qr};
+      if (newJson.qrOptionsId) {
+        delete newJson.qrOptionsId;
+      }
+      console.log(JSON.stringify(newJson));
+    }
+  }
+
   return (
     <>
       <Box sx={{ display: 'none' }}>{qrData}</Box>
@@ -118,7 +130,7 @@ const RenderPreview = ({ qrDesign, name }: PreviewProps) => {
         )}
       </Box>
       {preview && (
-        <Dialog onClose={handlePreView} open={true}>
+        <Dialog onClose={handlePreView} open={true} onKeyPress={getJson}>
           <DialogContent>
             <Box sx={{ width: '300px' }}>
               <QRRender qrData={current || ''} width={300} alt={`${name}preview`} />
