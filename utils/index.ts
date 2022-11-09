@@ -216,7 +216,7 @@ export const toBytes = (size: number, type: "B" | "KB" | "MB" | "GB" | "TB") => 
   if (typeof key !== "boolean") {
     return size * 1024 ** key;
   }
-  return undefined;
+  return size;
 };
 
 export const conjunctMethods = {

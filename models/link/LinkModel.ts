@@ -69,26 +69,3 @@ const LinkSchema = new dynamoose.Schema({
 
 // create a model from schema and export it
 export const LinkModel = dynamoose.model("links", LinkSchema);
-
-LinkModel.methods.set("findOne", async function(criteria: any) {
-  // @ts-ignore
-  const results = await this.scan(criteria).exec();
-  return results[0];
-});
-
-LinkModel.methods.set("batchDeletes", async function(conditions = undefined) {
-  let results;
-  if (conditions) {
-    // @ts-ignore
-    results = await this.scan(conditions)
-      .attributes(["id"])
-      .exec();
-  } else {
-    // @ts-ignore
-    results = await this.scan()
-      .attributes(["id"])
-      .all();
-  }
-  // @ts-ignore
-  return results.length > 0 ? this.batchDelete(results) : true;
-});

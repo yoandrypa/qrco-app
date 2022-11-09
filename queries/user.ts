@@ -66,17 +66,3 @@ export const update = async (match: Match<UserType>, update: Partial<UserType>) 
     { condition }
   );
 };
-
-export const remove = async (userId: string) => {
-  const userToRemove = await UserModel.findOne({
-    id: { eq: userId }
-  });
-
-  if (!userToRemove) {
-    throw Error("User was not found.");
-  }
-
-  UserModel.delete(userToRemove.id, ((error) => {
-    return !error;
-  }));
-};
