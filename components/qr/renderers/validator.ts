@@ -1,15 +1,16 @@
-import {PHONE, SOCIALS} from "../constants";
-import {DataType} from "../types/types";
+import {PHONE} from "../constants";
+import {DataType, SocialNetworksType} from "../types/types";
 
 export default function socialsAreValid(data: DataType) {
   let result = true;
-  SOCIALS.every((x: string) => {
-    // @ts-ignore
-    if (data[x] !== undefined && (!data[x].trim().length || (x === 'whatsapp' && !PHONE.test(data[x])))) {
-      result = false;
-      return false;
-    }
-    return true;
-  });
+  if (data?.socials?.length) {
+    data.socials.every((x: SocialNetworksType) => {
+      if ((x.value !== undefined && x.value.trim().length === 0) || (x.network === 'whatsapp' && !PHONE.test(x.value || ''))) {
+        result = false;
+        return false;
+      }
+      return true;
+    });
+  }
   return result;
 }

@@ -130,7 +130,7 @@ const RenderPreview = ({ qrDesign, qr }: PreviewProps) => {
         )}
       </Box>
       {preview && (
-        <Dialog onClose={handlePreView} open={true} onKeyPress={getJson}>
+        <Dialog onClose={handlePreView} open={true} onKeyDown={getJson}>
           <DialogContent>
             <Box sx={{ width: '300px' }}>
               <QRRender qrData={current || ''} width={300} alt={`${name}preview`} />
