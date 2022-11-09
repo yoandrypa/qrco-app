@@ -93,8 +93,12 @@ export default function AppWrapper(props: AppWrapperProps) {
       clearData(false);
     }
     handleLoading();
-    router.push({ pathname: mode !== 'edit' && router.pathname === "/" ? QR_TYPE_ROUTE : "/", query: { mode } },
-      undefined, { shallow: true }).then(() => {
+    const navigationOptions = {pathname: mode !== 'edit' && router.pathname === "/" ? QR_TYPE_ROUTE : "/", query: {}};
+    if (mode === 'edit') {
+      navigationOptions.query = { mode };
+    }
+
+    router.push(navigationOptions,undefined, { shallow: true }).then(() => {
       handleLoading(false);
     });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps

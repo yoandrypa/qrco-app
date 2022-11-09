@@ -85,7 +85,7 @@ const RenderSocials = ({data, setData}: RenderSocialsProps) => {
         {renderSocial(x)}
       </Grid>
     ))
-  }, [data?.socials]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data?.socials?.length || 0]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSelection = (item: SocialsType) => {
     selection.current = item;
@@ -106,7 +106,7 @@ const RenderSocials = ({data, setData}: RenderSocialsProps) => {
 
   const exists = useCallback((network: SocialsType) => (
     data.socials !== undefined && data.socials.some((x: SocialNetworksType) => x.network === network)
-  ), [data.socials]);  // eslint-disable-line react-hooks/exhaustive-deps
+  ), [data?.socials?.length || 0]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Grid container spacing={1}>
