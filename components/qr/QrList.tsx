@@ -110,13 +110,13 @@ const QrList = ({ qrs }: any) => {
     </Typography>
   );
 
-  const renderQr = (qrOptions: any, value: string, name: string) => {
+  const renderQr = (qrOptions: any, value: string, qr: any) => {
     const options = { ...qrOptions };
     if (!options.image?.trim().length) {
       options.image = null;
     }
     options.data = value;
-    return (<RenderPreview qrDesign={options} name={name} />);
+    return <RenderPreview qrDesign={options} qr={qr} />;
   };
 
   return (
@@ -125,16 +125,11 @@ const QrList = ({ qrs }: any) => {
         {qrs?.length > 0 ? (
           <>
             <Typography variant="h6" style={{ fontWeight: "bold" }}>My QR Codes</Typography>
-            {qrs.map((qr: any) => {
-              // @ts-ignore
-              const qrLink = sanitize.link(qr.shortLinkId || {});
-              // @ts-ignore
+            {qrs.map((qr: any) => { // @ts-ignore
+              const qrLink = sanitize.link(qr.shortLinkId || {}); // @ts-ignore
               return (
                 <Paper sx={{ width: "100%", overflow: "hidden" }} elevation={3} key={qr.createdAt}>
                   <Grid container justifyContent="flex-start" alignItems="center" spacing={2}>
-                    {/*<Grid item xs={0.1}>*/}
-                    {/*  <Checkbox />*/}
-                    {/*</Grid>*/}
                     <Grid item sm={5} xs={12}>
                       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                         <Box sx={{ display: "flex" }}>
@@ -145,7 +140,7 @@ const QrList = ({ qrs }: any) => {
                               </Box>
                             ) : (
                               <Box sx={{ mt: 1 }}>
-                                {renderQr(qr.qrOptionsId, !qr.isDynamic ? handleDesignerString(qr.qrType, qr) : qr.qrOptionsId.data, qr.qrName)}
+                                {renderQr(qr.qrOptionsId, !qr.isDynamic ? handleDesignerString(qr.qrType, qr) : qr.qrOptionsId.data, qr)}
                               </Box>
                             )}
                           </Box>
@@ -155,12 +150,10 @@ const QrList = ({ qrs }: any) => {
                             <Typography variant="h6" sx={{ fontWeight: "bold", mb: "-2px" }}>{qr.qrName}</Typography>
                             {isWide ? (
                               <Typography variant="caption" sx={{ color: "gray" }}>
-                                {/*Created at: {format(new Date(qr.createdAt), "MMM d, yyyy")}*/}
                                 {`Created at: ${humanDate(new Date(qr.createdAt).getTime())}`}
                               </Typography>
                             ) : (
-                              <Typography variant="caption" sx={{ color: "gray" }}>
-                                {/*@ts-ignore*/}
+                              <Typography variant="caption" sx={{ color: "gray" }}>{/*@ts-ignore*/}
                                 <Link href={qrLink.link}>{qrLink.link}</Link>
                               </Typography>
                             )}
