@@ -98,31 +98,14 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
           <Grid item>
           </Grid>
           <Grid item>
-            <Stack direction="row" sx={{ marginTop: 2, display: 'flex', justifyContent: 'center', alignSelf: 'center' }}>
-              {/* <FileUpload
-            sx={{border: 4, borderStyle: 'dashed', backgroundColor: 'lightgray'}}
-            onChange={()=>{}}
-            accept={ALLOWED_FILE_EXTENSIONS['image']}
-            multiple={false}
-            // @ts-ignore
-            value={data["files"]}
-            maxFiles={1}
-            // @ts-ignore
-            maxSize={toBytes(5, "MB")}
-          /> */}
-            </Stack>
-          </Grid>
-          <Grid item>
           </Grid>
         </Grid>
         <Grid container sx={{ display: 'flex', justifyContent: 'center', alignContent: 'center' }}>
-
         </Grid>
         <Grid sx={{
           display: 'flex', alignItems: "center",
           justifyContent: "center"
         }}>
-
           <TextField label='Your Name'
             sx={{ marginTop: 2, width: 300 }}
             placeholder='Paul Smith'
@@ -165,7 +148,7 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
             id="button-text-auto"
             disableClearable
             onChange={(event: any, newValue: string | null) => { handleValues('urlOptionLabel') }}
-            options={['Donate', 'Book', 'Pay']}
+            options={['Donate', 'Send', 'Contribute']}
             renderInput={(params) => (
               <TextField
                 {...params}
