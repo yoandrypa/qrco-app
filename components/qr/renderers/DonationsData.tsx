@@ -52,7 +52,6 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
   useEffect(() => {
     const temp = { ...data }
     temp["urlOptionLabel"] = inputButtonValue
-    console.log('saving state')
   }, [inputButtonValue, data])
 
   const handleValues = (item: Options) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -75,9 +74,6 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
         }
 
       }
-
-      if (item === 'urlOptionLabel') console.log(value)
-
       // @ts-ignore
       temp[item] = value;
       // @ts-ignore
@@ -150,21 +146,20 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
           >
           </TextField>
         </Grid>
-
-
         <Grid sx={{
           display: 'flex', alignItems: "center",
           justifyContent: "center", marginTop: 2
         }}>
           <Autocomplete
-            value={Buttonvalue}
+            value={data?.urlOptionLabel || 'Donate'}
             onChange={(event: any, newValue: string | null) => {
               setButtonValue(newValue);
             }}
             inputValue={inputButtonValue}
             onInputChange={(event, newInputButtonValue) => {
               setInputButtonValue(newInputButtonValue);
-
+              setData({ ...data, urlOptionLabel: newInputButtonValue })
+              console.log('saved')
             }}
             id="donation-button-text"
             options={options}
