@@ -50,9 +50,11 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import SmartphoneIcon from '@mui/icons-material/Smartphone';
 import HttpIcon from '@mui/icons-material/Http';
 import PublicIcon from '@mui/icons-material/Public';
-import VolunteerActivism  from '@mui/icons-material/VolunteerActivism';
+import VolunteerActivism from '@mui/icons-material/VolunteerActivism';
 import { grey } from "@mui/material/colors";
 import Coffee from '@mui/icons-material/Coffee';
+import CreditCard from '@mui/icons-material/CreditCard'
+import CurrencyBitcoinIcon from '@mui/icons-material/CurrencyBitcoin';
 
 type RenderIconProp = {
   icon: string;
@@ -119,6 +121,8 @@ export default function RenderIcon({ icon, color, enabled, adjust }: RenderIconP
       case 'world': { return <PublicIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'link': { return <LinkIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'fundme': { return <VolunteerActivism sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
+      case 'paylink': { return <CreditCard sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
+      case 'crypto': { return <CurrencyBitcoinIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       default: { return <TextSnippetOutlinedIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
     }
   };
