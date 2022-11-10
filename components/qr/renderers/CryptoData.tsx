@@ -65,9 +65,8 @@ const supportedBlockChains = [
 
 
 function CryptoData({ }: Props) {
-
-    const handleCryptoChange = (event, newValue) => {
-
+    const handleCryptoChange = (event: any, newValue: { label: string, value: string } | null) => {
+        //TODO
     }
 
     const [value, setValue] = useState(supportedBlockChains[0])
