@@ -37,6 +37,7 @@ const RenderProposalsTextFields = ({ value, handleValues, placeholder, label, it
         <TextField
           {...params}
           fullWidth
+          required={required}
           size="small"
           margin="dense"
           placeholder={placeholder}

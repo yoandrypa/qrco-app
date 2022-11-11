@@ -1,46 +1,66 @@
-import query from "../queries";
 import { CustomError, sanitize } from "../utils";
-import queries from "../queries";
+import * as Domain from "../queries/domain";
+
+export const get = async (key: string) => {
+  try {
+    return await Domain.get(key);
+  } catch (e: any) {
+    throw new CustomError(e.message, 500, e);
+  }
+};
 
 export const list = async (params: any) => {
-  return await query.domain.get({ userId: { eq: params.userId } });
+  try {
+    return await Domain.list({ userId: { eq: params.userId } });
+  } catch (e: any) {
+    throw new CustomError(e.message, 500, e);
+  }
 };
 
 export const find = async (params: any) => {
-  return await query.domain.find({ id: { eq: params.id } });
-};
-
-export const add = async (params: { body: { address?: string; userId: any; homepage?: string } }) => {
-  const { address, homepage, userId } = params.body;
-
-  const domain = await query.domain.add({
-    // @ts-ignore
-    address,
-    homepage,
-    userId
-  });
-
-  return sanitize.domain(domain);
-};
-
-export const remove = async (domainId: string, userId?: string) => {
-  //TODO review this logic
-  /*const domain = await query.domain.update(
-    {
-      id: { eq: domainId },
-      userId: { eq: userId }
-    },
-    { userId: "" }
-  );*/
-
-  const domain = await queries.domain.remove({
-    id: domainId,
-    userId: userId
-  });
-
-  if (!domain) {
-    throw new CustomError("Could not delete the domain.", 500);
+  try {
+    return await Domain.find({ userId: { eq: params.userId } });
+  } catch (e: any) {
+    throw new CustomError(e.message, 500, e);
   }
+};
 
-  return { message: "DomainModel deleted successfully" };
+export const create = async (params: { body: { address?: string; userId: any; homepage?: string } }) => {
+  try {
+    const { address, homepage, userId } = params.body;
+
+    const domainItem = await Domain.create({
+      // @ts-ignore
+      address,
+      homepage,
+      userId
+    });
+
+    return sanitize.domain(domainItem);
+  } catch (e: any) {
+    throw new CustomError(e.message, 500, e);
+  }
+};
+
+export const remove = async (key: { userId: string, createdAt: number }) => {
+  try {
+    //TODO review this logic
+    /*const domain = await query.domain.update(
+      {
+        id: { eq: domainId },
+        userId: { eq: userId }
+      },
+      { userId: "" }
+    );*/
+
+    const domainItem = await Domain.remove(key);
+
+    if (!domainItem) {
+      throw new CustomError("Could not delete the domain.", 500);
+    }
+
+    return { message: "DomainModel deleted successfully" };
+  } catch (e: any) {
+    throw new CustomError(e.message, 500, e);
+  }
 };

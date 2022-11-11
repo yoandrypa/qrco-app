@@ -40,6 +40,7 @@ const CouponData = ({data, setData, handleValues, setIsWrong}: CouponProps) => {
         options={item === 'prefix' ? ['Get coupon', '10% off', 'Get for free'] : ['Shop online', 'Buy online', 'Get a discount', 'Buy & get a discount']}
         value={value}
         item={item}
+        required={required}
         label={label}
         placeholder={placeholder}
         isError={isError}

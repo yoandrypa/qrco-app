@@ -7,8 +7,6 @@ import { useRouter } from "next/router";
 import QrList from "./QrList";
 
 export default function QrHome({ qrData, userInformation }: any) {
-  // const qrs = JSON.parse(qrData);
-
   const router = useRouter();
 
   // @ts-ignore
@@ -16,10 +14,13 @@ export default function QrHome({ qrData, userInformation }: any) {
 
   useEffect(() => {
     if (router.query.login) {
-      // @ts-ignore
       setLoading(true);
       const { path } = router.query;
-      router.push(path !== undefined ? `${path}` : '/', undefined, {shallow: false})
+      const route = { pathname: path !== undefined ? `${path}` : '/'};
+      if (router.query.selected) { // @ts-ignore
+        route.query = { selected: router.query.selected };
+      }
+      router.push(route, '/', {shallow: false})
         .then(() => {
           setLoading(false);
         });

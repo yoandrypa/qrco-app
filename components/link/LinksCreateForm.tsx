@@ -42,7 +42,8 @@ const LinksCreateForm = ({ domains, user }: any) => {
     try {
       setLoading(true);
       const address = await generateId();
-      const domain = await DomainHandler.find({ id: values.domain });
+      // @ts-ignore
+      const domain = "";//TODO values.domain ? await DomainHandler.get(values.domain) : values.domain;
       const link = await LinkHandler.create({
         // @ts-ignore
         body: {
@@ -60,6 +61,7 @@ const LinksCreateForm = ({ domains, user }: any) => {
         Router.push("/links").then(() => setLoading(false));
       }
     } catch (e) {
+      setLoading(false);
       console.error(e);
     }
   };

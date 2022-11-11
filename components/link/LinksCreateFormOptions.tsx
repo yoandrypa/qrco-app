@@ -32,8 +32,8 @@ const LinksCreateFormOptions = ({ domains, parentValues, parentHandleChange }: a
             size="small"
             fullWidth
           >
-            {domains && domains.map((domain: DomainType) => <MenuItem key={domain.id}
-                                                                      value={domain.id}>{domain.address}</MenuItem>)}
+            {domains && domains.map((domain: DomainType) => <MenuItem key={domain.createdAt}
+                                                                      value={domain.createdAt}>{domain.address}</MenuItem>)}
           </Select>
         </FormControl>
       </Grid>

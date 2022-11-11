@@ -9,7 +9,7 @@ import Divider from "@mui/material/Divider"
 import BillingPortal from "../../components/billing/BillingPortal"
 import Context from '../../components/context/Context'
 import Grid from '@mui/material/Grid'
-import {find} from '../../handlers/users'
+import {get} from '../../handlers/users'
 import Box from '@mui/material/Box'
 import Image from 'next/image'
 
@@ -56,7 +56,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, req, res }
   const userData = JSON.parse(userInfo.userData as string)
   const userId = userData.UserAttributes[0].Value;
   console.log('user infoData es',userData)
-  const data: object = await find(userId) 
+  const data: object = await get(userId)
   return {
     props: {
       logged: true,

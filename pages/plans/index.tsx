@@ -18,7 +18,7 @@ import axios, { AxiosError } from 'axios'
 import Snackbar from '@mui/material/Snackbar'
 import Alert from '@mui/material/Alert'
 import BillingPortal from '../../components/billing/BillingPortal'
-import {find} from '../../handlers/users'
+import {get} from '../../handlers/users'
 import CountDown from '../../components/countdown/CountDown'
 type Props = {
   logged: boolean,
@@ -309,7 +309,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, req, res }
   const userData = JSON.parse(userInfo.userData as string)
   const userId = userData.UserAttributes[0].Value;
   console.log('user infoData es',userData)
-  const data: object = await find(userId) 
+  const data: object = await get(userId)
    console.log('data retrieved', data)
   return {
     props: {

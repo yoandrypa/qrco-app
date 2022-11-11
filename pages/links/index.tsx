@@ -27,11 +27,6 @@ export default function Index({ linksData, domainsData }: InferGetServerSideProp
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  res.setHeader(
-    "Cache-Control",
-    "private, s-maxage=10, stale-while-revalidate=59"
-  );
-
   const getUserInfo = async () => {
     try {
       let userInfo = {};
@@ -64,12 +59,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   // @ts-ignore
   const userData = JSON.parse(userInfo.userData as string);
   const userId = userData.UserAttributes[0].Value;
-  let user = await UserHandler.find(userId);
+  let user = await UserHandler.get(userId);
   if (!user) {
     user = await UserHandler.create({ id: userId });
   }
   const links = await LinkHandler.list({ limit: 10, userId: user.id });
-  const domains = await DomainHandler.list({ userId: user.id });
+  const domains: any[] = await DomainHandler.find({ userId: user.id });
 
   return {
     props: {

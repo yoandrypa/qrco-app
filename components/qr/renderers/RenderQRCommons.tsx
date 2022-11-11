@@ -24,6 +24,7 @@ import Tooltip from "@mui/material/Tooltip";
 import RenderImgPreview from "./helpers/RenderImgPreview";
 import RenderForeImgTypePicker from "./helpers/RenderForeImgTypePicker";
 import CircularProgress from "@mui/material/CircularProgress";
+import ImageCropper from "./helpers/ImageCropper";
 
 interface QRCommonsProps {
   omitDesign?: boolean;
@@ -35,18 +36,25 @@ interface QRCommonsProps {
   backgndImg?: File | string;
   foregndImg?: File | string;
   foregndImgType?: string;
+  backError?: boolean;
+  foreError?: boolean;
   handleValue: Function;
 }
 
 const colors = [DEFAULT_COLORS, {p: '#187510', s: '#9ece99'}, {p: '#aa8412', s: '#d7c89a'},
   {p: '#b30909', s: '#dba8a8'}, {p: '#8c0f4a', s: '#dd9ebc'}, {p: '#40310f', s: '#a8a6a1'}] as ColorTypes[];
 
-function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, foregndImg, foregndImgType, backgndImg, secondary, handleValue}: QRCommonsProps) {
-  // @ts-ignore
+function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, foregndImg, foregndImgType, backgndImg,
+                           backError, foreError, secondary, handleValue}: QRCommonsProps) { // @ts-ignore
   const {userInfo} = useContext(Context);
   const [expander, setExpander] = useState<string | null>('design');
   const [selectFile, setSelectFile] = useState<string | null>(null);
+  const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+
+  if (!userInfo) {
+    return null;
+  }
 
   const renderColors = () => (
     <>
@@ -85,17 +93,18 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
     </>
   );
 
-  if (!userInfo) {
-    return null;
-  }
-
   const handleSelectFile = (kind: string) => () => {
     setSelectFile(kind);
   };
 
   const handleAccept = (file: File, kind: string) => {
-    handleValue(kind)(file);
+    setCropper({file, kind});
     setSelectFile(null);
+  };
+
+  const handleSave = (newFile: File, kind: string) => {
+    handleValue(kind)(newFile);
+    setCropper(null);
   };
 
   const renderOptions = (kind: string) => (
@@ -139,7 +148,7 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
             <>
               {renderColors()}
               {loading && (
-                <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center', position: 'absolute' }}>
+                <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center', mt: '10px', mb: '-10px' }}>
                   <CircularProgress size={20} sx={{ mr: '5px' }} />
                   <Typography sx={{ fontSize: 'small', color: theme => theme.palette.text.disabled}}>
                     {'Loading data. Please wait...'}
@@ -151,14 +160,14 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
                 display: 'flex',
                 textAlign: 'center',
                 flexDirection: {md: "row", xs: "column"},
-                mt: !loading? 2 : 3
+                mt: 2
               }}>
                 <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
                   <Tooltip title="Click for selecting the background image">
                     <Button
                       sx={{width: '100%'}}
                       disabled={loading}
-                      startIcon={<WallpaperIcon/>}
+                      startIcon={<WallpaperIcon sx={{ color: theme => backError ? theme.palette.error.dark : undefined }}/>}
                       variant="outlined"
                       color="primary"
                       onClick={handleSelectFile('backgndImg')}
@@ -173,7 +182,7 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
                     <Tooltip title="Click for selecting the main image">
                       <Button
                         sx={{width: '100%'}}
-                        startIcon={<ImageIcon/>}
+                        startIcon={<ImageIcon sx={{ color: theme => foreError ? theme.palette.error.dark : undefined }}/>}
                         variant="outlined"
                         disabled={loading}
                         onClick={handleSelectFile('foregndImg')}
@@ -196,11 +205,15 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
           handleClose={() => setSelectFile(null)}
           title={selectFile === 'foregndImg' ? 'main' : 'background'}
           kind={selectFile}
-          handleAcept={handleAccept}/>
+          handleAcept={handleAccept}
+          wasError={(selectFile === 'foregndImg' && foreError) || (selectFile === 'backgndImg' && backError)}
+        />
       )}
-      {preview !== null && (
-        // @ts-ignore
+      {preview !== null && ( // @ts-ignore
         <RenderImgPreview handleClose={() => setPreview(null)} file={preview === 'backgndImg' ? backgndImg : foregndImg} />
+      )}
+      {cropper !== null && (
+        <ImageCropper handleClose={() => setCropper(null)} file={cropper.file} kind={cropper.kind} handleAccept={handleSave} />
       )}
     </>
   );
@@ -210,7 +223,7 @@ function RenderQRCommons({loading, omitDesign, omitPrimaryImg, qrName, primary, 
 function notIf(curr, next) {
   return curr.qrName === next.qrName && curr.primary === next.primary && curr.secondary === next.secondary &&
     curr.backgndImg === next.backgndImg && curr.foregndImg === next.foregndImg && curr.loading === next.loading &&
-    curr.foregndImgType === next.foregndImgType;
+    curr.foregndImgType === next.foregndImgType && curr.backError === next.backError && curr.foreError === next.foreError;
 }
 
 export default memo(RenderQRCommons, notIf);

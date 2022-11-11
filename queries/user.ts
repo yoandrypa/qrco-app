@@ -1,29 +1,47 @@
-//import * as redis from "../redis";
-import { UserModel as UserModel } from "../models/link";
+import { UserModel } from "../models/link";
 import dynamoose from "../libs/dynamoose";
-import { CustomError } from "../utils";
 
-export const find = async (match: Partial<UserQueryType>) => {
-  return await UserModel.findOne(match);
+export const find = async (match: any) => {
+  try {
+    return await UserModel.get(match);
+  } catch (e) {
+    throw e;
+  }
 };
 export const findByCustomerId = async (match: Partial<UserQueryType>) => {
-  return await UserModel.findOne(match);
+  try {
+    return await UserModel.query(match).using("customerIdIndex").exec();
+  } catch (e) {
+    throw e;
+  }
 };
 
-export const deleteSubscription = async (match: Partial<UserQueryType>)=>{
-  return await UserModel.update(match,{"$REMOVE":"subscriptionData"})
-}
+export const deleteSubscription = async (match: Partial<UserQueryType>) => {
+  return await UserModel.update(match, { "$REMOVE": "subscriptionData" });
+};
 
 interface CreateData {
   id: string;
 }
 
 export const create = async (params: CreateData) => {
-  const data = {
-    id: params.id
-  };
+  try {
+    const data = {
+      id: params.id
+    };
 
-  return await UserModel.create(data);
+    return await UserModel.create(data);
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const get = async (key: any) => {
+  try {
+    return await UserModel.get(key);
+  } catch (e) {
+    throw e;
+  }
 };
 
 export const update = async (match: Match<UserType>, update: Partial<UserType>) => {
@@ -47,18 +65,4 @@ export const update = async (match: Match<UserType>, update: Partial<UserType>) 
     },
     { condition }
   );
-};
-
-export const remove = async (userId: string) => {
-  const userToRemove = await UserModel.findOne({
-    id: { eq: userId }
-  });
-
-  if (!userToRemove) {
-    throw new CustomError("User was not found.");
-  }
-
-  UserModel.delete(userToRemove.id, ((error) => {
-    return !error;
-  }));
 };

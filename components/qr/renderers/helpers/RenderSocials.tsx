@@ -1,4 +1,4 @@
-import {ChangeEvent, useCallback, useMemo, useRef} from "react";
+import {ChangeEvent, useCallback, useRef} from "react";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import SquareSelector from "../../helperComponents/SquareSelector";
@@ -6,11 +6,11 @@ import TextField from "@mui/material/TextField";
 import {capitalize} from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import RenderIcon from "../../helperComponents/RenderIcon";
-import {SocialProps, SocialsType} from "../../types/types";
-import {PHONE, SOCIALS} from "../../constants";
+import {DataType, SocialNetworksType, SocialsType} from "../../types/types";
+import {PHONE} from "../../constants";
 
 interface RenderSocialsProps {
-  data: SocialProps;
+  data: DataType;
   setData: Function;
 }
 
@@ -18,51 +18,40 @@ const RenderSocials = ({data, setData}: RenderSocialsProps) => {
   const selection = useRef<SocialsType | null>(null);
   const errorDetected = useRef(false);
 
-  const handleValues = (item: string) => (event: ChangeEvent<HTMLInputElement>) => {
-    setData((prev: SocialProps) => ({...prev, [item]: event.target.value}));
+  const handleValues = (item: SocialsType) => (event: ChangeEvent<HTMLInputElement>) => {
+    setData((prev: DataType) => {
+      const tempo = {...prev};
+      if (tempo.socials) {
+        const network = tempo.socials.find((x: SocialNetworksType) => x.network === item);
+        if (network) {
+          network.value = event.target.value;
+          return tempo;
+        }
+      }
+    });
   };
 
-  const amount = useMemo(() => {
-    return Object.keys(data || {}).filter((x: string) => SOCIALS.includes(x)).length;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.facebook !== undefined, data?.whatsapp !== undefined, data?.twitter !== undefined, data?.instagram !== undefined, data?.linkedin !== undefined, data?.pinterest !== undefined, data?.telegram !== undefined, data?.youtube !== undefined]);
+  const renderSocial = (item: SocialNetworksType) => {
+    if (item !== undefined) {
+      let isError = !item.value?.length;
 
-  const columns = useMemo(() => {
-    switch (amount) {
-      case 1: {
-        return 12;
-      }
-      case 2:
-      case 4: {
-        return 6;
-      }
-      default: {
-        return 4;
-      }
-    }
-  }, [amount]);
-
-  const renderSocial = (item: SocialsType) => {
-    if (data[item] !== undefined) {
-      let isError = !data[item]?.length;
-
-      if (item === 'whatsapp' && !isError && !PHONE.test(data[item] || '')) {
+      if (item.network === 'whatsapp' && !isError && !PHONE.test(item.value || '')) {
         isError = true;
       }
 
       return (
         <TextField
-          label={capitalize(item)}
-          autoFocus={item === selection.current}
+          label={capitalize(item.network)}
+          autoFocus={item.network === selection.current}
           size="small"
           fullWidth
-          placeholder={`Enter just your ${item !== 'whatsapp' ? 'username' : 'cell number'}`}
+          placeholder={`Enter just your ${item.network !== 'whatsapp' ? 'username' : 'cell number'}`}
           margin="dense"
-          value={data?.[item] || ''}
-          onChange={handleValues(item)}
+          value={item.value || ''}
+          onChange={handleValues(item.network)}
           error={isError}
           InputProps={{
-            startAdornment: <InputAdornment position="start"><RenderIcon icon={item} enabled/></InputAdornment>
+            startAdornment: <InputAdornment position="start"><RenderIcon icon={item.network} enabled/></InputAdornment>
           }}
         />
       );
@@ -72,69 +61,94 @@ const RenderSocials = ({data, setData}: RenderSocialsProps) => {
 
   const renderSocialNetworks = useCallback(() => {
     errorDetected.current = false;
-    // @ts-ignore
-    return Object.keys(data || {}).filter((x: string) => SOCIALS.includes(x)).map((x: SocialsType) => (
+    const socials = data.socials || [];
+
+    let columns:number;
+    switch (socials.length) {
+      case 1: {
+        columns = 12;
+        break;
+      }
+      case 2:
+      case 4: {
+        columns = 6;
+        break;
+      }
+      default: {
+        columns = 4;
+        break;
+      }
+    }
+
+    return socials.map((x: SocialNetworksType) => (
       <Grid item xs={12} sm={columns} style={{paddingTop: 0}} key={`socialnetwork${x}`}>
         {renderSocial(x)}
       </Grid>
-    ));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.facebook, data?.whatsapp, data?.twitter, data?.instagram, data?.linkedin, data?.pinterest, data?.telegram, data?.youtube]);
+    ))
+  }, [data?.socials?.length || 0]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSelection = (item: SocialsType) => {
     selection.current = item;
-    setData((prev: SocialProps) => {
+    setData((prev: DataType) => {
       const temp = {...prev};
-      if (temp[item] === undefined) {
-        temp[item] = '';
+      if (!temp.socials || !temp.socials.some((x: SocialNetworksType) => x.network === item)) {
+        if (!temp.socials) {
+          temp.socials = [];
+        }
+        temp.socials.push({ network: item, value: ''});
       } else {
-        delete temp[item];
+        const index = temp.socials.findIndex((x: SocialNetworksType) => x.network === item);
+        temp.socials.splice(index, 1);
       }
       return temp;
     });
   }
+
+  const exists = useCallback((network: SocialsType) => (
+    data.socials !== undefined && data.socials.some((x: SocialNetworksType) => x.network === network)
+  ), [data?.socials?.length || 0]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Grid container spacing={1}>
       <Grid item xs={12}>
         <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: 'fit-content', margin: '0 auto'}}>
           <SquareSelector
-            selected={data.facebook !== undefined}
+            selected={exists('facebook')}
             item="facebook"
             label="Facebook"
             handleSelection={handleSelection}/>
           <SquareSelector
-            selected={data.whatsapp !== undefined}
+            selected={exists('whatsapp')}
             item="whatsapp"
             label="Whatsapp"
             handleSelection={handleSelection}/>
           <SquareSelector
-            selected={data.twitter !== undefined}
+            selected={exists('twitter')}
             item="twitter"
             label="Twitter"
             handleSelection={handleSelection}/>
           <SquareSelector
-            selected={data.instagram !== undefined}
+            selected={exists('instagram')}
             item="instagram"
             label="Instagram"
             handleSelection={handleSelection}/>
           <SquareSelector
-            selected={data.youtube !== undefined}
+            selected={exists('youtube')}
             item="youtube"
             label="YouTube"
             handleSelection={handleSelection}/>
           <SquareSelector
-            selected={data.linkedin !== undefined}
+            selected={exists('linkedin')}
             item="linkedin"
             label="LinkedIn"
             handleSelection={handleSelection}/>
           <SquareSelector
-            selected={data.pinterest !== undefined}
+            selected={exists('pinterest')}
             item="pinterest"
             label="Pinterest"
             handleSelection={handleSelection}/>
           <SquareSelector
-            selected={data.telegram !== undefined}
+            selected={exists('telegram')}
             item="telegram"
             label="Telegram"
             handleSelection={handleSelection}/>

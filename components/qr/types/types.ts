@@ -73,8 +73,26 @@ export type LinkType = {
   link: string;
 }
 
+export type SocialProps = {
+  facebook?: string;
+  whatsapp?: string;
+  linkedin?: string;
+  instagram?: string;
+  youtube?: string;
+  pinterest?: string;
+  telegram?: string;
+  twitter?: string;
+  qrName?: string;
+  isDynamic?: boolean;
+};
+
+export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram';
+export type SocialNetworksType = { network: SocialsType, value?: string };
+
 export type DataType = {
+  qrType?: string;
   mode?: string;
+  prevNetworks?: string[];
   userId?: string;
   id?: string;
   qrName?: string;
@@ -115,14 +133,7 @@ export type DataType = {
   via?: string;
   hashtags?: string;
   text?: string;
-  facebook?: string;
-  whatsapp?: string;
-  linkedin?: string;
-  instagram?: string;
-  youtube?: string;
-  pinterest?: string;
-  telegram?: string;
-  twitter?: string;
+  socials?: SocialNetworksType[];
   value?: string;
   is12hours?: boolean;
   openingTime?: OpeningType;
@@ -156,6 +167,8 @@ export type DataType = {
   primary?: string;
   secondary?: string;
   isDynamic?: boolean;
+  prevBackImg?: string;
+  prevForeImg?: string;
   backgndImg?: File | string;
   foregndImg?: File | string;
   foregndImgType?: 'circle' | 'smooth' | 'square' | null;
@@ -168,26 +181,12 @@ export type DonationsData = {
   shortText: string
 }
 
-
-export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram';
-
 export type EbanuxDonationPriceData = {
+  priceId?: string,
+  productId?: string,
   name: string,
   unitAmountUSD: number,
   redirectUrl: string,
-}
-
-export type SocialProps = {
-  facebook?: string;
-  whatsapp?: string;
-  linkedin?: string;
-  instagram?: string;
-  youtube?: string;
-  pinterest?: string;
-  telegram?: string;
-  twitter?: string;
-  qrName?: string;
-  isDynamic?: boolean;
 }
 
 export type CardDataProps = {
@@ -208,14 +207,10 @@ export type ColorTypes = {
   s: string
 };
 
-export type FileType = {
-  content: string;
-  type: string;
-};
-
 export type EditType = {
   userId: string;
   id: string;
+  prevNetworks?: string[];
   qrType: string;
   qrName: string;
   isDynamic?: boolean;
@@ -227,4 +222,9 @@ export type EditType = {
   secondary?: string;
   createdAt?: string;
   updatedAt?: string;
+};
+
+export type ProcessHanldlerType = {
+  value: string;
+  status?: boolean;
 };

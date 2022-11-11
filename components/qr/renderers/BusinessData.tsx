@@ -28,7 +28,7 @@ interface BusinessProps {
 export default function BusinessData({data, setData, handleValues, setIsWrong}: BusinessProps) {
   const [expander, setExpander] = useState<string | null>(null);
 
-  const renderItem = (item: string, label: string) => {
+  const renderItem = (item: string, label: string, required?: boolean) => {
     let isError = false as boolean;
     // @ts-ignore
     const value = data?.[item] || '' as string;
@@ -53,7 +53,7 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
       />);
     }
 
-    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={handleValues} />;
+    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={handleValues} required={required} />;
   };
 
   const handleOptionButton = () => {
@@ -80,6 +80,8 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
       (data.email?.trim().length && !EMAIL.test(data.email)) || (data.phone?.trim().length && !PHONE.test(data.phone)) ||
       (data.zip?.trim().length && !ZIP.test(data.zip))) {
       errors = true;
+    } else if (!data.company?.trim().length) {
+      errors = true;
     } else {
       errors = !socialsAreValid(data);
     }
@@ -92,13 +94,13 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
       <Topics message={'Business info'}/>
       <Grid container spacing={1}>
         <Grid item xs={12} style={{paddingTop: 0}}>
-          {renderItem('company', 'Company')}
+          {renderItem('company', 'Company', true)}
         </Grid>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
           {renderItem('title', 'Title')}
         </Grid>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('subtitle', 'Sub title')}
+          {renderItem('subtitle', 'Subtitle')}
         </Grid>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
           {renderItem('web', 'Web')}

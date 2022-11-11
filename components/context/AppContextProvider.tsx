@@ -71,6 +71,10 @@ const AppContextProvider = (props: ContextProps) => {
     setStep(0);
     setOptions(handleInitialData("Ebanux"));
 
+    if (data.mode === 'edit') {
+      doNotNavigate.current = true;
+    }
+
     let newData:DataType;
     if (!keepType || data.isDynamic) {
       newData = initialData;
@@ -83,7 +87,7 @@ const AppContextProvider = (props: ContextProps) => {
     }
 
     setData(newData);
-  }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data?.isDynamic, data.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (doneInitialRender.current && (router.pathname === QR_TYPE_ROUTE || (router.pathname === '/' && !isUserInfo))) {
@@ -132,7 +136,7 @@ const AppContextProvider = (props: ContextProps) => {
   }, [step]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (options?.mode !== 'edit') {
+    if (options?.mode !== 'edit' && router.query.mode !== 'edit') {
       if ([QR_CONTENT_ROUTE, QR_DESIGN_ROUTE].includes(router.pathname)) {
         if (data?.isDynamic && !isUserInfo && !router.query.login) {
           router.push({pathname: "/", query: {path: router.pathname, login: true}}, "/").then(() => { setLoading(false); });
@@ -172,17 +176,16 @@ const AppContextProvider = (props: ContextProps) => {
     }
   }, [forceClear]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const verify = async () => {
-    try {
-      const userData = await Auth.currentAuthenticatedUser();
-      setUserInfo(userData);
-    } catch {
-      setUserInfo(null);
-      setVerifying(false);
-    }
-  };
-
   useEffect(() => {
+    const verify = async () => {
+      try {
+        const userData = await Auth.currentAuthenticatedUser();
+        setUserInfo(userData);
+      } catch {
+        setUserInfo(null);
+        setVerifying(false);
+      }
+    };
     verify();
   }, []);
 
@@ -193,10 +196,8 @@ const AppContextProvider = (props: ContextProps) => {
       setBackground(getBackgroundObject(options) || initialBackground);
       setFrame(getFrameObject(options) || initialFrame);
       setData(dataCleaner(options));
-      setOptions(dataCleaner(options, true));
-      // @ts-ignore
+      setOptions(dataCleaner(options, true)); // @ts-ignore
       setSelected(options.qrType);
-
       setStep(options?.isDynamic ? 1 : 2);
     }
    }, [options.mode]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -234,7 +235,7 @@ const AppContextProvider = (props: ContextProps) => {
       }
     } else {
       return (
-        <AppWrapper userInfo={userInfo} handleLogout={logout} clearData={clearData} setLoading={setLoading} setIsTrialMode={setIsTrialMode}>
+        <AppWrapper userInfo={userInfo} handleLogout={logout} clearData={clearData} setLoading={setLoading} setIsTrialMode={setIsTrialMode} mode={data.mode}>
           {children}
         </AppWrapper>
       );

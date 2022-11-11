@@ -4,23 +4,21 @@ import Box from "@mui/material/Box";
 import Common from "../helperComponents/Common";
 import RenderSocials from "./helpers/RenderSocials";
 
-import {SocialProps} from "../types/types";
+import {DataType} from "../types/types";
 import socialsAreValid from "./validator";
-import {SOCIALS} from "../constants";
 
 interface NetWorksProps {
-  data: SocialProps;
+  data: DataType;
   setData: Function;
   setIsWrong?: (isWrong: boolean) => void;
 }
 
 const NetworksData = ({data, setData, setIsWrong}: NetWorksProps) => {
   useEffect(() => {
-  if (setIsWrong !== undefined) {
-    setIsWrong(!Object.keys(data || {}).filter((x: string) => SOCIALS.includes(x)).length || !socialsAreValid(data));
-  }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.facebook, data.whatsapp, data.twitter, data.instagram, data.linkedin, data.pinterest, data.telegram, data.youtube]);
+    if (setIsWrong !== undefined) {
+      setIsWrong(!data?.socials || data.socials.length === 0 || !socialsAreValid(data));
+    }
+  }, [data]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Common msg="Your social networks. Users can reach you using the social networks.">

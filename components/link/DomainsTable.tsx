@@ -58,8 +58,8 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   }
 }));
 
-const deleteDomain = async (domainId: string, userId?: string) => {
-  const deleted = await DomainHandler.remove(domainId, userId);
+const deleteDomain = async (userId: string, createdAt: number) => {
+  const deleted = await DomainHandler.remove({ userId, createdAt });
   if (deleted) {
     Router.push("/settings");
   }
@@ -68,37 +68,37 @@ const deleteDomain = async (domainId: string, userId?: string) => {
 // @ts-ignore
 const DomainsTable = ({ domains }) => {
   const createData = (
-    id: string,
     banned: boolean | undefined,
     bannedById: string | undefined,
     address: string,
     homepage: string | undefined,
-    userId: string | undefined
+    userId: string,
+    createdAt: number
   ): Data => {
     const actions = (
-      <IconButton size="small" onClick={() => deleteDomain(id, userId)}>
+      <IconButton size="small" onClick={() => deleteDomain(userId, createdAt)}>
         <DeleteIcon fontSize="small" color="error" />
       </IconButton>
     );
     return {
-      id,
       banned,
       bannedById,
       address,
       homepage,
       userId,
+      createdAt,
       actions
     };
   };
 
   const rows = domains.map((domain: DomainType) => {
     return createData(
-      domain.id,
       domain.banned,
       domain.bannedById,
       domain.address,
       domain.homepage,
-      domain.userId
+      domain.userId,
+      domain.createdAt
     );
   });
 
@@ -123,8 +123,9 @@ const DomainsTable = ({ domains }) => {
               {rows
                 .map((row: Data) => {
                   return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                    <TableRow hover role="checkbox" tabIndex={-1} key={row.createdAt}>
                       {columns.map((column) => {
+                        // @ts-ignore
                         const value = row[column.id];
                         return (
                           <StyledTableCell

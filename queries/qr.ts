@@ -6,52 +6,35 @@ import { QrOptionsModel } from "../models/qr/QrOptionsModel";
 import { ObjectType } from "dynamoose/dist/General";
 import * as StorageHandler from "../handlers/storage";
 
-interface TotalParams {
-  search?: string;
-}
-
-export const total = async (
-  match: Match<LinkQueryType>,
-  params: TotalParams = {}
-) => {
+export const create = async (data: { shortLink: ObjectType; qrDesign: ObjectType; qrData: ObjectType; }) => {
   try {
-    const query = QrDataModel.scan(match);
-
-    if (params.search) {
-      query.and().parenthesis(
-        new dynamoose.Condition()
-          .where("description")
-          .contains(params.search)
-          .or()
-          .where("address")
-          .contains(params.search)
-          .or()
-          .where("target")
-          .contains(params.search)
-      );
+    let transactions = [];
+    if (data.shortLink) {
+      transactions.push(LinkModel.transaction.create(data.shortLink));
     }
-
-    const result = await query.count().exec();
-
-    return typeof result.count === "number"
-      ? result.count
-      : parseInt(result.count);
+    if (data.qrDesign) {
+      transactions.push(QrOptionsModel.transaction.create(data.qrDesign));
+    }
+    if (data.qrData) {
+      data.qrData.createdAt = Date.now();
+      transactions.push(QrDataModel.transaction.create(data.qrData));
+    }
+    return await dynamoose.transaction(transactions);
   } catch (e) {
-    // @ts-ignore
-    throw new CustomError(e.message, 500, e);
+    throw e;
   }
 };
 
-interface GetParams {
+interface ListParams {
   limit: number;
   search?: string;
   skip?: number;
 }
 
-export const get = async (match: Partial<QrDataQueryType>, params: GetParams) => {
+export const list = async (match: Partial<QrDataQueryType>, params: ListParams) => {
   try {
     //TODO include the Skip param
-    const query = QrDataModel.scan(match);
+    const query = QrDataModel.query(match);
 
     /*if (params.search) {
       query.and().parenthesis(
@@ -67,57 +50,60 @@ export const get = async (match: Partial<QrDataQueryType>, params: GetParams) =>
       );
     }*/
 
-    const results = await query.exec(); //query.limit(params.limit || 10).exec();
+    const results = await query.limit(params.limit || 10).sort("descending").exec();
     // @ts-ignore
     const qrs: QrDataType[] = results;
 
     return [qrs, results.count];
   } catch (e) {
-    // @ts-ignore
-    throw new CustomError(e.message, 500, e);
+    throw e;
   }
 };
 
-export const find = async (match: Partial<QrDataQueryType>): Promise<any> => {
+export const get = async (key: { userId: string, createdAt: number }) => {
   try {
-    return await QrDataModel.findOne(match);
+    return await QrDataModel.get(key);
   } catch (e) {
-    // @ts-ignore
-    throw new CustomError(e.message, 500, e);
+    throw e;
   }
 };
 
-interface Create extends Partial<QrDataType> {
-  qrName: string;
-  qrType: string;
-  userId: string;
-}
-
-export const create = async (data: { shortLink: ObjectType; qrDesign: ObjectType; qrData: ObjectType; }) => {
+// @ts-ignore
+export const update = async (data) => {
   try {
     let transactions = [];
-    if (data.shortLink) {
-      transactions.push(LinkModel.transaction.create(data.shortLink));
+    const { shortLinkId, qrOptionsId, ...qrData } = data;
+    if (shortLinkId) {
+      const { userId, createdAt, ...rest } = shortLinkId;
+      transactions.push(LinkModel.transaction.update({ userId, createdAt }, rest));
     }
-    if (data.qrDesign) {
-      transactions.push(QrOptionsModel.transaction.create(data.qrDesign));
+    if (qrOptionsId) {
+      const { id, ...rest } = qrOptionsId;
+      let propsToRemove: string[] = [];
+      Object.keys(rest).forEach((key) => {
+        if (rest[key] === undefined) {
+          propsToRemove.push(key);
+          delete rest[key];
+        }
+      });
+      if (propsToRemove.length) {
+        rest["$REMOVE"] = propsToRemove;
+      }
+      transactions.push(QrOptionsModel.transaction.update(id, rest));
     }
-    if (data.qrData) {
-      transactions.push(QrDataModel.transaction.create(data.qrData));
+    if (qrData) {
+      const { userId, createdAt, ...rest } = qrData;
+      transactions.push(QrDataModel.transaction.update({ userId, createdAt }, rest));
     }
     return await dynamoose.transaction(transactions);
   } catch (e) {
-    // @ts-ignore
-    throw new CustomError(e.message, 500, e);
+    throw e;
   }
 };
 
-export const remove = async (match: Partial<QrDataType>) => {
+export const remove = async (key: { userId: string, createdAt: number }) => {
   try {
-    const qr = await QrDataModel.findOne({
-      id: { eq: match.id },
-      userId: { eq: match.userId }
-    });
+    const qr = await QrDataModel.get(key);
 
     if (!qr) {
       throw new CustomError("QR Code was not found.");
@@ -125,18 +111,22 @@ export const remove = async (match: Partial<QrDataType>) => {
 
     let transactions = [];
     if (qr.shortLinkId) {
-      transactions.push(LinkModel.transaction.delete(qr.shortLinkId));
+      // @ts-ignore
+      const shortLink = (await qr.populate({ properties: "shortLinkId" })).shortLinkId;
+      const createdAt = (new Date(shortLink.createdAt)).getTime();
+      transactions.push(LinkModel.transaction.delete({ userId: shortLink.userId, createdAt }));
     }
     if (qr.qrOptionsId) {
       transactions.push(QrOptionsModel.transaction.delete(qr.qrOptionsId));
     }
-    transactions.push(QrDataModel.transaction.delete(qr.id));
+    const createdAt = (new Date(qr.createdAt)).getTime();
+    transactions.push(QrDataModel.transaction.delete({ userId: qr.userId, createdAt }));
     const promises = [dynamoose.transaction(transactions)];
     if (["video", "gallery", "pdf", "audio"].includes(qr.qrType)) {
       promises.push(StorageHandler.remove(qr.files));
     }
     if (qr.backgndImg) {
-     promises.push(StorageHandler.remove(qr.backgndImg));
+      promises.push(StorageHandler.remove(qr.backgndImg));
     }
     if (qr.foregndImg) {
       promises.push(StorageHandler.remove(qr.foregndImg));
@@ -151,31 +141,6 @@ export const remove = async (match: Partial<QrDataType>) => {
       throw e;
     });
   } catch (e) {
-    // @ts-ignore
-    throw new CustomError(e.message, 500, e);
-  }
-};
-
-// @ts-ignore
-export const update = async (data) => {
-  try {
-    let transactions = [];
-    const { shortLinkId, qrOptionsId, ...qrData } = data;
-    if (shortLinkId) {
-      const { id, ...rest } = shortLinkId;
-      transactions.push(await LinkModel.transaction.update(id, rest));
-    }
-    if (qrOptionsId) {
-      const { id, ...rest } = qrOptionsId;
-      transactions.push(await QrOptionsModel.transaction.update(id, rest));
-    }
-    if (qrData) {
-      const { id, ...rest } = qrData;
-      transactions.push(await QrDataModel.transaction.update(id, rest));
-    }
-    return await dynamoose.transaction(transactions);
-  } catch (e) {
-    // @ts-ignore
-    throw new CustomError(e.message, 500, e);
+    throw e;
   }
 };
