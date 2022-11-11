@@ -96,6 +96,8 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
           {renderTypeSelector("coupon", "Coupon", "Share a coupon", true)}
           {renderTypeSelector("donations", "Donations", "Get donations from your supporters worldwide", true)}
           {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("fundme", "Fund Me", "Start your own charity or fundraising campaign.", true)}
+          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("paylink", "Payment Link", "Receive payments worldwide", true)}
+          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("crypto", "Crypto Payment", "Recieve crypto on your eWallet", true)}
         </>)
       }
       {renderTypeSelector("twitter", "Twitter", "Post a tweet", true)}

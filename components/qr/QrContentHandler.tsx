@@ -1,4 +1,4 @@
-import {ChangeEvent, useContext} from 'react';
+import { ChangeEvent, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -20,8 +20,11 @@ import BusinessData from "./renderers/BusinessData";
 import NetworksData from "./renderers/NetworksData.";
 import CouponData from "./renderers/CouponData";
 import DonationsData, { DonationsProps } from './renderers/DonationsData';
+import CryptoData from './renderers/CryptoData';
+import FundMe from './renderers/FundMeData';
+import SimplePayLinkData from './renderers/SimplePayLinkData';
 
-import {DataType, SocialProps} from './types/types';
+import { DataType, SocialProps } from './types/types';
 import LinksData from "./renderers/LinksData";
 
 type QrContentHandlerProps = {
@@ -40,11 +43,11 @@ const QrContentHandler = () => {
     const value = typeof payload !== 'string' ? payload.target.value : payload;
 
     if (value.length) {
-      setData((prev: DataType) => ({...prev, [item]: value}));
+      setData((prev: DataType) => ({ ...prev, [item]: value }));
       // @ts-ignore
     } else if (data[item]) {
       setData((prev: DataType) => {
-        const temp = {...prev};
+        const temp = { ...prev };
         // @ts-ignore
         delete temp[item];
         return temp;
@@ -119,7 +122,13 @@ const QrContentHandler = () => {
         return <AssetData type={selected} data={data} setData={handlePayload} />;
       }
       case 'donations': {
-        return <DonationsData data={data} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong}/>
+        return <DonationsData data={data} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong} />
+      }
+      case 'paylink': {
+        return <SimplePayLinkData />
+      }
+      case 'crypto': {
+        return <CryptoData data={data} setData={handlePayload} setIsWrong={setIsWrong} />
       }
       default: {
         return <NetworksData data={data} setData={handlePayload} setIsWrong={setIsWrong} />
