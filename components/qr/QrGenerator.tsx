@@ -148,7 +148,7 @@ const QrGenerator = ({ hidden, options, frame, background, command, overrideValu
               <feBlend in="invert" in2="base" mode="difference" />
             </filter>
           )}
-          {(!qrCode?._options?.backgroundOptions?.color.startsWith('#ffffff') &&
+          {(!qrCode?._options?.backgroundOptions?.color.startsWith('#ffffff') && frame &&
             ['/frame/frame5.svg', '/frame/frame6.svg', '/frame/frame7.svg'].includes(frame.type)) &&
             (<rect width={280} height={330} x={0} y={0} fill={qrCode._options.backgroundOptions.color} />)
           }

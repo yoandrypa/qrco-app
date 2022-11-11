@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { SetStateAction, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -16,7 +14,7 @@ import Code from './sections/Code';
 import Frames from './sections/Frames';
 import Logos from './sections/Logos';
 import QrGenerator from './QrGenerator';
-import { initialFrame } from '../../helpers/qr/data';
+import {initialBackground, initialFrame} from '../../helpers/qr/data';
 import RenderDownload from './helperComponents/RenderDownload';
 import PDFGenDlg from './helperComponents/PDFGenDlg';
 import Context from '../context/Context';
@@ -43,6 +41,7 @@ interface GenProps {
 }
 
 const Generator = ({ forceOverride }: GenProps) => {
+  // @ts-ignore
   const {options, setOptions, background, setBackground, frame, setFrame, data,
     selected, userInfo, cornersData, dotsData }: GeneratorProps = useContext(Context);
 
@@ -58,14 +57,16 @@ const Generator = ({ forceOverride }: GenProps) => {
   const fileInput = useRef<any>();
   const mustReload = useRef<boolean>(false);
 
-  const handleExpand = (panel: SetStateAction<string>) => (_: any, newExpanded: SetStateAction<string> | boolean) => {
-    setExpanded(newExpanded ? panel : false);
+  const handleExpand = (panel: SetStateAction<string>) => (_: any, newExpanded: SetStateAction<string>) => {
+    setExpanded(newExpanded ? panel : '');
   };
 
+  // @ts-ignore
   const handleDownload = ({ currentTarget }) => {
     setAnchor(currentTarget);
   };
 
+  // @ts-ignore
   const onLoadFile = ({ target }) => {
     const f = target.files[0];
     const img = new Image();
@@ -110,17 +111,9 @@ const Generator = ({ forceOverride }: GenProps) => {
 
   const handleBackground = (item: string) => (event: { target: { value: string; checked: any; }; color: any; }) => {
     if (event.target) {
-      const back = { ...background, [item]: item !== 'invert' ? event.target.value : event.target.checked };
+      let back = { ...background, [item]: item !== 'invert' ? event.target.value : event.target.checked };
       if (event.target.value === 'solid') {
-        back.opacity = 50;
-        back.size = 1;
-        back.file = null;
-        if (back.invert !== undefined) {
-          delete back.invert;
-        }
-        if (back.backColor) {
-          delete back.backColor;
-        }
+        back = initialBackground;
       }
       setBackground(back);
     } else if (event.color) {
@@ -133,7 +126,7 @@ const Generator = ({ forceOverride }: GenProps) => {
   };
 
   const handleReset = useCallback(() => {
-    setBackground({ ...background, opacity: 50, size: 1, invert: false, x: 0, y: 0, imgSize: 1 });
+    setBackground(initialBackground);
   }, [background]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleMainFrame = (elem: string, payload: any) => {
@@ -180,18 +173,16 @@ const Generator = ({ forceOverride }: GenProps) => {
   const handleData = (item: string) => (payload: any) => {
     const opts = {...options};
     if (item.includes('.')) {
-      const x = item.split('.');
-      if (!opts[x[0]]) {
-        opts[x[0]] = '';
-      }
-      if (typeof payload === 'string') {
+      const x = item.split('.'); // @ts-ignore
+      if (!opts[x[0]]) { opts[x[0]] = ''; }
+      if (typeof payload === 'string') { // @ts-ignore
         opts[x[0]][x[1]] = payload;
-      } else if (payload.color) {
+      } else if (payload.color) { // @ts-ignore
         opts[x[0]][x[1]] = payload.color;
-      } else {
+      } else { // @ts-ignore
         opts[x[0]][x[1]] = payload.target.value !== '-1' ? payload.target.value : null;
       }
-    } else if (!payload || typeof payload === 'string') {
+    } else if (!payload || typeof payload === 'string') { // @ts-ignore
       opts[item] = payload;
     } else if (item === 'data') {
       opts[item] = payload.target.value.length ? payload.target.value : 'ebanux';
@@ -252,7 +243,7 @@ const Generator = ({ forceOverride }: GenProps) => {
   }, [updating]);
 
   return (
-    <>
+    <> {/* @ts-ignore */}
       {error && <Notifications open message={error} onClose={() => { setError(null); }} />}
       {background.type === 'image' && <input ref={fileInput} type="file" accept="image/*" style={{ display: 'none' }} onChange={onLoadFile} />}
       <Box sx={{ border: '1px solid rgba(0, 0, 0, .125)', borderRadius: '5px', p: 1, width: '100%' }}>
@@ -276,12 +267,13 @@ const Generator = ({ forceOverride }: GenProps) => {
                 hidden={updating}
                 command={command}
                 cornersData={cornersData}
-                dotsData={dotsData}
+                dotsData={dotsData} // @ts-ignore
                 overrideValue={dataToOverride}
                 background={!background.file ? null : background} />
               <Box sx={{ width: '100%', height: '35px', mt: '-2px', textAlign: 'center' }}>
-                {isReadable ? (
+                {isReadable ? ( // @ts-ignore
                   <Typography sx={{ color: theme => isReadable.readable ? theme.palette.success.dark : theme.palette.error.dark, height: '25px' }}>
+                    {/* @ts-ignore */}
                     {`${isReadable.readable ? 'High' : 'Low'} chance to be readable.`}
                   </Typography>
                 ) : (
@@ -302,6 +294,7 @@ const Generator = ({ forceOverride }: GenProps) => {
             overflow: 'auto',
             textAlign: 'left'
           }}>
+            {/* @ts-ignore */}
             <Accordion expanded={expanded === 'style'} onChange={handleExpand('style')}>
               <AccordionSummary aria-controls="style-content" id="style-header">
                 <Typography>Body</Typography>
@@ -316,7 +309,7 @@ const Generator = ({ forceOverride }: GenProps) => {
                   handleReset={handleReset}
                 />
               </AccordionDetails>
-            </Accordion>
+            </Accordion>{/* @ts-ignore */}
             <Accordion expanded={expanded === 'frame'} onChange={handleExpand('frame')}>
               <AccordionSummary aria-controls="frame-content" id="frame-header">
                 <Typography>Frame</Typography>
@@ -324,7 +317,7 @@ const Generator = ({ forceOverride }: GenProps) => {
               <AccordionDetails>
                 <Frames frame={frame} handleMainFrame={handleMainFrame} handleFrame={handleFrame} />
               </AccordionDetails>
-            </Accordion>
+            </Accordion>{/* @ts-ignore */}
             <Accordion expanded={expanded === 'logo'} onChange={handleExpand('logo')}>
               <AccordionSummary aria-controls="logo-content" id="logo-header">
                 <Typography>Logo</Typography>
@@ -346,9 +339,9 @@ const Generator = ({ forceOverride }: GenProps) => {
       )}
       {Boolean(generatePdf) && (
         <PDFGenDlg
-          data={qrImageData.current}
+          data={qrImageData.current} // @ts-ignore
           handleClose={() => setGeneratePdf(false)}
-          isFramed={frame?.type && frame.type !== '/frame/frame0.svg'} />
+          isFramed={frame?.type && frame.type !== '/frame/frame0.svg' || false} />
       )}
     </>
   );
