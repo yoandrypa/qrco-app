@@ -26,6 +26,7 @@ import SimplePayLinkData from './renderers/SimplePayLinkData';
 
 import { DataType, SocialProps } from './types/types';
 import LinksData from "./renderers/LinksData";
+import PleaseWait from "../PleaseWait";
 
 type QrContentHandlerProps = {
   data: DataType;
@@ -138,16 +139,22 @@ const QrContentHandler = () => {
 
   return (
     <>
-      <Box sx={{ display: 'inline' }}>
-        <RenderIcon icon={selected || ''} enabled adjust />
-      </Box>
-      <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{selected?.toUpperCase() || ''}</Typography>
-      <Typography sx={{ display: 'inline' }}>: Enter the QR data</Typography>
-      {data.isDynamic && <NotifyDynamic />}
-      <Divider sx={{ my: '10px' }} />
-      <Box sx={{ textAlign: 'left', width: '100%' }}>
-        {renderSel()}
-      </Box>
+      {selected ? (
+        <>
+          <Box sx={{ display: 'inline' }}>
+            <RenderIcon icon={selected} enabled adjust />
+          </Box>
+          <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{selected?.toUpperCase() || ''}</Typography>
+          <Typography sx={{ display: 'inline' }}>: Enter the QR data</Typography>
+          {data.isDynamic && <NotifyDynamic />}
+          <Divider sx={{ my: '10px' }} />
+          <Box sx={{ textAlign: 'left', width: '100%' }}>
+            {renderSel()}
+          </Box>
+        </>
+      ) : (
+        <PleaseWait redirecting hidePleaseWait />
+      )}
     </>
   );
 }

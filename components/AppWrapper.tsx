@@ -52,7 +52,7 @@ interface AppWrapperProps {
   children: ReactNode;
   userInfo?: any;
   handleLogout?: () => void;
-  clearData?: (keep: boolean) => void;
+  clearData?: (keepType?: boolean, item?: undefined, value?: undefined, doNot?: boolean) => void;
   setLoading?: (loading: boolean) => void;
   setIsTrialMode?: (isTrialMode: boolean) => void;
 }
@@ -89,16 +89,19 @@ export default function AppWrapper(props: AppWrapperProps) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleNavigation = useCallback(() => {
+    const isEdit = mode === 'edit';
+    const isInListView = router.pathname === '/';
+
     if (clearData !== undefined) {
-      clearData(false);
+      clearData(false, undefined, undefined, isEdit || !isInListView);
     }
     handleLoading();
-    const navigationOptions = {pathname: mode !== 'edit' && router.pathname === "/" ? QR_TYPE_ROUTE : "/", query: {}};
-    if (mode === 'edit') {
+    const navigationOptions = {pathname: !isEdit && isInListView ? QR_TYPE_ROUTE : "/", query: {}};
+    if (isEdit) { //@ts-ignore
       navigationOptions.query = { mode };
     }
 
-    router.push(navigationOptions,undefined, { shallow: true }).then(() => {
+    router.push(navigationOptions, '/', { shallow: true }).then(() => {
       handleLoading(false);
     });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps

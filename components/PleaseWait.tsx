@@ -3,9 +3,10 @@ import Typography from '@mui/material/Typography';
 
 interface PleaseWaitProps {
   redirecting?: boolean;
+  hidePleaseWait?: boolean;
 }
 
-export default function PleaseWait({redirecting}: PleaseWaitProps) {
+export default function PleaseWait({redirecting, hidePleaseWait}: PleaseWaitProps) {
   return (
     <Box
       sx={{
@@ -15,7 +16,7 @@ export default function PleaseWait({redirecting}: PleaseWaitProps) {
         transform: "translate(-50%, -50%)"
       }}
     >
-      <Typography>{'Please wait...'}</Typography>
+      {!hidePleaseWait && <Typography>{'Please wait...'}</Typography>}
       {redirecting && <Typography>{'Redirecting...'}</Typography>}
     </Box>
   );
