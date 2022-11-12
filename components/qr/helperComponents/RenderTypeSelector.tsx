@@ -92,7 +92,7 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
           {renderTypeSelector("vcard+", "VCard Plus", "Share your contact and social details", true)}
           {renderTypeSelector('business', 'Business', 'Describe your business or company', true)}
           {renderTypeSelector("social", "Social networks", "Share your social networks information", true)}
-          {renderTypeSelector("link", "Links", "Share your own links, including social info", true)}
+          {renderTypeSelector("link", "Link-in-Bio", "Share your own links, including social info", true)}
           {renderTypeSelector("coupon", "Coupon", "Share a coupon", true)}
           {renderTypeSelector("donations", "Donations", "Get donations from your supporters worldwide", true)}
           {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("fundme", "Fund Me", "Start your own charity or fundraising campaign.", true)}
