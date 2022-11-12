@@ -1,3 +1,4 @@
+import {MouseEvent} from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
@@ -16,9 +17,9 @@ interface TypeSelectorProps {
 }
 
 const TypeSelector = ({ handleSelect, label, description, icon, selected, enabled = true }: TypeSelectorProps) => {
-  const beforeHandle = () => {
+  const beforeHandle = (event: MouseEvent<HTMLDivElement>) => {
     if (enabled) {
-      handleSelect(icon);
+      handleSelect(icon, event.currentTarget);
     }
   };
 
