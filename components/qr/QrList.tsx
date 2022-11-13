@@ -1,4 +1,4 @@
-import {useCallback, useContext, useEffect, useState} from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -14,14 +14,14 @@ import SyncIcon from "@mui/icons-material/Sync";
 import SyncDisabledIcon from "@mui/icons-material/SyncDisabled";
 import Public from "@mui/icons-material/Public";
 import IconButton from "@mui/material/IconButton";
-import {sanitize} from "../../utils";
+import { sanitize } from "../../utils";
 import Link from "next/link";
 import * as QrHandler from "../../handlers/qrs";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import Context from "../context/Context";
 import RenderNewQrButton from "../renderers/RenderNewQrButton";
 import RenderPreview from "./renderers/RenderPreview";
-import {capitalize} from "@mui/material";
+import { capitalize } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -29,8 +29,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import {humanDate} from "../helpers/generalFunctions";
-import {handleDesignerString, handleInitialData} from "../../helpers/qr/helpers";
+import { humanDate } from "../helpers/generalFunctions";
+import { handleDesignerString, handleInitialData } from "../../helpers/qr/helpers";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 
 const QrList = ({ qrs }: any) => {
@@ -72,7 +72,7 @@ const QrList = ({ qrs }: any) => {
   };
 
   const handleDashboard = async () => {
-    const dashBaseUrl = !process.env.NEXT_PUBLIC_DEVELOPMENT_MODE ? "https://app.ebanux.com/checkouts" : "https://dev-app.ebanux.com/checkouts";
+    const dashBaseUrl = !process.env.NEXT_PUBLIC_NODE_ENV ? "https://app.ebanux.com/checkouts" : "https://dev-app.ebanux.com/checkouts";
     router.push(dashBaseUrl);
   };
 
@@ -146,7 +146,7 @@ const QrList = ({ qrs }: any) => {
                           </Box>
                           <Stack direction="column" sx={{ my: "auto" }}>
                             <Typography variant="subtitle2"
-                                        sx={{ color: "orange", mb: "-7px" }}>{capitalize(qr.qrType)}</Typography>
+                              sx={{ color: "orange", mb: "-7px" }}>{capitalize(qr.qrType)}</Typography>
                             <Typography variant="h6" sx={{ fontWeight: "bold", mb: "-2px" }}>{qr.qrName}</Typography>
                             {isWide ? (
                               <Typography variant="caption" sx={{ color: "gray" }}>
@@ -180,7 +180,7 @@ const QrList = ({ qrs }: any) => {
                       <Box sx={{ display: "flex" }}>
                         <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
                         <Stack direction="column" spacing={0.8} justifyContent="flex-start" alignItems="flex-start"
-                               sx={{ ml: { xs: 2, sm: 0 } }}>
+                          sx={{ ml: { xs: 2, sm: 0 } }}>
                           {renderStaticDynamic(qr.isDynamic)}
                           {qrLink.address ? (
                             <Typography variant="caption" sx={{ color: "gray" }}>{/*@ts-ignore*/}
