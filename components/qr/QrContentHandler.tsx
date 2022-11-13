@@ -129,7 +129,7 @@ const QrContentHandler = () => {
         return <SimplePayLinkData />
       }
       case 'crypto': {
-        return <CryptoData data={data} setData={handlePayload} setIsWrong={setIsWrong} />
+        return <CryptoData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
       }
       default: {
         return <NetworksData data={data} setData={handlePayload} setIsWrong={setIsWrong} />
