@@ -1,4 +1,4 @@
-import {ReactNode, useCallback, useContext, useRef, useState} from "react";
+import {ReactNode, useCallback, useContext, useEffect, useRef, useState} from "react";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -24,6 +24,7 @@ import * as EbanuxHandler from "../../handlers/ebanux";
 import Notifications from "../notifications/Notifications";
 import ProcessHandler from "./renderers/ProcessHandler";
 import {cleaner, generateObjectToEdit, steps, StepsProps} from "./auxFunctions";
+import {initialBackground} from "../../helpers/qr/data";
 
 interface QrWizardProps {
   children: ReactNode;
@@ -38,6 +39,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   // @ts-ignore
   const forceUpdate = useCallback(() => setUnusedState({}), []);
 
+  const deleteBack = useRef<boolean>(false);
   const dataInfo = useRef<ProcessHanldlerType[]>([]);
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
 
@@ -46,6 +48,12 @@ const QrWizard = ({ children }: QrWizardProps) => {
     selected, step, setStep, data, userInfo, options, frame, background, cornersData,
     dotsData, isWrong, loading, setOptions, setLoading, isTrialMode
   }: StepsProps = useContext(Context);
+
+  useEffect(() => {
+    if (options.mode === 'edit' && background?.type === 'image' && options.backgroundOptions.color.length === 7 && !deleteBack.current) {
+      deleteBack.current = true;
+    }
+  }, [background, options]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const router = useRouter();
 
@@ -209,6 +217,10 @@ const QrWizard = ({ children }: QrWizardProps) => {
 
           const objToEdit = generateObjectToEdit(qrData, data, qrDesign);
 
+          if (deleteBack.current) {
+            objToEdit.background = initialBackground;
+          }
+
           await QrHandler.edit(objToEdit);
         }
 
@@ -244,14 +256,14 @@ const QrWizard = ({ children }: QrWizardProps) => {
       onClick={handleBack}>
       {"Back"}
     </StepperButtons>
-  ); // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   const renderNext = () => (
     <StepperButtons
       onClick={handleNext}
       endIcon={step >= 2 ? (isLogged ? <SaveIcon /> : <DoneIcon />) : <ChevronRightIcon />}
       disabled={
-        loading || isWrong || !selected ||
+        loading || (isWrong && step > 0) || !selected ||
         (step === 1 && isLogged && !Boolean(data?.qrName?.trim()?.length))
       }
       variant={step >= 2 ? "outlined" : "contained"}>
@@ -275,7 +287,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
 
   return (
     <>
-      <Box sx={{ minHeight: `calc(100vh - ${isTrialMode ? (step === 0 ? 207 : 215) : 207}px)` }}>
+      <Box sx={{ minHeight: `calc(100vh - ${isTrialMode ? 215 : 205}px)` }}>
         {children}
       </Box>
       {dataInfo.current.length ? <ProcessHandler process={dataInfo.current} handleCommand={

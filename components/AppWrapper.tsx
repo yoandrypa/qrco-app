@@ -52,7 +52,7 @@ interface AppWrapperProps {
   children: ReactNode;
   userInfo?: any;
   handleLogout?: () => void;
-  clearData?: (keep: boolean) => void;
+  clearData?: (keepType?: boolean, item?: undefined, value?: undefined, doNot?: boolean) => void;
   setLoading?: (loading: boolean) => void;
   setIsTrialMode?: (isTrialMode: boolean) => void;
 }
@@ -89,16 +89,19 @@ export default function AppWrapper(props: AppWrapperProps) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleNavigation = useCallback(() => {
+    const isEdit = mode === 'edit';
+    const isInListView = router.pathname === '/';
+
     if (clearData !== undefined) {
-      clearData(false);
+      clearData(false, undefined, undefined, isEdit || !isInListView);
     }
     handleLoading();
-    const navigationOptions = {pathname: mode !== 'edit' && router.pathname === "/" ? QR_TYPE_ROUTE : "/", query: {}};
-    if (mode === 'edit') {
+    const navigationOptions = {pathname: !isEdit && isInListView ? QR_TYPE_ROUTE : "/", query: {}};
+    if (isEdit) { //@ts-ignore
       navigationOptions.query = { mode };
     }
 
-    router.push(navigationOptions,undefined, { shallow: true }).then(() => {
+    router.push(navigationOptions, '/', { shallow: true }).then(() => {
       handleLoading(false);
     });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -215,11 +218,11 @@ export default function AppWrapper(props: AppWrapperProps) {
       </ElevationScroll>)}
       <Container sx={{ width: "100%" }}>
         <Box sx={{ height }} /> {/* Aims to fill the header's gap */}
-        <Box sx={{ mx: "auto", minHeight: "calc(100vh - 145px)", paddingTop: 3 }}>
+        <Box sx={{ mx: "auto", minHeight: "calc(100vh - 145px)", pt: startTrialDate ? 3 : 0 }}>
           {children}
         </Box>
         {handleLogout !== undefined && !router.query.login && (
-          <Box sx={{ height: "40px", mt: "10px", display: "flex", justifyContent: "space-betweem" }}>
+          <Box sx={{ height: "40px", display: "flex", justifyContent: "space-betweem" }}>
             <Box sx={{ display: "flex", width: "100%" }}>
               <Typography sx={{ my: "auto", display: { sm: "block", xs: "none" } }}>
                 {"Powered by"}

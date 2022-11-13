@@ -1,4 +1,4 @@
-import { SetStateAction, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import {SetStateAction, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -6,7 +6,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import BrushIcon from '@mui/icons-material/Brush';
 import CropFreeIcon from '@mui/icons-material/CropFree';
 
-import { Accordion, AccordionDetails, AccordionSummary } from '../renderers/Renderers';
+import {Accordion, AccordionDetails, AccordionSummary} from '../renderers/Renderers';
 
 import {checkForAlpha, convertBase64, downloadAsSVGOrVerify, handleDesignerString} from '../../helpers/qr/helpers';
 import {BackgroundType, CornersAndDotsType, FramesType, OptionsType} from './types/types';
@@ -40,10 +40,9 @@ interface GenProps {
   forceOverride?: string | undefined;
 }
 
-const Generator = ({ forceOverride }: GenProps) => {
+const Generator = ({forceOverride}: GenProps) => {
   // @ts-ignore
-  const {options, setOptions, background, setBackground, frame, setFrame, data,
-    selected, userInfo, cornersData, dotsData }: GeneratorProps = useContext(Context);
+  const { options, setOptions, background, setBackground, frame, setFrame, data, selected, userInfo, cornersData, dotsData }: GeneratorProps = useContext(Context);
 
   const [expanded, setExpanded] = useState<string>('style');
   const [error, setError] = useState<object | string | null>(null);
@@ -62,12 +61,12 @@ const Generator = ({ forceOverride }: GenProps) => {
   };
 
   // @ts-ignore
-  const handleDownload = ({ currentTarget }) => {
+  const handleDownload = ({currentTarget}) => {
     setAnchor(currentTarget);
   };
 
   // @ts-ignore
-  const onLoadFile = ({ target }) => {
+  const onLoadFile = ({target}) => {
     const f = target.files[0];
     const img = new Image();
     img.src = URL.createObjectURL(f);
@@ -102,7 +101,7 @@ const Generator = ({ forceOverride }: GenProps) => {
     if ((!options?.backgroundOptions?.color || !options?.dotsOptions?.color) && options?.backgroundOptions?.color === '#ffffff00') {
       return undefined;
     }
-    return { color1: options.backgroundOptions?.color || '#000000', color2: options.dotsOptions?.color || '#ffffff' };
+    return {color1: options.backgroundOptions?.color || '#000000', color2: options.dotsOptions?.color || '#ffffff'};
   }, [options?.backgroundOptions?.color, options?.dotsOptions?.color]);
 
   const checkForReadability = () => {
@@ -111,13 +110,13 @@ const Generator = ({ forceOverride }: GenProps) => {
 
   const handleBackground = (item: string) => (event: { target: { value: string; checked: any; }; color: any; }) => {
     if (event.target) {
-      let back = { ...background, [item]: item !== 'invert' ? event.target.value : event.target.checked };
+      let back = {...background, [item]: item !== 'invert' ? event.target.value : event.target.checked};
       if (event.target.value === 'solid') {
         back = initialBackground;
       }
       setBackground(back);
     } else if (event.color) {
-      setBackground({ ...background, backColor: event.color });
+      setBackground({...background, backColor: event.color});
     }
   };
 
@@ -132,7 +131,7 @@ const Generator = ({ forceOverride }: GenProps) => {
   const handleMainFrame = (elem: string, payload: any) => {
     if (payload !== null) {
       if (elem === 'image') {
-        const selectedFrame = { ...frame, type: payload };
+        const selectedFrame = {...frame, type: payload};
         if (payload === '/frame/frame1.svg' && frame.textColor === '#000000') {
           selectedFrame.textColor = '#ffffff';
         } else if (['/frame/frame2.svg', '/frame/frame3.svg', '/frame/frame4.svg'].includes(payload) && frame.textColor === '#ffffff') {
@@ -140,10 +139,10 @@ const Generator = ({ forceOverride }: GenProps) => {
         }
         setFrame(selectedFrame);
       } else {
-        setFrame({ ...frame, [elem]: payload });
+        setFrame({...frame, [elem]: payload});
       }
     } else {
-      setFrame({ ...frame, ...initialFrame });
+      setFrame({...frame, ...initialFrame});
     }
   };
 
@@ -160,34 +159,38 @@ const Generator = ({ forceOverride }: GenProps) => {
 
   const handleMainData = (item: string, payload: any, icon = null) => {
     if (!payload?.fileContents) {
-      setOptions((prev: OptionsType) => ({ ...prev, [item]: payload }));
+      setOptions((prev: OptionsType) => ({...prev, [item]: payload}));
     } else {
       if (icon) {
-        setOptions((prev: OptionsType) => ({ ...prev, image: icon }));
+        setOptions((prev: OptionsType) => ({...prev, image: icon}));
       } else {
-        setOptions((prev: OptionsType) => ({ ...prev, image: payload.fileContents }));
+        setOptions((prev: OptionsType) => ({...prev, image: payload.fileContents}));
       }
     }
   };
 
   const handleData = (item: string) => (payload: any) => {
-    const opts = {...options};
-    if (item.includes('.')) {
-      const x = item.split('.'); // @ts-ignore
-      if (!opts[x[0]]) { opts[x[0]] = ''; }
-      if (typeof payload === 'string') { // @ts-ignore
-        opts[x[0]][x[1]] = payload;
-      } else if (payload.color) { // @ts-ignore
-        opts[x[0]][x[1]] = payload.color;
-      } else { // @ts-ignore
-        opts[x[0]][x[1]] = payload.target.value !== '-1' ? payload.target.value : null;
+    setOptions((prev: OptionsType) => {
+      const opts = {...prev};
+      if (item.includes('.')) {
+        const x = item.split('.'); // @ts-ignore
+        if (!opts[x[0]]) { // @ts-ignore
+          opts[x[0]] = '';
+        }
+        if (typeof payload === 'string') { // @ts-ignore
+          opts[x[0]][x[1]] = payload;
+        } else if (payload.color) { // @ts-ignore
+          opts[x[0]][x[1]] = payload.color;
+        } else { // @ts-ignore
+          opts[x[0]][x[1]] = payload.target.value !== '-1' ? payload.target.value : null;
+        }
+      } else if (!payload || typeof payload === 'string') { // @ts-ignore
+        opts[item] = payload;
+      } else if (item === 'data') {
+        opts[item] = payload.target.value.length ? payload.target.value : 'ebanux';
       }
-    } else if (!payload || typeof payload === 'string') { // @ts-ignore
-      opts[item] = payload;
-    } else if (item === 'data') {
-      opts[item] = payload.target.value.length ? payload.target.value : 'ebanux';
-    }
-    setOptions(opts);
+      return opts;
+    });
   };
 
   const dataToOverride = useMemo(() => (
@@ -196,7 +199,9 @@ const Generator = ({ forceOverride }: GenProps) => {
 
   useEffect(() => {
     if (isReadable) {
-      setTimeout(() => { setIsReadable(null); }, 3700);
+      setTimeout(() => {
+        setIsReadable(null);
+      }, 3700);
     }
   }, [isReadable]);
 
@@ -214,7 +219,7 @@ const Generator = ({ forceOverride }: GenProps) => {
 
   useEffect(() => {
     if (background.type === 'image') {
-      setBackground({ ...background, opacity: background.invert ? 100 : 50 });
+      setBackground({...background, opacity: background.invert ? 100 : 50});
     }
   }, [background.invert]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -235,7 +240,9 @@ const Generator = ({ forceOverride }: GenProps) => {
 
   useEffect(() => {
     if (updating) {
-      setTimeout(() => { setUpdating(false); }, 250);
+      setTimeout(() => {
+        setUpdating(false);
+      }, 250);
     }
     if (!doneFirst.current) {
       doneFirst.current = true;
@@ -244,22 +251,35 @@ const Generator = ({ forceOverride }: GenProps) => {
 
   return (
     <> {/* @ts-ignore */}
-      {error && <Notifications open message={error} onClose={() => { setError(null); }} />}
-      {background.type === 'image' && <input ref={fileInput} type="file" accept="image/*" style={{ display: 'none' }} onChange={onLoadFile} />}
-      <Box sx={{ border: '1px solid rgba(0, 0, 0, .125)', borderRadius: '5px', p: 1, width: '100%' }}>
-        {!Boolean(userInfo) && forceOverride === undefined && <RenderNoUserWarning />}
-        <Box sx={{ display: 'flex', width: '100%', position: 'relative' }}>
-          <BrushIcon sx={{ fontSize: '53px', mt: '2px', color: theme => theme.palette.primary.dark }} />
-          <Box sx={{ textAlign: 'left', display: 'block' }}>
+      {error && <Notifications open message={error} onClose={() => {
+        setError(null);
+      }}/>}
+      {background.type === 'image' &&
+        <input ref={fileInput} type="file" accept="image/*" style={{display: 'none'}} onChange={onLoadFile}/>}
+      <Box sx={{border: '1px solid rgba(0, 0, 0, .125)', borderRadius: '5px', p: 1, width: '100%'}}>
+        {!Boolean(userInfo) && forceOverride === undefined && <RenderNoUserWarning/>}
+        <Box sx={{display: 'flex', width: '100%', position: 'relative'}}>
+          <BrushIcon sx={{fontSize: '53px', mt: '2px', color: theme => theme.palette.primary.dark}}/>
+          <Box sx={{textAlign: 'left', display: 'block'}}>
             <Typography variant="h6">QR Designer</Typography>
             <Typography>QR Code appearance settings</Typography>
           </Box>
-          {data.isDynamic && <NotifyDynamic styling={{ position: 'absolute', right: '5px' }}/>}
+          {data.isDynamic && <NotifyDynamic styling={{position: 'absolute', right: '5px'}}/>}
         </Box>
-        <Box sx={{ display: 'flex', flexDirection: { sm: 'row', xs: 'column' }, m: { sm: 2, xs: 0 } }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: { sm: '430px', xs: '100%' } }}>
-            {updating ? <Typography sx={{ position: 'absolute', ml: 1, mt: 1, color: theme => theme.palette.text.disabled }}>{'Generating QR...'}</Typography> : null}
-            <Box sx={{ mt: { sm: 0, xs: 1 } }}>
+        <Box sx={{display: 'flex', flexDirection: {sm: 'row', xs: 'column'}, m: {sm: 2, xs: 0}}}>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            width: {sm: '430px', xs: '100%'}
+          }}>
+            {updating ? <Typography sx={{
+              position: 'absolute',
+              ml: 1,
+              mt: 1,
+              color: theme => theme.palette.text.disabled
+            }}>{'Generating QR...'}</Typography> : null}
+            <Box sx={{mt: {sm: 0, xs: 1}}}>
               <QrGenerator
                 ref={qrImageData}
                 options={options}
@@ -269,28 +289,30 @@ const Generator = ({ forceOverride }: GenProps) => {
                 cornersData={cornersData}
                 dotsData={dotsData} // @ts-ignore
                 overrideValue={dataToOverride}
-                background={!background.file ? null : background} />
-              <Box sx={{ width: '100%', height: '35px', mt: '-2px', textAlign: 'center' }}>
+                background={!background.file ? null : background}/>
+              <Box sx={{width: '100%', height: '35px', mt: '-2px', textAlign: 'center'}}>
                 {isReadable ? ( // @ts-ignore
-                  <Typography sx={{ color: theme => isReadable.readable ? theme.palette.success.dark : theme.palette.error.dark, height: '25px' }}>
+                  <Typography sx={{color: theme => isReadable.readable ? theme.palette.success.dark : theme.palette.error.dark, height: '25px'}}>
                     {/* @ts-ignore */}
                     {`${isReadable.readable ? 'High' : 'Low'} chance to be readable.`}
                   </Typography>
                 ) : (
-                  <Button variant="contained" onClick={checkForReadability} startIcon={<CropFreeIcon />} sx={{ width: '100%', height: '25px' }}>
+                  <Button variant="contained" onClick={checkForReadability} startIcon={<CropFreeIcon/>}
+                          sx={{width: '100%', height: '25px'}}>
                     {'Check for readability'}
                   </Button>
                 )}
               </Box>
             </Box>
-            <Button sx={{ mt: '10px', width: '100%' }} variant="outlined" onClick={handleDownload} startIcon={<DownloadIcon />}>
+            <Button sx={{mt: '10px', width: '100%'}} variant="outlined" onClick={handleDownload}
+                    startIcon={<DownloadIcon/>}>
               {'Download'}
             </Button>
           </Box>
           <Box sx={{
             width: '100%',
-            ml: { sm: 2, xs: 0 },
-            mt: { sm: 0, xs: 2 },
+            ml: {sm: 2, xs: 0},
+            mt: {sm: 0, xs: 2},
             overflow: 'auto',
             textAlign: 'left'
           }}>
@@ -315,7 +337,7 @@ const Generator = ({ forceOverride }: GenProps) => {
                 <Typography>Frame</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Frames frame={frame} handleMainFrame={handleMainFrame} handleFrame={handleFrame} />
+                <Frames frame={frame} handleMainFrame={handleMainFrame} handleFrame={handleFrame}/>
               </AccordionDetails>
             </Accordion>{/* @ts-ignore */}
             <Accordion expanded={expanded === 'logo'} onChange={handleExpand('logo')}>
@@ -323,7 +345,7 @@ const Generator = ({ forceOverride }: GenProps) => {
                 <Typography>Logo</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Logos handleMainData={handleMainData} image={options.image} />
+                <Logos handleMainData={handleMainData} image={options.image}/>
               </AccordionDetails>
             </Accordion>
           </Box>
@@ -335,13 +357,13 @@ const Generator = ({ forceOverride }: GenProps) => {
           qrImageData={qrImageData.current}
           anchor={anchor}
           setAnchor={setAnchor}
-          setGeneratePdf={setGeneratePdf} />
+          setGeneratePdf={setGeneratePdf}/>
       )}
       {Boolean(generatePdf) && (
         <PDFGenDlg
           data={qrImageData.current} // @ts-ignore
           handleClose={() => setGeneratePdf(false)}
-          isFramed={frame?.type && frame.type !== '/frame/frame0.svg' || false} />
+          isFramed={frame?.type && frame.type !== '/frame/frame0.svg' || false}/>
       )}
     </>
   );
