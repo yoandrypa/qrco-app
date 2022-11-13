@@ -34,6 +34,7 @@ export const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame
   if (!areEquals(frame, initialFrame)) {
     qrDesign.frame = frame;
   }
+
   if (!areEquals(background, initialBackground)) {
     qrDesign.background = background;
   }

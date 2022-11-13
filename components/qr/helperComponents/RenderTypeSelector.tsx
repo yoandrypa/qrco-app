@@ -1,12 +1,8 @@
-import { MouseEvent, useCallback, useContext, useMemo } from "react";
-import Box from "@mui/material/Box";
+import { useContext, useMemo } from "react";
 import Grid from "@mui/material/Grid";
-import MUIButton from "@mui/material/Button";
-import CheckBoxEmpty from "@mui/icons-material/CheckBoxOutlineBlankOutlined";
-import CheckBoxChecked from "@mui/icons-material/CheckBoxTwoTone";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { blue } from "@mui/material/colors";
-import { styled } from "@mui/material/styles";
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
 import TypeSelector from "./TypeSelector";
 import Context from "../../context/Context";
@@ -23,25 +19,22 @@ interface ContextData {
   useInfo: any;
 }
 
-const Button = styled(MUIButton)(() => ({ width: "calc(50% - 5px)", height: "32px" }));
-const getColor = (condition: boolean): string => (condition ? "green" : blue[900]);
-
-const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps) => {
-  // @ts-ignore
+const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps) => { // @ts-ignore
   const { data, setData }: ContextData = useContext(Context);
-  const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
 
+  const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
   const isDynamic = useMemo(() => Boolean(data.isDynamic), [data.isDynamic]);
 
-  const handleClick = (event: MouseEvent<HTMLButtonElement>): void => {
-    // @ts-ignore
-    const dynamic: boolean = event.currentTarget.id === "dynamic";
-    if (dynamic) {
-      setData({ ...data, isDynamic: dynamic });
-    } else if (data.isDynamic !== undefined) {
-      const tempoData: DataType = { ...data };
-      delete tempoData.isDynamic;
-      setData(tempoData);
+  const handleClick = (selection: number) => { // @ts-ignore
+    const dynamic = selection === 0;
+    if (dynamic) { // @ts-ignore
+      setData((prev: DataType) => ({ ...prev, isDynamic: dynamic }));
+    } else if (data.isDynamic !== undefined) { // @ts-ignore
+      setData((prev: DataType) => {
+        const tempoData = { ...prev };
+        delete tempoData.isDynamic;
+        return tempoData;
+      });
     }
   };
 
@@ -57,28 +50,13 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
     </Grid>
   );
 
-  const renderNo = useCallback(() => (<CheckBoxEmpty sx={{ color: blue[900] }} />), []);
-  const renderYes = useCallback(() => (<CheckBoxChecked color="success" />), []);
-
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={2}>
       <Grid item xs={12}>
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Button
-            sx={{ borderColor: getColor(isDynamic), color: getColor(isDynamic) }}
-            onClick={handleClick}
-            startIcon={isDynamic ? renderYes() : renderNo()}
-            key="dynamic"
-            id="dynamic"
-            variant="outlined">{isWide ? "Dynamic QR Codes" : "Dynamic"}</Button>
-          <Button
-            sx={{ borderColor: getColor(!isDynamic), color: getColor(!isDynamic) }}
-            onClick={handleClick}
-            startIcon={!isDynamic ? renderYes() : renderNo()}
-            key="static"
-            id="static"
-            variant="outlined">{isWide ? "Static QR Codes" : "Static"}</Button>
-        </Box>
+        <Tabs value={isDynamic ? 0 : 1} onChange={(_, newSel: number) => handleClick(newSel)}>
+          <Tab label={isWide ? "Dynamic QR Codes" : "Dynamic"} />
+          <Tab label={isWide ? "Static QR Codes" : "Static"} />
+        </Tabs>
       </Grid>
       {renderTypeSelector("web", "Website", "Link to any page on the web", true)}
       {!isDynamic ?
@@ -92,10 +70,12 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
           {renderTypeSelector("vcard+", "VCard Plus", "Share your contact and social details", true)}
           {renderTypeSelector('business', 'Business', 'Describe your business or company', true)}
           {renderTypeSelector("social", "Social networks", "Share your social networks information", true)}
-          {renderTypeSelector("link", "Links", "Share your own links, including social info", true)}
+          {renderTypeSelector("link", "Link-in-Bio", "Share your own links, including social info", true)}
           {renderTypeSelector("coupon", "Coupon", "Share a coupon", true)}
           {renderTypeSelector("donations", "Donations", "Get donations from your supporters worldwide", true)}
-          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("fundme", "Fund Me", "Start your own charity or fundraising campaign.", true)}
+          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("fundme", "Fund Me", "Start your own charity or fundraising campaign", true)}
+          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("paylink", "Payment Link", "Receive payments worldwide", true)}
+          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("crypto", "Crypto Payment", "Recieve crypto on your eWallet", true)}
         </>)
       }
       {renderTypeSelector("twitter", "Twitter", "Post a tweet", true)}

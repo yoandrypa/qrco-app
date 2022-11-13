@@ -1,3 +1,4 @@
+import { MouseEvent } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
@@ -16,9 +17,9 @@ interface TypeSelectorProps {
 }
 
 const TypeSelector = ({ handleSelect, label, description, icon, selected, enabled = true }: TypeSelectorProps) => {
-  const beforeHandle = () => {
+  const beforeHandle = (event: MouseEvent<HTMLDivElement>) => {
     if (enabled) {
-      handleSelect(icon);
+      handleSelect(icon, event.currentTarget);
     }
   };
 
@@ -27,10 +28,9 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, enable
       sx={{
         cursor: enabled ? 'pointer' : 'default',
         width: '100%',
-        height: '95px',
+        height: '130px',
         borderRadius: '5px',
         border: theme => `solid 1px ${theme.palette.text.disabled}`,
-        backgroundColor: enabled ? theme => alpha(theme.palette.info.light, selected ? 0.5 : 0.05) : grey[400],
         '&:hover': enabled ? {
           backgroundColor: theme => alpha(theme.palette.info.light, 0.3)
         } : grey[100]

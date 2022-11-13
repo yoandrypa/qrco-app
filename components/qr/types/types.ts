@@ -208,6 +208,7 @@ export type ColorTypes = {
 };
 
 export type EditType = {
+  background?: any;
   userId: string;
   id: string;
   prevNetworks?: string[];

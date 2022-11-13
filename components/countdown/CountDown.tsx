@@ -64,10 +64,10 @@ const CountDown = (props: Props) => {
   if (trialIsOver) {
     return (
       <Alert severity="error" onClick={() => Router.push(`/plans`)}>
-        <Typography sx={{ display: {xs: 'none', lg: 'block'}}}>
+        <Typography sx={{display: {xs: 'none', md: 'block'}}}>
           {'Your 14 days of free trial has ended. You must buy a plan to keep using the platform. Click here to go to the pricing page.'}
         </Typography>
-        <Typography sx={{ display: {lg: 'none', xs: 'block'}}}>
+        <Typography sx={{display: {md: 'none', xs: 'block'}}}>
           {'Free trial ended. Go to pricing.'}
         </Typography>
       </Alert>
@@ -77,8 +77,11 @@ const CountDown = (props: Props) => {
       <>
         <Alert severity="warning" onClick={() => Router.push(`/plans`)}>
           <Stack direction="row" spacing={1}>
-            <Typography>
-              You are in trial mode. Please subscribe to a plan here. Your free trial ends in:
+            <Typography sx={{display: {xs: 'none', md: 'block'}}}>
+              {'You are in trial mode. Please subscribe to a plan here. Your free trial ends in:'}
+            </Typography>
+            <Typography sx={{display: {md: 'none', xs: 'block'}}}>
+              {'Subscribe.Trial ends in:'}
             </Typography>
             <div className={".MuiAlert-standardWarning"}>
               <div className={style.container}>

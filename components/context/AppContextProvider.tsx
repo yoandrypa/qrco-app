@@ -55,10 +55,10 @@ const AppContextProvider = (props: ContextProps) => {
 
   const isUserInfo = useMemo(() => userInfo !== null, [userInfo]);
 
-  const clearData = useCallback((keepType?: boolean, item?: 'value' | 'message', value?: string) => {
+  const clearData = useCallback((keepType?: boolean, item?: 'value' | 'message', value?: string, doNot?: boolean) => {
     setForceClear(false);
 
-    if (!keepType) {
+    if (!keepType || doNot) {
       setSelected(null);
     }
     setBackground(initialBackground);
@@ -71,7 +71,7 @@ const AppContextProvider = (props: ContextProps) => {
     setStep(0);
     setOptions(handleInitialData("Ebanux"));
 
-    if (data.mode === 'edit') {
+    if (data.mode === 'edit' || doNot) {
       doNotNavigate.current = true;
     }
 
@@ -127,8 +127,7 @@ const AppContextProvider = (props: ContextProps) => {
       } else if (step === 2) {
         pathLocation = QR_DESIGN_ROUTE;
       }
-      router.push(pathLocation, undefined, {shallow: true})
-        .then(() => { setLoading(false); });
+      router.push(pathLocation, undefined, {shallow: true}).then(() => { setLoading(false); });
     } else {
       doneInitialRender.current = true;
       doNotNavigate.current = false;
@@ -150,9 +149,7 @@ const AppContextProvider = (props: ContextProps) => {
             doNotNavigate.current = true;
           }
           clearData(false);
-        }
-
-        if (!router.query.login && step !== 0) {
+        } else if (!router.query.login && step !== 0) {
           setStep(0);
         }
       }
