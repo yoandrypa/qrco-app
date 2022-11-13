@@ -58,7 +58,7 @@ const AppContextProvider = (props: ContextProps) => {
   const clearData = useCallback((keepType?: boolean, item?: 'value' | 'message', value?: string, doNot?: boolean) => {
     setForceClear(false);
 
-    if (!keepType) {
+    if (!keepType || doNot) {
       setSelected(null);
     }
     setBackground(initialBackground);

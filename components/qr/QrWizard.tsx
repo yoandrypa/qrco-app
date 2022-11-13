@@ -256,14 +256,14 @@ const QrWizard = ({ children }: QrWizardProps) => {
       onClick={handleBack}>
       {"Back"}
     </StepperButtons>
-  ); // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   const renderNext = () => (
     <StepperButtons
       onClick={handleNext}
       endIcon={step >= 2 ? (isLogged ? <SaveIcon /> : <DoneIcon />) : <ChevronRightIcon />}
       disabled={
-        loading || isWrong || !selected ||
+        loading || (isWrong && step > 0) || !selected ||
         (step === 1 && isLogged && !Boolean(data?.qrName?.trim()?.length))
       }
       variant={step >= 2 ? "outlined" : "contained"}>
@@ -287,7 +287,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
 
   return (
     <>
-      <Box sx={{ minHeight: `calc(100vh - ${isTrialMode ? (step === 0 ? 207 : 215) : 207}px)` }}>
+      <Box sx={{ minHeight: `calc(100vh - ${isTrialMode ? 215 : 205}px)` }}>
         {children}
       </Box>
       {dataInfo.current.length ? <ProcessHandler process={dataInfo.current} handleCommand={

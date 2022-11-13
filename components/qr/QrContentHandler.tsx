@@ -120,7 +120,7 @@ const QrContentHandler = () => {
       case 'pdf':
       case 'audio':
       case 'video': {
-        return <AssetData type={selected} data={data} setData={handlePayload} />;
+        return <AssetData type={selected} data={data} setData={handlePayload} handleValues={handleValues} />;
       }
       case 'donations': {
         return <DonationsData data={data} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong} />

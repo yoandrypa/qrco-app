@@ -218,11 +218,11 @@ export default function AppWrapper(props: AppWrapperProps) {
       </ElevationScroll>)}
       <Container sx={{ width: "100%" }}>
         <Box sx={{ height }} /> {/* Aims to fill the header's gap */}
-        <Box sx={{ mx: "auto", minHeight: "calc(100vh - 145px)", paddingTop: 3 }}>
+        <Box sx={{ mx: "auto", minHeight: "calc(100vh - 145px)", pt: startTrialDate ? 3 : 0 }}>
           {children}
         </Box>
         {handleLogout !== undefined && !router.query.login && (
-          <Box sx={{ height: "40px", mt: "10px", display: "flex", justifyContent: "space-betweem" }}>
+          <Box sx={{ height: "40px", display: "flex", justifyContent: "space-betweem" }}>
             <Box sx={{ display: "flex", width: "100%" }}>
               <Typography sx={{ my: "auto", display: { sm: "block", xs: "none" } }}>
                 {"Powered by"}

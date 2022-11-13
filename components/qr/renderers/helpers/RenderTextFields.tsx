@@ -9,11 +9,12 @@ interface RenderTextFieldsProps {
   placeholder?: string;
   handleValues: Function;
   isError?: boolean;
+  multiline?: boolean;
   value: string;
   item?: string;
 }
 
-const RenderTextFields = ({value, handleValues, placeholder, label, item, required, isError}: RenderTextFieldsProps) => (
+const RenderTextFields = ({value, handleValues, placeholder, label, item, required, isError, multiline}: RenderTextFieldsProps) => (
   <TextField
     label={label}
     size="small"
@@ -21,6 +22,7 @@ const RenderTextFields = ({value, handleValues, placeholder, label, item, requir
     required={required || false}
     error={isError || false}
     margin="dense"
+    multiline={multiline || false}
     value={value || ''}
     placeholder={placeholder}
     onChange={item !== undefined ? handleValues(item) : handleValues}
