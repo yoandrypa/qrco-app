@@ -72,7 +72,7 @@ const QrList = ({ qrs }: any) => {
   };
 
   const handleDashboard = async () => {
-    const dashBaseUrl = !process.env.NEXT_PUBLIC_NODE_ENV ? "https://app.ebanux.com/checkouts" : "https://dev-app.ebanux.com/checkouts";
+    const dashBaseUrl = process.env.REACT_NODE_ENV === 'develop' ? "https://dev-app.ebanux.com/checkouts" : "https://app.ebanux.com/checkouts";
     router.push(dashBaseUrl);
   };
 
@@ -94,11 +94,14 @@ const QrList = ({ qrs }: any) => {
       </IconButton>
       {(qr.qrType === "donations" && !!qr.donationProductId) &&
         (
-          <Tooltip title="Go to Dashboard">
-            <IconButton color="info" disabled={isLoading} onClick={handleDashboard}>
-              <DashboardIcon />
-            </IconButton>
-          </Tooltip>
+          <a target="_blank" href={process.env.REACT_NODE_ENV === 'develop' ? "https://dev-app.ebanux.com/checkouts" : "https://app.ebanux.com/checkouts"} rel="noopener noreferrer">
+            <Tooltip title="Go to Dashboard">
+              <IconButton color="info" disabled={isLoading} onClick={handleDashboard}>
+                <DashboardIcon />
+              </IconButton>
+            </Tooltip>
+          </a>
+
         )}
     </Stack>
   );
