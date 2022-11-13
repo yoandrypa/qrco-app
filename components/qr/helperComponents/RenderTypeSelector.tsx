@@ -1,4 +1,4 @@
-import {useContext, useMemo} from "react";
+import { useContext, useMemo } from "react";
 import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Tabs from '@mui/material/Tabs';
@@ -6,7 +6,7 @@ import Tab from '@mui/material/Tab';
 
 import TypeSelector from "./TypeSelector";
 import Context from "../../context/Context";
-import {DataType} from "../types/types";
+import { DataType } from "../types/types";
 
 interface RenderTypeSelectorProps {
   selected?: string | null;
@@ -19,19 +19,19 @@ interface ContextData {
   useInfo: any;
 }
 
-const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) => { // @ts-ignore
-  const {data, setData}: ContextData = useContext(Context);
+const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps) => { // @ts-ignore
+  const { data, setData }: ContextData = useContext(Context);
 
-  const isWide = useMediaQuery("(min-width:600px)", {noSsr: true});
+  const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
   const isDynamic = useMemo(() => Boolean(data.isDynamic), [data.isDynamic]);
 
   const handleClick = (selection: number) => { // @ts-ignore
     const dynamic = selection === 0;
     if (dynamic) { // @ts-ignore
-      setData((prev: DataType) => ({...prev, isDynamic: dynamic}));
+      setData((prev: DataType) => ({ ...prev, isDynamic: dynamic }));
     } else if (data.isDynamic !== undefined) { // @ts-ignore
       setData((prev: DataType) => {
-        const tempoData = {...prev};
+        const tempoData = { ...prev };
         delete tempoData.isDynamic;
         return tempoData;
       });
@@ -46,16 +46,16 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
         enabled={enabled}
         description={description}
         selected={selected === item}
-        handleSelect={handleSelect}/>
+        handleSelect={handleSelect} />
     </Grid>
   );
 
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={2}>
       <Grid item xs={12}>
         <Tabs value={isDynamic ? 0 : 1} onChange={(_, newSel: number) => handleClick(newSel)}>
-          <Tab label={isWide ? "Dynamic QR Codes" : "Dynamic"}/>
-          <Tab label={isWide ? "Static QR Codes" : "Static"}/>
+          <Tab label={isWide ? "Dynamic QR Codes" : "Dynamic"} />
+          <Tab label={isWide ? "Static QR Codes" : "Static"} />
         </Tabs>
       </Grid>
       {renderTypeSelector("web", "Website", "Link to any page on the web", true)}
