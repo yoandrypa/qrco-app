@@ -100,7 +100,6 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
 
 
   return (
-
     <Common msg='Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.'>
       <Paper>
         <Typography variant='h6' textAlign={'center'} marginTop={2}>Customize your donation page</Typography>
@@ -135,9 +134,10 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
             size="small"
             fullWidth
             margin="dense"
-            value={data?.message || 'Would you like to buy me a coffee?'}
+            value={data?.message || ''}
             onChange={handleValues('message')}
             multiline
+            placeholder='Would you like to buy me a coffee?'
             sx={{
               width: 300, display: 'flex', alignItems: "center",
               justifyContent: "center"
@@ -167,12 +167,6 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
             renderInput={(params) => <TextField {...params} label="Button Text" />}
           />
         </Grid>
-
-        <Alert severity='info' sx={{ margin: 2 }}>
-          Note: When you receive a donation, your supporters will be redirected to this website or social link page,
-          you can use this to provide some content as a sign of appreciation or just leave it blank and they
-          will be redirected to a &quot;thank you page&quot;.
-        </Alert>
         <Grid
           sx={{
             display: 'flex', alignItems: "center",
@@ -187,7 +181,11 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
             size='small'
           />
         </Grid>
-
+        <Alert severity='info' sx={{ margin: 2 }}>
+          Note: When you receive a donation, your supporters will be redirected to this website or social link page,
+          you can use this to provide some content as a sign of appreciation or just leave it blank and they
+          will be redirected to a &quot;thank you page&quot;.
+        </Alert>
         <Grid container spacing={2}
           sx={{ marginTop: 1, display: 'flex', alignItems: "center", justifyContent: "center" }}>
           <Grid item>
