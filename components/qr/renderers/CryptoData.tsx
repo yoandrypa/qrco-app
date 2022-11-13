@@ -11,14 +11,16 @@ import Alert from '@mui/material/Alert'
 import Common from '../helperComponents/Common'
 import AddIcon from '@mui/icons-material/Add';
 
-type Props = {
+type CryptoDataProps = {
     data: {
         urlOptionLabel?: string,// BlockChain indentifier "BTC", "USDT", etc
         message?: string, // Optional message
         subject?: string; // wallet Address
+        value?: string;
     },
     setData: Function,
-    setIsWrong: Function
+    setIsWrong: Function,
+    handleValues: Function
 }
 
 const supportedBlockChains = [
@@ -60,7 +62,7 @@ const supportedBlockChains = [
         value: "TRX"
     },
     {
-        label: "Not in this list",
+        label: "Not in the list",
         value: "add"
     },
 
@@ -68,28 +70,28 @@ const supportedBlockChains = [
 
 const currencyList = getCurrencies();
 
-function CryptoData({ setIsWrong }: Props) {
-    const [value, setValue] = useState(supportedBlockChains[0])
-    const [addressInput, setAddressInput] = useState<string>('');
+function CryptoData({ setIsWrong, data, handleValues }: CryptoDataProps) {
+    const [blockchainInput, setBlockchainInput] = useState(supportedBlockChains[0])
+    const [walletInput, setWalletInput] = useState<string>('');
     const [messageInput, setMessageInput] = useState<string>('');
     const [isWalletValid, setIsWalletValid] = useState<boolean>(false)
     const [isAddressVisited, setIsAddressVisited] = useState<boolean>(false)
 
     const handleCryptoChange = (event: any, newValue: { label: string, value: string } | null) => {
-        setValue(newValue || {
-            label: "Bitcoin (BTC)",
-            value: "BTC"
-        })
-        if (isAddressVisited && newValue?.value != 'add') setIsWalletValid(validateAddress(addressInput, newValue?.value.toLocaleLowerCase() || 'btc'))
+        setBlockchainInput(newValue || supportedBlockChains[0])//BTC
+        if (isAddressVisited && newValue?.value != 'add') setIsWalletValid(validateAddress(walletInput, newValue?.value.toLocaleLowerCase() || 'btc'))
+        handleValues('urlOptionLabel')(event)
     }
 
     const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setAddressInput(event.target.value)
-        setIsWalletValid(validateAddress(event.target.value, value.value.toLocaleLowerCase()))
+        setWalletInput(event.target.value)
+        setIsWalletValid(validateAddress(event.target.value, blockchainInput.value.toLocaleLowerCase()))
+        handleValues('subject')(event)
     }
 
     const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setMessageInput(event.target.value)
+        handleValues('message')(event)
     }
 
     const validateAddress = (address: string, currency: string): boolean => {
@@ -99,17 +101,24 @@ function CryptoData({ setIsWrong }: Props) {
     }
 
     useEffect(() => {
-        setIsWrong(addressInput.length === 0)
-    }, [addressInput, setIsWrong])
+        setIsWrong(walletInput.length === 0)
+    }, [walletInput, setIsWrong])
 
-
+    // useEffect(() => {
+    //     const temp = { ...data }
+    //     temp['message'] = messageInput.trim()
+    //     temp['subject'] = walletInput
+    //     temp['urlOptionLabel'] = blockchainInput.value
+    //     setData(temp)
+    //     console.log('saving data in context')
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [walletInput, messageInput, blockchainInput])
 
     return (
-        <Common msg='Share your wallet and receive crypto instantly.'>
-
+        <Common msg="Crypto Payment Link">
             <Grid container sx={{ marginTop: 2 }}>
                 <Autocomplete
-                    value={value}
+                    value={blockchainInput}
                     onChange={handleCryptoChange}
                     fullWidth
                     id="blockchain-select"
@@ -151,9 +160,9 @@ function CryptoData({ setIsWrong }: Props) {
                                 }}
                                 InputProps={{
                                     ...params.InputProps,
-                                    startAdornment: value ? (
+                                    startAdornment: blockchainInput ? (
                                         <InputAdornment position="start">
-                                            {value.value == 'add' ? (
+                                            {blockchainInput.value == 'add' ? (
                                                 <AddIcon />
                                             ) : (
                                                 <Image
@@ -161,7 +170,7 @@ function CryptoData({ setIsWrong }: Props) {
                                                     height={20}
                                                     loading="lazy"
                                                     width={20}
-                                                    src={`/images/crypto-logos/${value.value.toLowerCase()}.svg`}
+                                                    src={`/images/crypto-logos/${blockchainInput.value.toLowerCase()}.svg`}
                                                     // srcSet={`images/${value.value.toLowerCase()}.png`}
                                                     alt=""
                                                 />
@@ -177,22 +186,22 @@ function CryptoData({ setIsWrong }: Props) {
 
             </Grid>
             <Grid>
-                {(!isWalletValid && addressInput.length > 0) && <Alert severity='info' sx={{ marginTop: 1 }}>
+                {(!isWalletValid && walletInput.length > 0) && <Alert severity='info' sx={{ marginTop: 1 }}>
                     Double check this, this wallet address seems to be invalid. You can still send this address anyway. This warning won&apos;t be shown on the QR view.
                 </Alert>}
                 <TextField
-                    error={addressInput.length === 0}
+                    error={walletInput.length === 0}
                     sx={{ marginTop: 2 }}
                     label="Address"
                     size="small"
                     fullWidth
                     margin="dense"
-                    value={addressInput}
+                    value={data.subject || walletInput}
                     onChange={handleAddressChange}
                     onBlur={() => setIsAddressVisited(true)}
                     InputProps={{
                         endAdornment: (
-                            !addressInput.trim().length ? (
+                            !walletInput.trim().length ? (
                                 <InputAdornment position="end">
                                     <Typography color="error">{'REQUIRED'}</Typography>
                                 </InputAdornment>
@@ -209,7 +218,7 @@ function CryptoData({ setIsWrong }: Props) {
                 size="small"
                 fullWidth
                 margin="dense"
-                value={messageInput} />
+                value={data.message || messageInput} />
         </Common>
     )
 }
