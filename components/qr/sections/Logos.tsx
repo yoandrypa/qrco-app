@@ -19,19 +19,19 @@ const Logos = ({ image, handleMainData }: LogosProps) => (
         selected={!image}
         handleSelect={handleMainData} />
       <SectionSelector
-        icon="/scan/scan.svg"
+        icon="/scan/scan.png"
         label="Scan"
-        selected={image === '/scan/scan.svg'}
+        selected={image === '/scan/scan.png'}
         handleSelect={handleMainData} />
       <SectionSelector
-        icon="/scan/scan1.svg"
+        icon="/scan/scan1.png"
         label="Scan me"
-        selected={image === '/scan/scan1.svg'}
+        selected={image === '/scan/scan1.png'}
         handleSelect={handleMainData} />
       <SectionSelector
-        icon="/scan/scan2.svg"
+        icon="/scan/scan2.png"
         label="Scan me"
-        selected={image === '/scan/scan2.svg'}
+        selected={image === '/scan/scan2.png'}
         handleSelect={handleMainData} />
       <SectionSelector
         isUpload
