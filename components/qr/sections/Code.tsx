@@ -140,7 +140,6 @@ const Code = ({ options, handleData, background, handleBackground, handleReset, 
                 { label: 'Squares', value: 'square', image: true },
                 { label: 'Smooth', value: 'extra-rounded', image: true },
                 { label: 'Dots', value: 'dot', image: true },
-                // { label: 'Point to center', value: 'center' },
                 { label: 'Same as code', value: '-1', image: true }
               ]}
             />
@@ -163,7 +162,6 @@ const Code = ({ options, handleData, background, handleBackground, handleReset, 
               options={[
                 { label: 'Squares', value: 'square', image: true },
                 { label: 'Dots', value: 'dot', image: true },
-                // { label: 'Point to center', value: 'center' },
                 { label: 'Same as code', value: '-1', image: true }
               ]}
             />
