@@ -67,6 +67,7 @@ const Generator = ({forceOverride}: GenProps) => {
 
   // @ts-ignore
   const onLoadFile = ({target}) => {
+    debugger;
     const f = target.files[0];
     const img = new Image();
     img.src = URL.createObjectURL(f);

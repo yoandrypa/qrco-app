@@ -1,4 +1,4 @@
-import {ReactNode, useCallback, useContext, useEffect, useRef, useState} from "react";
+import {ReactNode, useCallback, useContext, useRef, useState} from "react";
 import Box from "@mui/material/Box";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
@@ -38,8 +38,6 @@ const QrWizard = ({ children }: QrWizardProps) => {
 
   // @ts-ignore
   const forceUpdate = useCallback(() => setUnusedState({}), []);
-
-  const deleteBack = useRef<boolean>(false);
   const dataInfo = useRef<ProcessHanldlerType[]>([]);
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
 
@@ -48,12 +46,6 @@ const QrWizard = ({ children }: QrWizardProps) => {
     selected, step, setStep, data, userInfo, options, frame, background, cornersData,
     dotsData, isWrong, loading, setOptions, setLoading, isTrialMode
   }: StepsProps = useContext(Context);
-
-  useEffect(() => {
-    if (options.mode === 'edit' && background?.type === 'image' && options.backgroundOptions.color.length === 7 && !deleteBack.current) {
-      deleteBack.current = true;
-    }
-  }, [background, options]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const router = useRouter();
 
@@ -199,13 +191,14 @@ const QrWizard = ({ children }: QrWizardProps) => {
         qrDesign.id = qrDesignId;
       }
 
-      cleaner(qrDesign, background, frame, cornersData, dotsData);
+      cleaner(qrDesign, background, frame, cornersData, dotsData, data.mode === 'edit');
 
       try {
         if (data.mode === undefined) {
           if (dataInfo.current.length) {
             updatingHandler("Saving QR Code data");
           }
+
           await QrHandler.create({ shortLink, qrDesign, qrData });
         } else {
           if (dataInfo.current.length) {
@@ -217,7 +210,14 @@ const QrWizard = ({ children }: QrWizardProps) => {
 
           const objToEdit = generateObjectToEdit(qrData, data, qrDesign);
 
-          if (deleteBack.current) {
+          if (objToEdit.qrOptionsId?.background?.backColor === null) {
+            objToEdit.qrOptionsId.background.backColor = '';
+          }
+          if (objToEdit.qrOptionsId?.background?.file === null) {
+            objToEdit.qrOptionsId.background.file = '';
+          }
+          if (objToEdit.background !== undefined && objToEdit.qrOptionsId?.background !== undefined &&
+            objToEdit.background.type === 'image' && objToEdit.qrOptionsId.background === 'solid') {
             objToEdit.background = initialBackground;
           }
 

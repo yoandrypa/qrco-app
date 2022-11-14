@@ -30,13 +30,15 @@ export interface StepsProps {
 export const steps = ["Type", "Content", "Design"];
 
 export const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame: FramesType,
-                        cornersData: CornersAndDotsType, dotsData: CornersAndDotsType): void => {
+                        cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, edit: boolean): void => {
   if (!areEquals(frame, initialFrame)) {
     qrDesign.frame = frame;
   }
 
   if (!areEquals(background, initialBackground)) {
     qrDesign.background = background;
+  } else if (edit) { // @ts-ignore
+    qrDesign.background = initialBackground;
   }
   if (cornersData !== null) {
     qrDesign.corners = cornersData;

@@ -130,6 +130,12 @@ const QrList = ({ qrs }: any) => {
             <Typography variant="h6" style={{ fontWeight: "bold" }}>My QR Codes</Typography>
             {qrs.map((qr: any) => { // @ts-ignore
               const qrLink = sanitize.link(qr.shortLinkId || {}); // @ts-ignore
+              if (qr.qrOptionsId?.background?.backColor === '') {
+                qr.qrOptionsId.background.backColor = null;
+              }
+              if (qr.qrOptionsId?.background?.file === '') {
+                qr.qrOptionsId.background.file = null;
+              }
               return (
                 <Paper sx={{ width: "100%", overflow: "hidden" }} elevation={3} key={qr.createdAt}>
                   <Grid container justifyContent="flex-start" alignItems="center" spacing={2}>
