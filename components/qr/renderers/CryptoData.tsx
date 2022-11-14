@@ -6,7 +6,6 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Box from '@mui/material/Box'
 import Image from 'next/image'
 import TextField from '@mui/material/TextField'
-import { validate, getCurrencies } from 'crypto-address-validator-ts'
 import Alert from '@mui/material/Alert'
 import Common from '../helperComponents/Common'
 import AddIcon from '@mui/icons-material/Add';
@@ -68,7 +67,8 @@ const supportedBlockChains = [
 
 ]
 
-const currencyList = getCurrencies();
+
+const isServer = typeof window === 'undefined'
 
 function CryptoData({ setIsWrong, data, handleValues }: CryptoDataProps) {
     const [blockchainInput, setBlockchainInput] = useState(supportedBlockChains[0])
@@ -79,13 +79,13 @@ function CryptoData({ setIsWrong, data, handleValues }: CryptoDataProps) {
 
     const handleCryptoChange = (event: any, newValue: { label: string, value: string } | null) => {
         setBlockchainInput(newValue || supportedBlockChains[0])//BTC
-        if (isAddressVisited && newValue?.value != 'add') setIsWalletValid(validateAddress(walletInput, newValue?.value.toLocaleLowerCase() || 'btc'))
         handleValues('urlOptionLabel')(event)
+        if (isServer) if (isAddressVisited && newValue?.value != 'add') setIsWalletValid(validateAddress(walletInput, newValue?.value.toLocaleLowerCase() || 'btc'))
     }
 
     const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setWalletInput(event.target.value)
-        setIsWalletValid(validateAddress(event.target.value, blockchainInput.value.toLocaleLowerCase()))
+        if (isServer) setIsWalletValid(validateAddress(event.target.value, blockchainInput.value.toLocaleLowerCase()))
         handleValues('subject')(event)
     }
 
@@ -95,9 +95,14 @@ function CryptoData({ setIsWrong, data, handleValues }: CryptoDataProps) {
     }
 
     const validateAddress = (address: string, currency: string): boolean => {
-        if (currency === 'add') return true;
-        if (!currencyList.some(el => el.symbol === currency)) return false;
-        return validate(address, currency.toLocaleLowerCase(), { networkType: 'both', chainType: 'Bech32' })
+        // if (currency === 'add') return true;
+        // if (!currencyList.some(el => el.symbol === currency)) return false;
+        // if (isServer) {
+        //     // return validate(address, currency.toLocaleLowerCase(), { networkType: 'both', chainType: 'Bech32' })
+        // } else {
+        //     return false;
+        // }
+        return true
     }
 
     useEffect(() => {
