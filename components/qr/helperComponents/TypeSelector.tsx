@@ -31,6 +31,7 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, enable
         height: '130px',
         borderRadius: '5px',
         border: theme => `solid 1px ${theme.palette.text.disabled}`,
+        backgroundColor: enabled ? theme => !selected ? '#fff' : alpha(theme.palette.info.light, 0.5) : grey[400],
         '&:hover': enabled ? {
           backgroundColor: theme => alpha(theme.palette.info.light, 0.3)
         } : grey[100]
