@@ -7,7 +7,7 @@ import frame4 from '../../components/qr/frames/frame4';
 import frame5 from '../../components/qr/frames/frame5';
 import frame6 from '../../components/qr/frames/frame6';
 import frame7 from '../../components/qr/frames/frame7';
-import {DataType, FramesType, SocialNetworksType, SocialsType} from '../../components/qr/types/types';
+import { DataType, FramesType, SocialNetworksType, SocialsType } from '../../components/qr/types/types';
 import initialOptions from "./data";
 
 const exists = (socials: SocialNetworksType[] | undefined, item: SocialsType): boolean => (
@@ -91,6 +91,10 @@ export const handleDesignerString = (selected: string | null | undefined, data: 
     }
     case 'facebook': {
       designerString += `https://www.facebook.com/sharer.php?u=${encodeURIComponent(data.message || '')}`;
+      break;
+    }
+    case 'crypto': {
+      designerString += `Blockchain: ${data.urlOptionLabel || 'btc'},to: ${data.subject} info: ${data.message || ''}`;
       break;
     }
   }
@@ -191,7 +195,7 @@ const delta = (rgbA: number[], rgbB: number[]): number => {
   return i < 0 ? 0 : Math.sqrt(i);
 }
 
-export const downloadAsSVGOrVerify = (qrImageData: { outerHTML: string; }, verify: Function | undefined, contrast: {color1?: string; color2: string} | undefined): void => {
+export const downloadAsSVGOrVerify = (qrImageData: { outerHTML: string; }, verify: Function | undefined, contrast: { color1?: string; color2: string } | undefined): void => {
   const svgData = qrImageData.outerHTML.replaceAll(' href', ' xlink:href');
   const data = new Blob([svgData], { type: 'image/svg+xml' });
   if (verify) {
@@ -252,7 +256,7 @@ export const downloadAsPNG = async (svgData: { outerHTML: string | number | bool
 
 export const getFrame = (frame: FramesType): string => {
   let result: string;
-  const defaultColor:string = '#000000';
+  const defaultColor: string = '#000000';
   const renderFrameText = () => frame.text !== undefined ? frame.text : 'SCAN ME' as string;
 
   if (frame.type === '/frame/frame0.svg') {
@@ -279,8 +283,8 @@ export function getUuid(): string {
   let dt = new Date().getTime();
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (dt + Math.random() * 16) % 16 | 0;
-    dt = Math.floor(dt/16);
-    return (c === 'x' ? r :(r&0x3|0x8)).toString(16);
+    dt = Math.floor(dt / 16);
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
   });
 }
 
@@ -321,16 +325,16 @@ export const getOptionsObject = (qrDesign: any) => {
 
 export const getBackgroundObject = (qrDesign: any) => (
   !qrDesign.background?.type ? null : {
-  type: qrDesign.background?.type,
-  opacity: qrDesign.background?.opacity,
-  size: qrDesign.background?.size,
-  file: qrDesign.background?.file,
-  x: qrDesign.background?.x,
-  y: qrDesign.background?.y,
-  imgSize: qrDesign.background?.imgSize || 1,
-  invert: qrDesign.background?.invert || false,
-  backColor: qrDesign.background?.backColor || null
-});
+    type: qrDesign.background?.type,
+    opacity: qrDesign.background?.opacity,
+    size: qrDesign.background?.size,
+    file: qrDesign.background?.file,
+    x: qrDesign.background?.x,
+    y: qrDesign.background?.y,
+    imgSize: qrDesign.background?.imgSize || 1,
+    invert: qrDesign.background?.invert || false,
+    backColor: qrDesign.background?.backColor || null
+  });
 
 export const getCornersAndDotsObject = (qrDesign: any, item: string) => (
   qrDesign[item] ? {
@@ -350,7 +354,7 @@ export const handleInitialData = (value: string | null | undefined) => {
 };
 
 export const dataCleaner = (options: any, mainObj?: boolean) => {
-  const data = {...options};
+  const data = { ...options };
 
   const base = ['backgroundOptions', 'cornersDotOptions', 'cornersSquareOptions', 'dotsOptions', 'imageOptions',
     'qrOptions', 'margin', 'type', 'width', 'height', 'image', 'data'] as string[];
