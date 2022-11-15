@@ -135,7 +135,16 @@ const AppContextProvider = (props: ContextProps) => {
   }, [step]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (options?.mode !== 'edit' && router.query.mode !== 'edit') {
+    if (router.pathname === QR_TYPE_ROUTE && step !== 0) {
+      doNotNavigate.current = true;
+      setStep(0);
+    } else if (router.pathname === QR_CONTENT_ROUTE && step !== 1) {
+      doNotNavigate.current = true;
+      setStep(1);
+    } else if (router.pathname === QR_DESIGN_ROUTE && step !== 2) {
+      doNotNavigate.current = true;
+      setStep(2);
+    } else if (options?.mode !== 'edit' && router.query.mode !== 'edit') {
       if ([QR_CONTENT_ROUTE, QR_DESIGN_ROUTE].includes(router.pathname)) {
         if (data?.isDynamic && !isUserInfo && !router.query.login) {
           router.push({pathname: "/", query: {path: router.pathname, login: true}}, "/").then(() => { setLoading(false); });
