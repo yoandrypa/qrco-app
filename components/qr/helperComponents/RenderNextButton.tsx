@@ -2,8 +2,9 @@ import SaveIcon from "@mui/icons-material/Save";
 import DoneIcon from "@mui/icons-material/Done";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import StepperButtons from "./StepperButtons";
-import Button from "@mui/material/Button";
+import IconButton from '@mui/material/IconButton';
 import Tooltip from "@mui/material/Tooltip";
+import {alpha} from "@mui/material/styles";
 
 interface RenderNextProps {
   handleNext: () => void;
@@ -25,9 +26,16 @@ const RenderNextButton = ({handleNext, isLogged, loading, step, mode, selected, 
   if (display) {
     return (
       <Tooltip title={`${text === 'Next' ? 'Go ' : ''}${text}`}>
-        <Button variant="contained" disabled={disabled} onClick={handleNext} sx={{ height: '30px' }}>
+        <IconButton
+          disabled={disabled}
+          onClick={handleNext}
+          size="small"
+          sx={{
+            backgroundColor: theme => alpha(theme.palette.primary.light, 0.3),
+            '&:hover, &.Mui-focusVisible': { backgroundColor: theme => theme.palette.primary.light, color: 'white' }
+          }}>
           {renderIcon}
-        </Button>
+        </IconButton>
       </Tooltip>
     );
   }
