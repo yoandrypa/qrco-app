@@ -67,6 +67,7 @@ const supportedBlockChains = [
 
 ]
 
+const btcRegExp = new RegExp('^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$')
 
 const isServer = typeof window === 'undefined'
 
@@ -80,7 +81,7 @@ function CryptoData({ setIsWrong, data, handleValues }: CryptoDataProps) {
     const handleCryptoChange = (event: any, newValue: { label: string, value: string } | null) => {
         setBlockchainInput(newValue || supportedBlockChains[0])//BTC
         handleValues('urlOptionLabel')(event)
-        if (isServer) if (isAddressVisited && newValue?.value != 'add') setIsWalletValid(validateAddress(walletInput, newValue?.value.toLocaleLowerCase() || 'btc'))
+        if (isAddressVisited && newValue?.value != 'add') setIsWalletValid(validateAddress(walletInput, newValue?.value.toLocaleLowerCase() || 'btc'))
     }
 
     const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,29 +96,22 @@ function CryptoData({ setIsWrong, data, handleValues }: CryptoDataProps) {
     }
 
     const validateAddress = (address: string, currency: string): boolean => {
-        // if (currency === 'add') return true;
-        // if (!currencyList.some(el => el.symbol === currency)) return false;
-        // if (isServer) {
-        //     // return validate(address, currency.toLocaleLowerCase(), { networkType: 'both', chainType: 'Bech32' })
-        // } else {
-        //     return false;
-        // }
-        return true
+        let result;
+        switch (currency) {
+            case 'btc':
+                result = btcRegExp.test(address)
+                break;
+            default:
+                result = true;
+                break;
+        }
+        return result
+
     }
 
     useEffect(() => {
         setIsWrong(walletInput.length === 0)
     }, [walletInput, setIsWrong])
-
-    // useEffect(() => {
-    //     const temp = { ...data }
-    //     temp['message'] = messageInput.trim()
-    //     temp['subject'] = walletInput
-    //     temp['urlOptionLabel'] = blockchainInput.value
-    //     setData(temp)
-    //     console.log('saving data in context')
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, [walletInput, messageInput, blockchainInput])
 
     return (
         <Common msg="Crypto Payment Link">
