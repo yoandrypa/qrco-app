@@ -28,7 +28,6 @@ export default function RenderFloatingButtons(
         isDynamic={isDynamic}
         mode={mode}
         selected={selected}
-        display
       />
       <RenderNextButton
         step={step}
@@ -39,7 +38,6 @@ export default function RenderFloatingButtons(
         selected={selected}
         mode={mode}
         qrName={qrName}
-        display
       />
     </Box>
   );
