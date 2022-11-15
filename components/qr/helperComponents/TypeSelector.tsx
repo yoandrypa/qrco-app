@@ -1,9 +1,8 @@
-import { MouseEvent } from 'react';
+import {MouseEvent} from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import { grey } from "@mui/material/colors";
-import { alpha } from '@mui/material/styles';
+import {grey} from "@mui/material/colors";
 
 import RenderIcon from './RenderIcon';
 
@@ -31,9 +30,10 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, enable
         height: '130px',
         borderRadius: '5px',
         border: theme => `solid 1px ${theme.palette.text.disabled}`,
-        backgroundColor: enabled ? theme => !selected ? '#fff' : alpha(theme.palette.info.light, 0.5) : grey[400],
+        backgroundColor: enabled ? '#fff' : grey[300],
+        boxShadow: enabled && selected ? '0 0 5px 2px #286ED6' : 'none',
         '&:hover': enabled ? {
-          backgroundColor: theme => alpha(theme.palette.info.light, 0.3)
+          boxShadow: !selected ? '0 0 3px 2px #849abb' : '0 0 3px 2px #286ED6',
         } : grey[100]
       }}
       onClick={beforeHandle}
@@ -43,6 +43,7 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, enable
           <RenderIcon icon={icon} enabled={enabled} />
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: 'left', ml: 1, width: '100%' }}>
+
           <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
             <Typography sx={{ width: '100%', fontWeight: 'bold', color: !enabled ? theme => theme.palette.text.disabled : 'default' }} variant="h6">
               {label}

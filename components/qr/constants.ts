@@ -4,7 +4,6 @@ export const QR_TYPE_ROUTE = '/qr/type' as string;
 export const QR_CONTENT_ROUTE = '/qr/content' as string;
 export const QR_DESIGN_ROUTE = '/qr/design' as string;
 
-export const SOCIALS = ['facebook', 'whatsapp', 'twitter', 'instagram', 'linkedin', 'pinterest', 'telegram', 'youtube'] as string[];
 export const PARAM_QR_TEXT = 'qr_text' as string;
 
 export const EMAIL = new RegExp('^\\w+(\\.\\w+)*(\\+\\w+(\\.\\w+)*)?@\\w+(\\.\\w+)+$', 'i');
