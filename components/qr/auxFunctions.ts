@@ -57,6 +57,19 @@ export const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame
   }
 };
 
+export const finalCleanForEdtion = (objToEdit: EditType) => {
+  if (objToEdit.qrOptionsId?.background?.backColor === null) {
+    objToEdit.qrOptionsId.background.backColor = '';
+  }
+  if (objToEdit.qrOptionsId?.background?.file === null) {
+    objToEdit.qrOptionsId.background.file = '';
+  }
+  if (objToEdit.background !== undefined && objToEdit.qrOptionsId?.background !== undefined &&
+    objToEdit.background.type === 'image' && objToEdit.qrOptionsId.background === 'solid') {
+    objToEdit.background = initialBackground;
+  }
+}
+
 export const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: OptionsType): EditType => {
   const objToEdit = {
     ...qrData,

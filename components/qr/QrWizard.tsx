@@ -1,15 +1,6 @@
-import {ReactNode, useCallback, useContext, useRef, useState} from "react";
+import {ReactNode, useCallback, useContext, useEffect, useRef, useState} from "react";
 import Box from "@mui/material/Box";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Button from "@mui/material/Button";
 import Context from "../context/Context";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import DoneIcon from "@mui/icons-material/Done";
-import SaveIcon from "@mui/icons-material/Save";
-import {styled} from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import {useRouter} from "next/router";
@@ -23,22 +14,26 @@ import * as StorageHandler from "../../handlers/storage";
 import * as EbanuxHandler from "../../handlers/ebanux";
 import Notifications from "../notifications/Notifications";
 import ProcessHandler from "./renderers/ProcessHandler";
-import {cleaner, generateObjectToEdit, steps, StepsProps} from "./auxFunctions";
-import {initialBackground} from "../../helpers/qr/data";
+import {cleaner, finalCleanForEdtion, generateObjectToEdit, StepsProps} from "./auxFunctions";
+import RenderNextButton from "./helperComponents/RenderNextButton";
+import RenderBackButton from "./helperComponents/RenderBackButton";
+import RenderSteps from "./helperComponents/RenderSteps";
+import RenderFloatingButtons from "./helperComponents/RenderFloatingButtons";
 
 interface QrWizardProps {
   children: ReactNode;
 }
 
-const StepperButtons = styled(Button)(() => ({ width: "120px", height: "30px" }));
-
 const QrWizard = ({ children }: QrWizardProps) => {
   const [isError, setIsError] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(false);
+  const [size, setSize] = useState<number>(0);
   const [, setUnusedState] = useState();
 
   // @ts-ignore
   const forceUpdate = useCallback(() => setUnusedState({}), []);
   const dataInfo = useRef<ProcessHanldlerType[]>([]);
+  const btnRef = useRef<any>(null);
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
 
   // @ts-ignore
@@ -68,22 +63,16 @@ const QrWizard = ({ children }: QrWizardProps) => {
     setLoading(true); // @ts-ignore
     if (step === 0 && data.isDynamic && !isLogged) {
       router.push({ pathname: "/", query: { path: router.pathname, login: true, selected } }, "/")
-        .then(() => {
-          setLoading(false);
-        });
+        .then(() => { setLoading(false); });
     } else if (step === 1 && isLogged && data.isDynamic && !Boolean(options.id) && options.mode === undefined) {
       const id = getUuid();
       const shortCode = await generateId();
       setOptions({
-        ...options,
-        id,
-        shortCode,
-        data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN)
+        ...options, id, shortCode, data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN)
       });
       setStep(2);
     } else if (step === 2 && isLogged) {
-      //Process assets before saving de QR Data
-      if (["pdf", "audio", "gallery", "video"].includes(selected)) {
+      if (["pdf", "audio", "gallery", "video"].includes(selected)) { //Process assets before saving de QR Data
         updatingHandler("Uploading assets");
         try { // @ts-ignore
           data["files"] = await StorageHandler.upload(data["files"], `${userInfo.attributes.sub}/${selected}s`);
@@ -163,31 +152,24 @@ const QrWizard = ({ children }: QrWizardProps) => {
         }
       }
 
-      const qrData = { ...data, qrType: selected };
-
       let shortLink;
-
+      const qrData = { ...data, qrType: selected };
       const qrDesign = { ...options };
 
       if (data.mode === undefined) {
         const qrDesignId = getUuid();
-        const qrId = options.id || getUuid();
-
-        // @ts-ignore
+        const qrId = options.id || getUuid(); // @ts-ignore
         qrData.qrOptionsId = qrDesignId;
         qrData.userId = userInfo.attributes.sub;
 
-        if (data.isDynamic) {
-          // @ts-ignore
+        if (data.isDynamic) { // @ts-ignore
           qrData.shortLinkId = { userId: userInfo.attributes.sub, createdAt: Date.now() };
           shortLink = {
             target: generateShortLink(`qr/${qrId}`),
-            address: options.shortCode || await generateId(),
-            // @ts-ignore
+            address: options.shortCode || await generateId(), // @ts-ignore
             ...qrData.shortLinkId
           };
         }
-
         qrDesign.id = qrDesignId;
       }
 
@@ -198,7 +180,6 @@ const QrWizard = ({ children }: QrWizardProps) => {
           if (dataInfo.current.length) {
             updatingHandler("Saving QR Code data");
           }
-
           await QrHandler.create({ shortLink, qrDesign, qrData });
         } else {
           if (dataInfo.current.length) {
@@ -209,17 +190,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           delete qrData.mode;
 
           const objToEdit = generateObjectToEdit(qrData, data, qrDesign);
-
-          if (objToEdit.qrOptionsId?.background?.backColor === null) {
-            objToEdit.qrOptionsId.background.backColor = '';
-          }
-          if (objToEdit.qrOptionsId?.background?.file === null) {
-            objToEdit.qrOptionsId.background.file = '';
-          }
-          if (objToEdit.background !== undefined && objToEdit.qrOptionsId?.background !== undefined &&
-            objToEdit.background.type === 'image' && objToEdit.qrOptionsId.background === 'solid') {
-            objToEdit.background = initialBackground;
-          }
+          finalCleanForEdtion(objToEdit);
 
           await QrHandler.edit(objToEdit);
         }
@@ -227,9 +198,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
         if (dataInfo.current.length) {
           updatingHandler(null, true);
         } else {
-          router.replace("/").then(() => {
-            setLoading(false);
-          });
+          router.replace("/").then(() => { setLoading(false); });
         }
       } catch {
         if (dataInfo.current.length) {
@@ -249,41 +218,43 @@ const QrWizard = ({ children }: QrWizardProps) => {
   };
 
   const renderBack = () => (
-    <StepperButtons
-      variant="contained"
-      startIcon={<ChevronLeftIcon />}
-      disabled={loading || step === 0 || !selected || (data.mode === "edit" && ((data.isDynamic && step <= 1) || (!data.isDynamic && step <= 2)))}
-      onClick={handleBack}>
-      {"Back"}
-    </StepperButtons>
+    <RenderBackButton
+      loading={loading}
+      step={step}
+      isDynamic={data.isDynamic || false}
+      handleBack={handleBack}
+      mode={data.mode}
+      selected={selected} />
   );
 
   const renderNext = () => (
-    <StepperButtons
-      onClick={handleNext}
-      endIcon={step >= 2 ? (isLogged ? <SaveIcon /> : <DoneIcon />) : <ChevronRightIcon />}
-      disabled={
-        loading || (isWrong && step > 0) || !selected ||
-        (step === 1 && isLogged && !Boolean(data?.qrName?.trim()?.length))
-      }
-      variant={step >= 2 ? "outlined" : "contained"}>
-      {step >= 2 ? (isLogged ? (data.mode === undefined ? "Save" : "Update") : "Done") : "Next"}
-    </StepperButtons>
+    <RenderNextButton
+      handleNext={handleNext}
+      isLogged={isLogged}
+      loading={loading}
+      step={step}
+      isWrong={isWrong}
+      selected={selected}
+      qrName={data.qrName}
+      mode={data.mode} />
   );
 
-  const renderSteps = useCallback(() => (
-    <Stepper
-      activeStep={step}
-      alternativeLabel={!isWide}
-      sx={{ width: "100%", mt: { xs: 2, sm: 0 }, mb: { xs: 1, sm: 0 } }}
-    >
-      {steps.map((label: string) => (
-        <Step key={label}>
-          <StepLabel>{label}</StepLabel>
-        </Step>
-      ))}
-    </Stepper>
-  ), [step, isWide]);
+  useEffect(() => {
+    const observer = new IntersectionObserver((payload: IntersectionObserverEntry[]) => {
+      setVisible(!loading && (payload[0].isIntersecting || false));
+      }, {
+      root: document.querySelector('#scrollArea'),
+      rootMargin: '0px',
+      threshold: [0.3]
+    });
+    observer.observe(btnRef.current);
+    setSize(btnRef.current.offsetWidth);
+    const getWidth = ()=>{
+      setSize(btnRef.current.offsetWidth);
+    }
+    window.addEventListener("resize", getWidth);
+    return () => window.removeEventListener("resize", getWidth);
+  }, [loading]);
 
   return (
     <>
@@ -302,21 +273,37 @@ const QrWizard = ({ children }: QrWizardProps) => {
           }
         }
       } /> : null}
-      {isWide ? (
-        <Box sx={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between", pt: 2 }}>
-          {renderBack()}
-          {renderSteps()}
-          {renderNext()}
-        </Box>
-      ) : (
-        <>
-          {renderSteps()}
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      {!visible && (
+        <RenderFloatingButtons
+          loading={loading}
+          step={step}
+          isDynamic={data.isDynamic || false}
+          isLogged={isLogged}
+          qrName={data.qrName}
+          isWrong={isWrong}
+          handleBack={handleBack}
+          handleNext={handleNext}
+          mode={data.mode}
+          size={size}
+          selected={selected} />
+      )}
+      <Box ref={btnRef}>
+        {isWide ? (
+          <Box sx={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between", pt: 2 }}>
             {renderBack()}
+            <RenderSteps step={step} isWide={true} />
             {renderNext()}
           </Box>
-        </>
-      )}
+        ) : (
+          <>
+            <RenderSteps step={step} isWide={false} />
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              {renderBack()}
+              {renderNext()}
+            </Box>
+          </>
+        )}
+      </Box>
       {isError && (
         <Notifications autoHideDuration={3500} message="Error accessing data!" onClose={() => {
           setIsError(false);
