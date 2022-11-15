@@ -241,7 +241,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
 
   useEffect(() => {
     const observer = new IntersectionObserver((payload: IntersectionObserverEntry[]) => {
-      setVisible(!loading && (payload[0].isIntersecting || false));
+      setVisible(payload[0].isIntersecting || false);
       }, {
       root: document.querySelector('#scrollArea'),
       rootMargin: '0px',
@@ -273,7 +273,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           }
         }
       } /> : null}
-      {!visible && (
+      {!loading && !visible && (
         <RenderFloatingButtons
           loading={loading}
           step={step}
