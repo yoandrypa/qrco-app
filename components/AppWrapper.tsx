@@ -212,7 +212,7 @@ export default function AppWrapper(props: AppWrapperProps) {
                 </>)}
               </>)}
             </Toolbar>
-            {startTrialDate && <CountDown startDate={startTrialDate} />}
+            {userInfo && startTrialDate && <CountDown startDate={startTrialDate} />}
           </Container>
         </AppBar>
       </ElevationScroll>)}
