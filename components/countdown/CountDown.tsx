@@ -2,9 +2,9 @@ import React, { useLayoutEffect, useState } from "react";
 import style from "./CountDown.module.css";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
-import Router from "next/router";
 import Stack from "@mui/material/Stack";
 import pluralize from "pluralize";
+import Link from "next/link";
 
 type Props = {
   /**
@@ -63,25 +63,29 @@ const CountDown = (props: Props) => {
 
   if (trialIsOver) {
     return (
-      <Alert severity="error" onClick={() => Router.push(`/plans`)}>
-        <Typography sx={{display: {xs: 'none', md: 'block'}}}>
-          {'Your 14 days of free trial has ended. You must buy a plan to keep using the platform. Click here to go to the pricing page.'}
+      <Alert severity="error">
+        <Typography sx={{ display: { xs: "none", md: "block" } }}>
+          {"Your 14 days of free trial has ended. Your QR codes have been disabled. Click "}
+          <span style={{ color: "blue" }}><Link href="/plans">here</Link></span>
+          {" to go to the pricing page."}
         </Typography>
-        <Typography sx={{display: {md: 'none', xs: 'block'}}}>
-          {'Free trial ended. Go to pricing.'}
+        <Typography sx={{ display: { md: "none", xs: "block" } }}>
+          {"Free trial ended. Go to pricing."}
         </Typography>
       </Alert>
     );
   } else {
     return (
       <>
-        <Alert severity="warning" onClick={() => Router.push(`/plans`)}>
+        <Alert severity="warning">
           <Stack direction="row" spacing={1}>
-            <Typography sx={{display: {xs: 'none', md: 'block'}}}>
-              {'You are in trial mode. Please subscribe to a plan here. Your free trial ends in:'}
+            <Typography sx={{ display: { xs: "none", md: "block" } }}>
+              {"You are in trial mode. Please subscribe to a plan "}
+              <span style={{ color: "blue" }}><Link href="/plans">here</Link></span>
+              {". Your free trial ends in:"}
             </Typography>
-            <Typography sx={{display: {md: 'none', xs: 'block'}}}>
-              {'Subscribe.Trial ends in:'}
+            <Typography sx={{ display: { md: "none", xs: "block" } }}>
+              {"Subscribe.Trial ends in:"}
             </Typography>
             <div className={".MuiAlert-standardWarning"}>
               <div className={style.container}>
