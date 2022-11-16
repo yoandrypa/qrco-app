@@ -1,13 +1,21 @@
 import React from 'react'
-import Grid from '@mui/material/Grid'
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+import { DataType } from '../types/types';
 
-type Props = {}
 
-const SimplePayLinkData = (props: Props) => {
+type Props = {
+    setData: Function,
+    setIsWrong: Function,
+    data: DataType
+}
+
+const SimplePayLinkData = ({ setData, setIsWrong }: Props) => {
+
     return (
-        <Grid container>
-
-        </Grid>
+        <Box sx={{ width: '100%' }}>
+        </Box>
     )
 }
 

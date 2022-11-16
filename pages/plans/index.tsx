@@ -18,7 +18,7 @@ import axios, { AxiosError } from 'axios'
 import Snackbar from '@mui/material/Snackbar'
 import Alert from '@mui/material/Alert'
 import BillingPortal from '../../components/billing/BillingPortal'
-import {get} from '../../handlers/users'
+import { get } from '../../handlers/users'
 import CountDown from '../../components/countdown/CountDown'
 type Props = {
   logged: boolean,
@@ -29,7 +29,7 @@ type Props = {
 
     }
   }
- 
+
 }
 
 Amplify.configure(awsconfig);
@@ -40,7 +40,7 @@ const Plans = (props: Props) => {
   const [user, setUser] = useState<any>(null);
   const [mustLogInDlg, setMustLogInDlg] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [startTrialDate,setStartTrialDate] = useState<string | null>(null)
+  const [startTrialDate, setStartTrialDate] = useState<string | null>(null)
 
   // @ts-ignore
   const { userInfo } = useContext(Context)
@@ -51,7 +51,7 @@ const Plans = (props: Props) => {
 
   });
 
-   
+
 
   useEffect(() => {
     // Auth.currentAuthenticatedUser()
@@ -61,21 +61,21 @@ const Plans = (props: Props) => {
     // console.log(user)       
     //@ts-ignore
     (userInfo != null && userInfo != undefined) && setUser(userInfo)
-    if(props.logged === true){
+    if (props.logged === true) {
       console.log(props.profile)
       //@ts-ignore
-      if (props.profile?.createdAt != null && !props.profile?.customerId){
+      if (props.profile?.createdAt != null && !props.profile?.customerId) {
         //@ts-ignore
         setStartTrialDate(props.profile.createdAt)
       }
 
-      if(props.profile?.subscriptionData != null && props.profile?.customerId != null){
-        <BillingPortal customerId={props.profile?.customerId}/>
+      if (props.profile?.subscriptionData != null && props.profile?.customerId != null) {
+        <BillingPortal customerId={props.profile?.customerId} />
       }
-      
+
       //TODO add logic for customer portal here
     }
-  }, [userInfo,props.logged,props.profile]);
+  }, [userInfo, props.logged, props.profile]);
 
 
 
@@ -84,61 +84,78 @@ const Plans = (props: Props) => {
 
   const basic = {
     title: "Basic Account",
-    description: "For small businesses/freelancers at an affordable price.",
-    buttonText: "Subscribe",
+    description: "For small businesses/freelancers at an affordable price",
+    buttonText: "START NOW",
     plan_type: "basic",
     legend: "A good choice to get started",
     highlighted: false,
-    priceAmount: "$9",
+    priceAmount: "$9.00",
     features: [
-      "Up to 5 Dynamic QR codes",
-      "Unlimited static QR codes",
-      "Unlimited scans"
+      '5 dynamic QR codes',
+      'Up to 5 microsites (mobile-friendly landing pages)',
+      'Unlimited static QR codes',
+      'Unlimited scans',
+      'QR codes design customization and edition',
+      'Dynamic QR codes content edition',
+      'Microsites appearance customization and edition'
     ],
 
   }
   const basicAnnual = {
     title: "Basic Account",
-    description: "A good choice to get started",
-    buttonText: "Subscribe",
+    description: 'A good choice to get started and save some cash.',
+    buttonText: "START NOW",
     plan_type: "basicAnnual",
     legend: "Save two months",
     highlighted: false,
-    priceAmount: "$90",
+    priceAmount: "$90.00",
     features: [
-      "Up to 5 Dynamic QR codes",
+      "5 Dynamic QR codes",
+      "Up to 5 microsites (mobile-friendly landing pages)",
       "Unlimited static QR codes",
-      "Unlimited scans"
+      'Unlimited scans',
+      'QR codes design customization and edition',
+      'Dynamic QR codes content edition',
+      'Microsites appearance customization and edition'
     ],
 
   }
 
   const business = {
     title: "Business Account",
-    description: "For medium business/freelancers who need a more complete solution.",
-    buttonText: "Subscribe",
+    description: "For medium businesses who need a larger solution",
+    buttonText: "START NOW",
     plan_type: "business",
     legend: "Have plenty of room to grow.",
-    highlighted: false,
-    priceAmount: "$15",
+    highlighted: true,
+    priceAmount: "$15.00",
     features: [
-      "Up to 100 Dynamic QR codes",
-      "Unlimited static QR codes",
-      "Unlimited scans"
+      '100 dynamic QR codes',
+      'Up to 100 microsites (mobile-friendly landing pages)',
+      'Unlimited static QR codes',
+      'Unlimited scans',
+      'QR codes design customization and edition',
+      'Dynamic QR codes content edition',
+      'Microsites appearance customization and edition'
     ],
   }
   const businessAnnual = {
     title: "Business Account",
-    description: "Receive a great discount with our annual plan.",
-    buttonText: "Subscribe",
+    description: 'Receive a fair discount with our annual plan.',
+    buttonText: "START NOW",
     plan_type: "businessAnnual",
-    legend: "Have plenty of room to grow.",
-    highlighted: false,
-    priceAmount: "$150",
+    legend: 'Save three months',
+    highlighted: true,
+    priceAmount: "$135.OO",
     features: [
-      "Up to 100 Dynamic QR codes",
-      "Unlimited static QR codes",
-      "Unlimited scans"
+      '100 dynamic QR codes',
+      'Up to 100 microsites (mobile-friendly landing pages)',
+      'Unlimited static QR codes',
+      'Unlimited scans',
+      'QR codes design customization and edition',
+      'Dynamic QR codes content edition',
+      'Microsites appearance customization and edition'
+
     ],
 
   }
@@ -146,29 +163,37 @@ const Plans = (props: Props) => {
   const premium = {
     title: "Premium Account",
     description: "The definitive plan. You're completely covered.",
-    buttonText: "Subscribe",
+    buttonText: "START NOW",
     plan_type: "premium",
     legend: "Limitless",
     highlighted: true,
-    priceAmount: "$45",
+    priceAmount: "$45.00",
     features: [
-      "Unlimited dynamic QR codes",
-      "Unlimited static QR codes",
-      "Unlimited scans"
+      'Unlimited dynamic QR codes',
+      'Unlimited microsites (mobile-friendly landing pages)',
+      'Unlimited static QR codes',
+      'Unlimited scans',
+      'QR codes design customization and edition',
+      'Dynamic QR codes content edition',
+      'Microsites appearance customization and edition'
     ],
   }
   const premiumAnnual = {
     title: "Premium Account",
-    description: "The definitive plan. You're completely covered.",
-    buttonText: "Subscribe",
+    description: 'Receive a great discount and get completely covered.',
+    buttonText: "START NOW",
     plan_type: "premiumAnnual",
-    legend: "With a great discount. You deserve the best",
+    legend: 'Save four months',
     highlighted: true,
-    priceAmount: "$360",
+    priceAmount: "$360.00",
     features: [
-      "Unlimited dynamic QR codes",
-      "Unlimited static QR codes",
-      "Unlimited scans"
+      'Unlimited dynamic QR codes',
+      'Unlimited microsites (mobile-friendly landing pages)',
+      'Unlimited static QR codes',
+      'Unlimited scans',
+      'QR codes design customization and edition',
+      'Dynamic QR codes content edition',
+      'Microsites appearance customization and edition'
     ],
   }
 
@@ -193,9 +218,6 @@ const Plans = (props: Props) => {
         const errorMessage = error instanceof AxiosError ? error.message : 'Something went wrong'
         setError(errorMessage)
       }
-
-
-
     }
   }
 
@@ -234,18 +256,18 @@ const Plans = (props: Props) => {
 
       <Typography variant='h6' color='blue' textAlign={'center'} marginBottom={3} marginTop={2}>PRICING PLANS</Typography>
       <Typography variant='h4' textAlign={'center'} marginBottom={3}>Save money with our annual plans</Typography>
-      
-    
-         {/* {startTrialDate && <TrialCountDown dateFrom={startTrialDate}/>} */}
-         {/* {startTrialDate && <CountDown startDate={startTrialDate}/>}*/}
 
-        <Box sx={{ alignContent: 'center', display: 'flex', spacing: 3, justifyContent: 'center' }}>
+
+      {/* {startTrialDate && <TrialCountDown dateFrom={startTrialDate}/>} */}
+      {/* {startTrialDate && <CountDown startDate={startTrialDate}/>}*/}
+
+      <Box sx={{ alignContent: 'center', display: 'flex', spacing: 3, justifyContent: 'center' }}>
         <Tabs value={activeTab} onChange={handleTabChange}>
-          <Tab label='Monthly' />
-          <Tab label='Annual' />
-        </Tabs>  
+          <Tab label='Monthly Plan' />
+          <Tab label='Annual Plan' />
+        </Tabs>
       </Box>
-      <Grid container alignContent='center' display='flex' spacing={3} justifyContent={'center'}>
+      <Grid container marginTop={6} alignContent='center' display='flex' spacing={3} justifyContent={'center'}>
         <Grid item xs={12} md={6} lg={4}>
           <PlanCard data={activeTab == 0 ? basic : basicAnnual}
             isCurrentPlan={false}
@@ -293,31 +315,31 @@ export const getServerSideProps: GetServerSideProps = async ({ query, req, res }
   };
 
   const userInfo = await getUserInfo();
-  if (userInfo){
+  if (userInfo) {
 
   }
 
-  if (!userInfo?.userData){
+  if (!userInfo?.userData) {
     return {
       props: {
         logged: false
       }
     }
   } else {
-   console.log(userInfo)
-   //@ts-ignore
-  const userData = JSON.parse(userInfo.userData as string)
-  const userId = userData.UserAttributes[0].Value;
-  console.log('user infoData es',userData)
-  const data: object = await get(userId)
-   console.log('data retrieved', data)
-  return {
-    props: {
-      logged: true,
-      profile: JSON.parse(JSON.stringify(data)) 
+    console.log(userInfo)
+    //@ts-ignore
+    const userData = JSON.parse(userInfo.userData as string)
+    const userId = userData.UserAttributes[0].Value;
+    console.log('user infoData es', userData)
+    const data: object = await get(userId)
+    console.log('data retrieved', data)
+    return {
+      props: {
+        logged: true,
+        profile: JSON.parse(JSON.stringify(data))
+      }
     }
   }
-} 
 
 
 }
