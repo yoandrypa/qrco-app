@@ -4879,6 +4879,11 @@ browserify-optional@^1.0.0:
     ast-types "^0.7.0"
     browser-resolve "^1.8.1"
 
+bubblebabbler@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/bubblebabbler/-/bubblebabbler-1.0.1.tgz#f381c5e64bb1a49b37529854309e6cd63bab35dd"
+  integrity sha512-cQ6S1s3HrxTFvlHSoPqBvK1lf1VIc8cE1Z0Y51T3jph0nekcj8EZG68zgusWenWP5Zk1yYlCm8eLWyUTRrOa6Q==
+
 buffer@4.9.2:
   version "4.9.2"
   resolved "https://registry.yarnpkg.com/buffer/-/buffer-4.9.2.tgz#230ead344002988644841ab0244af8c44bbe3ef8"
@@ -7900,6 +7905,13 @@ universalify@^2.0.0:
   resolved "https://registry.yarnpkg.com/universalify/-/universalify-2.0.0.tgz#75a4984efedc4b08975c5aeb73f530d02df25717"
   integrity sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==
 
+unix-checksum@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/unix-checksum/-/unix-checksum-4.4.0.tgz#d67966cc45ed2268f5ca11ed5167d0fd601fa36b"
+  integrity sha512-Vz4O/OpaHVLs9uKKWbz/XFot9IzzbzlwuVROV9z7fixHa02V2txnmgbeODbgKrFGpzy1y6mnAlpc1jeW+q5wBw==
+  dependencies:
+    bubblebabbler "^1.0.0"
+
 unpipe@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/unpipe/-/unpipe-1.0.0.tgz#b2bf4ee8514aae6165b4817829d21b2ef49904ec"
@@ -7978,6 +7990,11 @@ uuid@^8.2.0, uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
+
+uuid@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.0.tgz#592f550650024a38ceb0c562f2f6aa435761efb5"
+  integrity sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==
 
 v8-compile-cache@^2.0.3:
   version "2.3.0"
