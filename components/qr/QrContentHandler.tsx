@@ -126,7 +126,7 @@ const QrContentHandler = () => {
         return <DonationsData data={data} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong} />
       }
       case 'paylink': {
-        return <SimplePayLinkData />
+        return <SimplePayLinkData data={data} setData={handlePayload} setIsWrong={setIsWrong} />
       }
       case 'crypto': {
         return <CryptoData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
