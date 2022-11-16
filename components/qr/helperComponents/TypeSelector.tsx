@@ -76,22 +76,24 @@ const TypeSelector = ({handleSelect, label, description, icon, selected, enabled
           </Box>
         </Box>
       </Box>
-      {anchorEl && <Popover
+      {anchorEl && (
+        <Popover
           id="mouse-over-popover"
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
           onClose={() => setAnchorEl(null)}
-          sx={{ pointerEvents: 'none' }}
-          anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+          sx={{pointerEvents: 'none'}}
+          anchorOrigin={{vertical: 'center', horizontal: 'center'}}
+          transformOrigin={{vertical: 'top', horizontal: 'center'}}
           disableRestoreFocus
         >
           {Boolean(anchorEl) ? (
             <Paper sx={{p: '5px', textAlign: 'center'}}>
-              <RenderIframe src={`${process.env.REACT_MICROSITES_ROUTE}/sample/${selected}`} width={370} height={500}/>
+              <RenderIframe src={`${process.env.REACT_MICROSITES_ROUTE}/sample/${icon}`} width={370} height={500}/>
             </Paper>
           ) : null}
-        </Popover>}
+        </Popover>
+      )}
     </>
   );
 };
