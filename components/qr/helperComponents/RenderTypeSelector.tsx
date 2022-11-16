@@ -10,7 +10,7 @@ import { DataType } from "../types/types";
 
 interface RenderTypeSelectorProps {
   selected?: string | null;
-  handleSelect: Function;
+  handleSelect: (payload: string) => void;
 }
 
 interface ContextData {
