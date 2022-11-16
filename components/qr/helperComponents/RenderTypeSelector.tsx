@@ -38,9 +38,10 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
     }
   };
 
-  const renderTypeSelector = (item: string, label: string, description: string, enabled: boolean) => (
+  const renderTypeSelector = (item: string, label: string, description: string, enabled: boolean, isDynamic?: boolean) => (
     <Grid item lg={3} md={4} sm={6} xs={12}>
       <TypeSelector
+        isDynamic={isDynamic || false}
         icon={item}
         label={label}
         enabled={enabled}
@@ -68,24 +69,24 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
           {renderTypeSelector("wifi", "WiFi", "Get connected to a WiFi network", true)}
           {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("crypto", "Crypto Payment", "Recieve crypto on your eWallet", true)}
         </>) : (<>
-          {renderTypeSelector("vcard+", "VCard Plus", "Share your contact and social details", true)}
-          {renderTypeSelector('business', 'Business', 'Describe your business or company', true)}
-          {renderTypeSelector("social", "Social networks", "Share your social networks information", true)}
-          {renderTypeSelector("link", "Link-in-Bio", "Share your own links, including social info", true)}
-          {renderTypeSelector("coupon", "Coupon", "Share a coupon", true)}
-          {renderTypeSelector("donations", "Donations", "Get donations from your supporters worldwide", true)}
-          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("fundme", "Fund Me", "Start your own charity or fundraising campaign", true)}
-          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("paylink", "Payment Link", "Receive payments worldwide", true)}
+          {renderTypeSelector("vcard+", "VCard Plus", "Share your contact and social details", true, true)}
+          {renderTypeSelector('business', 'Business', 'Describe your business or company', true, true)}
+          {renderTypeSelector("social", "Social networks", "Share your social networks information", true, true)}
+          {renderTypeSelector("link", "Link-in-Bio", "Share your own links, including social info", true, true)}
+          {renderTypeSelector("coupon", "Coupon", "Share a coupon", true, true)}
+          {renderTypeSelector("donations", "Donations", "Get donations from your supporters worldwide", true, true)}
+          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("fundme", "Fund Me", "Start your own charity or fundraising campaign", true, true)}
+          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("paylink", "Payment Link", "Receive payments worldwide", true, true)}
         </>)
       }
       {renderTypeSelector("twitter", "Twitter", "Post a tweet", true)}
-      {renderTypeSelector("whatsapp", "Whatsapp", "Send a Whatsapp message", true)}
+      {renderTypeSelector("whatsapp", "WhatsApp", "Send a WhatsApp message", true)}
       {renderTypeSelector("facebook", "Facebook", "Share an URL in your wall", true)}
       {isDynamic ? (<>
-        {renderTypeSelector("pdf", "PDF file", "Share a PDF file", true)}
-        {renderTypeSelector("audio", "Audio file", "Share an audio file", true)}
-        {renderTypeSelector("gallery", "Gallery", "Share a gallery of images", true)}
-        {renderTypeSelector("video", "Video files", "Share video files", true)}
+        {renderTypeSelector("pdf", "PDF file", "Share a PDF file", true, true)}
+        {renderTypeSelector("audio", "Audio file", "Share an audio file", true, true)}
+        {renderTypeSelector("gallery", "Gallery", "Share a gallery of images", true, true)}
+        {renderTypeSelector("video", "Video files", "Share video files", true, true)}
       </>) : null}
     </Grid>
   );

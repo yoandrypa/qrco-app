@@ -16,6 +16,6 @@ export default function RenderIframe({src, width, height}: IframeProps) {
   }
 
   return (
-      <iframe src={src} width={width} height={height} ref={iRef} onLoad={handleLoad} />
+    <iframe src={src} width={width} height={height} ref={iRef} onLoad={handleLoad} />
   );
 }

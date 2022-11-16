@@ -16,9 +16,10 @@ interface TypeSelectorProps {
   icon: string;
   selected: boolean;
   enabled?: boolean;
+  isDynamic: boolean;
 }
 
-const TypeSelector = ({handleSelect, label, description, icon, selected, enabled = true}: TypeSelectorProps) => {
+const TypeSelector = ({handleSelect, label, description, icon, selected, isDynamic, enabled = true}: TypeSelectorProps) => {
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
 
   const beforeHandle = () => {
@@ -28,11 +29,15 @@ const TypeSelector = ({handleSelect, label, description, icon, selected, enabled
   };
 
   const handleEnter = (event: MouseEvent<HTMLDivElement>) => {
-    setAnchorEl(!NO_MICROSITE.includes(icon) ? event.currentTarget : null);
+    if (isDynamic) {
+      setAnchorEl(!NO_MICROSITE.includes(icon) ? event.currentTarget : null);
+    }
   }
 
   const handleLeave = () => {
-    setAnchorEl(null);
+    if (isDynamic) {
+      setAnchorEl(null);
+    }
   }
 
   return (
