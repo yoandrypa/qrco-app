@@ -6,6 +6,8 @@ export const QR_DESIGN_ROUTE = '/qr/design' as string;
 
 export const PARAM_QR_TEXT = 'qr_text' as string;
 
+export const NO_MICROSITE = ['web', 'facebook', 'twitter', 'whatsapp'];
+
 export const EMAIL = new RegExp('^\\w+(\\.\\w+)*(\\+\\w+(\\.\\w+)*)?@\\w+(\\.\\w+)+$', 'i');
 export const PHONE = new RegExp('^(\\+\\d{1,3}\\s?)?((\\(\\d{1,3}\\))|\\d{1,3})(\\s|\\-)?(\\d+((\\s|\\-)\\d+)*)$');
 export const ZIP = new RegExp('^\\d{5}(-\\d{4})?$');

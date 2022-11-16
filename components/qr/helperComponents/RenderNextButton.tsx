@@ -2,9 +2,6 @@ import SaveIcon from "@mui/icons-material/Save";
 import DoneIcon from "@mui/icons-material/Done";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import StepperButtons from "./StepperButtons";
-import Tooltip from "@mui/material/Tooltip";
-import {alpha} from "@mui/material/styles";
-import Button from "@mui/material/Button";
 
 interface RenderNextProps {
   handleNext: () => void;

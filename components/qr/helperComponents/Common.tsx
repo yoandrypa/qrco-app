@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import Context from "../../context/Context";
 import RenderQRCommons from "../renderers/RenderQRCommons";
 
-import {DEFAULT_COLORS} from "../constants";
+import {DEFAULT_COLORS, NO_MICROSITE} from "../constants";
 import {download} from "../../../handlers/storage";
 import Notifications from "../../notifications/Notifications";
 import {DataType} from "../types/types";
@@ -106,7 +106,7 @@ function Common({ msg, children }: CommonProps) {
       <RenderQRCommons
         handleValue={handleValue}
         qrName={data?.qrName}
-        omitDesign={['web', 'facebook', 'twitter', 'whatsapp'].includes(selected) || !data?.isDynamic}
+        omitDesign={NO_MICROSITE.includes(selected) || !data?.isDynamic}
         omitPrimaryImg={!['vcard+', 'link', 'business', 'social', 'donations'].includes(selected) || !data?.isDynamic}
         backgndImg={data.mode === 'edit' ? (Array.isArray(data?.backgndImg) ? backImg || undefined : data?.backgndImg) : data?.backgndImg}
         foregndImg={data.mode === 'edit' ? (Array.isArray(data?.foregndImg) ? foreImg || undefined : data?.foregndImg) : data?.foregndImg}
