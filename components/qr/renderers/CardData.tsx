@@ -83,7 +83,7 @@ export default function CardData({data, setData, handleValues, setIsWrong}: Card
           {renderItem('cell', 'Cell number')}
         </Grid>
         <Grid item sm={4} xs={12} style={{paddingTop: 0}}>
-          {renderItem('phone', 'Phone number')}
+          {renderItem('phone', 'Alternative phone number')}
         </Grid>
         <Grid item sm={4} xs={12} style={{paddingTop: 0}}>
           {renderItem('fax', 'Fax')}
