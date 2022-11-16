@@ -74,7 +74,7 @@ export const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign:
   const objToEdit = {
     ...qrData,
     userId: qrDesign.userId,
-    id: qrDesign.id,
+    //id: qrDesign.id,
     qrType: qrData.qrType,
     qrName: qrData.qrName
   } as EditType;

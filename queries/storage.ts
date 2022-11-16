@@ -39,7 +39,7 @@ export const checkIfExist = async (key: string, checkSum?: string) => {
   }
 };
 
-export const upload = async (file: File, key = "") => {
+export const upload = async (file: File, key: string) => {
   try {
     const body = Buffer.from(await file.arrayBuffer());
     const checkSum = uc.crc32c(body, "base64");
