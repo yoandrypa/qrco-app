@@ -14,8 +14,11 @@ export const upload = async (assets: File[], customPath = "") => {
           res = await Storage.multipartUpload(asset, customPath + "/" + asset.name);
         }
         files.push({
+          // @ts-ignore
           Key: res.Key,
+          // @ts-ignore
           ContentLength: res.ContentLength,
+          // @ts-ignore
           ContentType: res.ContentType,
           name: asset.name
         });

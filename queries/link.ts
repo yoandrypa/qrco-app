@@ -114,6 +114,16 @@ export const total = async (
   }
 };
 
+export const update = async (key: { userId: string, createdAt: number } | Partial<LinkType>, update: Partial<LinkType>
+) => {
+  try {
+    // @ts-ignore
+    return await LinkModel.update(key, { ...update });
+  } catch (e) {
+    throw e;
+  }
+};
+
 export const remove = async (key: { userId: string, createdAt: number }) => { //DONE
   try {
     await LinkModel.delete(key);
@@ -121,41 +131,4 @@ export const remove = async (key: { userId: string, createdAt: number }) => { //
   } catch (e) {
     throw e;
   }
-};
-
-//----------------------------------------------------------------------------------------------------------
-
-
-/* export const get = async (match: Partial<LinkQueryType>, params: GetParams) => {
-  //TODO include the Skip param
-  try {
-    const query = LinkModel.scan(match);
-
-    if (params.search) {
-      query.and().parenthesis(
-        new dynamoose.Condition()
-          .where("description")
-          .contains(params.search)
-          .or()
-          .where("address")
-          .contains(params.search)
-          .or()
-          .where("target")
-          .contains(params.search)
-      );
-    }
-
-    const results = await query.limit(params.limit || 10).exec();
-    const links: any[] = results;
-
-    return [links, results.count];
-  } catch (e) {
-    throw e;
-  }
-};*/
-
-export const update = async (match: string | Partial<LinkType>, update: Partial<LinkType>
-) => {
-  // @ts-ignore
-  return await LinkModel.update(match, { ...update });
 };

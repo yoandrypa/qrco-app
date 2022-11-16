@@ -221,7 +221,7 @@ export type EditType = {
   value?: string;
   primary?: string;
   secondary?: string;
-  createdAt?: string;
+  createdAt: number;
   updatedAt?: string;
 };
 

@@ -117,7 +117,7 @@ interface LinkType {
 }
 
 interface QrDataType {
-  id: string;
+  createdAt: number;
   qrName: string;
   qrType: string;
   userId: string;

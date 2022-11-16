@@ -184,7 +184,8 @@ export const edit = async (data: UpdateLinkData) => {
     // Update link
     const updatedLink = await Link.update(
       {
-        id: linkData.id
+        userId: linkData.user.id,
+        createdAt: linkData.createdAt
       },
       {
         ...(address && { address }),

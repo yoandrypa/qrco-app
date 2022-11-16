@@ -63,9 +63,7 @@ export const get = async (key: { userId: string, createdAt: number }) => {
   }
 };
 
-// export const edit = async (data: UpdateQrDataType) => {
-// @ts-ignore
-export const edit = async (data) => {
+export const edit = async (data: QrDataType) => {
   try {
     let { userId, createdAt, ...rest } = data;
 
@@ -78,9 +76,27 @@ export const edit = async (data) => {
     if (!qr) {
       throw new CustomError("QR code was not found.");
     }
+    // @ts-ignore
     rest.qrOptionsId.id = qr.qrOptionsId;
     if (rest.shortLinkId) {
-      rest.shortLinkId.id = qr.shortLinkId;
+      const { userId, createdAt } = qr.shortLinkId;
+      // @ts-ignore
+      rest.shortLinkId = { ...rest.shortLinkId, userId, createdAt };
+    }
+
+    //Removing undefined attributes
+    const attributesToRemove: string[] = [];
+    Object.keys(rest).forEach(key => {
+      // @ts-ignore
+      if (rest[key] === undefined) {
+        // @ts-ignore
+        delete rest[key];
+        attributesToRemove.push(key);
+      }
+    });
+    if (attributesToRemove.length > 0) {
+      // @ts-ignore
+      rest["$REMOVE"] = attributesToRemove;
     }
 
     // Update QR
