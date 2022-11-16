@@ -6,7 +6,7 @@ export const upload = async (assets: File[], customPath = "") => {
     let files: any[] = [];
     for (const asset of assets) {
       if (asset instanceof File) {
-        const limitLargeFile: number = toBytes(100, "MB");
+        const limitLargeFile: number = toBytes(10, "MB");
         let res;
         if (asset.size < limitLargeFile) {
           res = await Storage.upload(asset, customPath + "/" + asset.name);
@@ -14,8 +14,11 @@ export const upload = async (assets: File[], customPath = "") => {
           res = await Storage.multipartUpload(asset, customPath + "/" + asset.name);
         }
         files.push({
+          // @ts-ignore
           Key: res.Key,
+          // @ts-ignore
           ContentLength: res.ContentLength,
+          // @ts-ignore
           ContentType: res.ContentType,
           name: asset.name
         });

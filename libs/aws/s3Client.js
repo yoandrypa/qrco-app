@@ -1,4 +1,5 @@
 import {
+  S3,
   S3Client,
   GetBucketAccelerateConfigurationCommand,
   PutBucketAccelerateConfigurationCommand
@@ -8,7 +9,7 @@ import {
 const region = process.env.REACT_AWS_REGION;
 const accessKeyId = process.env.REACT_AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.REACT_AWS_SECRET_ACCESS_KEY;
-export const s3Client = new S3Client({ region, credentials: { accessKeyId, secretAccessKey } });
+export const s3Client = new S3({ region, credentials: { accessKeyId, secretAccessKey } });
 
 let params = {
   "Bucket": String(process.env.REACT_AWS_BUCKET_NAME)
