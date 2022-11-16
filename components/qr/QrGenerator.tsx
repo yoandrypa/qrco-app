@@ -136,7 +136,7 @@ const QrGenerator = ({ hidden, options, frame, background, command, overrideValu
 
       return (
         <svg viewBox={`0 0 ${originalDimensions} ${!isFramed || frame.type === '/frame/frame0.svg' ? originalDimensions : '330'}`}
-             xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" ref={ref}>
+             xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" ref={ref} id="qrCodeReferenceId">
           {back && background.invert && (
             <filter id="inverse-difference" colorInterpolationFilters="sRGB">
               <feComponentTransfer result="invert">
