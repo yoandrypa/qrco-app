@@ -26,7 +26,7 @@ interface ContextData {
 const MyBadge = styled(Badge)(({pro}: {pro?: boolean}) => ({
   '& .MuiBadge-badge': {
     top: -2,
-    right: 8,
+    right: pro ? 14 : 17,
     height: 11,
     fontSize: '0.55rem',
     borderRadius: '4px',
