@@ -78,9 +78,11 @@ const RenderTypeSelector = ({ selected, handleSelect, isLogged }: RenderTypeSele
                   <p>Dynamic QR codes:</p>
                   <ul style={{paddingLeft: 0, listStylePosition: 'inside'}}>
                     <li>Editable</li>
-                    <li>Code less dense</li>
+                    <li>Less dense</li>
                     <li>Content can be shown in a microsite</li>
-                    {!isLogged && <li>Can be created by authenticated users only</li>}
+                    <li>Able to be shared as a QR code or a Short URL</li>
+                    <li>Scans tracking available</li>
+                    <li>Available for authenticated users only</li>
                   </ul>
                 </span>
               } arrow>
@@ -96,9 +98,13 @@ const RenderTypeSelector = ({ selected, handleSelect, isLogged }: RenderTypeSele
                 <span>
                 <p>Static QR codes:</p>
                   <ul style={{paddingLeft: 0, listStylePosition: 'inside'}}>
+                    <li>100% free</li>
+                    <li>Unlimited for both authenticated and guest users</li>
+                    <li>Easy to use</li>
+                    <li>Effective for simple use cases</li>
                     <li>Not editable</li>
-                    <li>Code more dense</li>
-                    {!isLogged && <li>Can be created by authenticated or guest users</li>}
+                    <li>Dense QR code</li>
+                    <li>Stored for authenticated users only</li>
                   </ul>
               </span>
               } arrow>
