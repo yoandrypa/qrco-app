@@ -1,11 +1,16 @@
-import {MouseEvent, useState} from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import {useState} from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
 import Popover from "@mui/material/Popover";
 import Paper from "@mui/material/Paper";
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import IconButton from '@mui/material/IconButton';
 import {grey} from "@mui/material/colors";
+import {alpha} from "@mui/material/styles";
 
-import RenderIcon from './RenderIcon';
+import RenderIcon from "./RenderIcon";
 import RenderIframe from "../../RenderIframe";
 import {NO_MICROSITE} from "../constants";
 
@@ -19,33 +24,28 @@ interface TypeSelectorProps {
   isDynamic: boolean;
 }
 
-const TypeSelector = ({handleSelect, label, description, icon, selected, isDynamic, enabled = true}: TypeSelectorProps) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+const TypeSelector = ({ handleSelect, label, description, icon, selected, isDynamic, enabled = true}: TypeSelectorProps) => {
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
-  const beforeHandle = () => {
-    if (enabled) {
+  const beforeHandle = (event: any) => {
+    if (enabled && !['svg', 'BUTTON'].includes(event.target.tagName)) {
       handleSelect(icon);
     }
   };
 
-  const handleEnter = (event: MouseEvent<HTMLDivElement>) => {
-    if (isDynamic) {
-      setAnchorEl(!NO_MICROSITE.includes(icon) ? event.currentTarget : null);
-    }
-  }
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-  const handleLeave = () => {
-    if (isDynamic) {
-      setAnchorEl(null);
-    }
-  }
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <>
       <Box
-        aria-owns={Boolean(anchorEl) ? 'mouse-over-popover' : undefined}
-        aria-haspopup="true"
         sx={{
+          position: 'relative',
           cursor: enabled ? 'pointer' : 'default',
           width: '100%',
           height: '130px',
@@ -58,9 +58,23 @@ const TypeSelector = ({handleSelect, label, description, icon, selected, isDynam
           } : grey[100]
         }}
         onClick={beforeHandle}
-        onMouseEnter={handleEnter}
-        onMouseLeave={handleLeave}
       >
+        {isDynamic && !NO_MICROSITE.includes(icon) && (
+          <Tooltip title="View example">
+            <IconButton
+              sx={{
+                position: 'absolute',
+                right: '5px',
+                bottom: 0,
+                color: theme => alpha(theme.palette.primary.dark, 0.25),
+                '&:hover': {color: theme => theme.palette.primary.dark}
+              }}
+              onClick={handleClick}
+              id={`example${icon}`}>
+              <OpenInNewIcon/>
+            </IconButton>
+          </Tooltip>
+        )}
         <Box sx={{display: 'flex', p: 1}}>
           <Box sx={{mt: '3px'}}>
             <RenderIcon icon={icon} enabled={enabled}/>
@@ -83,18 +97,19 @@ const TypeSelector = ({handleSelect, label, description, icon, selected, isDynam
       </Box>
       {anchorEl && (
         <Popover
-          id="mouse-over-popover"
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
           onClose={() => setAnchorEl(null)}
-          sx={{pointerEvents: 'none'}}
           anchorOrigin={{vertical: 'center', horizontal: 'center'}}
           transformOrigin={{vertical: 'top', horizontal: 'center'}}
           disableRestoreFocus
         >
           {Boolean(anchorEl) ? (
-            <Paper sx={{p: '5px', textAlign: 'center'}}>
+            <Paper sx={{p: '5px', textAlign: 'center', display: 'grid'}}>
               <RenderIframe src={`${process.env.REACT_MICROSITES_ROUTE}/sample/${icon}`} width={370} height={500}/>
+              <Button onClick={handleClose}>
+                {'Close preview'}
+              </Button>
             </Paper>
           ) : null}
         </Popover>
