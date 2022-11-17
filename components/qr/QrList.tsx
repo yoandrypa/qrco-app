@@ -70,7 +70,7 @@ const QrList = ({ qrs }: any) => {
       setItems(qrs.items);
     }).catch(console.error);
     setLoading(false);
-  }, [rowsPerPage]);
+  }, [rowsPerPage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setLoading(true);
@@ -85,7 +85,7 @@ const QrList = ({ qrs }: any) => {
       setItems(qrs.items);
     }).catch(console.error);
     setLoading(false);
-  }, [page, lastKeys]);
+  }, [page, lastKeys]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // @ts-ignore
   const { isLoading, setLoading, setOptions, setStep, userInfo } = useContext(Context);
