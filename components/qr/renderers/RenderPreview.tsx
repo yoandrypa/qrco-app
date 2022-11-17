@@ -140,11 +140,11 @@ const RenderPreview = ({qrDesign, qr, externalFrame, externalDesign, handleDone}
             <Box sx={{width: '300px'}}>
               <QRRender qrData={!externalDesign ? (current || '') : externalDesign.outerHTML} width={300} alt={`${name}preview`}/>
               <Box sx={{display: 'flex'}}>
-                <Button sx={{mt: '10px', width: '100%'}} variant="outlined" onClick={handleDownload} startIcon={<DownloadIcon/>}>
+                <Button sx={{mt: '10px', width: '100%'}} variant="outlined" onClick={handleDownload} endIcon={<DownloadIcon/>}>
                   {'Download'}
                 </Button>
                 {handleDone !== undefined && (
-                  <Button sx={{ml: '5px', mt: '10px', width: '130px'}} variant="outlined" onClick={handleDone} startIcon={<DoneIcon />}>
+                  <Button sx={{ml: '5px', mt: '10px', width: '130px'}} variant="outlined" onClick={handleDone} endIcon={<DoneIcon />}>
                     {'Done'}
                   </Button>
                 )}
