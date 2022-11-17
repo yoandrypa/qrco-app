@@ -3,6 +3,9 @@ import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import Badge from '@mui/material/Badge';
+import Typography from "@mui/material/Typography";
+import {styled} from "@mui/material/styles";
 
 import TypeSelector from "./TypeSelector";
 import Context from "../../context/Context";
@@ -11,6 +14,7 @@ import { DataType } from "../types/types";
 interface RenderTypeSelectorProps {
   selected?: string | null;
   handleSelect: (payload: string) => void;
+  isLogged: boolean;
 }
 
 interface ContextData {
@@ -19,7 +23,16 @@ interface ContextData {
   useInfo: any;
 }
 
-const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps) => { // @ts-ignore
+const MyBadge = styled(Badge)(() => ({
+  '& .MuiBadge-badge': {
+    top: -2,
+    height: 15,
+    fontSize: '0.6rem',
+    borderRadius: '4px'
+  }
+}));
+
+const RenderTypeSelector = ({ selected, handleSelect, isLogged }: RenderTypeSelectorProps) => { // @ts-ignore
   const { data, setData }: ContextData = useContext(Context);
 
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
@@ -55,8 +68,16 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
     <Grid container spacing={2}>
       <Grid item xs={12}>
         <Tabs value={isDynamic ? 0 : 1} onChange={(_, newSel: number) => handleClick(newSel)}>
-          <Tab label={isWide ? "Dynamic QR Codes" : "Dynamic"} />
-          <Tab label={isWide ? "Static QR Codes" : "Static"} />
+          <Tab label={
+            <MyBadge badgeContent="Pro" color="primary" invisible={isLogged} sx={{right: '3px'}}>
+              <Typography>{isWide ? "Dynamic QR Codes" : "Dynamic"}</Typography>
+            </MyBadge>
+          } />
+          <Tab label={
+            <MyBadge badgeContent="Free" color="success" invisible={isLogged} sx={{right: '5px'}}>
+              <Typography>{isWide ? "Static QR Codes" : "Static"}</Typography>
+            </MyBadge>
+          } />
         </Tabs>
       </Grid>
       {renderTypeSelector("web", "Website", "Link to any page on the web", true)}
