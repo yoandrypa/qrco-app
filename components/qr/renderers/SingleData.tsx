@@ -1,22 +1,23 @@
-import {ChangeEvent} from 'react';
+import {ChangeEvent, useEffect} from 'react';
 import TextField from '@mui/material/TextField';
 
 import Common from '../helperComponents/Common';
 import MultiLineDetails from '../helperComponents/MultiLineDetails';
 import {DataType} from "../types/types";
 import {isValidUrl} from "../../../utils";
+import InputAdornment from "@mui/material/InputAdornment";
+import Typography from "@mui/material/Typography";
 
 type SingleDataProps = {
   limit?: number;
   msg: string;
   label: string;
-  data: DataType | { value: string };
+  data: DataType;
   setData: (value: DataType) => void;
-  isWrong: boolean;
   setIsWrong: (isWrong: boolean) => void;
 };
 
-function SingleData({ isWrong, setIsWrong, label, data, setData, msg, limit = -1 }: SingleDataProps) {
+function SingleData({ setIsWrong, label, data, setData, msg, limit = -1 }: SingleDataProps) {
   const handleValue = (event: ChangeEvent<HTMLInputElement>) => {
     let { value } = event.target;
     if (limit !== -1) {
@@ -30,9 +31,14 @@ function SingleData({ isWrong, setIsWrong, label, data, setData, msg, limit = -1
       error = true;
     }
     setIsWrong(error);
+
     // @ts-ignore
-    setData({ ...data, value });
+    setData((prev: DataType) => ({ ...prev, value }));
   };
+
+  useEffect(() => {
+    setIsWrong(true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Common msg={msg}>
@@ -43,10 +49,22 @@ function SingleData({ isWrong, setIsWrong, label, data, setData, msg, limit = -1
           label={label}
           size="small"
           fullWidth
+          autoFocus
           margin="dense"
-          error={isWrong}
+          error={label === 'Website' && data?.value !== undefined && data.value.trim().length > 0 && !isValidUrl(data.value)}
           value={data?.value || ''}
-          onChange={handleValue}/>
+          onChange={handleValue}
+          placeholder={label === 'Website' ? 'https://www.example.com' : 'Enter any text here'}
+          InputProps={{
+            endAdornment: (
+              !data?.value?.trim().length ? (
+                <InputAdornment position="end">
+                  <Typography color="error">{'REQUIRED'}</Typography>
+                </InputAdornment>
+              ) : null
+            )
+          }}
+        />
         {limit !== -1 && <MultiLineDetails top={limit} data={data?.value || ''} />}
       </>
     </Common>

@@ -32,10 +32,6 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
     }
   };
 
-  // const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-  //   setAnchorEl(event.currentTarget);
-  // };
-
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -44,7 +40,6 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
     <>
       <Box
         sx={{
-          position: 'relative',
           cursor: enabled ? 'pointer' : 'default',
           width: '100%',
           height: '130px',
@@ -58,22 +53,6 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
         }}
         onClick={beforeHandle}
       >
-        {/*{isDynamic && !NO_MICROSITE.includes(icon) && (*/}
-        {/*  <Tooltip title="View example">*/}
-        {/*    <IconButton*/}
-        {/*      sx={{*/}
-        {/*        position: 'absolute',*/}
-        {/*        right: '5px',*/}
-        {/*        bottom: 0,*/}
-        {/*        color: theme => alpha(theme.palette.primary.dark, 0.25),*/}
-        {/*        '&:hover': {color: theme => theme.palette.primary.dark}*/}
-        {/*      }}*/}
-        {/*      onClick={handleClick}*/}
-        {/*      id={`example${icon}`}>*/}
-        {/*      <OpenInNewIcon/>*/}
-        {/*    </IconButton>*/}
-        {/*  </Tooltip>*/}
-        {/*)}*/}
         <Box sx={{display: 'flex', p: 1}}>
           <Box sx={{mt: '3px'}}>
             <RenderIcon icon={icon} enabled={enabled}/>

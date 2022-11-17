@@ -285,8 +285,11 @@ const QrList = ({ qrs }: any) => {
         ) : (
           <Grid container justifyContent="center" alignItems="center" sx={{ height: "calc( 100vh - 200px );" }}>
             <Grid item>
-              <Alert severity="info" variant="outlined" action={<RenderNewQrButton />} sx={{ width: 450, p: 5 }}>
-                There are no QR codes.
+              <Alert severity="info" variant="outlined" sx={{ width: isWide ? '450px' : 'calc(100% - 4px)', p: '31px' }}>
+                <Box sx={{ display: 'flex', flexDirection: isWide ? 'row' : 'column' }}>
+                  <Typography sx={{ mr: '10px' }}>{'There are no QR codes.'}</Typography>
+                  <RenderNewQrButton />
+                </Box>
               </Alert>
             </Grid>
           </Grid>
