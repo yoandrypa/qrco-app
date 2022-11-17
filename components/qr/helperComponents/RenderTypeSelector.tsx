@@ -25,8 +25,9 @@ interface ContextData {
 
 const MyBadge = styled(Badge)(({pro}: {pro?: boolean}) => ({
   '& .MuiBadge-badge': {
-    top: -5,
-    height: 13,
+    top: -2,
+    right: 8,
+    height: 11,
     fontSize: '0.55rem',
     borderRadius: '4px',
     background: pro && '#000'
@@ -70,12 +71,12 @@ const RenderTypeSelector = ({ selected, handleSelect, isLogged }: RenderTypeSele
       <Grid item xs={12}>
         <Tabs value={isDynamic ? 0 : 1} onChange={(_, newSel: number) => handleClick(newSel)}>
           <Tab label={
-            <MyBadge badgeContent="Pro" color="primary" invisible={isLogged} sx={{right: '3px'}} pro>
+            <MyBadge badgeContent="Pro" color="primary" invisible={isLogged} pro>
               <Typography>{isWide ? "Dynamic QR Codes" : "Dynamic"}</Typography>
             </MyBadge>
           } />
           <Tab label={
-            <MyBadge badgeContent="Free" color="success" invisible={isLogged} sx={{right: '5px'}}>
+            <MyBadge badgeContent="Free" color="success" invisible={isLogged}>
               <Typography>{isWide ? "Static QR Codes" : "Static"}</Typography>
             </MyBadge>
           } />
