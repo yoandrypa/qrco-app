@@ -135,13 +135,13 @@ const AppContextProvider = (props: ContextProps) => {
   }, [step]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (router.pathname === QR_TYPE_ROUTE && step !== 0) {
+    if (router.pathname === QR_TYPE_ROUTE && step !== 0 && selected) {
       doNotNavigate.current = true;
       setStep(0);
-    } else if (router.pathname === QR_CONTENT_ROUTE && step !== 1) {
+    } else if (router.pathname === QR_CONTENT_ROUTE && step !== 1 && selected) {
       doNotNavigate.current = true;
       setStep(1);
-    } else if (router.pathname === QR_DESIGN_ROUTE && step !== 2) {
+    } else if (router.pathname === QR_DESIGN_ROUTE && step !== 2 && selected) {
       doNotNavigate.current = true;
       setStep(2);
     } else if (options?.mode !== 'edit' && router.query.mode !== 'edit') {

@@ -19,6 +19,7 @@ import RenderNextButton from "./helperComponents/RenderNextButton";
 import RenderBackButton from "./helperComponents/RenderBackButton";
 import RenderSteps from "./helperComponents/RenderSteps";
 import RenderFloatingButtons from "./helperComponents/RenderFloatingButtons";
+import RenderPreview from "./renderers/RenderPreview";
 
 interface QrWizardProps {
   children: ReactNode;
@@ -27,6 +28,7 @@ interface QrWizardProps {
 const QrWizard = ({ children }: QrWizardProps) => {
   const [isError, setIsError] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
+  const [forceDownload, setForceDownload] = useState<any>(undefined);
   const [size, setSize] = useState<number>(0);
   const [, setUnusedState] = useState();
 
@@ -211,7 +213,13 @@ const QrWizard = ({ children }: QrWizardProps) => {
         updatingHandler("done");
       }
     } else if (step === 2 && !isLogged) {
-      await router.push(QR_TYPE_ROUTE, "/", { shallow: true });
+      const item = document.getElementById('qrCodeReferenceId');
+
+      if (item) {
+        setForceDownload({item});
+      } else {
+        await router.push(QR_TYPE_ROUTE, "/", {shallow: true});
+      }
     } else {
       setStep((prev: number) => prev + 1);
     }
@@ -286,6 +294,15 @@ const QrWizard = ({ children }: QrWizardProps) => {
           mode={data.mode}
           size={size}
           selected={selected} />
+      )}
+      {forceDownload !== undefined && (
+        <RenderPreview
+          externalDesign={forceDownload.item}
+          externalFrame={frame}
+          handleDone={async () => {
+            setForceDownload(undefined);
+            await router.push(QR_TYPE_ROUTE, "/", {shallow: true});
+          }} />
       )}
       <Box ref={btnRef}>
         {isWide ? (
