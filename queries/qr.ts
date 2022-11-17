@@ -25,10 +25,37 @@ export const create = async (data: { shortLink: ObjectType; qrDesign: ObjectType
   }
 };
 
+export const count = async (match: Partial<QrDataQueryType>, params: ListParams) => {
+  try {
+    const query = QrDataModel.query(match);
+
+    /*if (params.search) {
+      query.and().parenthesis(
+        new dynamoose.Condition()
+          .where("description")
+          .contains(params.search)
+          .or()
+          .where("address")
+          .contains(params.search)
+          .or()
+          .where("target")
+          .contains(params.search)
+      );
+    }*/
+
+    const result = await query.count().exec();
+
+    return result.count;
+  } catch (e) {
+    throw e;
+  }
+};
+
 interface ListParams {
-  limit: number;
+  limit?: number;
   search?: string;
-  skip?: number;
+  startAt?: ObjectType;
+  sort?: "ascending" | "descending";
 }
 
 export const list = async (match: Partial<QrDataQueryType>, params: ListParams) => {
@@ -50,11 +77,15 @@ export const list = async (match: Partial<QrDataQueryType>, params: ListParams) 
       );
     }*/
 
-    const results = await query.limit(params.limit || 10).sort("descending").exec();
+    query.limit(params.limit || 10).sort(params.sort || "descending");
+    if (params.startAt) {
+      query.startAt(params.startAt);
+    }
+    const results = await query.exec();
     // @ts-ignore
-    const qrs: QrDataType[] = results;
+    const items: QrDataType[] = results;
 
-    return [qrs, results.count];
+    return [items, results.lastKey];
   } catch (e) {
     throw e;
   }
