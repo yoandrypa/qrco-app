@@ -11,6 +11,7 @@ import {styled} from "@mui/material/styles";
 import TypeSelector from "./TypeSelector";
 import Context from "../../context/Context";
 import {DataType} from "../types/types";
+import {blue} from "@mui/material/colors";
 
 interface RenderTypeSelectorProps {
   selected?: string | null;
@@ -31,7 +32,7 @@ const MyBadge = styled(Badge)(({pro}: {pro?: boolean}) => ({
     height: 18,
     fontSize: '0.55rem',
     borderRadius: '4px',
-    background: pro && '#000'
+    background: pro ? '#000' : blue[800]
   }
 }));
 

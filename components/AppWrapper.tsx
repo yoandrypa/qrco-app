@@ -52,7 +52,7 @@ interface AppWrapperProps {
   children: ReactNode;
   userInfo?: any;
   handleLogout?: () => void;
-  clearData?: (keepType?: boolean, item?: undefined, value?: undefined, doNot?: boolean) => void;
+  clearData?: (keepType?: boolean, doNot?: boolean) => void;
   setLoading?: (loading: boolean) => void;
   setIsTrialMode?: (isTrialMode: boolean) => void;
 }
@@ -93,7 +93,7 @@ export default function AppWrapper(props: AppWrapperProps) {
     const isInListView = router.pathname === '/';
 
     if (clearData !== undefined) {
-      clearData(false, undefined, undefined, isEdit || !isInListView);
+      clearData(false, isEdit || !isInListView);
     }
     handleLoading();
     const navigationOptions = {pathname: !isEdit && isInListView ? QR_TYPE_ROUTE : "/", query: {}};

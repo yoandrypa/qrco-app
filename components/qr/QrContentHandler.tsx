@@ -1,4 +1,4 @@
-import { ChangeEvent, useContext } from 'react';
+import {ChangeEvent, useContext} from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -19,12 +19,11 @@ import NotifyDynamic from "./helperComponents/NotifyDynamic";
 import BusinessData from "./renderers/BusinessData";
 import NetworksData from "./renderers/NetworksData.";
 import CouponData from "./renderers/CouponData";
-import DonationsData, { DonationsProps } from './renderers/DonationsData';
+import DonationsData, {DonationsProps} from './renderers/DonationsData';
 import CryptoData from './renderers/CryptoData';
-import FundMe from './renderers/FundMeData';
 import SimplePayLinkData from './renderers/SimplePayLinkData';
 
-import { DataType, SocialProps } from './types/types';
+import {DataType, SocialProps} from './types/types';
 import LinksData from "./renderers/LinksData";
 import PleaseWait from "../PleaseWait";
 
@@ -32,24 +31,20 @@ type QrContentHandlerProps = {
   data: DataType;
   setData: Function;
   selected?: string | null;
-  isWrong: boolean;
   setIsWrong: (isWrong: boolean) => void;
 }
 
-const QrContentHandler = () => {
-  // @ts-ignore
-  const { data, setData, selected, isWrong, setIsWrong }: QrContentHandlerProps = useContext(Context);
+const QrContentHandler = () => { // @ts-ignore
+  const { data, setData, selected, setIsWrong }: QrContentHandlerProps = useContext(Context);
 
   const handleValues = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string) => {
     const value = typeof payload !== 'string' ? payload.target.value : payload;
 
     if (value.length) {
-      setData((prev: DataType) => ({ ...prev, [item]: value }));
-      // @ts-ignore
+      setData((prev: DataType) => ({ ...prev, [item]: value })); // @ts-ignore
     } else if (data[item]) {
       setData((prev: DataType) => {
-        const temp = { ...prev };
-        // @ts-ignore
+        const temp = { ...prev }; // @ts-ignore
         delete temp[item];
         return temp;
       });
@@ -67,7 +62,6 @@ const QrContentHandler = () => {
     switch (selected) {
       case 'web': {
         return (<SingleData
-          isWrong={isWrong}
           setIsWrong={setIsWrong}
           label="Website"
           msg="Type in the website to link the QR Code."
@@ -76,7 +70,6 @@ const QrContentHandler = () => {
       }
       case 'text': {
         return (<SingleData
-          isWrong={isWrong}
           setIsWrong={setIsWrong}
           label="Message"
           limit={300}
@@ -88,8 +81,7 @@ const QrContentHandler = () => {
         return <WhatsAppData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
       }
       case 'facebook': {
-        // @ts-ignore
-        return (<FacebookData data={data} setData={handlePayload} setIsWrong={setIsWrong} isWrong={isWrong} />);
+        return (<FacebookData data={data} setData={handlePayload} setIsWrong={setIsWrong} />);
       }
       case 'wifi': {
         return <WifiData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;

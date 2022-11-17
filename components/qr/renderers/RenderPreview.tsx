@@ -102,7 +102,7 @@ const RenderPreview = ({qrDesign, qr, externalFrame, externalDesign, handleDone}
       setTimeout(() => {
         setUpdating(false);
         generateQr();
-      }, 250);
+      }, 350);
     }
   }, [updating]); // eslint-disable-line react-hooks/exhaustive-deps
 
