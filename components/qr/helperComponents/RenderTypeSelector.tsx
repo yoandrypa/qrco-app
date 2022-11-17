@@ -1,15 +1,16 @@
-import { useContext, useMemo } from "react";
+import {useContext, useMemo} from "react";
 import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Badge from '@mui/material/Badge';
 import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
 import {styled} from "@mui/material/styles";
 
 import TypeSelector from "./TypeSelector";
 import Context from "../../context/Context";
-import { DataType } from "../types/types";
+import {DataType} from "../types/types";
 
 interface RenderTypeSelectorProps {
   selected?: string | null;
@@ -36,7 +37,6 @@ const MyBadge = styled(Badge)(({pro}: {pro?: boolean}) => ({
 
 const RenderTypeSelector = ({ selected, handleSelect, isLogged }: RenderTypeSelectorProps) => { // @ts-ignore
   const { data, setData }: ContextData = useContext(Context);
-
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
   const isDynamic = useMemo(() => Boolean(data.isDynamic), [data.isDynamic]);
 
@@ -70,13 +70,39 @@ const RenderTypeSelector = ({ selected, handleSelect, isLogged }: RenderTypeSele
     <Grid container spacing={2}>
       <Grid item xs={12}>
         <Tabs value={isDynamic ? 0 : 1} onChange={(_, newSel: number) => handleClick(newSel)}>
-          <Tab sx={{pr: !isLogged ? '37px' : 0, mr: !isLogged? '3px' : 0}} label={
-            <MyBadge badgeContent="Pro" color="primary" invisible={isLogged} pro>
+          <Tab sx={{pr: '37px', mr: '3px'}} label={
+            <MyBadge badgeContent={
+              <Tooltip title={
+                <span>
+                  <p>Dynamic QR codes:</p>
+                  <ul style={{paddingLeft: 0, listStylePosition: 'inside'}}>
+                    <li>Editable</li>
+                    <li>Code less dense</li>
+                    <li>Content can be shown in a microsite</li>
+                    {!isLogged && <li>Can be created by authenticated users only</li>}
+                  </ul>
+                </span>
+              } arrow>
+              <span>Pro</span>
+              </Tooltip>
+            } color="primary" pro>
               <Typography>{isWide ? "Dynamic QR Codes" : "Dynamic"}</Typography>
             </MyBadge>
           } />
-          <Tab sx={{pr: !isLogged ? '39px' : 0}} label={
-            <MyBadge badgeContent="Free" color="success" invisible={isLogged}>
+          <Tab sx={{pr: '39px'}} label={
+            <MyBadge badgeContent={
+              <Tooltip title={
+                <span>
+                <p>Static QR codes:</p>
+                  <ul style={{paddingLeft: 0, listStylePosition: 'inside'}}>
+                    <li>Not editable</li>
+                    <li>Code more dense</li>
+                    {!isLogged && <li>Can be created by authenticated or guest users</li>}
+                  </ul>
+              </span>
+              } arrow>
+                <span>Free</span>
+              </Tooltip>} color="success">
               <Typography>{isWide ? "Static QR Codes" : "Static"}</Typography>
             </MyBadge>
           } />
