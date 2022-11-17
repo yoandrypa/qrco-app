@@ -1,10 +1,10 @@
 import * as Qr from "../queries/qr";
 import { CustomError } from "../utils";
 
-interface Query {
+export interface Query {
   userId: string;
   limit?: any;
-  skip?: any;
+  startAt?: Object;
   search?: any;
   all?: any;
 }
@@ -26,29 +26,31 @@ export const create = async (data) => {
 
 export const list = async (query: Query) => {
   try {
-    const { limit, skip, search, all, userId } = query;
+    const { limit, startAt, search, all, userId } = query;
 
     const match = {
       ...(!all && { userId: { eq: userId } })
     };
 
     // @ts-ignore
-    const [qrs, total] = await Qr.list(match, { limit, search, skip });
+    const [items, lastKey] = await Qr.list(match, { limit: limit || 5, search, startAt });
     // @ts-ignore
 
-    for (const qr of qrs) {
+    for (const qr of items) {
       // @ts-ignore
-      const index = qrs.indexOf(qr);
+      const index = items.indexOf(qr);
       // @ts-ignore
-      qrs[index] = await qr.populate({ properties: qr.isDynamic ? ["shortLinkId", "qrOptionsId"] : "qrOptionsId" });
+      items[index] = await qr.populate({ properties: qr.isDynamic ? ["shortLinkId", "qrOptionsId"] : "qrOptionsId" });
     }
 
+    const count = await Qr.count(match, {search})
+
     return {
-      total,
-      limit,
-      skip,
+      count,
+      limit: limit || 5,
+      lastKey,
       // @ts-ignore
-      qrs
+      items
     };
   } catch (e: any) {
     throw new CustomError(e.message);

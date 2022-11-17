@@ -39,10 +39,6 @@ export default function Index({ qrData }: InferGetServerSidePropsType<typeof get
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  // res.setHeader(
-  //   "Cache-Control",
-  //   "private, s-maxage=10, stale-while-revalidate=59"
-  // );
 
   const getUserInfo = async () => {
     try {
@@ -87,7 +83,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     props: {
       qrData: JSON.parse(
         // @ts-ignore
-        JSON.stringify(qrs.qrs)
+        JSON.stringify(qrs)
       )
     }
   };

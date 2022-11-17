@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -32,6 +32,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { humanDate } from "../helpers/generalFunctions";
 import { handleDesignerString, handleInitialData } from "../../helpers/qr/helpers";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import TablePagination from "@mui/material/TablePagination";
 
 const QrList = ({ qrs }: any) => {
   const [deleteConfirm, setDeleteConfirm] = useState<{
@@ -39,8 +40,55 @@ const QrList = ({ qrs }: any) => {
     userId: string;
   } | null>(null);
 
+  const [items, setItems] = useState(qrs.items);
+  const [page, setPage] = useState(0);
+  const [lastKeys, setLastKeys] = useState([undefined]);
+  const [rowsPerPage, setRowsPerPage] = useState(qrs.limit || 5);
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+    setLastKeys([undefined]);
+  };
+
+  const fetchQrs = async (query: QrHandler.Query) => {
+    return await QrHandler.list(query);
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    fetchQrs({ limit: rowsPerPage, userId: userInfo.attributes.sub }).then(qrs => {
+      setItems(qrs.items);
+    }).catch(console.error);
+    setLoading(false);
+  }, [rowsPerPage]);
+
+  useEffect(() => {
+    setLoading(true);
+    let lastKey = lastKeys[page];
+    if (page > 0 && lastKey === undefined) {
+      lastKey = qrs.lastKey;
+      setLastKeys([...lastKeys, lastKey]);
+    }
+    fetchQrs({
+      limit: rowsPerPage, userId: userInfo.attributes.sub, startAt: lastKey
+    }).then(qrs => {
+      setItems(qrs.items);
+    }).catch(console.error);
+    setLoading(false);
+  }, [page, lastKeys]);
+
   // @ts-ignore
-  const { isLoading, setLoading, setOptions, setStep } = useContext(Context);
+  const { isLoading, setLoading, setOptions, setStep, userInfo } = useContext(Context);
   const router = useRouter();
 
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
@@ -72,8 +120,8 @@ const QrList = ({ qrs }: any) => {
   };
 
   const handleDashboard = async () => {
-    const dashBaseUrl = process.env.REACT_NODE_ENV === 'develop' ? "https://dev-app.ebanux.com/checkouts" : "https://app.ebanux.com/checkouts";
-    router.push(dashBaseUrl);
+    const dashBaseUrl = process.env.REACT_NODE_ENV === "develop" ? "https://dev-app.ebanux.com/checkouts" : "https://app.ebanux.com/checkouts";
+    await router.push(dashBaseUrl);
   };
 
   const handleCancelDeletion = useCallback(() => {
@@ -94,7 +142,9 @@ const QrList = ({ qrs }: any) => {
       </IconButton>
       {(qr.qrType === "donations" && !!qr.donationProductId) &&
         (
-          <a target="_blank" href={process.env.REACT_NODE_ENV === 'develop' ? "https://dev-app.ebanux.com/checkouts" : "https://app.ebanux.com/checkouts"} rel="noopener noreferrer">
+          <a target="_blank"
+             href={process.env.REACT_NODE_ENV === "develop" ? "https://dev-app.ebanux.com/checkouts" : "https://app.ebanux.com/checkouts"}
+             rel="noopener noreferrer">
             <Tooltip title="Go to Dashboard">
               <IconButton color="info" disabled={isLoading} onClick={handleDashboard}>
                 <DashboardIcon />
@@ -125,15 +175,26 @@ const QrList = ({ qrs }: any) => {
   return (
     <>
       <Stack spacing={2}>
-        {qrs?.length > 0 ? (
+        {qrs?.count > 0 ? (
           <>
-            <Typography variant="h6" style={{ fontWeight: "bold" }}>My QR Codes</Typography>
-            {qrs.map((qr: any) => { // @ts-ignore
+            <Stack direction="row" alignItems="center" justifyContent="space-between">
+              <Typography variant="h6" style={{ fontWeight: "bold" }}>My QR Codes</Typography>
+              <TablePagination
+                size="small"
+                component="span"
+                count={qrs.count}
+                page={page}
+                onPageChange={handleChangePage}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                rowsPerPageOptions={[5, 10, 25, 50]}
+              /></Stack>
+            {items.map((qr: any) => { // @ts-ignore
               const qrLink = sanitize.link(qr.shortLinkId || {}); // @ts-ignore
-              if (qr.qrOptionsId?.background?.backColor === '') {
+              if (qr.qrOptionsId?.background?.backColor === "") {
                 qr.qrOptionsId.background.backColor = null;
               }
-              if (qr.qrOptionsId?.background?.file === '') {
+              if (qr.qrOptionsId?.background?.file === "") {
                 qr.qrOptionsId.background.file = null;
               }
               return (
@@ -155,7 +216,7 @@ const QrList = ({ qrs }: any) => {
                           </Box>
                           <Stack direction="column" sx={{ my: "auto" }}>
                             <Typography variant="subtitle2"
-                              sx={{ color: "orange", mb: "-7px" }}>{capitalize(qr.qrType)}</Typography>
+                                        sx={{ color: "orange", mb: "-7px" }}>{capitalize(qr.qrType)}</Typography>
                             <Typography variant="h6" sx={{ fontWeight: "bold", mb: "-2px" }}>{qr.qrName}</Typography>
                             {isWide ? (
                               <Typography variant="caption" sx={{ color: "gray" }}>
@@ -189,7 +250,7 @@ const QrList = ({ qrs }: any) => {
                       <Box sx={{ display: "flex" }}>
                         <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
                         <Stack direction="column" spacing={0.8} justifyContent="flex-start" alignItems="flex-start"
-                          sx={{ ml: { xs: 2, sm: 0 } }}>
+                               sx={{ ml: { xs: 2, sm: 0 } }}>
                           {renderStaticDynamic(qr.isDynamic)}
                           {qrLink.address ? (
                             <Typography variant="caption" sx={{ color: "gray" }}>{/*@ts-ignore*/}
