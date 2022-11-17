@@ -2,13 +2,9 @@ import {useState} from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import Tooltip from "@mui/material/Tooltip";
 import Popover from "@mui/material/Popover";
 import Paper from "@mui/material/Paper";
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import IconButton from '@mui/material/IconButton';
 import {grey} from "@mui/material/colors";
-import {alpha} from "@mui/material/styles";
 
 import RenderIcon from "./RenderIcon";
 import RenderIframe from "../../RenderIframe";
@@ -25,17 +21,20 @@ interface TypeSelectorProps {
 }
 
 const TypeSelector = ({ handleSelect, label, description, icon, selected, isDynamic, enabled = true}: TypeSelectorProps) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
 
   const beforeHandle = (event: any) => {
-    if (enabled && !['svg', 'BUTTON'].includes(event.target.tagName)) {
+    if (enabled) {
+      if (isDynamic && !NO_MICROSITE.includes(icon)) {
+        setAnchorEl(event.currentTarget);
+      }
       handleSelect(icon);
     }
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  // const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -59,22 +58,22 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
         }}
         onClick={beforeHandle}
       >
-        {isDynamic && !NO_MICROSITE.includes(icon) && (
-          <Tooltip title="View example">
-            <IconButton
-              sx={{
-                position: 'absolute',
-                right: '5px',
-                bottom: 0,
-                color: theme => alpha(theme.palette.primary.dark, 0.25),
-                '&:hover': {color: theme => theme.palette.primary.dark}
-              }}
-              onClick={handleClick}
-              id={`example${icon}`}>
-              <OpenInNewIcon/>
-            </IconButton>
-          </Tooltip>
-        )}
+        {/*{isDynamic && !NO_MICROSITE.includes(icon) && (*/}
+        {/*  <Tooltip title="View example">*/}
+        {/*    <IconButton*/}
+        {/*      sx={{*/}
+        {/*        position: 'absolute',*/}
+        {/*        right: '5px',*/}
+        {/*        bottom: 0,*/}
+        {/*        color: theme => alpha(theme.palette.primary.dark, 0.25),*/}
+        {/*        '&:hover': {color: theme => theme.palette.primary.dark}*/}
+        {/*      }}*/}
+        {/*      onClick={handleClick}*/}
+        {/*      id={`example${icon}`}>*/}
+        {/*      <OpenInNewIcon/>*/}
+        {/*    </IconButton>*/}
+        {/*  </Tooltip>*/}
+        {/*)}*/}
         <Box sx={{display: 'flex', p: 1}}>
           <Box sx={{mt: '3px'}}>
             <RenderIcon icon={icon} enabled={enabled}/>
@@ -100,8 +99,8 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
           onClose={() => setAnchorEl(null)}
-          anchorOrigin={{vertical: 'center', horizontal: 'center'}}
-          transformOrigin={{vertical: 'top', horizontal: 'center'}}
+          anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+          transformOrigin={{vertical: 'bottom', horizontal: 'center'}}
           disableRestoreFocus
         >
           {Boolean(anchorEl) ? (
