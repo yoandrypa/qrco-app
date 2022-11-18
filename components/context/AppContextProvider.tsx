@@ -55,17 +55,16 @@ const AppContextProvider = (props: ContextProps) => {
 
   const isUserInfo = useMemo(() => userInfo !== null, [userInfo]);
 
-  const clearData = useCallback((keepType?: boolean, item?: 'value' | 'message', value?: string, doNot?: boolean) => {
+  const clearData = useCallback((keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean) => {
     setForceClear(false);
 
-    if (!keepType || doNot) {
+    if (!keepType || doNot || takeAwaySelection) {
       setSelected(null);
     }
     setBackground(initialBackground);
     setFrame(initialFrame);
     setDotsData(null);
     setCornersData(null);
-
     setIsWrong(false);
     setLoading(false);
     setStep(0);
@@ -82,25 +81,13 @@ const AppContextProvider = (props: ContextProps) => {
       newData = {};
     }
 
-    if (item !== undefined) {
-      newData[item] = value;
-    }
-
     setData(newData);
   }, [data?.isDynamic, data.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (doneInitialRender.current && (router.pathname === QR_TYPE_ROUTE || (router.pathname === '/' && !isUserInfo))) {
       if (selected !== null) {
-        if (selected === "web") {
-          clearData(true, 'value', 'https://www.example.com');
-        } else if (selected === "facebook") {
-          clearData(true, 'message', 'https://www.example.com');
-        } else if (selected === "text") {
-          clearData(true, 'value', 'Enter any text here');
-        } else {
-          clearData(true);
-        }
+        clearData(true);
       } else {
         clearData(true);
       }
@@ -135,10 +122,10 @@ const AppContextProvider = (props: ContextProps) => {
   }, [step]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (router.pathname === QR_TYPE_ROUTE && step !== 0 && selected) {
+    if (router.pathname === QR_TYPE_ROUTE && step === 1 && selected) {
       doNotNavigate.current = true;
       setStep(0);
-    } else if (router.pathname === QR_CONTENT_ROUTE && step !== 1 && selected) {
+    } else if (router.pathname === QR_CONTENT_ROUTE && step === 2 && selected) {
       doNotNavigate.current = true;
       setStep(1);
     } else if (router.pathname === QR_DESIGN_ROUTE && step !== 2 && selected) {
@@ -152,12 +139,13 @@ const AppContextProvider = (props: ContextProps) => {
           router.push(QR_TYPE_ROUTE, undefined, {shallow: true}).then(() => { setLoading(false); });
         }
       }
-      if (router.pathname === "/") {
+
+      if (['/', QR_TYPE_ROUTE].includes(router.pathname)) {
         if (step === 2) {
           if (isUserInfo) {
             doNotNavigate.current = true;
           }
-          clearData(false);
+          clearData(true, undefined, true);
         } else if (!router.query.login && step !== 0) {
           setStep(0);
         }
