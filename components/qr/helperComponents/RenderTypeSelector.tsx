@@ -78,11 +78,14 @@ const RenderTypeSelector = ({ selected, handleSelect, isLogged }: RenderTypeSele
                 <span>
                   <p>Dynamic QR codes:</p>
                   <ul style={{paddingLeft: 0, listStylePosition: 'inside'}}>
-                    <li>Editable</li>
-                    <li>Less dense</li>
-                    <li>Content can be shown in a microsite</li>
-                    <li>Able to be shared as a QR code or a Short URL</li>
-                    <li>Scans tracking available</li>
+                    <li>Easy to customize</li>
+                    <li>Easy to use</li>
+                    <li>Unlimited content changes</li>
+                    <li>Ability to fix mistakes</li>
+                    <li>Reusable QR codes after printing</li>
+                    <li>QR content in a mobile-friendly microsite</li>
+                    <li>Microsite easy to share with other apps</li>
+                    <li>Scans tracking and other statistics included</li>
                     <li>Available for authenticated users only</li>
                   </ul>
                 </span>
@@ -100,11 +103,12 @@ const RenderTypeSelector = ({ selected, handleSelect, isLogged }: RenderTypeSele
                 <p>Static QR codes:</p>
                   <ul style={{paddingLeft: 0, listStylePosition: 'inside'}}>
                     <li>100% free</li>
-                    <li>Unlimited for both authenticated and guest users</li>
+                    <li>Easy to customize</li>
                     <li>Easy to use</li>
-                    <li>Effective for simple use cases</li>
-                    <li>Not editable</li>
-                    <li>Dense QR code</li>
+                    <li>Effective for simple uses</li>
+                    <li>Take longer to scan</li>
+                    <li>Non-editable content</li>
+                    <li>Unlimited for both authenticated and guest users</li>
                     <li>Stored for authenticated users only</li>
                   </ul>
               </span>
