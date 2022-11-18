@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { useCallback, useContext, useState } from 'react';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -9,6 +7,8 @@ import UploadIcon from '@mui/icons-material/Upload';
 import TuneIcon from '@mui/icons-material/Tune';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import Box from "@mui/material/Box";
+import {alpha} from "@mui/material/styles";
 
 import Context from '../../context/Context';
 import { BackgroundType, OptionsType } from '../types/types';
@@ -28,8 +28,8 @@ interface CodeProps {
 
 const Code = ({ options, handleData, background, handleBackground, handleReset, handleUpload }: CodeProps) => {
   const [showSettings, setShowSettings] = useState<boolean>(false);
-  const [editColor, setEditColors] = useState<string | null>(null);
-  const { cornersData, dotsData, setCornersData, setDotsData } = useContext(Context);
+  const [editColor, setEditColors] = useState<string | null>(null);  // @ts-ignore
+  const { cornersData, dotsData, setCornersData, setDotsData, isWrong } = useContext(Context);
 
   const handleSettings = () => {
     setShowSettings(prev => !prev);
@@ -100,33 +100,35 @@ const Code = ({ options, handleData, background, handleBackground, handleReset, 
         </Grid>
         <Grid item xs={12} sm={6}>
           <Paper elevation={2} sx={{ p: 2, m: '1px' }}>
-            <OptionsSelector
-              label="Background type"
-              property="type"
-              handleData={handleBackground}
-              selected={background?.type}
-              options={[
-                { label: 'Solid', value: 'solid' },
-                { label: 'Image', value: 'image' }
-              ]}
-            />
-            {background.type === 'solid' ? (
-              <ColorSelector
-                label="Background color"
-                color={options.backgroundOptions.color}
-                handleData={handleData}
-                property="backgroundOptions.color"
+            <Box sx={{ border: theme => `solid 3px ${!isWrong ? '#fff0' : alpha(theme.palette.error.light, 0.5)}`, borderRadius: '4px', p: '14px', m: '-16px' }}>
+              <OptionsSelector
+                label="Background type"
+                property="type"
+                handleData={handleBackground} // @ts-ignore
+                selected={background?.type}
+                options={[
+                  { label: 'Solid', value: 'solid' },
+                  { label: 'Image', value: 'image' }
+                ]}
               />
-            ) : (
-              <ButtonGroup orientation="vertical" aria-label="vertical_buttons" sx={{ width: '100%', mt: '5px' }}>
-                <Button sx={{ height: '28px' }} variant="contained" onClick={handleUpload} startIcon={<UploadIcon />}>
-                  {'Pick image'}
-                </Button>
-                <Button sx={{ height: '28px' }} disabled={!background?.file?.length} variant="outlined" onClick={handleSettings} click startIcon={<TuneIcon />}>
-                  {'Settings'}
-                </Button>
-              </ButtonGroup>
-            )}
+              {background.type === 'solid' ? (
+                <ColorSelector
+                  label="Background color"
+                  color={options.backgroundOptions.color}
+                  handleData={handleData}
+                  property="backgroundOptions.color"
+                />
+              ) : (
+                <ButtonGroup orientation="vertical" aria-label="vertical_buttons" sx={{ width: '100%', mt: '5px' }}> {/* @ts-ignore */}
+                  <Button sx={{ height: '28px' }} variant="contained" onClick={handleUpload} startIcon={<UploadIcon />}>
+                    {'Pick image'}
+                  </Button> {/* @ts-ignore */}
+                  <Button sx={{ height: '28px' }} disabled={!background?.file?.length} variant="outlined" onClick={handleSettings} click startIcon={<TuneIcon />}>
+                    {'Settings'}
+                  </Button>
+                </ButtonGroup>
+              )}
+            </Box>
           </Paper>
         </Grid>
         <Grid item xs={12} sm={6}>

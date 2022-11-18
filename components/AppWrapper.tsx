@@ -41,14 +41,12 @@ function ElevationScroll({ children, window }: Props) {
     threshold: 0,
     target: window ? window() : undefined
   });
-
-  return cloneElement(children, {
-    elevation: trigger ? 5 : 0
-  });
+  return cloneElement(children, {elevation: trigger ? 5 : 0});
 }
 
 interface AppWrapperProps {
   mode?: string;
+  step?: number;
   children: ReactNode;
   userInfo?: any;
   handleLogout?: () => void;
@@ -59,7 +57,7 @@ interface AppWrapperProps {
 }
 
 export default function AppWrapper(props: AppWrapperProps) {
-  const { children, userInfo, handleLogout, clearData, setLoading, setIsTrialMode, isTrialMode, mode } = props;
+  const { children, userInfo, handleLogout, clearData, setLoading, setIsTrialMode, mode, isTrialMode, step } = props;
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
@@ -83,28 +81,27 @@ export default function AppWrapper(props: AppWrapperProps) {
 
   const handleLogin = useCallback(() => {
     handleLoading();
-    router.push({ pathname: "/", query: { login: true } }, "/")
-      .then(() => {
-        handleLoading(false);
-      });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    const navigationOptions = { pathname: "/", query: { login: true }};
+    if (step !== 0) { //@ts-ignore
+      navigationOptions.query.path = router.pathname;
+    }
+    router.push(navigationOptions, "/").then(() => { handleLoading(false); });
+  }, [step, router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleNavigation = useCallback(() => {
-    const isEdit = mode === "edit";
-    const isInListView = router.pathname === "/";
+    const isEdit = mode === 'edit';
+    const isInListView = router.pathname === '/';
 
     if (clearData !== undefined) {
       clearData(false, isEdit || !isInListView);
     }
     handleLoading();
-    const navigationOptions = { pathname: !isEdit && isInListView ? QR_TYPE_ROUTE : "/", query: {} };
+    const navigationOptions = {pathname: !isEdit && isInListView ? QR_TYPE_ROUTE : "/", query: {}};
     if (isEdit) { //@ts-ignore
       navigationOptions.query = { mode };
     }
 
-    router.push(navigationOptions, "/", { shallow: true }).then(() => {
-      handleLoading(false);
-    });
+    router.push(navigationOptions, '/', { shallow: true }).then(() => { handleLoading(false); });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
 
@@ -142,10 +139,8 @@ export default function AppWrapper(props: AppWrapperProps) {
               sx={{ display: "flex", justifyContent: "space-between", color: theme => theme.palette.text.primary }}>
               <Link href={{ pathname: !userInfo ? QR_TYPE_ROUTE : "/" }}>
                 <Box sx={{ display: "flex", cursor: "pointer" }}>
-                  <Box component="img" alt="EBANUX" src="/ebanuxQr.svg"
-                       sx={{ width: "40px", display: isWide ? "block" : "none" }} />
-                  <Typography sx={{ my: "auto", ml: "5px", fontSize: "28.8px", fontWeight: "bold" }}>The QR
-                    Link</Typography>
+                  <Box component="img" alt="EBANUX" src="/ebanuxQr.svg" sx={{ width: "40px", display: isWide ? "block" : "none" }} />
+                  <Typography sx={{ my: "auto", ml: "5px", fontSize: "28.8px", fontWeight: "bold" }}>{'The QR Link'}</Typography>
                 </Box>
               </Link>
               {router.query[PARAM_QR_TEXT] === undefined && (<>

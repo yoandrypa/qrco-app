@@ -9,7 +9,7 @@ import CropFreeIcon from '@mui/icons-material/CropFree';
 import {Accordion, AccordionDetails, AccordionSummary} from '../renderers/Renderers';
 
 import {checkForAlpha, convertBase64, downloadAsSVGOrVerify, handleDesignerString} from '../../helpers/qr/helpers';
-import {BackgroundType, CornersAndDotsType, FramesType, OptionsType} from './types/types';
+import {OptionsType} from './types/types';
 import Code from './sections/Code';
 import Frames from './sections/Frames';
 import Logos from './sections/Logos';
@@ -22,27 +22,12 @@ import RenderNoUserWarning from "./helperComponents/RenderNoUserWarning";
 import NotifyDynamic from "./helperComponents/NotifyDynamic";
 import Notifications from "../../components/notifications/Notifications";
 import {FRAMES_LENGTH} from "./constants";
-
-interface GeneratorProps {
-  options: OptionsType;
-  setOptions: Function;
-  background: BackgroundType;
-  setBackground: Function;
-  frame: FramesType;
-  setFrame: Function;
-  selected: string;
-  userInfo: object;
-  cornersData?: CornersAndDotsType | null;
-  dotsData?: CornersAndDotsType | null;
-}
-
-interface GenProps {
-  forceOverride?: string | undefined;
-}
+import {GeneratorProps, GenProps} from "./auxFunctions";
 
 const Generator = ({forceOverride}: GenProps) => {
   // @ts-ignore
-  const { options, setOptions, background, setBackground, frame, setFrame, data, selected, userInfo, cornersData, dotsData }: GeneratorProps = useContext(Context);
+  const { options, setOptions, background, setBackground, frame, setFrame, data, selected, userInfo, cornersData,
+    dotsData, setIsWrong }: GeneratorProps = useContext(Context);
 
   const [expanded, setExpanded] = useState<string>('style');
   const [error, setError] = useState<object | string | null>(null);
@@ -222,6 +207,14 @@ const Generator = ({forceOverride}: GenProps) => {
       setBackground({...background, opacity: background.invert ? 100 : 50});
     }
   }, [background.invert]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    let wrong = false;
+    if (background.type === 'image' && !background.file) {
+      wrong = true;
+    }
+    setIsWrong(wrong);
+  }, [background.invert, background.type]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (doneFirst.current && Boolean(options?.backgroundOptions)) {

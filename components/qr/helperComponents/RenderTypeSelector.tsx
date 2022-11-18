@@ -12,6 +12,7 @@ import TypeSelector from "./TypeSelector";
 import Context from "../../context/Context";
 import {DataType} from "../types/types";
 import {blue} from "@mui/material/colors";
+import RenderCellPhoneShape from "./RenderCellPhoneShape";
 
 interface RenderTypeSelectorProps {
   selected?: string | null;
