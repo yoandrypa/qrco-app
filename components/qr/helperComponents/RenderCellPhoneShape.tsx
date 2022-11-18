@@ -14,31 +14,25 @@ export default function RenderCellPhoneShape({offlineText, children, closePrevie
   return (
     <Box sx={{
       position: 'relative',
-      width: '340px',
-      height: '640px',
+      width: '315px',
+      height: '630px',
       margin: 'auto',
-      border: '16px black solid',
-      borderTopWidth: '60px',
-      borderBottomWidth: '70px',
-      borderRadius: '30px',
+      background: '#f7f7f7',
+      border: '1px #9e9e9e solid',
+      borderRadius: '25px',
       '&::before': {
         content: '""',
         display: 'block',
         width: '60px',
         height: '5px',
         position: 'absolute',
-        top: '-30px',
+        top: '23px',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        background: '#333',
+        background: '#9e9e9e',
         borderRadius: '10px'
       }
     }}>
-      <Box sx={{
-        width: '308px',
-        height: '510px',
-        background: 'white'
-      }}>
         <Tooltip title={closePreviewText || "Close preview"}>
           <Box
             sx={{
@@ -49,23 +43,33 @@ export default function RenderCellPhoneShape({offlineText, children, closePrevie
               height: '35px',
               position: 'absolute',
               left: '50%',
-              bottom: '-65px',
+              bottom: '-5px',
               transform: 'translate(-50%, -50%)',
-              background: '#333',
+              background: '#dbdbdb',
+              border: 'solid 1px #9e9e9e',
               borderRadius: '50%',
-              '&:hover': {background: '#444'}
+              '&:hover': {background: '#9e9e9e'}
             }}
             onClick={onClose}
           />
         </Tooltip>
-        {children || (
-          <Box sx={{height: '510px', width: '100%', position: 'relative'}}>
-            <Typography sx={{m: 0, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}}>
-              {offlineText || 'Offline content'}
-            </Typography>
-          </Box>
-        )}
-      </Box>
+        <Box sx={{
+          position: 'absolute',
+          top: '47px',
+          left: '10px',
+          right: '10px',
+          bottom: '59px',
+          border: 'solid 1px #9e9e9e'
+        }}>
+          {children || (
+            <Box sx={{height: '520px', width: '100%', position: 'absolute', background: '#fff'}}>
+              <Typography
+                sx={{m: 0, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}}>
+                {offlineText || 'Offline content'}
+              </Typography>
+            </Box>
+          )}
+        </Box>
     </Box>
   );
 }
