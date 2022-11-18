@@ -27,6 +27,24 @@ export interface StepsProps {
   isTrialMode?: boolean;
 }
 
+export interface GeneratorProps {
+  options: OptionsType;
+  setOptions: Function;
+  background: BackgroundType;
+  setBackground: Function;
+  setIsWrong: (isWrong: boolean) => void;
+  frame: FramesType;
+  setFrame: Function;
+  selected: string;
+  userInfo: object;
+  cornersData?: CornersAndDotsType | null;
+  dotsData?: CornersAndDotsType | null;
+}
+
+export interface GenProps {
+  forceOverride?: string | undefined;
+}
+
 export const steps = ["Type", "Content", "Design"];
 
 export const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame: FramesType,
