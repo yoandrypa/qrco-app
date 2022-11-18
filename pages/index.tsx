@@ -38,7 +38,7 @@ export default function Index({ qrData }: InferGetServerSidePropsType<typeof get
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
   const getUserInfo = async () => {
     try {
