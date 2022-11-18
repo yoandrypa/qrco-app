@@ -26,16 +26,18 @@ import SimplePayLinkData from './renderers/SimplePayLinkData';
 import {DataType, SocialProps} from './types/types';
 import LinksData from "./renderers/LinksData";
 import PleaseWait from "../PleaseWait";
+import RenderNoUserWarning from "./helperComponents/RenderNoUserWarning";
 
 type QrContentHandlerProps = {
   data: DataType;
+  userInfo: object;
   setData: Function;
   selected?: string | null;
   setIsWrong: (isWrong: boolean) => void;
 }
 
 const QrContentHandler = () => { // @ts-ignore
-  const { data, setData, selected, setIsWrong }: QrContentHandlerProps = useContext(Context);
+  const { data, setData, selected, setIsWrong, userInfo }: QrContentHandlerProps = useContext(Context);
 
   const handleValues = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string) => {
     const value = typeof payload !== 'string' ? payload.target.value : payload;
@@ -133,6 +135,7 @@ const QrContentHandler = () => { // @ts-ignore
     <>
       {selected ? (
         <>
+          {!Boolean(userInfo) && <Box sx={{mb: '10px'}}><RenderNoUserWarning/></Box>}
           <Box sx={{ display: 'inline' }}>
             <RenderIcon icon={selected} enabled adjust />
           </Box>

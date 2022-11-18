@@ -18,27 +18,28 @@ type SingleDataProps = {
 };
 
 function SingleData({ setIsWrong, label, data, setData, msg, limit = -1 }: SingleDataProps) {
-  const handleValue = (event: ChangeEvent<HTMLInputElement>) => {
-    let { value } = event.target;
+  const isWrong = (value: string): boolean => {
     if (limit !== -1) {
       value = value.slice(0, limit);
     }
-
     let error = false;
     if (!value.trim().length) {
       error = true;
     } else if (label === 'Website' && !isValidUrl(value)) {
       error = true;
     }
-    setIsWrong(error);
+    return error;
+  }
 
+  const handleValue = (event: ChangeEvent<HTMLInputElement>) => {
+    let { value } = event.target;
     // @ts-ignore
     setData((prev: DataType) => ({ ...prev, value }));
   };
 
   useEffect(() => {
-    setIsWrong(true);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    setIsWrong(isWrong(data?.value || ''));
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Common msg={msg}>
