@@ -55,10 +55,11 @@ interface AppWrapperProps {
   clearData?: (keepType?: boolean, doNot?: boolean) => void;
   setLoading?: (loading: boolean) => void;
   setIsTrialMode?: (isTrialMode: boolean) => void;
+  isTrialMode?: boolean;
 }
 
 export default function AppWrapper(props: AppWrapperProps) {
-  const { children, userInfo, handleLogout, clearData, setLoading, setIsTrialMode, mode } = props;
+  const { children, userInfo, handleLogout, clearData, setLoading, setIsTrialMode, isTrialMode, mode } = props;
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
@@ -89,19 +90,19 @@ export default function AppWrapper(props: AppWrapperProps) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleNavigation = useCallback(() => {
-    const isEdit = mode === 'edit';
-    const isInListView = router.pathname === '/';
+    const isEdit = mode === "edit";
+    const isInListView = router.pathname === "/";
 
     if (clearData !== undefined) {
       clearData(false, isEdit || !isInListView);
     }
     handleLoading();
-    const navigationOptions = {pathname: !isEdit && isInListView ? QR_TYPE_ROUTE : "/", query: {}};
+    const navigationOptions = { pathname: !isEdit && isInListView ? QR_TYPE_ROUTE : "/", query: {} };
     if (isEdit) { //@ts-ignore
       navigationOptions.query = { mode };
     }
 
-    router.push(navigationOptions, '/', { shallow: true }).then(() => {
+    router.push(navigationOptions, "/", { shallow: true }).then(() => {
       handleLoading(false);
     });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -116,14 +117,16 @@ export default function AppWrapper(props: AppWrapperProps) {
       fetchUser().then(profile => {
         let isInTrialMode = false;
         //@ts-ignore
-        if (profile?.createdAt !== null && !profile?.customerId) {
-          isInTrialMode = true;
+        if (profile?.createdAt !== null && !profile?.customerId) {//(!profile?.customerId || profile?.subscriptionData?.status !== "active")) {
+          // @ts-ignore
+          setIsTrialMode(true);
           //@ts-ignore
           setStartTrialDate(profile.createdAt);
-        }
-
-        if (setIsTrialMode !== undefined) {
-          setIsTrialMode(isInTrialMode);
+        } else {
+          // @ts-ignore
+          setIsTrialMode(false);
+          //@ts-ignore
+          setStartTrialDate(null);
         }
       }).catch(console.error);
     }
@@ -212,7 +215,7 @@ export default function AppWrapper(props: AppWrapperProps) {
                 </>)}
               </>)}
             </Toolbar>
-            {userInfo && startTrialDate && <CountDown startDate={startTrialDate} />}
+            {isTrialMode && startTrialDate && <CountDown startDate={startTrialDate} />}
           </Container>
         </AppBar>
       </ElevationScroll>)}

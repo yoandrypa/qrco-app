@@ -229,7 +229,7 @@ const AppContextProvider = (props: ContextProps) => {
       }
     } else {
       return (
-        <AppWrapper userInfo={userInfo} handleLogout={logout} clearData={clearData} setLoading={setLoading} setIsTrialMode={setIsTrialMode} mode={data.mode}>
+        <AppWrapper userInfo={userInfo} handleLogout={logout} clearData={clearData} setLoading={setLoading} setIsTrialMode={setIsTrialMode} isTrialMode={isTrialMode} mode={data.mode}>
           {children}
         </AppWrapper>
       );

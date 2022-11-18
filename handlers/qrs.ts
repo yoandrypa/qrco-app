@@ -1,14 +1,6 @@
 import * as Qr from "../queries/qr";
 import { CustomError } from "../utils";
 
-export interface Query {
-  userId: string;
-  limit?: any;
-  startAt?: Object;
-  search?: any;
-  all?: any;
-}
-
 // @ts-ignore
 export const create = async (data) => {
   try {
@@ -24,6 +16,14 @@ export const create = async (data) => {
   }
 };
 
+export interface Query {
+  userId: string;
+  limit?: any;
+  startAt?: Object;
+  search?: any;
+  all?: any;
+}
+
 export const list = async (query: Query) => {
   try {
     const { limit, startAt, search, all, userId } = query;
@@ -33,21 +33,20 @@ export const list = async (query: Query) => {
     };
 
     // @ts-ignore
-    const [items, lastKey] = await Qr.list(match, { limit: limit || 5, search, startAt });
-    // @ts-ignore
+    const [items, lastKey] = await Qr.list(match, { limit, search, startAt });
 
-    for (const qr of items) {
+    for (const qr of [items]) {
       // @ts-ignore
       const index = items.indexOf(qr);
       // @ts-ignore
       items[index] = await qr.populate({ properties: qr.isDynamic ? ["shortLinkId", "qrOptionsId"] : "qrOptionsId" });
     }
 
-    const count = await Qr.count(match, {search})
+    //const count = await Qr.count(match, { search });
 
     return {
-      count,
-      limit: limit || 5,
+      //count,
+      limit,
       lastKey,
       // @ts-ignore
       items
@@ -69,7 +68,7 @@ export const edit = async (data: QrDataType) => {
   try {
     let { userId, createdAt, ...rest } = data;
 
-    if (typeof createdAt === "string") {
+    if (typeof createdAt !== "number") {
       createdAt = (new Date(createdAt)).getTime();
     }
 
@@ -113,7 +112,7 @@ export const edit = async (data: QrDataType) => {
 
 export const remove = async (key: { userId: string, createdAt: number }) => {
   try {
-    if (typeof key["createdAt"] === "string") {
+    if (typeof key["createdAt"] !== "number") {
       key["createdAt"] = (new Date(key["createdAt"])).getTime();
     }
 
