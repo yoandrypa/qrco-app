@@ -5,7 +5,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Popover from "@mui/material/Popover";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import IconButton from '@mui/material/IconButton';
-import grey from "@mui/material/colors/grey";
+import {grey} from "@mui/material/colors";
 import {alpha} from "@mui/material/styles";
 
 import RenderIcon from "./RenderIcon";
