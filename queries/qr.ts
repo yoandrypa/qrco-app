@@ -77,10 +77,13 @@ export const list = async (match: Partial<QrDataQueryType>, params: ListParams) 
       );
     }*/
 
-    query.limit(params.limit || 10).sort(params.sort || "descending");
+    //query.limit(params.limit || 10).sort(params.sort || "descending");
+    query.sort(params.sort || "descending");
+
     if (params.startAt) {
       query.startAt(params.startAt);
     }
+
     const results = await query.exec();
     // @ts-ignore
     const items: QrDataType[] = results;

@@ -32,7 +32,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { humanDate } from "../helpers/generalFunctions";
 import { handleDesignerString, handleInitialData } from "../../helpers/qr/helpers";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import TablePagination from "@mui/material/TablePagination";
 
 const QrList = ({ qrs }: any) => {
   const [deleteConfirm, setDeleteConfirm] = useState<{
@@ -40,52 +39,29 @@ const QrList = ({ qrs }: any) => {
     userId: string;
   } | null>(null);
 
-  const [items, setItems] = useState(qrs.items);
-  const [page, setPage] = useState(0);
-  const [lastKeys, setLastKeys] = useState([undefined]);
-  const [rowsPerPage, setRowsPerPage] = useState(qrs.limit || 5);
-
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-    setLastKeys([undefined]);
-  };
+  /*const [items, setItems] = useState(qrs.items || []);
+  const [lastKey, setLastKey] = useState<string | object | undefined>(qrs.lastKey);
+  const [hasMore, setHasMore] = useState<boolean>(qrs.lastKey !== undefined);
 
   const fetchQrs = async (query: QrHandler.Query) => {
     return await QrHandler.list(query);
   };
 
-  useEffect(() => {
+  const handleShowMore = (lastKey: any) => {
     setLoading(true);
-    fetchQrs({ limit: rowsPerPage, userId: userInfo.attributes.sub }).then(qrs => {
-      setItems(qrs.items);
-    }).catch(console.error);
-    setLoading(false);
-  }, [rowsPerPage]);
-
-  useEffect(() => {
-    setLoading(true);
-    let lastKey = lastKeys[page];
-    if (page > 0 && lastKey === undefined) {
-      lastKey = qrs.lastKey;
-      setLastKeys([...lastKeys, lastKey]);
-    }
     fetchQrs({
-      limit: rowsPerPage, userId: userInfo.attributes.sub, startAt: lastKey
+      limit: 2, userId: userInfo.attributes.sub, startAt: lastKey
     }).then(qrs => {
-      setItems(qrs.items);
+      // @ts-ignore
+      const allItems = items.concat(qrs.items);
+      if (qrs.count === allItems.length) {
+        setHasMore(false);
+      }
+      setLastKey(qrs.lastKey);
+      setItems(allItems);
     }).catch(console.error);
     setLoading(false);
-  }, [page, lastKeys]);
+  };*/
 
   // @ts-ignore
   const { isLoading, setLoading, setOptions, setStep, userInfo } = useContext(Context);
@@ -175,21 +151,10 @@ const QrList = ({ qrs }: any) => {
   return (
     <>
       <Stack spacing={2}>
-        {qrs?.count > 0 ? (
+        {qrs.items?.length > 0 ? (
           <>
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-              <Typography variant="h6" style={{ fontWeight: "bold" }}>My QR Codes</Typography>
-              <TablePagination
-                size="small"
-                component="span"
-                count={qrs.count}
-                page={page}
-                onPageChange={handleChangePage}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                rowsPerPageOptions={[5, 10, 25, 50]}
-              /></Stack>
-            {items.map((qr: any) => { // @ts-ignore
+            <Typography variant="h6" style={{ fontWeight: "bold" }}>My QR Codes</Typography>
+            {qrs.items.map((qr: any) => { // @ts-ignore
               const qrLink = sanitize.link(qr.shortLinkId || {}); // @ts-ignore
               if (qr.qrOptionsId?.background?.backColor === "") {
                 qr.qrOptionsId.background.backColor = null;
@@ -243,7 +208,7 @@ const QrList = ({ qrs }: any) => {
                         }}>
                         {renderStaticDynamic(qr.isDynamic)}
                         <Typography variant="caption" style={{ color: "gray" }}>
-                          {`${qrLink.visitCount} scans`}
+                          {`${qrLink.visitCount || 0} scans`}
                         </Typography>
                       </Box>
                     </Grid>) : (<Grid item xs={4}>
@@ -267,7 +232,7 @@ const QrList = ({ qrs }: any) => {
                         {qr.isDynamic ? (
                           <Stack direction="column" spacing={1.2} justifyContent="flex-start" alignItems="center">
                             <Typography variant="h4" style={{ color: qrLink.visitCount > 0 ? "blue" : "red" }}>
-                              {qrLink.visitCount}
+                              {qrLink.visitCount || 0}
                             </Typography>
                             <Typography variant="caption" style={{ color: "gray" }}>
                               Scans
@@ -281,6 +246,7 @@ const QrList = ({ qrs }: any) => {
                 </Paper>
               );
             })}
+            {/*{hasMore && <Button onClick={() => handleShowMore(lastKey)}>Show more</Button>}*/}
           </>
         ) : (
           <Grid container justifyContent="center" alignItems="center" sx={{ height: "calc( 100vh - 200px );" }}>

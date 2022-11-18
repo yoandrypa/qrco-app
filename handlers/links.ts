@@ -204,7 +204,7 @@ export const edit = async (data: UpdateLinkData) => {
 
 export const remove = async (match: { userId: string, createdAt: number }) => {
   try {
-    if (typeof match["createdAt"] === "string") {
+    if (typeof match["createdAt"] !== "number") {
       match["createdAt"] = (new Date(match["createdAt"])).getTime();
     }
     const linkData = await Link.remove(match);
