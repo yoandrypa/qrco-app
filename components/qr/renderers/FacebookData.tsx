@@ -24,8 +24,7 @@ function FacebookData({ setIsWrong, data, setData }: FacebookDataProps) {
       if (!isValidUrl(value)) {
         wrong = true;
       }
-    } else if (tempo[item]) {
-      // @ts-ignore
+    } else if (tempo[item]) { // @ts-ignore
       delete tempo[item];
       wrong = true;
     }
@@ -33,9 +32,9 @@ function FacebookData({ setIsWrong, data, setData }: FacebookDataProps) {
     setData(tempo);
   };
 
-  useEffect(() => {
-    setIsWrong(true);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { // @ts-ignore
+    setIsWrong(!Boolean(data?.message?.trim().length) || !isValidUrl(data.message));
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Common msg="URL to be shared in your wall.">
