@@ -122,12 +122,16 @@ export const list = async (query: Query) => {
   }
 };
 
-export const get = async (address: string) => {
-  const linkItem = await Link.find({ address: { eq: address } });
-  if (!linkItem) {
+export const get = async (key: { userId: string, createdAt: number }) => {
+  try {
+    return await Link.get(key);
+  } catch (e: any) {
+    throw new CustomError(e.message, 500, e);
+  }
+  /*if (!linkItem) {
     return;
   }
-  return utils.sanitize.link(linkItem);
+  return utils.sanitize.link(linkItem);*/
 };
 
 export const find = async (linkId: string) => {

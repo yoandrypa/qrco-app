@@ -1,9 +1,7 @@
 import { s3Client } from "../libs";
 import {
   PutObjectCommandInput,
-  GetObjectCommand,
   GetObjectCommandInput,
-  DeleteObjectsCommand,
   DeleteObjectsCommandInput,
   ObjectIdentifier,
   CompleteMultipartUploadCommandInput,
@@ -154,8 +152,7 @@ export const download = async (key: string) => {
       Key: key,
       Bucket: String(process.env.REACT_AWS_BUCKET_NAME)
     };
-    const command: GetObjectCommand = new GetObjectCommand(downloadParams);
-    return await s3Client.send(command);
+    return await s3Client.getObject(downloadParams);
   } catch (e) {
     return e;
   }
@@ -170,8 +167,7 @@ export const remove = async (keys: ObjectIdentifier[]) => {
         Quiet: true
       }
     };
-    const command: DeleteObjectsCommand = new DeleteObjectsCommand(deleteParams);
-    return await s3Client.send(command);
+    return await s3Client.deleteObjects(deleteParams);
   } catch (e) {
     return e;
   }

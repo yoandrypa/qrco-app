@@ -1,6 +1,5 @@
 import {
   S3,
-  S3Client,
   GetBucketAccelerateConfigurationCommand,
   PutBucketAccelerateConfigurationCommand
 } from "@aws-sdk/client-s3";
