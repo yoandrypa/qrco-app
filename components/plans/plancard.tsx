@@ -30,7 +30,7 @@ const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
   const intl = useIntl()
 
   return (
-    <Paper sx={{ borderRadius: 2.5, maxWidth: 300 }}>
+    <Paper sx={{ borderRadius: 2.5, maxWidth: 340 }}>
       <Typography variant='h5' align='center' sx={{ marginBottom: 2, paddingTop: 3 }} >
         {data.title}
       </Typography>
@@ -68,12 +68,12 @@ const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
       {data.features?.map((feature, index) => {
 
         return (
-          <Grid key={index} container sx={{ marginLeft: 1, marginRight: 1, paddingBottom: 2 }}>
-            <Grid item key={index} xs={2} sx={{ display: 'flex', justifyContent: 'left' }}>
+          <Grid key={index} container sx={{ marginLeft: 1, paddingBottom: 2 }}>
+            <Grid item key={index} xs={2} sx={{ display: 'flex', justifyContent: 'right', paddingRight: 1 }}>
               <Done color='success' />
             </Grid>
             <Grid item xs={10}>
-              <Typography>
+              <Typography sx={{ paddingRight: 1 }}>
                 {feature}
               </Typography>
             </Grid>
