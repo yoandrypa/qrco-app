@@ -13,6 +13,7 @@ const SimplePayLinkData = ({ setData, setIsWrong }: Props) => {
 
     return (
         <Box sx={{ width: '100%' }}>
+
         </Box>
     )
 }
