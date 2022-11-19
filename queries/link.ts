@@ -61,6 +61,14 @@ export const list = async (match: Partial<LinkQueryType>, params: GetParams) => 
   }
 };
 
+export const get = async (key: { userId: string, createdAt: number }) => {
+  try {
+    return await LinkModel.get(key);
+  } catch (e) {
+    throw e;
+  }
+};
+
 export const find = async (match: Partial<LinkQueryType>): Promise<any> => {
   try {
     const resp = await LinkModel.query(match).exec();

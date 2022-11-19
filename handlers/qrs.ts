@@ -12,7 +12,7 @@ export const create = async (data) => {
 
     return await Qr.create(data);
   } catch (e: any) {
-    throw new CustomError(e.message);
+    throw new CustomError(e.message, 500, e);
   }
 };
 
@@ -33,16 +33,12 @@ export const list = async (query: Query) => {
     };
 
     // @ts-ignore
-    const [items, lastKey] = await Qr.list(match, { limit, search, startAt });
-
-    for (const qr of [items]) {
-      // @ts-ignore
-      const index = items.indexOf(qr);
-      // @ts-ignore
-      items[index] = await qr.populate({ properties: qr.isDynamic ? ["shortLinkId", "qrOptionsId"] : "qrOptionsId" });
-    }
+    let [items, lastKey] = await Qr.list(match, { limit, search, startAt });
 
     //const count = await Qr.count(match, { search });
+
+    // @ts-ignore
+    items = await items.populate({ properties: ["shortLinkId", "qrOptionsId"] });
 
     return {
       //count,
@@ -52,7 +48,7 @@ export const list = async (query: Query) => {
       items
     };
   } catch (e: any) {
-    throw new CustomError(e.message);
+    throw new CustomError(e.message, 500, e);
   }
 };
 
@@ -60,7 +56,7 @@ export const get = async (key: { userId: string, createdAt: number }) => {
   try {
     return await Qr.get(key);
   } catch (e: any) {
-    throw new CustomError(e.message);
+    throw new CustomError(e.message, 500, e);
   }
 };
 
@@ -124,6 +120,6 @@ export const remove = async (key: { userId: string, createdAt: number }) => {
 
     return { message: "Qr has been deleted successfully." };
   } catch (e: any) {
-    throw new CustomError(e.message);
+    throw new CustomError(e.message, 500, e);
   }
 };
