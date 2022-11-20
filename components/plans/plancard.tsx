@@ -43,15 +43,6 @@ const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
             {data.priceAmount}
           </Typography>
         </Grid>
-        <Grid sx={{ justifyContent: 'end', alignContent: 'baseline', display: 'flex' }}>
-          <Grid container direction='column' >
-            {/* <Grid item sx={{ display:'flex', justifyContent:'start', alignContent:'end' }}>
-              <Typography variant='caption' >
-                {data.period}
-              </Typography>
-            </Grid>             */}
-          </Grid>
-        </Grid>
       </Grid>
       <Typography color='gray' textAlign={'center'}> {data.legend}</Typography>
       <Grid sx={{ justifyContent: 'center', alignContent: 'center', display: 'flex', margin: 2 }}>
