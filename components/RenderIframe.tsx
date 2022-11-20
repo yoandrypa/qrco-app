@@ -15,7 +15,12 @@ export default function RenderIframe({src, width, height}: IframeProps) {
 
   const handleLoad = () => {
     if (iRef.current?.contentWindow) {
-      iRef.current.contentWindow.postMessage({name: 'hello'}, '*');
+      setTimeout(() => {
+        if (iRef.current) { // @ts-ignore
+          iRef.current.contentWindow.postMessage(JSON.stringify({message: 'hello'}), process.env.REACT_MICROSITES_ROUTE);
+        }
+      }, 150);
+      iRef.current.onload = null;
     }
   }
 
@@ -64,6 +69,12 @@ export default function RenderIframe({src, width, height}: IframeProps) {
   }
 
   return (
-    <iframe src={src} width={width} height={height} ref={iRef} onLoad={handleLoad} style={{border: 'none'}}/>
+    <iframe
+      src={src}
+      width={width}
+      height={height}
+      ref={iRef}
+      onLoad={handleLoad}
+      style={{border: 'none'}} />
   );
 }
