@@ -15,7 +15,8 @@ export default function RenderIframe({src, width, height}: IframeProps) {
 
   const handleLoad = () => {
     if (iRef.current?.contentWindow) {
-      iRef.current.contentWindow.postMessage({name: 'hello'}, '*');
+      iRef.current.contentWindow.postMessage(JSON.stringify({name: 'hello'}), '*');
+      iRef.current.onload = null;
     }
   }
 
@@ -64,6 +65,6 @@ export default function RenderIframe({src, width, height}: IframeProps) {
   }
 
   return (
-    <iframe src={src} width={width} height={height} ref={iRef} onLoad={handleLoad} style={{border: 'none'}}/>
+    <iframe src={src} width={width} height={height} ref={iRef} onLoad={handleLoad} style={{border: 'none'}} id="exampleWindowId" />
   );
 }
