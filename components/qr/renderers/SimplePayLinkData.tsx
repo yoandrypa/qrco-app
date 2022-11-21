@@ -49,7 +49,7 @@ const SimplePayLinkData = ({ data, setData, setIsWrong, handleValues }: Props) =
                             handleValues={handleValues}
                             value={data?.title || ''}
                             isError={false}
-                            label='Name of the product'
+                            label='Product'
                         />
                         <TextField
                             label="Description"
@@ -58,7 +58,6 @@ const SimplePayLinkData = ({ data, setData, setIsWrong, handleValues }: Props) =
                             sx={{ maxWidth: 600 }}
                             rows={4}
                             multiline
-                            required
                             margin="dense"
                             value={data?.message || ''}
                             onChange={handleValues('message')} />
@@ -67,7 +66,7 @@ const SimplePayLinkData = ({ data, setData, setIsWrong, handleValues }: Props) =
                 </Grid>
                 <Grid item>
                     <FormGroup>
-                        <FormControl sx={{ m: 1, maxWidth: 150 }} variant="outlined">
+                        <FormControl sx={{ m: 1, maxWidth: 130 }} variant="outlined">
                             <InputLabel htmlFor="outlined-adornment-amount">Amount</InputLabel>
                             <OutlinedInput
                                 id="outlined-adornment-amount"
