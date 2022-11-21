@@ -85,7 +85,7 @@ export const handleDesignerString = (selected: string | null | undefined, data: 
       break;
     }
     case 'whatsapp': {
-      designerString += `https://wa.me/${data.number}`;
+      designerString += `https://wa.me/${data.number || ''}`;
       if (data.message) { designerString += `?text=${encodeURIComponent(data.message)}`; }
       break;
     }

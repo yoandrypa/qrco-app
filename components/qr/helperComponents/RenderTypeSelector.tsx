@@ -120,17 +120,20 @@ const RenderTypeSelector = ({ selected, handleSelect, isLogged }: RenderTypeSele
           } />
         </Tabs>
       </Grid>
-      {renderTypeSelector("web", "Website", "Link to any page on the web", true)}
+      {renderTypeSelector("web", "Short URL", "Link to any page on the web", true)}
       {!isDynamic ?
         (<>
           {renderTypeSelector("email", "Email", "Send email messages", true)}
           {renderTypeSelector("sms", "SMS", "Send text messages", true)}
-          {renderTypeSelector("vcard", "VCard", "Share your contact details", true)}
+          {renderTypeSelector("vcard", "vCard", "Share your contact details", true)}
           {renderTypeSelector("text", "Text", "Display a short text message", true)}
           {renderTypeSelector("wifi", "WiFi", "Get connected to a WiFi network", true)}
+          {renderTypeSelector("twitter", "Twitter", "Post a tweet", true)}
+          {renderTypeSelector("whatsapp", "WhatsApp", "Send a WhatsApp message", true)}
+          {renderTypeSelector("facebook", "Facebook", "Share an URL in your wall", true)}
           {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("crypto", "Crypto Payment", "Recieve crypto on your eWallet", true)}
         </>) : (<>
-          {renderTypeSelector("vcard+", "VCard Plus", "Share your contact and social details", true, true)}
+          {renderTypeSelector("vcard+", "vCard Plus", "Share your contact and social details", true, true)}
           {renderTypeSelector('business', 'Business', 'Describe your business or company', true, true)}
           {renderTypeSelector("social", "Social networks", "Share your social networks information", true, true)}
           {renderTypeSelector("link", "Link-in-Bio", "Share your own links, including social info", true, true)}
@@ -140,9 +143,6 @@ const RenderTypeSelector = ({ selected, handleSelect, isLogged }: RenderTypeSele
           {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("paylink", "Send me money", "Receive payments worldwide", true, true)}
         </>)
       }
-      {renderTypeSelector("twitter", "Twitter", "Post a tweet", true)}
-      {renderTypeSelector("whatsapp", "WhatsApp", "Send a WhatsApp message", true)}
-      {renderTypeSelector("facebook", "Facebook", "Share an URL in your wall", true)}
       {isDynamic ? (<>
         {renderTypeSelector("pdf", "PDF file", "Share a PDF file", true, true)}
         {renderTypeSelector("audio", "Audio file", "Share an audio file", true, true)}

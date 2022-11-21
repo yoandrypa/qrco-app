@@ -6,6 +6,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
 
 import {DataType} from "../types/types";
+import RenderPreviewURLString from "./helpers/RenderPreviewURLString";
 
 interface FacebookDataProps {
   data: DataType;
@@ -13,12 +14,12 @@ interface FacebookDataProps {
   setIsWrong: (isWrong: boolean) => void;
 }
 
-function FacebookData({ setIsWrong, data, setData }: FacebookDataProps) {
+function FacebookData({setIsWrong, data, setData}: FacebookDataProps) {
   const handleValues = (item: 'message') => (event: ChangeEvent<HTMLInputElement>) => {
     let wrong = false;
-    const { value } = event.target;
+    const {value} = event.target;
 
-    const tempo = { ...data };
+    const tempo = {...data};
     if (value.length) {
       tempo[item] = value;
       if (!isValidUrl(value)) {
@@ -58,7 +59,8 @@ function FacebookData({ setIsWrong, data, setData }: FacebookDataProps) {
             ) : null
           )
         }}
-        onChange={handleValues('message')} />
+        onChange={handleValues('message')}/>
+      <RenderPreviewURLString selected="facebook" data={data}/>
     </Common>
   );
 }
