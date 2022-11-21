@@ -128,7 +128,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           delete data.prevForeImg;
           updatingHandler(null, true);
         } catch {
-          updatingHandler(null, true);
+          updatingHandler(null, false);
         }
       }
 

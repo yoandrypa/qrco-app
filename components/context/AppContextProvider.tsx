@@ -57,7 +57,6 @@ const AppContextProvider = (props: ContextProps) => {
 
   const clearData = useCallback((keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean) => {
     setForceClear(false);
-
     if (!keepType || doNot || takeAwaySelection) {
       setSelected(null);
     }
@@ -152,7 +151,9 @@ const AppContextProvider = (props: ContextProps) => {
       }
     }
 
-    if (loading) {
+    if (router.pathname === '/') {
+      clearData();
+    } else if (loading) {
       setLoading(false);
     }
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps

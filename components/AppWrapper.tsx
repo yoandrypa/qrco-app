@@ -89,8 +89,8 @@ export default function AppWrapper(props: AppWrapperProps) {
   }, [step, router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleNavigation = useCallback(() => {
-    const isEdit = mode === 'edit';
     const isInListView = router.pathname === '/';
+    const isEdit = !isInListView && mode === 'edit';
 
     if (clearData !== undefined) {
       clearData(false, isEdit || !isInListView);
@@ -101,7 +101,7 @@ export default function AppWrapper(props: AppWrapperProps) {
       navigationOptions.query = { mode };
     }
 
-    router.push(navigationOptions, '/', { shallow: true }).then(() => { handleLoading(false); });
+    router.push(navigationOptions, isInListView ? QR_TYPE_ROUTE : '/', { shallow: true }).then(() => { handleLoading(false); });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
 
