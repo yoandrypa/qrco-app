@@ -63,12 +63,12 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
     }
     if (value.length) {
       if (item === 'donationUnitAmount') {
-        setCoffeePrice(parseInt(value))
-        if (parseInt(value) < 1) {
+        setCoffeePrice(parseFloat(value))
+        if (parseFloat(value) < 1) {
           setIsWrong(true)
           setIsError(true)
         } else {
-          temp[item] = parseInt(value)
+          temp[item] = parseFloat(value)
           setIsWrong(false)
           setIsError(false)
         }
@@ -93,11 +93,6 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
     }
     setIsWrong(webError)
   }
-
-  async function handleAutocomplete(event: any, newValue: string) {
-    console.log(event, newValue);
-  }
-
 
   return (
     <Common msg='Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.'>
@@ -159,7 +154,6 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
             onInputChange={(event, newInputButtonValue) => {
               setInputButtonValue(newInputButtonValue);
               setData({ ...data, urlOptionLabel: newInputButtonValue })
-              console.log('saved')
             }}
             id="donation-button-text"
             options={options}
@@ -195,10 +189,10 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
           </Grid>
           <Grid item>
             <TextField
-              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+              inputProps={{ inputMode: 'numeric', step: "any", pattern: ' ^[-,0-9]+$' }}
               type='number'
               label='Coffee Price'
-              sx={{ width: 140, marginBottom: 2 }}
+              sx={{ width: 150, marginBottom: 2 }}
               placeholder='10'
               size='small'
               value={coffeePrice}
