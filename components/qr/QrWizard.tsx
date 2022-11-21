@@ -1,20 +1,20 @@
-import {ReactNode, useCallback, useContext, useEffect, useRef, useState} from "react";
+import { ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Context from "../context/Context";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 
-import {generateId, generateShortLink} from "../../utils";
-import {EbanuxDonationPriceData, ProcessHanldlerType} from "./types/types";
-import {QR_TYPE_ROUTE} from "./constants";
-import {getUuid} from "../../helpers/qr/helpers";
+import { generateId, generateShortLink } from "../../utils";
+import { EbanuxDonationPriceData, ProcessHanldlerType } from "./types/types";
+import { QR_TYPE_ROUTE } from "./constants";
+import { getUuid } from "../../helpers/qr/helpers";
 import * as QrHandler from "../../handlers/qrs";
 import * as StorageHandler from "../../handlers/storage";
 import * as EbanuxHandler from "../../handlers/ebanux";
 import Notifications from "../notifications/Notifications";
 import ProcessHandler from "./renderers/ProcessHandler";
-import {cleaner, finalCleanForEdtion, generateObjectToEdit, StepsProps} from "./auxFunctions";
+import { cleaner, finalCleanForEdtion, generateObjectToEdit, StepsProps } from "./auxFunctions";
 import RenderNextButton from "./helperComponents/RenderNextButton";
 import RenderBackButton from "./helperComponents/RenderBackButton";
 import RenderSteps from "./helperComponents/RenderSteps";
@@ -140,16 +140,24 @@ const QrWizard = ({ children }: QrWizardProps) => {
           redirectUrl: data["web"] || ""
         };
         if (data["donationPriceId"]) {
+          try {
+
+          } catch (error) {
+            setIsError(true);
+          }
 
         } else {
+          updatingHandler("Saving donation payment data");
           try {
             const price = await EbanuxHandler.createEbanuxDonationPrice(userInfo.attributes.sub,
               userInfo.signInUserSession.accessToken.jwtToken,
               priceData);
             data["donationPriceId"] = price.data.result.price.id;
             data["donationProductId"] = price.data.result.product.id;
+            updatingHandler(null, true);
           } catch (error) {
             setIsError(true);
+            updatingHandler(null, false)
           }
         }
       }
@@ -216,9 +224,9 @@ const QrWizard = ({ children }: QrWizardProps) => {
       const item = document.getElementById('qrCodeReferenceId');
 
       if (item) {
-        setForceDownload({item});
+        setForceDownload({ item });
       } else {
-        await router.push(QR_TYPE_ROUTE, "/", {shallow: true});
+        await router.push(QR_TYPE_ROUTE, "/", { shallow: true });
       }
     } else {
       setStep((prev: number) => prev + 1);
@@ -250,14 +258,14 @@ const QrWizard = ({ children }: QrWizardProps) => {
   useEffect(() => {
     const observer = new IntersectionObserver((payload: IntersectionObserverEntry[]) => {
       setVisible(payload[0].isIntersecting || false);
-      }, {
+    }, {
       root: document.querySelector('#scrollArea'),
       rootMargin: '0px',
       threshold: [0.3]
     });
     observer.observe(btnRef.current);
     setSize(btnRef.current.offsetWidth);
-    const getWidth = ()=>{
+    const getWidth = () => {
       setSize(btnRef.current.offsetWidth);
     }
     window.addEventListener("resize", getWidth);
@@ -301,7 +309,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           externalFrame={frame}
           handleDone={async () => {
             setForceDownload(undefined);
-            await router.push(QR_TYPE_ROUTE, "/", {shallow: true});
+            await router.push(QR_TYPE_ROUTE, "/", { shallow: true });
           }} />
       )}
       <Box ref={btnRef}>
