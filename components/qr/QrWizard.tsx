@@ -154,7 +154,6 @@ const QrWizard = ({ children }: QrWizardProps) => {
               priceData);
             data["donationPriceId"] = price.data.result.price.id;
             data["donationProductId"] = price.data.result.product.id;
-            updatingHandler(null, true);
           } catch (error) {
             setIsError(true);
             updatingHandler(null, false)
