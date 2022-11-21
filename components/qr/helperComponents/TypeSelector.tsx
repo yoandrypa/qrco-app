@@ -93,7 +93,7 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
                 {label}
               </Typography>
             </Box>
-            <Typography sx={{width: '100%', color: !enabled ? grey[500] : (selected || over ? theme.palette.primary.main : grey[700])}}>
+            <Typography sx={{width: '100%', color: !enabled ? grey[500] : grey[700]}}>
               {description}
             </Typography>
           </Box>
