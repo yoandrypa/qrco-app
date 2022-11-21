@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {MouseEvent, useState} from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
@@ -35,7 +35,7 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
     }
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
