@@ -64,13 +64,12 @@ const QrList = ({ qrs }: any) => {
   };*/
 
   // @ts-ignore
-  const { isLoading, setLoading, setOptions, setStep, userInfo } = useContext(Context);
+  const { isLoading, setLoading, setOptions, setStep } = useContext(Context);
   const router = useRouter();
 
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
 
   const handleEdit = useCallback((qr: QrDataType) => {
-    debugger;
     setLoading(true);
     setOptions({ ...qr.qrOptionsId, ...qr, mode: "edit" });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
