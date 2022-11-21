@@ -1,4 +1,4 @@
-import {useContext, useMemo} from "react";
+import { useContext, useMemo } from "react";
 import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Tabs from '@mui/material/Tabs';
@@ -6,12 +6,12 @@ import Tab from '@mui/material/Tab';
 import Badge from '@mui/material/Badge';
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
-import {styled} from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 
 import TypeSelector from "./TypeSelector";
 import Context from "../../context/Context";
-import {DataType} from "../types/types";
-import {blue} from "@mui/material/colors";
+import { DataType } from "../types/types";
+import { blue } from "@mui/material/colors";
 import RenderCellPhoneShape from "./RenderCellPhoneShape";
 
 interface RenderTypeSelectorProps {
@@ -26,7 +26,7 @@ interface ContextData {
   useInfo: any;
 }
 
-const MyBadge = styled(Badge)(({pro}: {pro?: boolean}) => ({
+const MyBadge = styled(Badge)(({ pro }: { pro?: boolean }) => ({
   '& .MuiBadge-badge': {
     top: 11,
     right: pro ? -20 : -22,
@@ -72,12 +72,12 @@ const RenderTypeSelector = ({ selected, handleSelect, isLogged }: RenderTypeSele
     <Grid container spacing={2}>
       <Grid item xs={12}>
         <Tabs value={isDynamic ? 0 : 1} onChange={(_, newSel: number) => handleClick(newSel)}>
-          <Tab sx={{pr: '37px', mr: '3px'}} label={
+          <Tab sx={{ pr: '37px', mr: '3px' }} label={
             <MyBadge badgeContent={
               <Tooltip title={
                 <span>
                   <p>Dynamic QR codes:</p>
-                  <ul style={{paddingLeft: 0, listStylePosition: 'inside'}}>
+                  <ul style={{ paddingLeft: 0, listStylePosition: 'inside' }}>
                     <li>Easy to customize</li>
                     <li>Easy to use</li>
                     <li>Unlimited content changes</li>
@@ -90,18 +90,18 @@ const RenderTypeSelector = ({ selected, handleSelect, isLogged }: RenderTypeSele
                   </ul>
                 </span>
               } arrow>
-              <span>Pro</span>
+                <span>Pro</span>
               </Tooltip>
             } color="primary" pro>
               <Typography>{isWide ? "Dynamic QR Codes" : "Dynamic"}</Typography>
             </MyBadge>
           } />
-          <Tab sx={{pr: '39px'}} label={
+          <Tab sx={{ pr: '39px' }} label={
             <MyBadge badgeContent={
               <Tooltip title={
                 <span>
-                <p>Static QR codes:</p>
-                  <ul style={{paddingLeft: 0, listStylePosition: 'inside'}}>
+                  <p>Static QR codes:</p>
+                  <ul style={{ paddingLeft: 0, listStylePosition: 'inside' }}>
                     <li>100% free</li>
                     <li>Easy to customize</li>
                     <li>Easy to use</li>
@@ -111,7 +111,7 @@ const RenderTypeSelector = ({ selected, handleSelect, isLogged }: RenderTypeSele
                     <li>Unlimited for both authenticated and guest users</li>
                     <li>Stored for authenticated users only</li>
                   </ul>
-              </span>
+                </span>
               } arrow>
                 <span>Free</span>
               </Tooltip>} color="success">
@@ -137,7 +137,7 @@ const RenderTypeSelector = ({ selected, handleSelect, isLogged }: RenderTypeSele
           {renderTypeSelector("coupon", "Coupon", "Share a coupon", true, true)}
           {renderTypeSelector("donations", "Donations", "Get donations from your supporters worldwide", true, true)}
           {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("fundme", "Fund Me", "Start your own charity or fundraising campaign", true, true)}
-          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("paylink", "Payment Link", "Receive payments worldwide", true, true)}
+          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("paylink", "Send me money", "Receive payments worldwide", true, true)}
         </>)
       }
       {renderTypeSelector("twitter", "Twitter", "Post a tweet", true)}

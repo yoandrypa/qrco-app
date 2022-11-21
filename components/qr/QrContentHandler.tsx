@@ -1,4 +1,4 @@
-import {ChangeEvent, useContext} from 'react';
+import { ChangeEvent, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -19,11 +19,11 @@ import NotifyDynamic from "./helperComponents/NotifyDynamic";
 import BusinessData from "./renderers/BusinessData";
 import NetworksData from "./renderers/NetworksData.";
 import CouponData from "./renderers/CouponData";
-import DonationsData, {DonationsProps} from './renderers/DonationsData';
+import DonationsData, { DonationsProps } from './renderers/DonationsData';
 import CryptoData from './renderers/CryptoData';
 import SimplePayLinkData from './renderers/SimplePayLinkData';
 
-import {DataType, SocialProps} from './types/types';
+import { DataType, SocialProps } from './types/types';
 import LinksData from "./renderers/LinksData";
 import PleaseWait from "../PleaseWait";
 import RenderNoUserWarning from "./helperComponents/RenderNoUserWarning";
@@ -120,7 +120,7 @@ const QrContentHandler = () => { // @ts-ignore
         return <DonationsData data={data} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong} />
       }
       case 'paylink': {
-        return <SimplePayLinkData data={data} setData={handlePayload} setIsWrong={setIsWrong} />
+        return <SimplePayLinkData data={data} setData={handlePayload} handleValues={handleValues} setIsWrong={setIsWrong} />
       }
       case 'crypto': {
         return <CryptoData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
@@ -135,7 +135,7 @@ const QrContentHandler = () => { // @ts-ignore
     <>
       {selected ? (
         <>
-          {!Boolean(userInfo) && <Box sx={{mb: '10px'}}><RenderNoUserWarning/></Box>}
+          {!Boolean(userInfo) && <Box sx={{ mb: '10px' }}><RenderNoUserWarning /></Box>}
           <Box sx={{ display: 'inline' }}>
             <RenderIcon icon={selected} enabled adjust />
           </Box>
