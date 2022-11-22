@@ -81,19 +81,19 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
         )}
         <Box sx={{display: 'flex', p: 1}}>
           <Box sx={{mt: '3px'}}>
-            <RenderIcon icon={icon} enabled={enabled} color={!selected && !over ? '#000' : undefined} />
+            <RenderIcon icon={icon} enabled={enabled} color={!selected && !over ? grey[800] : undefined} />
           </Box>
           <Box sx={{display: 'flex', flexDirection: 'column', textAlign: 'left', ml: 1, width: '100%'}}>
             <Box sx={{display: 'flex', width: '100%', justifyContent: 'space-between'}}>
               <Typography sx={{
                 width: '100%',
                 fontWeight: 'bold',
-                color: !enabled ? grey[500] : (selected || over ? theme.palette.primary.dark : '#000')
+                color: !enabled ? grey[500] : (selected || over ? theme.palette.primary.dark : grey[800])
               }} variant="h6">
                 {label}
               </Typography>
             </Box>
-            <Typography sx={{width: '100%', color: !enabled ? grey[500] : grey[700]}}>
+            <Typography sx={{width: '100%', color: !enabled ? grey[500] : grey[selected || over ? 800 : 700]}}>
               {description}
             </Typography>
           </Box>
