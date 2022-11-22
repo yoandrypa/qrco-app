@@ -214,7 +214,7 @@ const Generator = ({forceOverride}: GenProps) => {
       wrong = true;
     }
     setIsWrong(wrong);
-  }, [background.invert, background.type]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [background.file, background.type]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (doneFirst.current && Boolean(options?.backgroundOptions)) {
