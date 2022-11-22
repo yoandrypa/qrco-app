@@ -58,8 +58,7 @@ interface ListParams {
   sort?: "ascending" | "descending";
 }
 
-export const
-  list = async (match: Partial<QrDataQueryType>, params: ListParams) => {
+export const list = async (match: Partial<QrDataQueryType>, params: ListParams) => {
   try {
     //TODO include the Skip param
     const query = QrDataModel.query(match);
