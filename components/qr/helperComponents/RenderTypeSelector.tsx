@@ -12,7 +12,6 @@ import TypeSelector from "./TypeSelector";
 import Context from "../../context/Context";
 import { DataType } from "../types/types";
 import { blue } from "@mui/material/colors";
-import RenderCellPhoneShape from "./RenderCellPhoneShape";
 
 interface RenderTypeSelectorProps {
   selected?: string | null;
@@ -37,7 +36,7 @@ const MyBadge = styled(Badge)(({ pro }: { pro?: boolean }) => ({
   }
 }));
 
-const RenderTypeSelector = ({ selected, handleSelect, isLogged }: RenderTypeSelectorProps) => { // @ts-ignore
+const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps) => { // @ts-ignore
   const { data, setData }: ContextData = useContext(Context);
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
   const isDynamic = useMemo(() => Boolean(data.isDynamic), [data.isDynamic]);
