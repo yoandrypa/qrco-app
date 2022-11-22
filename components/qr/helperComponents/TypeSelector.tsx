@@ -111,7 +111,7 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
           sx={{ '.MuiPopover-paper': { borderRadius: '25px', boxShadow: '0px 7px 5px 0px rgb(0 0 0 / 50%)' } }}
         >
           <RenderCellPhoneShape onClose={() => setAnchorEl(null)}>
-            <RenderIframe src={`${process.env.REACT_MICROSITES_ROUTE}/sample/${icon}`} width={291} height={520}/>
+            <RenderIframe src={`${process.env.REACT_MICROSITES_ROUTE}/sample/${icon}`} width="291px" height="520px"/>
           </RenderCellPhoneShape>
         </Popover>
       )}
