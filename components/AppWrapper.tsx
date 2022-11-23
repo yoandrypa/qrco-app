@@ -112,7 +112,6 @@ export default function AppWrapper(props: AppWrapperProps) {
       };
 
       fetchUser().then(profile => {
-        let isInTrialMode = false;
         //@ts-ignore
         if (profile?.createdAt !== null && !profile?.customerId) {//(!profile?.customerId || profile?.subscriptionData?.status !== "active")) {
           // @ts-ignore
