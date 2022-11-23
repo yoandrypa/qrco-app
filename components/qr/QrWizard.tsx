@@ -149,10 +149,12 @@ const QrWizard = ({ children }: QrWizardProps) => {
         } else {
           // updatingHandler("Saving donation payment data");
           try {
+            const temp = (process.env.REACT_NODE_ENV != 'production') ?
+              userInfo.signInUserSession.idToken.jwtToken :
+              userInfo.signInUserSession.accessToken.jwtToken;
+
             const price = await EbanuxHandler.createEbanuxDonationPrice(userInfo.attributes.sub,
-              (process.env.REACT_NODE_ENV === 'develop') ?
-                userInfo.signInUserSession.idToken.jwtToken :
-                userInfo.signInUserSession.accessToken.jwtToken,
+              temp,
               priceData);
             data["donationPriceId"] = price.data.result.price.id;
             data["donationProductId"] = price.data.result.product.id;
