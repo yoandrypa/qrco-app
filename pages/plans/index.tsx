@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import Box from '@mui/material/Box'
-import { Amplify } from 'aws-amplify';
+import { Amplify, Auth } from 'aws-amplify';
 import awsconfig from '../../libs/aws/aws-exports'
 import Button from '@mui/material/Button'
 import DialogActions from '@mui/material/DialogActions'
@@ -35,8 +35,6 @@ type Props = {
 Amplify.configure(awsconfig);
 
 const Plans = (props: Props) => {
-
-
   const [user, setUser] = useState<any>(null);
   const [mustLogInDlg, setMustLogInDlg] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -54,15 +52,13 @@ const Plans = (props: Props) => {
 
 
   useEffect(() => {
-    // Auth.currentAuthenticatedUser()
-    //     .then(currentUser => setUser(currentUser.attributes.email))
-    //     .catch(() => setUser(null));
+    Auth.currentAuthenticatedUser()
+      .then(currentUser => { })
+      .catch(() => setUser(null));
 
-    // console.log(user)       
     //@ts-ignore
     (userInfo != null && userInfo != undefined) && setUser(userInfo)
     if (props.logged === true) {
-      console.log(props.profile)
       //@ts-ignore
       if (props.profile?.createdAt != null && !props.profile?.customerId) {
         //@ts-ignore
@@ -326,13 +322,11 @@ export const getServerSideProps: GetServerSideProps = async ({ query, req, res }
       }
     }
   } else {
-    console.log(userInfo)
+
     //@ts-ignore
     const userData = JSON.parse(userInfo.userData as string)
     const userId = userData.UserAttributes[0].Value;
-    console.log('user infoData es', userData)
     const data: object = await get(userId)
-    console.log('data retrieved', data)
     return {
       props: {
         logged: true,

@@ -12,6 +12,9 @@ export interface StepsProps {
     signInUserSession: {
       accessToken: {
         jwtToken: string
+      },
+      idToken: {
+        jwtToken: string
       }
     }
   };
@@ -48,7 +51,7 @@ export interface GenProps {
 export const steps = ["Type", "Content", "Design"];
 
 export const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame: FramesType,
-                        cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, edit: boolean): void => {
+  cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, edit: boolean): void => {
   if (!areEquals(frame, initialFrame)) {
     qrDesign.frame = frame;
   }
