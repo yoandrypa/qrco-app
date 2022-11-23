@@ -150,7 +150,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           updatingHandler("Saving donation payment data");
           try {
             const price = await EbanuxHandler.createEbanuxDonationPrice(userInfo.attributes.sub,
-              process.env.NODE_ENV === 'development' ?
+              (process.env.REACT_NODE_ENV === 'develop') ?
                 userInfo.signInUserSession.idToken.jwtToken :
                 userInfo.signInUserSession.accessToken.jwtToken,
               priceData);
