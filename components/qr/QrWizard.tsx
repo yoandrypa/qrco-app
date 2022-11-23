@@ -147,7 +147,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           }
 
         } else {
-          updatingHandler("Saving donation payment data");
+          // updatingHandler("Saving donation payment data");
           try {
             const price = await EbanuxHandler.createEbanuxDonationPrice(userInfo.attributes.sub,
               (process.env.REACT_NODE_ENV === 'develop') ?
@@ -156,7 +156,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
               priceData);
             data["donationPriceId"] = price.data.result.price.id;
             data["donationProductId"] = price.data.result.product.id;
-            updatingHandler(null, true)
+            // updatingHandler(null, true)
           } catch (error) {
             setIsError(true);
             updatingHandler(null, false)
