@@ -253,10 +253,6 @@ const Plans = (props: Props) => {
       <Typography variant='h6' color='blue' textAlign={'center'} marginBottom={3} marginTop={2}>PRICING PLANS</Typography>
       <Typography variant='h4' textAlign={'center'} marginBottom={3}>Save money with our annual plans</Typography>
 
-
-      {/* {startTrialDate && <TrialCountDown dateFrom={startTrialDate}/>} */}
-      {/* {startTrialDate && <CountDown startDate={startTrialDate}/>}*/}
-
       <Box sx={{ alignContent: 'center', display: 'flex', spacing: 3, justifyContent: 'center' }}>
         <Tabs value={activeTab} onChange={handleTabChange}>
           <Tab label='Monthly Plan' />
