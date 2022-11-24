@@ -141,14 +141,17 @@ const QrWizard = ({ children }: QrWizardProps) => {
         };
         if (data["donationPriceId"]) {
           try {
-
+            updatingHandler("Updating donation payment data");
+            updatingHandler(null, true);
           } catch (error) {
             setIsError(true);
+            updatingHandler(null, false);
           }
 
         } else {
-          // updatingHandler("Saving donation payment data");
+
           try {
+            updatingHandler("Creating Donation microsite");
             const temp = (process.env.REACT_NODE_ENV != 'production') ?
               userInfo.signInUserSession.idToken.jwtToken :
               userInfo.signInUserSession.accessToken.jwtToken;
@@ -158,7 +161,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
               priceData);
             data["donationPriceId"] = price.data.result.price.id;
             data["donationProductId"] = price.data.result.product.id;
-            // updatingHandler(null, true)
+            updatingHandler(null, true)
           } catch (error) {
             setIsError(true);
             updatingHandler(null, false)
