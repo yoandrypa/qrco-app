@@ -20,12 +20,15 @@ function createData(
 }
 
 export default function VisitTechnologyDetails({ visitData }: any) {
-  let continentRows: { name, visits, percent }[] = [];
+  let continentRows: { name: string, visits: number, percent: number }[] = [];
+  // @ts-ignore
   Object.keys(visitData.continents).forEach(continent => continentRows.push(continent, visitData.continents[continent], visitData.total));
-  let countriesRows = [];
+  let countriesRows: { name: string, visits: number, percent: number }[] = [];
+  // @ts-ignore
   Object.keys(visitData.countries).forEach(country => countriesRows.push(country, visitData.countries[country], visitData.total));
-  let citiesRows = [];
-  Object.keys(visitData.cities).forEach(city => citiesRows.push(city, visitData.cities[city], visitData.total));
+  let citiesRows: { name: string, visits: number, percent: number }[] = [];
+  // @ts-ignore
+  Object.keys(visitData.cities).forEach((city) => citiesRows.push(city, visitData.cities[city], visitData.total));
 
   return (
     <TableContainer component={Paper}>
