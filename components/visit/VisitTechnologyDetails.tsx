@@ -19,7 +19,7 @@ function createData(
   };
 }
 
-export default function VisitTechnologyDetails({ visitData }) {
+export default function VisitTechnologyDetails({ visitData }: any) {
   let deviceRows = [];
   if (visitData.dv_mobile > 0) {
     deviceRows.push(createData("Movile", visitData.dv_mobile, visitData.total));
