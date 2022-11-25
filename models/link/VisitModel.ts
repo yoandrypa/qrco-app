@@ -9,7 +9,13 @@ const VisitSchema = new dynamoose.Schema({
     hashKey: true
   },
   shortLinkId: { type: [LinkModel, Object] },
+  continents: {
+    type: Object
+  },
   countries: {
+    type: Object
+  },
+  cities: {
     type: Object
   },
   link_id: {
@@ -54,6 +60,26 @@ const VisitSchema = new dynamoose.Schema({
     default: 0
   },
   br_safari: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  dv_mobile: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  dv_tablet: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  dv_smarttv: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  dv_desktop: {
     type: Number,
     required: true,
     default: 0
