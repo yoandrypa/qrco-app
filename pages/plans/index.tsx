@@ -19,7 +19,7 @@ import Snackbar from '@mui/material/Snackbar'
 import Alert from '@mui/material/Alert'
 import BillingPortal from '../../components/billing/BillingPortal'
 import { get } from '../../handlers/users'
-import CountDown from '../../components/countdown/CountDown'
+
 type Props = {
   logged: boolean,
   profile?: {
@@ -221,11 +221,7 @@ const Plans = (props: Props) => {
     setActiveTab(value)
   }
 
-  // const action = (
-  //   <Button onClick={()=> window.location.href = 'mailto:'} color="primary" variant='contained' sx={{ marginLeft: 2 }} size="small">
-  //     Support
-  //   </Button>
-  // );
+
 
   return (
     <>
@@ -249,7 +245,6 @@ const Plans = (props: Props) => {
           </Button>
         </DialogActions>
       </Dialog>
-
       <Typography variant='h6' color='blue' textAlign={'center'} marginBottom={3} marginTop={2}>PRICING PLANS</Typography>
       <Typography variant='h4' textAlign={'center'} marginBottom={3}>Save money with our annual plans</Typography>
 
