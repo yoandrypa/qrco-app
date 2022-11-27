@@ -15,7 +15,7 @@ export const createEbanuxDonationPrice = async (userId: string, token: string, d
         },
         body: JSON.stringify(payload)
     };
-    const response = await fetch(`${EBANUX_API}/donation`, options);
+    const response = await fetch(`${EBANUX_API}/api/v1/donation`, options);
     return await handleFetchResponse(response);
 }
 
@@ -34,6 +34,6 @@ async function updateEbanuxDonationPrice(userId: string, token: string, priceId:
         },
         body: JSON.stringify(payload)
     };
-    const response = await fetch(`${EBANUX_API}/donation`, options);
+    const response = await fetch(`${EBANUX_API}/api/v1/donation`, options);
     return await handleFetchResponse(response);
 }
