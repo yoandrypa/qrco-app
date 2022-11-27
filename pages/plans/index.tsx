@@ -196,22 +196,27 @@ const Plans = (props: Props) => {
 
   const handleClick = async (plan: string) => {
     if (!props.logged) {
-      setMustLogInDlg(true)
+      router.push('/?login=true')
     } else {
-
       try {
-        const response = await API.post(`/api/create-customer`, {
+        const payload = {
           id: user.attributes.sub,
           email: user.attributes.email,
           plan_type: plan
-        })
-
-        if (response.status === 200 && response.data.result.url) {
-          window.location.href = response.data.result.url
         }
-
+        const options = {
+          method: 'post',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload)
+        };
+        const response = await fetch(`/api/create-customer`, options);
+        const data = await handleFetchResponse(response)
+        //@ts-ignore
+        window.location.href = data.result.url;
       } catch (error) {
-        const errorMessage = error instanceof AxiosError ? error.message : 'Something went wrong'
+        const errorMessage = error instanceof Error ? error.message : 'Something went wrong. We are working on it.'
         setError(errorMessage)
       }
     }
@@ -221,8 +226,6 @@ const Plans = (props: Props) => {
     setActiveTab(value)
   }
 
-
-
   return (
     <>
       <Snackbar open={!!error} autoHideDuration={6000}>
@@ -230,21 +233,6 @@ const Plans = (props: Props) => {
           {error}
         </Alert>
       </Snackbar>
-      <Dialog open={mustLogInDlg}>
-        <DialogContent>
-          Sorry, you must have an account to buy a Plan.
-        </DialogContent>
-        <DialogActions>
-          <Button variant='contained' onClick={async () => {
-            await router.push('/?login=true')
-          }}>
-            Login
-          </Button>
-          <Button onClick={() => setMustLogInDlg(false)}>
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
       <Typography variant='h6' color='blue' textAlign={'center'} marginBottom={3} marginTop={2}>PRICING PLANS</Typography>
       <Typography variant='h4' textAlign={'center'} marginBottom={3}>Save money with our annual plans</Typography>
 
@@ -280,6 +268,7 @@ const Plans = (props: Props) => {
 // You should use getServerSideProps when:
 // - Only if you need to pre-render a page whose data must be fetched at request time
 import { GetServerSideProps } from 'next'
+import { handleFetchResponse } from '../../handlers/helpers'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, req, res }) => {
 
