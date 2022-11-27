@@ -31,7 +31,7 @@ import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { humanDate } from "../helpers/generalFunctions";
 import { handleDesignerString, handleInitialData } from "../../helpers/qr/helpers";
-import DashboardIcon from "@mui/icons-material/Dashboard";
+import PaidIcon from '@mui/icons-material/Paid';
 
 const QrList = ({ qrs }: any) => {
   const [deleteConfirm, setDeleteConfirm] = useState<{
@@ -110,25 +110,24 @@ const QrList = ({ qrs }: any) => {
 
   const renderOptions = (qr: any) => (
     <Stack direction="row" justifyContent="flex-end" alignItems="center">
+      {(qr.qrType === "donations" && !!qr.donationProductId) &&
+        (
+          <Link target="_blank"
+            href={process.env.REACT_NODE_ENV === "develop" ? "https://dev-app.ebanux.com/checkouts" : "https://app.ebanux.com/checkouts"}
+            rel="noopener noreferrer">
+            <Tooltip title="View Donations">
+              <IconButton size='medium' color="info" disabled={isLoading} onClick={handleDashboard}>
+                <PaidIcon color='success' />
+              </IconButton>
+            </Tooltip>
+          </Link>
+        )}
       <IconButton color="primary" disabled={isLoading} onClick={() => handleEdit(qr)}>
         <EditOutlined />
       </IconButton>
       <IconButton color="error" disabled={isLoading} onClick={() => showConfirmationDialog(qr.userId, qr.createdAt)}>
         <DeleteOutlineRounded />
       </IconButton>
-      {(qr.qrType === "donations" && !!qr.donationProductId) &&
-        (
-          <a target="_blank"
-             href={process.env.REACT_NODE_ENV === "develop" ? "https://dev-app.ebanux.com/checkouts" : "https://app.ebanux.com/checkouts"}
-             rel="noopener noreferrer">
-            <Tooltip title="Go to Dashboard">
-              <IconButton color="info" disabled={isLoading} onClick={handleDashboard}>
-                <DashboardIcon />
-              </IconButton>
-            </Tooltip>
-          </a>
-
-        )}
     </Stack>
   );
 
@@ -181,7 +180,7 @@ const QrList = ({ qrs }: any) => {
                           </Box>
                           <Stack direction="column" sx={{ my: "auto" }}>
                             <Typography variant="subtitle2"
-                                        sx={{ color: "orange", mb: "-7px" }}>{capitalize(qr.qrType)}</Typography>
+                              sx={{ color: "orange", mb: "-7px" }}>{capitalize(qr.qrType)}</Typography>
                             <Typography variant="h6" sx={{ fontWeight: "bold", mb: "-2px" }}>{qr.qrName}</Typography>
                             {isWide ? (
                               <Typography variant="caption" sx={{ color: "gray" }}>
@@ -215,7 +214,7 @@ const QrList = ({ qrs }: any) => {
                       <Box sx={{ display: "flex" }}>
                         <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
                         <Stack direction="column" spacing={0.8} justifyContent="flex-start" alignItems="flex-start"
-                               sx={{ ml: { xs: 2, sm: 0 } }}>
+                          sx={{ ml: { xs: 2, sm: 0 } }}>
                           {renderStaticDynamic(qr.isDynamic)}
                           {qrLink.address ? (
                             <Typography variant="caption" sx={{ color: "gray" }}>{/*@ts-ignore*/}
