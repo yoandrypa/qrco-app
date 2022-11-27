@@ -11,7 +11,7 @@ import Context from '../../components/context/Context'
 import Grid from '@mui/material/Grid'
 import { get } from '../../handlers/users'
 import Box from '@mui/material/Box'
-import Image from 'next/image'
+import CircularProgress from '@mui/material/CircularProgress';
 
 type Props = {
   logged: boolean,
@@ -85,8 +85,9 @@ const AccountPage = (props: Props) => {
         left: "50%",
         transform: "translate(-50%, -50%)"
       }}>
+
         <Typography textAlign={'center'} >
-          No data available yet . Try refresh this page.
+          No data available yet . Loading...
         </Typography>
       </Box>
 
