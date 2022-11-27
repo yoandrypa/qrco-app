@@ -6,15 +6,8 @@ import Typography from '@mui/material/Typography'
 import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
 import Box from '@mui/material/Box'
-import { Amplify, Auth } from 'aws-amplify';
-import awsconfig from '../../libs/aws/aws-exports'
-import Button from '@mui/material/Button'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import Dialog from '@mui/material/Dialog'
 import { useRouter } from 'next/router';
 import Context from '../../components/context/Context'
-import axios, { AxiosError } from 'axios'
 import Snackbar from '@mui/material/Snackbar'
 import Alert from '@mui/material/Alert'
 import BillingPortal from '../../components/billing/BillingPortal'
@@ -32,37 +25,21 @@ type Props = {
 
 }
 
-Amplify.configure(awsconfig);
-
 const Plans = (props: Props) => {
   const [user, setUser] = useState<any>(null);
-  const [mustLogInDlg, setMustLogInDlg] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [startTrialDate, setStartTrialDate] = useState<string | null>(null)
-
   // @ts-ignore
   const { userInfo } = useContext(Context)
-  const API = axios.create({
-    baseURL: process.env.REACT_APP_DEFAULT_DOMAIN === 'localhost:3000' ?
-      `http://${process.env.REACT_APP_DEFAULT_DOMAIN}` :
-      `https://${process.env.REACT_APP_DEFAULT_DOMAIN}`
-
-  });
 
 
 
   useEffect(() => {
-    Auth.currentAuthenticatedUser()
-      .then(currentUser => { })
-      .catch(() => setUser(null));
-
     //@ts-ignore
     (userInfo != null && userInfo != undefined) && setUser(userInfo)
     if (props.logged === true) {
       //@ts-ignore
       if (props.profile?.createdAt != null && !props.profile?.customerId) {
         //@ts-ignore
-        setStartTrialDate(props.profile.createdAt)
       }
 
       if (props.profile?.subscriptionData != null && props.profile?.customerId != null) {
@@ -193,10 +170,10 @@ const Plans = (props: Props) => {
     ],
   }
 
-
   const handleClick = async (plan: string) => {
-    if (!props.logged) {
+    if (!user) {
       router.push('/?login=true')
+      return;
     } else {
       try {
         const payload = {
@@ -213,8 +190,9 @@ const Plans = (props: Props) => {
         };
         const response = await fetch(`/api/create-customer`, options);
         const data = await handleFetchResponse(response)
+        if (data instanceof Error) throw data;
         //@ts-ignore
-        window.location.href = data.result.url;
+        window.location.href = data.result?.url;
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Something went wrong. We are working on it.'
         setError(errorMessage)
@@ -260,8 +238,6 @@ const Plans = (props: Props) => {
         </Grid>
       </Grid>
     </>
-
-
   )
 }
 
@@ -291,10 +267,6 @@ export const getServerSideProps: GetServerSideProps = async ({ query, req, res }
   };
 
   const userInfo = await getUserInfo();
-  if (userInfo) {
-
-  }
-
   if (!userInfo?.userData) {
     return {
       props: {
@@ -302,7 +274,6 @@ export const getServerSideProps: GetServerSideProps = async ({ query, req, res }
       }
     }
   } else {
-
     //@ts-ignore
     const userData = JSON.parse(userInfo.userData as string)
     const userId = userData.UserAttributes[0].Value;
@@ -314,8 +285,6 @@ export const getServerSideProps: GetServerSideProps = async ({ query, req, res }
       }
     }
   }
-
-
 }
 
 export default Plans
