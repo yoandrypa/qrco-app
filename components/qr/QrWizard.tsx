@@ -155,15 +155,15 @@ const QrWizard = ({ children }: QrWizardProps) => {
             const temp = (process.env.REACT_NODE_ENV != 'production') ?
               userInfo.signInUserSession.idToken.jwtToken :
               userInfo.signInUserSession.accessToken.jwtToken;
-
             const price = await EbanuxHandler.createEbanuxDonationPrice(userInfo.attributes.sub,
               temp,
               priceData);
-            data["donationPriceId"] = price.data.result.price.id;
-            data["donationProductId"] = price.data.result.product.id;
+            data["donationPriceId"] = price.result.price.id;
+            data["donationProductId"] = price.result.product.id;
             updatingHandler(null, true)
           } catch (error) {
             setIsError(true);
+            console.log(error)
             updatingHandler(null, false)
           }
         }
