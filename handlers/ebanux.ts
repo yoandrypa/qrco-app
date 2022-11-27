@@ -1,39 +1,39 @@
-import axios from 'axios'
-const SERVER_URL = process.env.REACT_NODE_ENV === 'develop' ? 'https://dev.ebanux.link' : 'https://ebanux.link'
+const EBANUX_API = process.env.REACT_EBANUX_API || 'https://dev.ebanux.link';
 import { EbanuxDonationPriceData } from '../components/qr/types/types';
-
-const APIv1 = axios.create({
-    baseURL: `${SERVER_URL}/api/v1`
-});
-
-//Temporarely use of APIv1 and APIv2 until is fully migrated
-export const APIv2 = axios.create({
-    baseURL: `${SERVER_URL}/api/v2.0`,
-
-});
+import { handleFetchResponse } from './helpers';
 
 export const createEbanuxDonationPrice = async (userId: string, token: string, data: EbanuxDonationPriceData) => {
-    const result = await APIv1.post('/donation', {
+    const payload = {
         amount: data.unitAmountUSD,
         cognitoUserId: userId
-    }, {
+    };
+    const options = {
+        method: 'post',
         headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-    return result;
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+    };
+    const response = await fetch(`${EBANUX_API}/donation`, options);
+    return await handleFetchResponse(response);
 }
 
 async function updateEbanuxDonationPrice(userId: string, token: string, priceId: string, data: EbanuxDonationPriceData) {
-    const result = await APIv1.patch('/donation', {
+    const payload = {
         amount: data.unitAmountUSD,
         cognitoUserId: userId,
         priceId: data.priceId,
         productId: data.productId
-    }, {
+    };
+    const options = {
+        method: 'patch',
         headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-    return result;
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+    };
+    const response = await fetch(`${EBANUX_API}/donation`, options);
+    return await handleFetchResponse(response);
 }
