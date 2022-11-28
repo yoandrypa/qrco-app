@@ -14,3 +14,34 @@ export const query = async (req, res, next) => {
 
   next();
 };
+
+
+export const handleFetchResponse = async (fetchResponse: Response): Promise<any | Error> => {
+  if (!fetchResponse.ok) {
+    if (!fetchResponse.status) {
+      return new Error('Ops, something went wrong. Check your Internet connection.')
+    }
+    let result: Error;
+    switch (fetchResponse.status) {
+      case 401:
+      case 403:
+        result = new Error('Access denied. Your session might expired, try login again')
+        break;
+      case 500:
+      case 400:
+      case 502:
+        result = new Error('Ops, something went wrong. Don\'t worry, our team is working on it.')
+        break;
+      default:
+        result = new Error(`Error ${fetchResponse.status} ${fetchResponse?.statusText}`)
+        break;
+    }
+    return result;
+  }
+  try {
+    return await fetchResponse.json()
+  } catch (error) {
+    //this will rarely happen
+    return new Error('Bad Request. Error decoding JSON response');
+  }
+}
