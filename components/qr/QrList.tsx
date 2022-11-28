@@ -111,10 +111,6 @@ const QrList = ({ qrs }: any) => {
 
   const renderOptions = (qr: any) => (
     <Stack direction="row" justifyContent="flex-end" alignItems="center">
-      <IconButton color="primary" disabled={isLoading}
-                  onClick={() => router.push("/qr/" + (new Date(qr.shortLinkId.createdAt)).getTime() + "/details")}>
-        <InfoOutlinedIcon />
-      </IconButton>
       <IconButton color="primary" disabled={isLoading} onClick={() => handleEdit(qr)}>
         <EditOutlined />
       </IconButton>
