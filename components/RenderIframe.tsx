@@ -71,7 +71,7 @@ export default function RenderIframe({src, width, height}: IframeProps) {
         if (iRef.current) { // @ts-ignore
           iRef.current.contentWindow.postMessage(JSON.stringify({parentWidth: width, parentHeight: height}), process.env.REACT_MICROSITES_ROUTE);
         }
-      }, 250);
+      }, 500);
       iRef.current.onload = null;
     }
   }
