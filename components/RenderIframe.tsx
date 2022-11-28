@@ -65,14 +65,6 @@ export default function RenderIframe({src, width, height}: IframeProps) {
 
   const handleLoad = () => {
     setLoading(false);
-    if (iRef.current?.contentWindow) {
-      setTimeout(() => {
-        if (iRef.current) { // @ts-ignore
-          iRef.current.contentWindow.postMessage(JSON.stringify({parentWidth: width, parentHeight: height}), '*');
-        }
-      }, 1000);
-      iRef.current.onload = null;
-    }
   }
 
   const handleError = () => {
@@ -87,6 +79,12 @@ export default function RenderIframe({src, width, height}: IframeProps) {
           const data = JSON.parse(event.data)
           if (data.error) {
             setWhatToRender(data.message);
+          } else if (data.ready) {
+            if (iRef.current) {
+              setTimeout(() => { // @ts-ignore
+                iRef.current.contentWindow.postMessage(JSON.stringify({parentWidth: width, parentHeight: height}), '*');
+              }, 150);
+            }
           }
         } catch (e) {
           console.error(e)
