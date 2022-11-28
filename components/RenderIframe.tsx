@@ -67,9 +67,8 @@ export default function RenderIframe({src, width, height}: IframeProps) {
     setLoading(false);
     if (iRef.current?.contentWindow) {
       setTimeout(() => {
-        console.log('!>!>!>!>', process.env.REACT_MICROSITES_ROUTE);
         if (iRef.current) { // @ts-ignore
-          iRef.current.contentWindow.postMessage(JSON.stringify({parentWidth: width, parentHeight: height}), '*');
+          iRef.current.contentWindow.postMessage(JSON.stringify({parentWidth: width, parentHeight: height}), process.env.REACT_MICROSITES_ROUTE);
         }
       }, 1000);
       iRef.current.onload = null;
