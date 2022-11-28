@@ -74,12 +74,10 @@ export default function RenderIframe({src, width, height}: IframeProps) {
 
   useEffect(() => {
     const handler = (event: any) => {
-      console.log('*****', event.origin);
-      if (event.origin === process.env.REACT_MICROSITES_ROUTE) {
-        console.log('------');
+
+      if (event.origin.replace('https://www.', 'https://') === process.env.REACT_MICROSITES_ROUTE) {
         try {
           const data = JSON.parse(event.data)
-          console.log('>>',data)
           if (data.error) {
             setWhatToRender(data.message);
           } else if (data.ready) {
