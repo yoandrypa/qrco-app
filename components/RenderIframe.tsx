@@ -74,7 +74,7 @@ export default function RenderIframe({src, width, height}: IframeProps) {
 
   useEffect(() => {
     const handler = (event: any) => {
-      console.log('*****');
+      console.log('*****', event.origin);
       if (event.origin === process.env.REACT_MICROSITES_ROUTE) {
         console.log('------');
         try {
