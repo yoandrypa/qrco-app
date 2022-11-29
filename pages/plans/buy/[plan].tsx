@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useRouter } from 'next/router'
 import { get } from '../../../handlers/users'
 import { GetServerSideProps } from 'next'
@@ -25,7 +25,6 @@ type Props = {
 Amplify.configure(awsExports);
 
 const PlanType = (props: Props) => {
-    const [isLoading, setIsLoading] = useState<boolean>(false)
     const router = useRouter();
 
     if (router.isFallback) {
