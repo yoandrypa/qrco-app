@@ -21,6 +21,10 @@ function createData(
   };
 }
 
+const regionNames = new Intl.DisplayNames(
+  ['en'], {type: 'region'}
+);
+
 export default function VisitTechnologyDetails({ visitData }: any) {
   let countriesRows: { name: string, visits: number, percent: number }[] = [];
   // @ts-ignore
@@ -52,7 +56,7 @@ export default function VisitTechnologyDetails({ visitData }: any) {
                 key={index}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell component="th" scope="row">{row.name}</TableCell>
+                <TableCell component="th" scope="row">{regionNames.of(row.name)}</TableCell>
                 <TableCell align="right">{row.visits}</TableCell>
                 <TableCell align="right">{row.percent}</TableCell>
               </TableRow>

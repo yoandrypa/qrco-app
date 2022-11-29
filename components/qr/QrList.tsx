@@ -111,7 +111,7 @@ const QrList = ({ qrs }: any) => {
 
   const renderOptions = (qr: any) => (
     <Stack direction="row" justifyContent="flex-end" alignItems="center">
-      <IconButton color="primary" disabled={isLoading}
+      <IconButton color="primary" disabled={isLoading} hidden={qr.shortLinkId.visitCount === 0}
                   onClick={() => {
                     setLoading(true);
                     router.push("/qr/" + (new Date(qr.shortLinkId.createdAt)).getTime() + "/details").then(() => setLoading(false));
