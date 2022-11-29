@@ -14,22 +14,9 @@ import QrGen from "../type";
 Amplify.configure(awsExports);
 
 export default function Details({ visitData }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const router = useRouter();
-
-  if (router.isFallback) {
-    return <PleaseWait />;
-  }
-
-  if (visitData === "noUser" &&
-    ((!router.query.login && !router.query.qr_text) || (router.pathname === "/" && !router.query.login))) {
-    return <QrGen />;
-  }
-
   return (
     <Authenticator components={components}>
-      {({ user }) => (
-        <QrDetails visitData={JSON.parse(visitData)} user={user} />
-      )}
+      <QrDetails visitData={JSON.parse(visitData)} />
     </Authenticator>
   );
 };
@@ -72,7 +59,14 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
   }
 
   const createdAt = JSON.parse(params?.id as string);
-  const visitData = (await VisitHandler.findByShortLink({ userId: user.id, createdAt }))[0];
+  const visitData = (await VisitHandler.findByShortLink({ userId: user.id, createdAt }));
+
+  if (!visitData) {
+    return {
+      notFound: true
+    };
+  }
+
   return {
     props: { visitData: JSON.stringify(visitData) }
   };

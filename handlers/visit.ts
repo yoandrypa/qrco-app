@@ -4,7 +4,9 @@ import { CustomError } from "../utils";
 
 export const findByShortLink = async (shortLinkId: { userId: string, createdAt: number }) => {
   try {
-    return await Visit.find({ userId: { eq: shortLinkId.userId }, shortLinkId: { eq: shortLinkId } });
+    const res = await Visit.find(shortLinkId);
+    console.debug({ res });
+    return res;
   } catch (e: any) {
     throw new CustomError(e.message, e.statusCode || 500, e);
   }

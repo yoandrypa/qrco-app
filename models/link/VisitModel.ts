@@ -9,9 +9,6 @@ const VisitSchema = new dynamoose.Schema({
     hashKey: true
   },
   shortLinkId: { type: [LinkModel, Object] },
-  continents: {
-    type: Object
-  },
   countries: {
     type: Object
   },

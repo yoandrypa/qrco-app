@@ -1,11 +1,13 @@
 import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+import Stack from "@mui/material/Stack";
 
 function createData(
   name: string,
@@ -15,87 +17,73 @@ function createData(
   return {
     name,
     visits,
-    percent: visits * 100 / total
+    percent: Math.round((visits * 100 / total) * 10) / 10
   };
 }
 
 export default function VisitTechnologyDetails({ visitData }: any) {
-  let continentRows: { name: string, visits: number, percent: number }[] = [];
-  // @ts-ignore
-  Object.keys(visitData.continents).forEach(continent => continentRows.push(continent, visitData.continents[continent], visitData.total));
   let countriesRows: { name: string, visits: number, percent: number }[] = [];
   // @ts-ignore
-  Object.keys(visitData.countries).forEach(country => countriesRows.push(country, visitData.countries[country], visitData.total));
+  Object.keys(visitData.countries).forEach(country => countriesRows.push(
+    createData(country, visitData.countries[country], visitData.total)
+  ));
+
   let citiesRows: { name: string, visits: number, percent: number }[] = [];
   // @ts-ignore
-  Object.keys(visitData.cities).forEach((city) => citiesRows.push(city, visitData.cities[city], visitData.total));
+  Object.keys(visitData.cities).forEach((city) => citiesRows.push(
+    createData(city, visitData.cities[city], visitData.total)
+  ));
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        {/*Continents*/}
-        <TableHead>
-          <TableRow>
-            <TableCell>Continent</TableCell>
-            <TableCell align="right">Visits</TableCell>
-            <TableCell align="right">%</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {continentRows.map((row, index) => (
-            <TableRow
-              key={index}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">{row.name}</TableCell>
-              <TableCell align="right">{row.visits}</TableCell>
-              <TableCell align="right">{row.percent}</TableCell>
+    <Stack direction="column" spacing={2} width={"100%"}>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} size="small">
+          {/*Countries*/}
+          <TableHead>
+            <TableRow>
+              <TableCell>Countries</TableCell>
+              <TableCell align="right" sx={{ width: 100 }}>Visits</TableCell>
+              <TableCell align="right" sx={{ width: 100 }}>%</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-
-        {/*Countries*/}
-        <TableHead>
-          <TableRow>
-            <TableCell>Country</TableCell>
-            <TableCell align="right">Visits</TableCell>
-            <TableCell align="right">%</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {countriesRows.map((row, index) => (
-            <TableRow
-              key={index}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">{row.name}</TableCell>
-              <TableCell align="right">{row.visits}</TableCell>
-              <TableCell align="right">{row.percent}</TableCell>
+          </TableHead>
+          <TableBody>
+            {countriesRows.map((row, index) => (
+              <TableRow
+                key={index}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">{row.name}</TableCell>
+                <TableCell align="right">{row.visits}</TableCell>
+                <TableCell align="right">{row.percent}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} size="small">
+          {/*Cities*/}
+          <TableHead>
+            <TableRow>
+              <TableCell>Cities</TableCell>
+              <TableCell align="right" sx={{ width: 100 }}>Visits</TableCell>
+              <TableCell align="right" sx={{ width: 100 }}>%</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-
-        {/*Cities*/}
-        <TableHead>
-          <TableRow>
-            <TableCell>City</TableCell>
-            <TableCell align="right">Visits</TableCell>
-            <TableCell align="right">%</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {citiesRows.map((row, index) => (
-            <TableRow
-              key={index}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">{row.name}</TableCell>
-              <TableCell align="right">{row.visits}</TableCell>
-              <TableCell align="right">{row.percent}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {citiesRows.map((row, index) => (
+              <TableRow
+                key={index}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">{row.name}</TableCell>
+                <TableCell align="right">{row.visits}</TableCell>
+                <TableCell align="right">{row.percent}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Stack>
   );
 }

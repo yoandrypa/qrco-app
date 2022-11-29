@@ -1,11 +1,13 @@
 import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+import Stack from "@mui/material/Stack";
 
 function createData(
   name: string,
@@ -15,7 +17,7 @@ function createData(
   return {
     name,
     visits,
-    percent: visits * 100 / total
+    percent: Math.round((visits * 100 / total) * 100) / 100
   };
 }
 
@@ -52,49 +54,55 @@ export default function VisitTechnologyDetails({ visitData }: any) {
   }
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        {/*Devices*/}
-        <TableHead>
-          <TableRow>
-            <TableCell>Device</TableCell>
-            <TableCell align="right">Visits</TableCell>
-            <TableCell align="right">%</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {deviceRows.map((row, index) => (
-            <TableRow
-              key={index}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">{row.name}</TableCell>
-              <TableCell align="right">{row.visits}</TableCell>
-              <TableCell align="right">{row.percent}</TableCell>
+    <Stack direction="column" spacing={2} width={"100%"}>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} size="small">
+          {/*Devices*/}
+          <TableHead>
+            <TableRow>
+              <TableCell>Devices</TableCell>
+              <TableCell align="right">Visits</TableCell>
+              <TableCell align="right">%</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-        {/*OS*/}
-        <TableHead>
-          <TableRow>
-            <TableCell>OS</TableCell>
-            <TableCell align="right">Visits</TableCell>
-            <TableCell align="right">%</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {osRows.map((row, index) => (
-            <TableRow
-              key={index}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">{row.name}</TableCell>
-              <TableCell align="right">{row.visits}</TableCell>
-              <TableCell align="right">{row.percent}</TableCell>
+          </TableHead>
+          <TableBody>
+            {deviceRows.map((row, index) => (
+              <TableRow
+                key={index}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">{row.name}</TableCell>
+                <TableCell align="right" sx={{ width: 100 }}>{row.visits}</TableCell>
+                <TableCell align="right" sx={{ width: 100 }}>{row.percent}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} size="small">
+          {/*OS*/}
+          <TableHead>
+            <TableRow>
+              <TableCell>Operating Systems</TableCell>
+              <TableCell align="right">Visits</TableCell>
+              <TableCell align="right">%</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {osRows.map((row, index) => (
+              <TableRow
+                key={index}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">{row.name}</TableCell>
+                <TableCell align="right" sx={{ width: 100 }}>{row.visits}</TableCell>
+                <TableCell align="right" sx={{ width: 100 }}>{row.percent}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Stack>
   );
 }

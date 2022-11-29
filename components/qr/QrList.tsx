@@ -10,7 +10,7 @@ import Alert from "@mui/material/Alert";
 import DeleteOutlineRounded from "@mui/icons-material/DeleteOutlineRounded";
 import Edit from "@mui/icons-material/Edit";
 import EditOutlined from "@mui/icons-material/EditOutlined";
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import SyncIcon from "@mui/icons-material/Sync";
 import SyncDisabledIcon from "@mui/icons-material/SyncDisabled";
 import Public from "@mui/icons-material/Public";
@@ -111,6 +111,13 @@ const QrList = ({ qrs }: any) => {
 
   const renderOptions = (qr: any) => (
     <Stack direction="row" justifyContent="flex-end" alignItems="center">
+      <IconButton color="primary" disabled={isLoading}
+                  onClick={() => {
+                    setLoading(true);
+                    router.push("/qr/" + (new Date(qr.shortLinkId.createdAt)).getTime() + "/details").then(() => setLoading(false));
+                  }}>
+        <InfoOutlinedIcon />
+      </IconButton>
       <IconButton color="primary" disabled={isLoading} onClick={() => handleEdit(qr)}>
         <EditOutlined />
       </IconButton>
