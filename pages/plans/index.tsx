@@ -19,10 +19,9 @@ type Props = {
     planType?: string,
     customerId?: string,
     subscriptionData?: {
-
+      //TODO
     }
   }
-
 }
 
 const Plans = (props: Props) => {
