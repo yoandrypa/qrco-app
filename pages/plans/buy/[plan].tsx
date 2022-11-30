@@ -1,6 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { get } from '../../../handlers/users'
+import * as UserHandler from "../../../handlers/users";
 import { GetServerSideProps } from 'next'
 import BuyPlan from '../../../components/plans/BuyPlan'
 //Generic Imports
@@ -67,16 +67,18 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
                 logged: false
             }
         }
-    } else {
-        //@ts-ignore
-        const userData = JSON.parse(userInfo.userData as string)
-        const userId = userData.UserAttributes[0].Value;
-        const data: object = await get(userId)
-        return {
-            props: {
-                logged: true,
-                profile: JSON.parse(JSON.stringify(data))
-            }
+    }
+
+    console.log(userInfo)
+    //@ts-ignore
+    const userData = JSON.parse(userInfo.userData as string)
+    const userId = userData.UserAttributes[0].Value;
+    const data: object = await UserHandler.get(userId)
+    return {
+        props: {
+            logged: true,
+            profile: JSON.parse(JSON.stringify(data))
         }
     }
 }
+

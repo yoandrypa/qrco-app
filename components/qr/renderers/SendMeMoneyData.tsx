@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box';
-import Common from '../helperComponents/Common';
 import Alert from '@mui/material/Alert'
 import RenderTextFields from './helpers/RenderTextFields';
 import MultiLineDetails from '../helperComponents/MultiLineDetails';
@@ -26,12 +25,18 @@ type Props = {
     handleValues: Function
 }
 
-const SimplePayLinkData = ({ data, setData, setIsWrong, handleValues }: Props) => {
-    const [amountValue, setAmountValue] = useState<number>(1);
+
+const SendMeMoneyData = ({ data, setData, setIsWrong, handleValues }: Props) => {
+    const [amountValue, setAmountValue] = useState<string>('');
+
+    useEffect(() => {
+
+    }, []);
+
 
 
     return (
-        <Common msg='Receive money worldwide.' >
+        <>
             <Alert severity='info' sx={{ marginTop: 2 }} >
                 In order to withdraw your funds to a credit card o bank account you&apos;ll
                 need a Payoneer or Stripe account. For more information contact us at info@ebanux.com
@@ -72,8 +77,8 @@ const SimplePayLinkData = ({ data, setData, setIsWrong, handleValues }: Props) =
                                 type='number'
                                 inputProps={{ step: '0.01', max: 100, min: 1 }}
                                 value={amountValue}
-                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setAmountValue(Number.parseFloat(event.target.value))}
-                                startAdornment={<InputAdornment position="start">USD $</InputAdornment>}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => setAmountValue((Number.parseFloat(event.target.value)).toFixed(2))}
+                                startAdornment={<InputAdornment position="start">(USD)$</InputAdornment>}
                                 label="Amount"
                             />
                         </FormControl>
@@ -84,8 +89,8 @@ const SimplePayLinkData = ({ data, setData, setIsWrong, handleValues }: Props) =
                 </Grid>
             </Grid>
 
-        </Common >
+        </>
     )
 }
 
-export default SimplePayLinkData
+export default SendMeMoneyData
