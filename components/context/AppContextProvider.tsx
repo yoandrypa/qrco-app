@@ -225,8 +225,6 @@ const AppContextProvider = (props: ContextProps) => {
   }
 
   const renderContent = () => {
-    debugger
-    console.log(router.pathname);
     if (router.pathname === "/" && router.query[PARAM_QR_TEXT] !== undefined) {
       const qrText = router.query[PARAM_QR_TEXT] as string;
       if (qrText !== undefined && qrText.length) {
