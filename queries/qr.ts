@@ -100,6 +100,14 @@ export const get = async (key: { userId: string, createdAt: number }) => {
   }
 };
 
+export const find = async (condition: any) => {
+  try {
+    return await QrDataModel.query(condition).exec()
+  } catch (e) {
+    throw e;
+  }
+};
+
 // @ts-ignore
 export const update = async (data) => {
   try {

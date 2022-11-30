@@ -1,5 +1,6 @@
 import * as Qr from "../queries/qr";
 import { CustomError } from "../utils";
+import * as Visit from "../queries/visit";
 
 // @ts-ignore
 export const create = async (data) => {
@@ -57,6 +58,14 @@ export const get = async (key: { userId: string, createdAt: number }) => {
     return await Qr.get(key);
   } catch (e: any) {
     throw new CustomError(e.message, 500, e);
+  }
+};
+
+export const findByShortLink = async (shortLinkId: { userId: string, createdAt: number }) => {
+  try {
+    return await Qr.find({ userId: { eq: shortLinkId.userId }, shortLinkId: { eq: shortLinkId } });
+  } catch (e: any) {
+    throw new CustomError(e.message, e.statusCode || 500, e);
   }
 };
 

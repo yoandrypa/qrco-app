@@ -111,7 +111,7 @@ const QrList = ({ qrs }: any) => {
 
   const renderOptions = (qr: any) => (
     <Stack direction="row" justifyContent="flex-end" alignItems="center">
-      <IconButton color="primary" disabled={isLoading} hidden={qr.shortLinkId.visitCount === 0}
+      <IconButton color="primary" disabled={isLoading}
                   onClick={() => {
                     setLoading(true);
                     router.push("/qr/" + (new Date(qr.shortLinkId.createdAt)).getTime() + "/details").then(() => setLoading(false));
@@ -216,7 +216,7 @@ const QrList = ({ qrs }: any) => {
                         }}>
                         {renderStaticDynamic(qr.isDynamic)}
                         <Typography variant="caption" style={{ color: "gray" }}>
-                          {`${qrLink.visitCount || 0} scans`}
+                          {`${qrLink.visitCount || 0} visits`}
                         </Typography>
                       </Box>
                     </Grid>) : (<Grid item xs={4}>
@@ -243,7 +243,7 @@ const QrList = ({ qrs }: any) => {
                               {qrLink.visitCount || 0}
                             </Typography>
                             <Typography variant="caption" style={{ color: "gray" }}>
-                              Scans
+                              Visits
                             </Typography>
                           </Stack>
                         ) : <div />}

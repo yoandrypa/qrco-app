@@ -45,17 +45,3 @@ export const find = async (key: { userId: string, createdAt: number }) => {
     throw e;
   }
 };
-
-/*
-import { VisitModel } from "../models/link";
-
-
-export const find = async (match: any) => {
-  try {
-    const res = await VisitModel.query(match).exec();
-    console.debug({ res });
-    return res;
-  } catch (e) {
-    throw e;
-  }
-};*/
