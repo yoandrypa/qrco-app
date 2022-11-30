@@ -33,7 +33,13 @@ const PlanType = (props: Props) => {
     return (
         <Authenticator components={components}>
             {({ user }) => (
-                <BuyPlan plan={router.query.plan as string} email={user?.attributes?.email!} id={user?.attributes?.sub!} />
+                <>
+                    {console.log('user in athenticator', user)}
+                    <BuyPlan
+                        plan={router.query.plan as string}
+                        email={user?.attributes?.email!}
+                        id={user?.attributes?.sub!} />
+                </>
             )}
         </Authenticator>
     );
@@ -73,7 +79,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     //@ts-ignore
     const userData = JSON.parse(userInfo.userData as string)
     const userId = userData.UserAttributes[0].Value;
-    const data: object = await UserHandler.get(userId)
+    let data: object = await UserHandler.get(userId)
+    if (!data) {
+        console.log('creating new user on the fly', data)
+        data = await UserHandler.create({ id: userId });
+    }
+
     return {
         props: {
             logged: true,
