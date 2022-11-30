@@ -1,11 +1,13 @@
 //const useragent = require("useragent");
-
+import * as Visit from "../queries/visit";
 import { CustomError } from "../utils";
 
-export const getByShortLink = async (shortLinkId: { userId: string, createdAt: number }) => {
+export const findByShortLink = async (shortLinkId: { userId: string, createdAt: number }) => {
   try {
-    return;
+    const res = await Visit.find(shortLinkId);
+    console.debug({ res });
+    return res;
   } catch (e: any) {
-    throw new CustomError(e.message, e.statuscode || 500, e);
+    throw new CustomError(e.message, e.statusCode || 500, e);
   }
 };

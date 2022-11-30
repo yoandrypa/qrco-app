@@ -1,44 +1,27 @@
-import components from "../libs/aws/components";
-import * as UserHandler from "../handlers/users";
-import * as QrHandler from "../handlers/qrs";
-import QrHome from "../components/qr/QrHome";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-
+import components from "../../../libs/aws/components";
 import { Amplify } from "aws-amplify";
 import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
-import awsExports from "../libs/aws/aws-exports";
+import awsExports from "../../../libs/aws/aws-exports";
+import QrDetails from "../../../components/qr/QrDetails";
+import * as VisitHandler from "../../../handlers/visit";
+import * as UserHandler from "../../../handlers/users";
 import { useRouter } from "next/router";
-import PleaseWait from "../components/PleaseWait";
-
-import QrGen from "./qr/type";
+import PleaseWait from "../../../components/PleaseWait";
+import QrGen from "../type";
 
 Amplify.configure(awsExports);
 
-const noUser = "noUser";
-
-export default function Index({ qrData }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const router = useRouter();
-
-  if (router.isFallback) {
-    return <PleaseWait />;
-  }
-
-  if (qrData === noUser &&
-    ((!router.query.login && !router.query.qr_text) || (router.pathname === "/" && !router.query.login))) {
-    return <QrGen />;
-  }
-
+export default function Details({ visitData }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <Authenticator components={components}>
-      {({ user }) => (
-        <QrHome qrData={qrData !== noUser ? qrData : []} userInformation={user} />
-      )}
+      <QrDetails visitData={JSON.parse(visitData)} />
     </Authenticator>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
   const getUserInfo = async () => {
     try {
       let userInfo = {};
@@ -62,7 +45,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   if (!userInfo?.userData) {
     return {
       props: {
-        qrData: noUser
+        visitData: "noUser"
       }
     };
   }
@@ -75,15 +58,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     user = await UserHandler.create({ id: userId });
   }
 
-  const qrs = await QrHandler.list({ userId: user.id });
+  const createdAt = JSON.parse(params?.id as string);
+  const visitData = (await VisitHandler.findByShortLink({ userId: user.id, createdAt }));
 
-  // return only the list data
+  if (!visitData) {
+    return {
+      notFound: true
+    };
+  }
+
   return {
-    props: {
-      qrData: JSON.parse(
-        // @ts-ignore
-        JSON.stringify(qrs)
-      )
-    }
+    props: { visitData: JSON.stringify(visitData) }
   };
 };
