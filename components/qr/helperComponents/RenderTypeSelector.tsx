@@ -121,7 +121,8 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
           } />
         </Tabs>
       </Grid>
-      {renderTypeSelector("web", isDynamic ? "Short URL" : "Website", "Link to any page on the web", true)}
+      {renderTypeSelector("web", isDynamic ? "Short URL" : "Website",
+        isDynamic ? "Transform a long URL in a shortened link much easier to share, manage, and analyze" : "Link to any page on the web", true)}
       {!isDynamic ?
         (<>
           {renderTypeSelector("vcard", "vCard", "Share your contact details", true)}

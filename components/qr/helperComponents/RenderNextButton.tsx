@@ -12,15 +12,14 @@ interface RenderNextProps {
   selected?: string;
   qrName?: string;
   isWrong: boolean;
-  display?: boolean;
 }
 
-const RenderNextButton = ({handleNext, isLogged, loading, step, mode, selected, qrName, isWrong, display}: RenderNextProps) => (
+const RenderNextButton = ({handleNext, isLogged, loading, step, mode, selected, qrName, isWrong}: RenderNextProps) => (
   <StepperButtons
     onClick={handleNext}
     endIcon={step >= 2 ? (isLogged ? <SaveIcon/> : <DoneIcon/>) : <ChevronRightIcon/>}
     disabled={loading || (isWrong && step > 0) || !selected || (step === 1 && isLogged && !Boolean(qrName?.trim()?.length))}
-    variant={step >= 2 ? "outlined" : "contained"}>
+    variant="contained">
     {step >= 2 ? (isLogged ? (mode === undefined ? "Save" : "Update") : "Done") : "Next"}
   </StepperButtons>
 );

@@ -1,8 +1,15 @@
 import {ReactNode, useCallback, useContext, useEffect, useState} from "react";
 import Typography from "@mui/material/Typography";
+import InputAdornment from "@mui/material/InputAdornment";
+import ArticleIcon from '@mui/icons-material/Article';
+import DesignServicesIcon from '@mui/icons-material/DesignServices';
+import TextField from "@mui/material/TextField";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import { alpha } from "@mui/material/styles";
+
 import Context from "../../context/Context";
 import RenderQRCommons from "../renderers/RenderQRCommons";
-
 import {DEFAULT_COLORS, NO_MICROSITE} from "../constants";
 import {download} from "../../../handlers/storage";
 import Notifications from "../../notifications/Notifications";
@@ -13,14 +20,19 @@ interface CommonProps {
   children: ReactNode;
 }
 
-function Common({ msg, children }: CommonProps) {
+function Common({msg, children}: CommonProps) {
   // @ts-ignore
-  const { selected, data, setData } = useContext(Context);
+  const {selected, data, setData, userInfo} = useContext(Context);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [backImg, setBackImg] = useState<any>(undefined);
   const [foreImg, setForeImg] = useState<any>(undefined);
   const [error, setError] = useState<boolean>(false);
+  const [tabSelected, setTabSelected] = useState<number>(0);
+
+  const handleSelectTab = (_: any, newValue: number) => {
+    setTabSelected(newValue);
+  }
 
   const handleValue = useCallback((prop: string) => (payload: any) => {
     if (payload === undefined) {
@@ -29,23 +41,45 @@ function Common({ msg, children }: CommonProps) {
         delete tempo[prop];
         return tempo;
       })
-    } else if (prop !== 'both') {
+    } else if (!prop.startsWith('both')) {
       if (prop === 'backgndImg' && backImg !== undefined) {
         setBackImg(undefined); // @ts-ignore
         setData((prev: DataType) => ({...prev, backgndImg: payload, prevBackImg: prev.backgndImg[0].Key}));
       } else if (prop === 'foregndImg' && foreImg !== undefined) {
         setForeImg(undefined); // @ts-ignore
         setData((prev: DataType) => ({...prev, foregndImg: payload, prevForeImg: prev.foregndImg[0].Key}));
+      } else if (payload.clear) {
+        setData((prev: any) => {
+          const tempo = {...prev};
+          delete tempo[prop];
+          return tempo;
+        })
+      } else if (prop === 'backgroundType') {
+        setData((prev: any) => {
+          const tempo = {...prev};
+          if (tempo.backgroundColor !== undefined) { delete tempo.backgroundColor }
+          if (tempo.backgroundColorRight !== undefined) { delete tempo.backgroundColorRight }
+          tempo.backgroundType = payload.target.value;
+          return tempo;
+        })
       } else {
-        setData((prev: any) => ({ ...prev, [prop]: payload.target?.value !== undefined ? payload.target.value : payload }));
+        setData((prev: any) => ({
+          ...prev, [prop]: payload.target?.value !== undefined ? payload.target.value : payload
+        }));
       }
     } else if (payload.p !== DEFAULT_COLORS.p || payload.s !== DEFAULT_COLORS.s) {
-      setData((prev: any) => ({ ...prev, primary: payload.p, secondary: payload.s }));
+      const isMain = prop === 'both';
+      setData((prev: any) => ({...prev, [isMain ? 'primary' : 'backgroundColor']: payload.p, [isMain ? 'secondary' : 'backgroundColorRight']: payload.s}));
     } else {
       setData((prev: any) => {
-        const temp = { ...prev };
-        if (temp.primary) { delete temp.primary; }
-        if (temp.secondary) { delete temp.secondary; }
+        const temp = {...prev};
+        if (prop === 'both') {
+          if (temp.primary) { delete temp.primary; }
+          if (temp.secondary) { delete temp.secondary; }
+        } else {
+          if (temp.backgroundColor) { delete temp.backgroundColor; }
+          if (temp.backgroundColorRight) { delete temp.backgroundColorRight; }
+        }
         return temp;
       });
     }
@@ -75,7 +109,7 @@ function Common({ msg, children }: CommonProps) {
     if (data.mode === 'edit') {
       if (data.backgndImg) {
         setLoading(true);
-        getFiles(data.backgndImg[0].Key,'backgndImg');
+        getFiles(data.backgndImg[0].Key, 'backgndImg');
       }
       if (data.foregndImg) {
         setLoading(true);
@@ -90,6 +124,11 @@ function Common({ msg, children }: CommonProps) {
     }
   }, [backImg, foreImg]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const renderChildren = () => (<>
+    <Typography>{msg}</Typography>
+    {children}
+  </>);
+
   return (
     <>
       {error && (
@@ -103,21 +142,45 @@ function Common({ msg, children }: CommonProps) {
           autoHideDuration={10500}
         />
       )}
-      <RenderQRCommons
-        handleValue={handleValue}
-        qrName={data?.qrName}
-        omitDesign={NO_MICROSITE.includes(selected) || !data?.isDynamic}
-        omitPrimaryImg={!['vcard+', 'link', 'business', 'social', 'donations'].includes(selected) || !data?.isDynamic}
-        backgndImg={data.mode === 'edit' ? (Array.isArray(data?.backgndImg) ? backImg || undefined : data?.backgndImg) : data?.backgndImg}
-        foregndImg={data.mode === 'edit' ? (Array.isArray(data?.foregndImg) ? foreImg || undefined : data?.foregndImg) : data?.foregndImg}
-        foregndImgType={data?.foregndImgType}
-        primary={data?.primary}
-        loading={loading}
-        foreError={foreImg === null}
-        backError={backImg === null}
-        secondary={data.secondary} />
-      <Typography>{msg}</Typography>
-      {children}
+      {userInfo ? (
+        <>
+          <TextField
+            label="QR name"
+            required
+            size="small"
+            fullWidth
+            margin="dense"
+            value={data?.qrName || ''}
+            onChange={handleValue('qrName')}
+            InputProps={{
+              endAdornment: (
+                !Boolean(data?.qrName?.trim().length) ? (<InputAdornment position="end">
+                  <Typography color="error">{'REQUIRED'}</Typography>
+                </InputAdornment>) : null
+              )
+            }}
+          />
+          {!NO_MICROSITE.includes(selected) && data?.isDynamic ? (
+            <>
+              <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ borderBottom: theme => `1px solid ${alpha(theme.palette.text.disabled, 0.2)}`, mb: 1 }}>
+                <Tab label="Content" icon={<ArticleIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
+                <Tab label="Design" icon={<DesignServicesIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
+              </Tabs>
+              {tabSelected === 0 ? renderChildren() : (<>
+                <RenderQRCommons
+                  handleValue={handleValue}
+                  omitPrimaryImg={!['vcard+', 'link', 'business', 'social', 'donations'].includes(selected) || !data?.isDynamic}
+                  backgndImg={data.mode === 'edit' ? (Array.isArray(data?.backgndImg) ? backImg || undefined : data?.backgndImg) : data?.backgndImg}
+                  foregndImg={data.mode === 'edit' ? (Array.isArray(data?.foregndImg) ? foreImg || undefined : data?.foregndImg) : data?.foregndImg}
+                  loading={loading}
+                  foreError={foreImg === null}
+                  backError={backImg === null}
+                  data={data}/>
+              </>)}
+            </>
+          ) : renderChildren()}
+        </>
+      ) : renderChildren()}
     </>
   );
 }

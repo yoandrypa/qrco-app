@@ -74,7 +74,6 @@ export default function RenderIframe({src, width, height}: IframeProps) {
 
   useEffect(() => {
     const handler = (event: any) => {
-
       if (event.origin.replace('https://www.', 'https://') === process.env.REACT_MICROSITES_ROUTE) {
         try {
           const data = JSON.parse(event.data)
@@ -96,7 +95,7 @@ export default function RenderIframe({src, width, height}: IframeProps) {
     window.addEventListener("message", handler);
 
     return () => window.removeEventListener("message", handler)
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (whatToRender !== null) {
     return <RenderMessage whatToRender={whatToRender} height={height}/>;
