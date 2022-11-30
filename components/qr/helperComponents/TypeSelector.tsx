@@ -63,7 +63,7 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
         onMouseLeave={handleOver}
         onClick={beforeHandle}
       >
-        {isDynamic && !NO_MICROSITE.includes(icon) && (
+        {isDynamic && ![...NO_MICROSITE, 'paylink', 'fundme'].includes(icon) && (
           <Tooltip title="View example">
             <IconButton
               sx={{

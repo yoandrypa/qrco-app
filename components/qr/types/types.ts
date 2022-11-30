@@ -164,6 +164,10 @@ export type DataType = {
     taxi?: boolean;
     wifi?: boolean;
   } | undefined;
+  backgroundType?: string;
+  backgroundColor?: string;
+  backgroundColorRight?: string;
+  backgroundDirection?: string;
   primary?: string;
   secondary?: string;
   isDynamic?: boolean;
@@ -174,12 +178,6 @@ export type DataType = {
   foregndImgType?: 'circle' | 'smooth' | 'square' | null;
   files?: File[];
 };
-
-export type DonationsData = {
-  name: string,
-  image?: string,
-  shortText: string
-}
 
 export type EbanuxDonationPriceData = {
   priceId?: string,
@@ -194,17 +192,9 @@ export type CardDataProps = {
   setData: Function;
 };
 
-export type UpdaterType = {
-  options: OptionsType;
-  background?: BackgroundType;
-  corners?: CornersAndDotsType;
-  cornersDot?: CornersAndDotsType;
-  frame?: FramesType;
-};
-
 export type ColorTypes = {
-  p: string,
-  s: string
+  p: string;
+  s: string;
 };
 
 export type EditType = {

@@ -14,12 +14,14 @@ import * as StorageHandler from "../../handlers/storage";
 import * as EbanuxHandler from "../../handlers/ebanux";
 import Notifications from "../notifications/Notifications";
 import ProcessHandler from "./renderers/ProcessHandler";
-import { cleaner, finalCleanForEdtion, generateObjectToEdit, StepsProps } from "./auxFunctions";
+import {cleaner, finalCleanForEdtion, generateObjectToEdit, steps, StepsProps} from "./auxFunctions";
 import RenderNextButton from "./helperComponents/RenderNextButton";
 import RenderBackButton from "./helperComponents/RenderBackButton";
-import RenderSteps from "./helperComponents/RenderSteps";
 import RenderFloatingButtons from "./helperComponents/RenderFloatingButtons";
 import RenderPreview from "./renderers/RenderPreview";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import Stepper from "@mui/material/Stepper";
 
 interface QrWizardProps {
   children: ReactNode;
@@ -36,6 +38,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   const forceUpdate = useCallback(() => setUnusedState({}), []);
   const dataInfo = useRef<ProcessHanldlerType[]>([]);
   const btnRef = useRef<any>(null);
+  const sizeRef = useRef<any>(null);
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
 
   // @ts-ignore
@@ -240,28 +243,6 @@ const QrWizard = ({ children }: QrWizardProps) => {
     }
   };
 
-  const renderBack = () => (
-    <RenderBackButton
-      loading={loading}
-      step={step}
-      isDynamic={data.isDynamic || false}
-      handleBack={handleBack}
-      mode={data.mode}
-      selected={selected} />
-  );
-
-  const renderNext = () => (
-    <RenderNextButton
-      handleNext={handleNext}
-      isLogged={isLogged}
-      loading={loading}
-      step={step}
-      isWrong={isWrong}
-      selected={selected}
-      qrName={data.qrName}
-      mode={data.mode} />
-  );
-
   useEffect(() => {
     const observer = new IntersectionObserver((payload: IntersectionObserverEntry[]) => {
       setVisible(payload[0].isIntersecting || false);
@@ -271,16 +252,38 @@ const QrWizard = ({ children }: QrWizardProps) => {
       threshold: [0.3]
     });
     observer.observe(btnRef.current);
-    setSize(btnRef.current.offsetWidth);
-    const getWidth = () => {
-      setSize(btnRef.current.offsetWidth);
-    }
+    setSize(sizeRef.current.offsetWidth);
+    const getWidth = () => { setSize(sizeRef.current.offsetWidth); }
     window.addEventListener("resize", getWidth);
     return () => window.removeEventListener("resize", getWidth);
   }, [loading]);
 
   return (
     <>
+      <Box ref={sizeRef} sx={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between", pb: '10px' }} >
+        <RenderBackButton
+          loading={loading}
+          step={step}
+          isDynamic={data.isDynamic || false}
+          handleBack={handleBack}
+          mode={data.mode}
+          selected={selected} />
+        <Stepper activeStep={step} sx={{width: "100%", my: 0}}>
+          {steps.map((label: string) => <Step key={label}>
+            <StepLabel>{isWide ? label : ''}</StepLabel>
+          </Step>)}
+        </Stepper>
+        <RenderNextButton
+          handleNext={handleNext}
+          isLogged={isLogged}
+          loading={loading}
+          step={step}
+          isWrong={isWrong}
+          selected={selected}
+          qrName={data.qrName}
+          mode={data.mode} />
+      </Box>
+      <Box sx={{ position: 'absolute', top: '32px' }} ref={btnRef} />
       <Box sx={{ minHeight: `calc(100vh - ${isTrialMode ? 215 : 205}px)` }}>
         {children}
       </Box>
@@ -288,9 +291,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
         (isError?: boolean) => {
           dataInfo.current = [];
           if (!isError) {
-            router.replace("/").then(() => {
-              setLoading(false);
-            });
+            router.replace("/").then(() => { setLoading(false); });
           } else {
             forceUpdate();
           }
@@ -319,27 +320,8 @@ const QrWizard = ({ children }: QrWizardProps) => {
             await router.push(QR_TYPE_ROUTE, "/", { shallow: true });
           }} />
       )}
-      <Box ref={btnRef}>
-        {isWide ? (
-          <Box sx={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between", pt: 2 }}>
-            {renderBack()}
-            <RenderSteps step={step} isWide={true} />
-            {renderNext()}
-          </Box>
-        ) : (
-          <>
-            <RenderSteps step={step} isWide={false} />
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              {renderBack()}
-              {renderNext()}
-            </Box>
-          </>
-        )}
-      </Box>
       {isError && (
-        <Notifications autoHideDuration={3500} message="Error accessing data!" onClose={() => {
-          setIsError(false);
-        }} />
+        <Notifications autoHideDuration={3500} message="Error accessing data!" onClose={() => setIsError(false)} />
       )}
     </>
   );

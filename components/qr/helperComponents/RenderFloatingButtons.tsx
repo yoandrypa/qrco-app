@@ -20,7 +20,7 @@ export default function RenderFloatingButtons(
   { loading, step, selected, mode, isDynamic, handleBack, handleNext, qrName, isWrong, isLogged, size}:
     RenderFloatingButtons) {
   return (
-    <Box sx={{ position: 'fixed', width: `${size}px`, bottom: '17px', display: 'flex', justifyContent: 'space-between' }}>
+    <Box sx={{ position: 'fixed', width: `${size}px`, top: '115px', display: 'flex', justifyContent: 'space-between' }}>
       <RenderBackButton
         step={step}
         handleBack={handleBack}

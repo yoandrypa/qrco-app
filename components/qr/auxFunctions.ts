@@ -48,7 +48,7 @@ export interface GenProps {
   forceOverride?: string | undefined;
 }
 
-export const steps = ["Type", "Content", "Design"];
+export const steps = ["Type", "Content", "QR Design"];
 
 export const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame: FramesType,
   cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, edit: boolean): void => {

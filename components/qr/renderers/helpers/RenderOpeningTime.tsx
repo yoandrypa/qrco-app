@@ -19,7 +19,7 @@ const handleDayName = (day: string, isWide: boolean): string => (isWide ? DAYS[d
 const getInitial = () => ({ini: getHM(new Date()), end: getHM(new Date())});
 
 export default function RenderOpeningTime({data, setData}: CardDataProps) {
-  const isWide = useMediaQuery('(min-width:600px)', {noSsr: true});
+  const isWide = useMediaQuery('(min-width:830px)', {noSsr: true});
 
   const handleFormat = (is: boolean) => () => {
     if (is) {
@@ -38,21 +38,17 @@ export default function RenderOpeningTime({data, setData}: CardDataProps) {
       const dt = {...prev};
       if (!dt.openingTime) {
         dt.openingTime = {};
-      }
-      // @ts-ignore
-      if (!dt.openingTime[day]) {
-        // @ts-ignore
+      } // @ts-ignore
+      if (!dt.openingTime[day]) { // @ts-ignore
         dt.openingTime[day] = [getInitial()];
-      } else {
-        // @ts-ignore
+      } else { // @ts-ignore
         delete dt.openingTime[day];
       }
       return dt;
     });
   }
 
-  const renderWorkingDay = (day: string) => {
-    // @ts-ignore
+  const renderWorkingDay = (day: string) => { // @ts-ignore
     const selected = data.openingTime?.[day] !== undefined as boolean;
     return (<Button key={`btn${day}`} sx={{minWidth: '38px'}} onClick={handleWorkingDay(day)}
                     variant={selected ? 'contained' : 'outlined'}>{handleDayName(day, isWide)}</Button>);
@@ -64,8 +60,7 @@ export default function RenderOpeningTime({data, setData}: CardDataProps) {
       if (index === 0) { //aims to add
         // @ts-ignore
         d.openingTime[x].push(getInitial());
-      } else {
-        // @ts-ignore
+      } else { // @ts-ignore
         d.openingTime[x].splice(index, 1);
       }
       return d;
@@ -97,12 +92,8 @@ export default function RenderOpeningTime({data, setData}: CardDataProps) {
         <Grid item xs={12}>
           <Grid container spacing={1}>
             {['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map((x: string) => { // @ts-ignore
-              if (!data.openingTime[x]) {
-                return null;
-              }
-              // @ts-ignore
-              const values = data.openingTime?.[x] || [] as OpeningType;
-              // @ts-ignore
+              if (!data.openingTime[x]) { return null; } // @ts-ignore
+              const values = data.openingTime?.[x] || [] as OpeningType; // @ts-ignore
               const day = DAYS[x];
               return (
                 <Grid item xs={12} sm={4} key={`day${day}`}>
@@ -110,7 +101,6 @@ export default function RenderOpeningTime({data, setData}: CardDataProps) {
                     <Typography sx={{fontWeight: 'bold'}}>{day}</Typography>
                     {values.map((timing: OpeningDaysType, index: number) => {
                       const disabled = index === 0 && values.length === 2;
-
                       return (
                         <Box sx={{width: '100%', display: 'flex'}} key={`item${day}`}>
                           <Box sx={{width: 'calc(50% - 20px)'}}>
@@ -130,7 +120,7 @@ export default function RenderOpeningTime({data, setData}: CardDataProps) {
                     })}
                   </Paper>
                 </Grid>
-              )
+              );
             })}
           </Grid>
         </Grid>
