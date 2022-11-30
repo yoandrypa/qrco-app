@@ -21,7 +21,7 @@ import NetworksData from "./renderers/NetworksData.";
 import CouponData from "./renderers/CouponData";
 import DonationsData, { DonationsProps } from './renderers/DonationsData';
 import CryptoData from './renderers/CryptoData';
-import SimplePayLinkData from './renderers/SimplePayLinkData';
+import SendMeMoneyData from './renderers/SendMeMoneyData';
 
 import { DataType, SocialProps } from './types/types';
 import LinksData from "./renderers/LinksData";
@@ -120,7 +120,7 @@ const QrContentHandler = () => { // @ts-ignore
         return <DonationsData data={data} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong} />
       }
       case 'paylink': {
-        return <SimplePayLinkData data={data} setData={handlePayload} handleValues={handleValues} setIsWrong={setIsWrong} />
+        return <SendMeMoneyData data={data} setData={handlePayload} handleValues={handleValues} setIsWrong={setIsWrong} />
       }
       case 'crypto': {
         return <CryptoData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
