@@ -21,7 +21,7 @@ const VisitDetailsSections = ({ visitData }: any) => {
         </ListItemAvatar>
         <ListItemText
           primary="Technology"
-          secondary="What apps and websites have accessed the link attached to your QR?" />
+          secondary="What apps have accessed the Short URL, either by scanning the QR code or by visiting the link directly?" />
       </ListItem>
       <ListItem>
         <VisitTechnologyDetails visitData={visitData} />
