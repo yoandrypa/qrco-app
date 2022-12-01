@@ -63,8 +63,8 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
         onMouseLeave={handleOver}
         onClick={beforeHandle}
       >
-        {isDynamic && ![...NO_MICROSITE, 'paylink', 'fundme'].includes(icon) && (
-          <Tooltip title="View example">
+        {isDynamic && !NO_MICROSITE.includes(icon) && (
+          <Tooltip title="View sample">
             <IconButton
               sx={{
                 position: 'absolute',
@@ -110,8 +110,8 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
           disableRestoreFocus
           sx={{ '.MuiPopover-paper': { borderRadius: '25px', boxShadow: '0px 7px 5px 0px rgb(0 0 0 / 50%)' } }}
         >
-          <RenderCellPhoneShape onClose={() => setAnchorEl(null)}>
-            <RenderIframe src={`${process.env.REACT_MICROSITES_ROUTE}/sample/${icon}`} width="291px" height="520px"/>
+          <RenderCellPhoneShape width={270} height={570}>
+            <RenderIframe src={`${process.env.REACT_MICROSITES_ROUTE}/sample/${icon}`} width="256px" height="536px" />
           </RenderCellPhoneShape>
         </Popover>
       )}

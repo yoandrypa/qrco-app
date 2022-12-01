@@ -21,14 +21,14 @@ export default function RenderFloatingButtons(
     RenderFloatingButtons) {
   return (
     <Box sx={{ position: 'fixed', width: `${size}px`, top: '115px', display: 'flex', justifyContent: 'space-between' }}>
-      <RenderBackButton
+      {step > 0 ? <RenderBackButton
         step={step}
         handleBack={handleBack}
         loading={loading}
         isDynamic={isDynamic}
         mode={mode}
         selected={selected}
-      />
+      /> : <Box />}
       <RenderNextButton
         step={step}
         handleNext={handleNext}

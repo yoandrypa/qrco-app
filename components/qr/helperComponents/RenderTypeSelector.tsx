@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react";
+import {useContext, useEffect, useMemo, useState} from "react";
 import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Tabs from '@mui/material/Tabs';
@@ -6,12 +6,20 @@ import Tab from '@mui/material/Tab';
 import Badge from '@mui/material/Badge';
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
+import Drawer from '@mui/material/Drawer';
+import Button from "@mui/material/Button";
+import CloseIcon from '@mui/icons-material/Close';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { styled } from "@mui/material/styles";
 
 import TypeSelector from "./TypeSelector";
 import Context from "../../context/Context";
 import { DataType } from "../types/types";
 import { blue } from "@mui/material/colors";
+import Box from "@mui/material/Box";
+import RenderIframe from "../../RenderIframe";
+import RenderCellPhoneShape from "./RenderCellPhoneShape";
+import {NO_MICROSITE} from "../constants";
 
 interface RenderTypeSelectorProps {
   selected?: string | null;
@@ -39,7 +47,9 @@ const MyBadge = styled(Badge)(({ pro }: { pro?: boolean }) => ({
 const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps) => { // @ts-ignore
   const { data, setData }: ContextData = useContext(Context);
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
-  const isDynamic = useMemo(() => Boolean(data.isDynamic), [data.isDynamic]);
+  const isWideForPreview = useMediaQuery("(min-width:925px)", { noSsr: true });
+  const isDynamic = useMemo(() => data.isDynamic || false, [data.isDynamic]);
+  const [openPreview, setOpenPreview] = useState<boolean>(false);
 
   const handleClick = (selection: number) => { // @ts-ignore
     const dynamic = selection === 0;
@@ -55,7 +65,7 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
   };
 
   const renderTypeSelector = (item: string, label: string, description: string, enabled: boolean, isDynamic?: boolean) => (
-    <Grid item lg={3} md={4} sm={6} xs={12}>
+    <Grid item lg={data.isDynamic && selected ? 4 : 3} md={4} sm={6} xs={12}>
       <TypeSelector
         isDynamic={isDynamic || false}
         icon={item}
@@ -63,95 +73,138 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
         enabled={enabled}
         description={description}
         selected={selected === item}
-        handleSelect={handleSelect} />
+        handleSelect={handleSelect}/>
     </Grid>
   );
 
+  const renderPreview = (forbidStyle?: boolean) => (
+    <Box sx={!forbidStyle ? {ml: '20px', mt: '60px'} : undefined}>
+      <RenderCellPhoneShape width={270} height={570} offlineText="The selected card has no available sample">
+        {selected && !NO_MICROSITE.includes(selected) ?
+          <RenderIframe width="256px" height="536px" src={`${process.env.REACT_MICROSITES_ROUTE}/sample/${selected}`}/> : null}
+      </RenderCellPhoneShape>
+    </Box>
+  );
+
+  useEffect(() => {
+    if (isWideForPreview && openPreview) {
+      setOpenPreview(false);
+    }
+  }, [isWideForPreview]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
-        <Tabs value={isDynamic ? 0 : 1} onChange={(_, newSel: number) => handleClick(newSel)}>
-          <Tab sx={{ pr: '37px', mr: '3px' }} label={
-            <MyBadge badgeContent={
-              <Tooltip title={
-                <span>
-                  <p>Dynamic QR codes:</p>
-                  <ul style={{ paddingLeft: 0, listStylePosition: 'inside' }}>
-                    <li>Dynamic QR code + Short Link + Microsite</li>
-                    <li>Easy to customize</li>
-                    <li>Easy to use</li>
-                    <li>Unlimited content changes</li>
-                    <li>Ability to fix mistakes</li>
-                    <li>Ability to be shared as a Short URL</li>
-                    <li>Reusable QR codes after printing</li>
-                    <li>QR content in a mobile-friendly microsite</li>
-                    <li>Microsite easy to share with other apps</li>
-                    <li>Scans tracking and other statistics included</li>
-                    <li>Available for authenticated users only</li>
-                  </ul>
-                </span>
-              } arrow>
-                <span>Pro</span>
-              </Tooltip>
-            } color="primary" pro>
-              <Typography>{isWide ? "Dynamic QR Codes" : "Dynamic"}</Typography>
-            </MyBadge>
-          } />
-          <Tab sx={{ pr: '39px' }} label={
-            <MyBadge badgeContent={
-              <Tooltip title={
-                <span>
-                  <p>Static QR codes:</p>
-                  <ul style={{ paddingLeft: 0, listStylePosition: 'inside' }}>
-                    <li>100% free</li>
-                    <li>Easy to customize</li>
-                    <li>Easy to use</li>
-                    <li>Effective for simple uses</li>
-                    <li>Take longer to scan</li>
-                    <li>Non-editable content</li>
-                    <li>Unlimited for both authenticated and guest users</li>
-                    <li>Stored for authenticated users only</li>
-                  </ul>
-                </span>
-              } arrow>
-                <span>Free</span>
-              </Tooltip>} color="success">
-              <Typography>{isWide ? "Static QR Codes" : "Static"}</Typography>
-            </MyBadge>
-          } />
-        </Tabs>
+    <Box sx={{display: 'flex'}}>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Tabs value={isDynamic ? 0 : 1} onChange={(_, newSel: number) => handleClick(newSel)}>
+            <Tab sx={{ pr: '37px', mr: '3px' }} label={
+              <MyBadge badgeContent={
+                <Tooltip title={
+                  <span>
+                    <p>Dynamic QR codes:</p>
+                    <ul style={{ paddingLeft: 0, listStylePosition: 'inside' }}>
+                      <li>Dynamic QR code + Short Link + Microsite</li>
+                      <li>Easy to customize</li>
+                      <li>Easy to use</li>
+                      <li>Unlimited content changes</li>
+                      <li>Ability to fix mistakes</li>
+                      <li>Ability to be shared as a Short URL</li>
+                      <li>Reusable QR codes after printing</li>
+                      <li>QR content in a mobile-friendly microsite</li>
+                      <li>Microsite easy to share with other apps</li>
+                      <li>Scans tracking and other statistics included</li>
+                      <li>Available for authenticated users only</li>
+                    </ul>
+                  </span>
+                } arrow>
+                  <span>Pro</span>
+                </Tooltip>
+              } color="primary" pro>
+                <Typography>{isWide ? "Dynamic QR Codes" : "Dynamic"}</Typography>
+              </MyBadge>
+            } />
+            <Tab sx={{ pr: '39px' }} label={
+              <MyBadge badgeContent={
+                <Tooltip title={
+                  <span>
+                    <p>Static QR codes:</p>
+                    <ul style={{ paddingLeft: 0, listStylePosition: 'inside' }}>
+                      <li>100% free</li>
+                      <li>Easy to customize</li>
+                      <li>Easy to use</li>
+                      <li>Effective for simple uses</li>
+                      <li>Take longer to scan</li>
+                      <li>Non-editable content</li>
+                      <li>Unlimited for both authenticated and guest users</li>
+                      <li>Stored for authenticated users only</li>
+                    </ul>
+                  </span>
+                } arrow>
+                  <span>Free</span>
+                </Tooltip>} color="success">
+                <Typography>{isWide ? "Static QR Codes" : "Static"}</Typography>
+              </MyBadge>
+            } />
+          </Tabs>
+        </Grid>
+        {renderTypeSelector("web", isDynamic ? "Short URL" : "Website",
+          isDynamic ? "Transform a long URL in a shortened link" : "Link to any page on the web", true)}
+        {!isDynamic ?
+          (<>
+            {renderTypeSelector("vcard", "vCard", "Share your contact details", true)}
+            {renderTypeSelector("email", "Email", "Send email messages", true)}
+            {renderTypeSelector("sms", "SMS", "Send text messages", true)}
+            {renderTypeSelector("text", "Text", "Display a short text message", true)}
+            {renderTypeSelector("wifi", "WiFi", "Get connected to a WiFi network", true)}
+            {renderTypeSelector("twitter", "Twitter", "Post a tweet", true)}
+            {renderTypeSelector("whatsapp", "WhatsApp", "Send a WhatsApp message", true)}
+            {renderTypeSelector("facebook", "Facebook", "Share an URL in your wall", true)}
+            {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("crypto", "Crypto Payment", "Recieve crypto on your eWallet", true)}
+          </>) : (<>
+            {renderTypeSelector("vcard+", "vCard Plus", "Share your contact and social details", true, true)}
+            {renderTypeSelector('business', 'Business', 'Describe your business or company', true, true)}
+            {renderTypeSelector("social", "Social Networks", "Share your social networks information", true, true)}
+            {renderTypeSelector("link", "Link-in-Bio", "Share your own links, including social info", true, true)}
+            {renderTypeSelector("coupon", "Coupon", "Share a coupon", true, true)}
+            {renderTypeSelector("donations", "Donation", "Get donations from your supporters worldwide", true, true)}
+            {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("fundme", "Fund Me", "Start your own charity or fundraising campaign", true)}
+            {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("paylink", "Send Me Money", "Receive payments worldwide", true)}
+          </>)
+        }
+        {isDynamic ? (<>
+          {renderTypeSelector("pdf", "PDF File", "Share a PDF file", true, true)}
+          {renderTypeSelector("audio", "Audio File", "Share an audio file", true, true)}
+          {renderTypeSelector("gallery", "Gallery", "Share a gallery of images", true, true)}
+          {renderTypeSelector("video", "Video Files", "Share video files", true, true)}
+        </>) : null}
       </Grid>
-      {renderTypeSelector("web", isDynamic ? "Short URL" : "Website",
-        isDynamic ? "Transform a long URL in a shortened link much easier to share, manage, and analyze" : "Link to any page on the web", true)}
-      {!isDynamic ?
-        (<>
-          {renderTypeSelector("vcard", "vCard", "Share your contact details", true)}
-          {renderTypeSelector("email", "Email", "Send email messages", true)}
-          {renderTypeSelector("sms", "SMS", "Send text messages", true)}
-          {renderTypeSelector("text", "Text", "Display a short text message", true)}
-          {renderTypeSelector("wifi", "WiFi", "Get connected to a WiFi network", true)}
-          {renderTypeSelector("twitter", "Twitter", "Post a tweet", true)}
-          {renderTypeSelector("whatsapp", "WhatsApp", "Send a WhatsApp message", true)}
-          {renderTypeSelector("facebook", "Facebook", "Share an URL in your wall", true)}
-          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("crypto", "Crypto Payment", "Recieve crypto on your eWallet", true)}
-        </>) : (<>
-          {renderTypeSelector("vcard+", "vCard Plus", "Share your contact and social details", true, true)}
-          {renderTypeSelector('business', 'Business', 'Describe your business or company', true, true)}
-          {renderTypeSelector("social", "Social Networks", "Share your social networks information", true, true)}
-          {renderTypeSelector("link", "Link-in-Bio", "Share your own links, including social info", true, true)}
-          {renderTypeSelector("coupon", "Coupon", "Share a coupon", true, true)}
-          {renderTypeSelector("donations", "Donation", "Get donations from your supporters worldwide", true, true)}
-          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("fundme", "Fund Me", "Start your own charity or fundraising campaign", true)}
-          {process.env.REACT_NODE_ENV === 'develop' && renderTypeSelector("paylink", "Send Me Money", "Receive payments worldwide", true)}
-        </>)
-      }
-      {isDynamic ? (<>
-        {renderTypeSelector("pdf", "PDF File", "Share a PDF file", true, true)}
-        {renderTypeSelector("audio", "Audio File", "Share an audio file", true, true)}
-        {renderTypeSelector("gallery", "Gallery", "Share a gallery of images", true, true)}
-        {renderTypeSelector("video", "Video Files", "Share video files", true, true)}
-      </>) : null}
-    </Grid>
+      {isWideForPreview && selected && data.isDynamic && renderPreview()}
+      {!isWideForPreview && selected && data.isDynamic && (
+        <Button
+          onClick={() => setOpenPreview(true)}
+          variant="contained"
+          color="error"
+          sx={{position: 'fixed', bottom: '25px', right: '-5px'}}
+          startIcon={<OpenInNewIcon />}>
+          {'Sample'}
+        </Button>
+      )}
+      {openPreview && (
+        <Drawer anchor="right" open onClose={() => setOpenPreview(false)}>
+          <Box sx={{minWidth: '300px'}}>
+            <Box sx={{width: '100%', height: '50px', background: theme => theme.palette.primary.main}}>
+              <Typography variant="h6" sx={{ color: '#fff', fontWeight: 'bold', pt: '8px', pl: '15px' }}>{'Sample microsite'}</Typography>
+            </Box>
+            <Box sx={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}}>
+              {renderPreview(true)}
+            </Box>
+            <Box sx={{width: '100%', position: 'absolute', bottom: '10px', textAlign: 'center'}} onClick={() => setOpenPreview(false)}>
+              <Button variant="outlined" startIcon={<CloseIcon />}>{'Close Sample'}</Button>
+            </Box>
+          </Box>
+        </Drawer>
+      )}
+    </Box>
   );
 };
 
