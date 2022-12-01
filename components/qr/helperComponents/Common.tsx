@@ -142,8 +142,9 @@ function Common({msg, children}: CommonProps) {
     {children}
   </>);
 
-  const renderPreview = (forbidStyle?: boolean) => (
-    <Box sx={{ml: !forbidStyle ? '20px' : 0, mt: !forbidStyle ? '60px' : 0}}>
+  const renderPreview = (forbidStyle?: boolean, previewMessage?: boolean) => (
+    <Box sx={{ml: !forbidStyle ? '20px' : 0, mt: !forbidStyle ? '25px' : 0}}>
+      {previewMessage && <Typography sx={{textAlign: 'center', fontSize: 'small', color: theme => theme.palette.text.disabled}}>Preview</Typography>}
       <RenderCellPhoneShape width={270} height={570}>
         {null}
       </RenderCellPhoneShape>
@@ -200,7 +201,7 @@ function Common({msg, children}: CommonProps) {
                     data={data}/>
                 )}
               </Box>
-              {isWideForPreview && renderPreview()}
+              {isWideForPreview && renderPreview(false, true)}
             </Box>
           ) : renderChildren()}
         </>
