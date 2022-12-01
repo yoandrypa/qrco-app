@@ -40,7 +40,7 @@ const Plans = (props: Props) => {
       if (props.profile?.createdAt != null && !props.profile?.customerId) {
         //@ts-ignore
       }
-
+      console.log(props.profile)
       if (props.profile?.subscriptionData != null && props.profile?.customerId != null) {
         <BillingPortal customerId={props.profile?.customerId} />
       }
