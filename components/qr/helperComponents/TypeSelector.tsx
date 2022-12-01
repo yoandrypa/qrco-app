@@ -64,7 +64,7 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
         onClick={beforeHandle}
       >
         {isDynamic && !NO_MICROSITE.includes(icon) && (
-          <Tooltip title="View example">
+          <Tooltip title="View sample">
             <IconButton
               sx={{
                 position: 'absolute',
