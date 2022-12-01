@@ -78,7 +78,7 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
   );
 
   const renderPreview = (forbidStyle?: boolean) => (
-    <Box sx={!forbidStyle ? {ml: '20px', mt: '60px'} : undefined}>
+    <Box sx={{ml: !forbidStyle ? '20px' : 0, mt: !forbidStyle ? '60px' : 0}}>
       <RenderCellPhoneShape width={270} height={570} offlineText="The selected card has no available sample">
         {selected && !NO_MICROSITE.includes(selected) ?
           <RenderIframe width="256px" height="536px" src={`${process.env.REACT_MICROSITES_ROUTE}/sample/${selected}`}/> : null}
@@ -179,7 +179,7 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
         </>) : null}
       </Grid>
       {isWideForPreview && selected && data.isDynamic && renderPreview()}
-      {!isWideForPreview && selected && data.isDynamic && (
+      {!openPreview && !isWideForPreview && selected && data.isDynamic && (
         <Button
           onClick={() => setOpenPreview(true)}
           variant="contained"
@@ -190,17 +190,17 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
         </Button>
       )}
       {openPreview && (
-        <Drawer anchor="right" open onClose={() => setOpenPreview(false)}>
+        <Drawer anchor="right" open onClose={() => setOpenPreview(false)} sx={{'& .MuiPaper-root': {
+          height: '638px', borderRadius: '20px 0 0 35px', top: 'calc(50% - 320px)'}
+        }}>
           <Box sx={{minWidth: '300px'}}>
-            <Box sx={{width: '100%', height: '50px', background: theme => theme.palette.primary.main}}>
-              <Typography variant="h6" sx={{ color: '#fff', fontWeight: 'bold', pt: '8px', pl: '15px' }}>{'Sample microsite'}</Typography>
+            <Box sx={{width: '100%', height: '40px', background: theme => theme.palette.primary.main, mb: '10px', display: 'flex', justifyContent: 'space-between'}}>
+              <Typography sx={{fontWeight: 'bold', color: '#fff', pt: '3px', pl: 2}} variant="h6">{'Sample'}</Typography>
+              <CloseIcon sx={{
+                color: '#fff', mt: '8px', mr: '5px', cursor: 'pointer', background: '#ffffff21', borderRadius: '50%'
+              }} onClick={() => setOpenPreview(false)} />
             </Box>
-            <Box sx={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}}>
-              {renderPreview(true)}
-            </Box>
-            <Box sx={{width: '100%', position: 'absolute', bottom: '10px', textAlign: 'center'}} onClick={() => setOpenPreview(false)}>
-              <Button variant="outlined" startIcon={<CloseIcon />}>{'Close Sample'}</Button>
-            </Box>
+            {renderPreview(true)}
           </Box>
         </Drawer>
       )}
