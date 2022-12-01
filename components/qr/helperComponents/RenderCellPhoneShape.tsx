@@ -1,75 +1,60 @@
 import Box from "@mui/material/Box";
 import {ReactNode} from "react";
 import Typography from "@mui/material/Typography";
-import Tooltip from "@mui/material/Tooltip";
 
 interface CellPhoneProps {
   children?: ReactNode;
-  onClose: () => void;
-  closePreviewText?: string;
   offlineText?: string;
+  width?: number;
+  height?: number;
 }
 
-export default function RenderCellPhoneShape({offlineText, children, closePreviewText, onClose}: CellPhoneProps) {
+const border = '#9e9e9e';
+const background = '#d7d4d4';
+
+export default function RenderCellPhoneShape({width, height, offlineText, children}: CellPhoneProps) {
   return (
     <Box sx={{
       position: 'relative',
-      width: '315px',
-      height: '630px',
+      width: width ? `${width}px` : '315px',
+      height: height ? `${height}px` : '630px',
       margin: 'auto',
-      background: '#f7f7f7',
-      border: '1px #9e9e9e solid',
+      background,
+      border: `1px solid ${border}`,
       borderRadius: '25px',
-      '&::before': {
-        content: '""',
-        display: 'block',
-        width: '60px',
-        height: '5px',
-        position: 'absolute',
-        top: '23px',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        background: '#9e9e9e',
-        borderRadius: '10px'
-      }
+      boxShadow: '0px 4px 10px #808080'
     }}>
-        <Tooltip title={closePreviewText || "Close preview"}>
-          <Box
-            sx={{
-              cursor: 'pointer',
-              content: '""',
-              display: 'block',
-              width: '35px',
-              height: '35px',
-              position: 'absolute',
-              left: '50%',
-              bottom: '-5px',
-              transform: 'translate(-50%, -50%)',
-              background: '#dbdbdb',
-              border: 'solid 1px #9e9e9e',
-              borderRadius: '50%',
-              '&:hover': {background: '#9e9e9e'}
-            }}
-            onClick={onClose}
-          />
-        </Tooltip>
-        <Box sx={{
-          position: 'absolute',
-          top: '47px',
-          left: '10px',
-          right: '10px',
-          bottom: '59px',
-          border: 'solid 1px #9e9e9e'
-        }}>
+      <Box sx={{
+        position: 'absolute',
+        top: '10px',
+        left: '5px',
+        right: '5px',
+        bottom: '20px',
+        border: `solid 1px ${border}`,
+        borderRadius: '17px'
+      }}>
+        <Box sx={{borderRadius: '17px', height: '100%', width: '100%', position: 'absolute', background: '#fff'}}>
           {children || (
-            <Box sx={{height: '520px', width: '100%', position: 'absolute', background: '#fff'}}>
-              <Typography
-                sx={{m: 0, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}}>
-                {offlineText || 'Offline content'}
-              </Typography>
-            </Box>
+            <Typography
+              sx={{m: 0, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}}>
+              {offlineText || 'Offline content'}
+            </Typography>
           )}
         </Box>
+        <Box sx={{
+          position: 'absolute',
+          width: 'calc(100% - 130px)',
+          height: '10px',
+          background,
+          left: '50%',
+          top: '-1px',
+          transform: 'translate(-50%, 0)',
+          borderBottom: `solid 1px ${border}`,
+          borderLeft: `solid 1px ${border}`,
+          borderRight: `solid 1px ${border}`,
+          borderRadius: '0 0 10px 10px'
+        }} />
+      </Box>
     </Box>
   );
 }

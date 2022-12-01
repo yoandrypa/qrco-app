@@ -11,12 +11,10 @@ interface IframeProps {
 
 interface RenderMessageProps {
   whatToRender?: string;
-  height: string;
 }
 
-function RenderMessage({whatToRender, height}: RenderMessageProps) {
+function RenderMessage({whatToRender}: RenderMessageProps) {
   return (
-    <Box sx={{height, width: '100%', position: 'absolute', background: '#fff'}}>
       <Box sx={{
         m: 0,
         position: 'absolute',
@@ -53,7 +51,6 @@ function RenderMessage({whatToRender, height}: RenderMessageProps) {
           </>
         )}
       </Box>
-    </Box>
   );
 }
 
@@ -97,17 +94,22 @@ export default function RenderIframe({src, width, height}: IframeProps) {
     return () => window.removeEventListener("message", handler)
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (whatToRender !== null) { setWhatToRender(null); }
+    if (error) { setError(false); }
+  } ,[src]); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (whatToRender !== null) {
-    return <RenderMessage whatToRender={whatToRender} height={height}/>;
+    return <RenderMessage whatToRender={whatToRender} />;
   }
 
   if (error) {
-    return <RenderMessage whatToRender="offline" height={height}/>;
+    return <RenderMessage whatToRender="offline" />;
   }
 
   return (
     <>
-      {loading && <RenderMessage height={height} />}
+      {loading && <RenderMessage />}
       <iframe
         src={src}
         width={width}
@@ -115,7 +117,7 @@ export default function RenderIframe({src, width, height}: IframeProps) {
         ref={iRef}
         onLoad={handleLoad}
         onError={handleError}
-        style={{border: 'none'}}/>
+        style={{border: 'none', borderRadius: 'inherit'}}/>
     </>
   );
 }
