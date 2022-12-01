@@ -260,7 +260,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
 
   return (
     <>
-      <Box ref={sizeRef} sx={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between", pb: '10px' }} >
+      <Box ref={sizeRef} sx={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between", pb: '10px', mb: '10px' }} >
         <RenderBackButton
           loading={loading}
           step={step}
