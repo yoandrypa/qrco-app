@@ -190,14 +190,17 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
         </Button>
       )}
       {openPreview && (
-        <Drawer anchor="right" open onClose={() => setOpenPreview(false)} sx={{hheight: '695px', borderRadius: '9px 0 0 9px', top: 'calc(50% - 325px)'}}>
+        <Drawer anchor="right" open onClose={() => setOpenPreview(false)} sx={{'& .MuiPaper-root': {
+          height: '638px', borderRadius: '20px 0 0 35px', top: 'calc(50% - 320px)'}
+        }}>
           <Box sx={{minWidth: '300px'}}>
-            <Box sx={{mt: '10px'}}>
-            {renderPreview(true)}
+            <Box sx={{width: '100%', height: '40px', background: theme => theme.palette.primary.main, mb: '10px', display: 'flex', justifyContent: 'space-between'}}>
+              <Typography sx={{fontWeight: 'bold', color: '#fff', pt: '3px', pl: 2}} variant="h6">{'Sample'}</Typography>
+              <CloseIcon sx={{
+                color: '#fff', mt: '8px', mr: '5px', cursor: 'pointer', background: '#ffffff21', borderRadius: '50%'
+              }} onClick={() => setOpenPreview(false)} />
             </Box>
-            <Button sx={{ width: 'calc(100% - 20px)', ml: '10px', mt: '20px'}} variant="outlined" startIcon={<CloseIcon />} onClick={() => setOpenPreview(false)}>
-              {'Close Sample'}
-            </Button>
+            {renderPreview(true)}
           </Box>
         </Drawer>
       )}
