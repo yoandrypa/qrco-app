@@ -29,7 +29,7 @@ export default function RenderFloatingButtons(
         mode={mode}
         selected={selected}
       /> : <Box />}
-      <RenderNextButton
+      {!isWrong ? <RenderNextButton
         step={step}
         handleNext={handleNext}
         loading={loading}
@@ -38,7 +38,7 @@ export default function RenderFloatingButtons(
         selected={selected}
         mode={mode}
         qrName={qrName}
-      />
+      /> : <Box />}
     </Box>
   );
 }

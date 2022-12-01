@@ -14,6 +14,12 @@ import {DEFAULT_COLORS, NO_MICROSITE} from "../constants";
 import {download} from "../../../handlers/storage";
 import Notifications from "../../notifications/Notifications";
 import {DataType} from "../types/types";
+import Box from "@mui/material/Box";
+import RenderCellPhoneShape from "./RenderCellPhoneShape";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import Button from "@mui/material/Button";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import RenderPreviewDrawer from "./RenderPreviewDrawer";
 
 interface CommonProps {
   msg: string;
@@ -29,6 +35,9 @@ function Common({msg, children}: CommonProps) {
   const [foreImg, setForeImg] = useState<any>(undefined);
   const [error, setError] = useState<boolean>(false);
   const [tabSelected, setTabSelected] = useState<number>(0);
+  const [openPreview, setOpenPreview] = useState<boolean>(false);
+
+  const isWideForPreview = useMediaQuery("(min-width:720px)", { noSsr: true });
 
   const handleSelectTab = (_: any, newValue: number) => {
     setTabSelected(newValue);
@@ -124,10 +133,23 @@ function Common({msg, children}: CommonProps) {
     }
   }, [backImg, foreImg]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (isWideForPreview && openPreview) { setOpenPreview(false); }
+  }, [isWideForPreview]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const renderChildren = () => (<>
     <Typography>{msg}</Typography>
     {children}
   </>);
+
+  const renderPreview = (forbidStyle?: boolean, previewMessage?: boolean) => (
+    <Box sx={{ml: !forbidStyle ? '20px' : 0, mt: !forbidStyle ? '25px' : 0}}>
+      {previewMessage && <Typography sx={{textAlign: 'center', fontSize: 'small', color: theme => theme.palette.text.disabled}}>Preview</Typography>}
+      <RenderCellPhoneShape width={270} height={570}>
+        {null}
+      </RenderCellPhoneShape>
+    </Box>
+  );
 
   return (
     <>
@@ -161,26 +183,42 @@ function Common({msg, children}: CommonProps) {
             }}
           />
           {!NO_MICROSITE.includes(selected) && data?.isDynamic ? (
-            <>
-              <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ borderBottom: theme => `1px solid ${alpha(theme.palette.text.disabled, 0.2)}`, mb: 1 }}>
-                <Tab label="Content" icon={<ArticleIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
-                <Tab label="Design" icon={<DesignServicesIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
-              </Tabs>
-              {tabSelected === 0 ? renderChildren() : (<>
-                <RenderQRCommons
-                  handleValue={handleValue}
-                  omitPrimaryImg={!['vcard+', 'link', 'business', 'social', 'donations'].includes(selected) || !data?.isDynamic}
-                  backgndImg={data.mode === 'edit' ? (Array.isArray(data?.backgndImg) ? backImg || undefined : data?.backgndImg) : data?.backgndImg}
-                  foregndImg={data.mode === 'edit' ? (Array.isArray(data?.foregndImg) ? foreImg || undefined : data?.foregndImg) : data?.foregndImg}
-                  loading={loading}
-                  foreError={foreImg === null}
-                  backError={backImg === null}
-                  data={data}/>
-              </>)}
-            </>
+            <Box sx={{ display: 'flex' }}>
+              <Box sx={{ width: '100%' }}>
+                <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ borderBottom: theme => `1px solid ${alpha(theme.palette.text.disabled, 0.2)}`, mb: 1 }}>
+                  <Tab label="Content" icon={<ArticleIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
+                  <Tab label="Design" icon={<DesignServicesIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
+                </Tabs>
+                {tabSelected === 0 ? renderChildren() : (
+                  <RenderQRCommons
+                    handleValue={handleValue}
+                    omitPrimaryImg={!['vcard+', 'link', 'business', 'social', 'donations'].includes(selected) || !data?.isDynamic}
+                    backgndImg={data.mode === 'edit' ? (Array.isArray(data?.backgndImg) ? backImg || undefined : data?.backgndImg) : data?.backgndImg}
+                    foregndImg={data.mode === 'edit' ? (Array.isArray(data?.foregndImg) ? foreImg || undefined : data?.foregndImg) : data?.foregndImg}
+                    loading={loading}
+                    foreError={foreImg === null}
+                    backError={backImg === null}
+                    data={data}/>
+                )}
+              </Box>
+              {isWideForPreview && renderPreview(false, true)}
+            </Box>
           ) : renderChildren()}
         </>
       ) : renderChildren()}
+      {!openPreview && !isWideForPreview && !NO_MICROSITE.includes(selected) && data?.isDynamic && (
+        <Button
+          onClick={() => setOpenPreview(true)}
+          variant="contained"
+          color="error"
+          sx={{position: 'fixed', bottom: '25px', right: '-5px'}}
+          startIcon={<OpenInNewIcon />}>
+          {'Preview'}
+        </Button>
+      )}
+      {openPreview && ( // @ts-ignore
+        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={638}>{renderPreview(true)}</RenderPreviewDrawer>
+      )}
     </>
   );
 }

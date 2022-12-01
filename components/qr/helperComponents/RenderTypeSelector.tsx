@@ -76,8 +76,9 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
     </Grid>
   );
 
-  const renderPreview = (forbidStyle?: boolean) => (
-    <Box sx={{ml: !forbidStyle ? '20px' : 0, mt: !forbidStyle ? '60px' : 0}}>
+  const renderPreview = (forbidStyle?: boolean, renderSampleMessage?: boolean) => (
+    <Box sx={{ml: !forbidStyle ? '20px' : 0, mt: !forbidStyle ? '44px' : 0}}>
+      {renderSampleMessage && <Typography sx={{textAlign: 'center', fontSize: 'small', color: theme => theme.palette.text.disabled}}>Sample</Typography>}
       <RenderCellPhoneShape width={270} height={570} offlineText="The selected card has no available sample">
         {selected && !NO_MICROSITE.includes(selected) ?
           <RenderIframe width="256px" height="536px" src={`${process.env.REACT_MICROSITES_ROUTE}/sample/${selected}`}/> : null}
@@ -175,7 +176,7 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
           {renderTypeSelector("video", "Video Files", "Share video files", true, true)}
         </>) : null}
       </Grid>
-      {isWideForPreview && selected && data.isDynamic && renderPreview()}
+      {isWideForPreview && selected && data.isDynamic && renderPreview(false, true)}
       {!openPreview && !isWideForPreview && selected && data.isDynamic && (
         <Button
           onClick={() => setOpenPreview(true)}
