@@ -9,7 +9,6 @@ import ImageIcon from '@mui/icons-material/Image';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 
-import Expander from "./helpers/Expander";
 import RenderImagePicker from "./helpers/RenderImagePicker";
 import Tooltip from "@mui/material/Tooltip";
 import RenderImgPreview from "./helpers/RenderImgPreview";
@@ -29,8 +28,8 @@ interface QRCommonsProps {
   foreError?: boolean;
   handleValue: Function;
 }
+
 function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg, backError, foreError, handleValue}: QRCommonsProps) { // @ts-ignore
-  const [expander, setExpander] = useState<string | null>('design');
   const [selectFile, setSelectFile] = useState<string | null>(null);
   const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -68,60 +67,55 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
   return (
     <>
       <Box sx={{p: 1, mt: 1}}>
-        <Expander expand={expander} setExpand={setExpander} item="design" title="Design" bold/>
-        {expander === "design" && (
-          <>
-            <RenderColors handleValue={handleValue} data={data} />
-            {loading && (
-              <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center', mt: '10px', mb: '-10px' }}>
-                <CircularProgress size={20} sx={{ mr: '5px' }} />
-                <Typography sx={{ fontSize: 'small', color: theme => theme.palette.text.disabled}}>
-                  {'Loading data. Please wait...'}
-                </Typography>
-              </Box>
-            )}
-            <Box sx={{
-              width: '100%',
-              display: 'flex',
-              textAlign: 'center',
-              flexDirection: {md: "row", xs: "column"},
-              mt: 2
-            }}>
-              <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
-                <Tooltip title="Click for selecting the background image">
-                  <Button
-                    sx={{width: '100%'}}
-                    disabled={loading}
-                    startIcon={<WallpaperIcon sx={{ color: theme => backError ? theme.palette.error.dark : undefined }}/>}
-                    variant="outlined"
-                    color="primary"
-                    onClick={handleSelectFile('backgndImg')}
-                  >
-                    {`${backgndImg && !loading ? 'Image loaded /' : 'Select'} background image`}
-                  </Button>
-                </Tooltip>
-                {backgndImg && !loading && renderOptions('backgndImg')}
-              </ButtonGroup>
-              {!omitPrimaryImg && (
-                <ButtonGroup sx={{mt: {xs: 1, md: 0}, width: '100%'}}>
-                  <Tooltip title="Click for selecting the main image">
-                    <Button
-                      sx={{width: '100%'}}
-                      startIcon={<ImageIcon sx={{ color: theme => foreError ? theme.palette.error.dark : undefined }}/>}
-                      variant="outlined"
-                      disabled={loading}
-                      onClick={handleSelectFile('foregndImg')}
-                      color="primary"
-                    >
-                      {`${foregndImg && !loading ? 'Image loaded /' : 'Select'} main image`}
-                    </Button>
-                  </Tooltip>
-                  {foregndImg && !loading && renderOptions('foregndImg')}
-                </ButtonGroup>
-              )}
-            </Box>
-          </>
+        <RenderColors handleValue={handleValue} data={data} />
+        {loading && (
+          <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center', mt: '10px', mb: '-10px' }}>
+            <CircularProgress size={20} sx={{ mr: '5px' }} />
+            <Typography sx={{ fontSize: 'small', color: theme => theme.palette.text.disabled}}>
+              {'Loading data. Please wait...'}
+            </Typography>
+          </Box>
         )}
+        <Box sx={{
+          width: '100%',
+          display: 'flex',
+          textAlign: 'center',
+          flexDirection: {md: "row", xs: "column"},
+          mt: 2
+        }}>
+          <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
+            <Tooltip title="Click for selecting the background image">
+              <Button
+                sx={{width: '100%'}}
+                disabled={loading}
+                startIcon={<WallpaperIcon sx={{ color: theme => backError ? theme.palette.error.dark : undefined }}/>}
+                variant="outlined"
+                color="primary"
+                onClick={handleSelectFile('backgndImg')}
+              >
+                {`${backgndImg && !loading ? 'Image loaded /' : 'Select'} background image`}
+              </Button>
+            </Tooltip>
+            {backgndImg && !loading && renderOptions('backgndImg')}
+          </ButtonGroup>
+          {!omitPrimaryImg && (
+            <ButtonGroup sx={{mt: {xs: 1, md: 0}, width: '100%'}}>
+              <Tooltip title="Click for selecting the main image">
+                <Button
+                  sx={{width: '100%'}}
+                  startIcon={<ImageIcon sx={{ color: theme => foreError ? theme.palette.error.dark : undefined }}/>}
+                  variant="outlined"
+                  disabled={loading}
+                  onClick={handleSelectFile('foregndImg')}
+                  color="primary"
+                >
+                  {`${foregndImg && !loading ? 'Image loaded /' : 'Select'} main image`}
+                </Button>
+              </Tooltip>
+              {foregndImg && !loading && renderOptions('foregndImg')}
+            </ButtonGroup>
+          )}
+        </Box>
       </Box>
       <Divider sx={{my: '10px'}}/>
       {selectFile !== null && (

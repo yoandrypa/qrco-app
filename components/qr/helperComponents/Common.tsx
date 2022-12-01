@@ -143,11 +143,11 @@ function Common({msg, children}: CommonProps) {
   </>);
 
   const renderPreview = (forbidStyle?: boolean, previewMessage?: boolean) => (
-    <Box sx={{ml: !forbidStyle ? '20px' : 0, mt: !forbidStyle ? '25px' : 0}}>
-      {previewMessage && <Typography sx={{textAlign: 'center', fontSize: 'small', color: theme => theme.palette.text.disabled}}>Preview</Typography>}
+    <Box sx={{ml: !forbidStyle ? '20px' : 0, mt: !forbidStyle ? 1 : 0}}>
       <RenderCellPhoneShape width={270} height={570}>
         {null}
       </RenderCellPhoneShape>
+      {previewMessage && <Typography sx={{textAlign: 'center', fontSize: 'small', color: theme => theme.palette.text.disabled}}>Preview</Typography>}
     </Box>
   );
 
@@ -165,25 +165,25 @@ function Common({msg, children}: CommonProps) {
         />
       )}
       {userInfo ? (
-        <>
-          <TextField
-            label="QR name"
-            required
-            size="small"
-            fullWidth
-            margin="dense"
-            value={data?.qrName || ''}
-            onChange={handleValue('qrName')}
-            InputProps={{
-              endAdornment: (
-                !Boolean(data?.qrName?.trim().length) ? (<InputAdornment position="end">
-                  <Typography color="error">{'REQUIRED'}</Typography>
-                </InputAdornment>) : null
-              )
-            }}
-          />
-          {!NO_MICROSITE.includes(selected) && data?.isDynamic ? (
-            <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex' }}>
+          <Box>
+            <TextField
+              label="QR name"
+              required
+              size="small"
+              fullWidth
+              margin="dense"
+              value={data?.qrName || ''}
+              onChange={handleValue('qrName')}
+              InputProps={{
+                endAdornment: (
+                  !Boolean(data?.qrName?.trim().length) ? (<InputAdornment position="end">
+                    <Typography color="error">{'REQUIRED'}</Typography>
+                  </InputAdornment>) : null
+                )
+              }}
+            />
+            {!NO_MICROSITE.includes(selected) && data?.isDynamic ? (
               <Box sx={{ width: '100%' }}>
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ borderBottom: theme => `1px solid ${alpha(theme.palette.text.disabled, 0.2)}`, mb: 1 }}>
                   <Tab label="Content" icon={<ArticleIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
@@ -201,10 +201,10 @@ function Common({msg, children}: CommonProps) {
                     data={data}/>
                 )}
               </Box>
-              {isWideForPreview && renderPreview(false, true)}
-            </Box>
-          ) : renderChildren()}
-        </>
+            ) : renderChildren()}
+          </Box>
+          {isWideForPreview && !NO_MICROSITE.includes(selected) && data?.isDynamic && renderPreview(false, true)}
+        </Box>
       ) : renderChildren()}
       {!openPreview && !isWideForPreview && !NO_MICROSITE.includes(selected) && data?.isDynamic && (
         <Button
