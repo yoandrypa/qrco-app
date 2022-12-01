@@ -144,9 +144,7 @@ function Common({msg, children}: CommonProps) {
 
   const renderPreview = (forbidStyle?: boolean, previewMessage?: boolean) => (
     <Box sx={{ml: !forbidStyle ? '20px' : 0, mt: !forbidStyle ? 1 : 0}}>
-      <RenderCellPhoneShape width={270} height={570}>
-        {null}
-      </RenderCellPhoneShape>
+      <RenderCellPhoneShape width={270} height={570} />
       {previewMessage && <Typography sx={{textAlign: 'center', fontSize: 'small', color: theme => theme.palette.text.disabled}}>Preview</Typography>}
     </Box>
   );
