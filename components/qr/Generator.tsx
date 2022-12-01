@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import DownloadIcon from '@mui/icons-material/Download';
 import BrushIcon from '@mui/icons-material/Brush';
 import CropFreeIcon from '@mui/icons-material/CropFree';
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import {Accordion, AccordionDetails, AccordionSummary} from '../renderers/Renderers';
 
@@ -23,18 +24,21 @@ import NotifyDynamic from "./helperComponents/NotifyDynamic";
 import Notifications from "../../components/notifications/Notifications";
 import {FRAMES_LENGTH} from "./constants";
 import {GeneratorProps, GenProps} from "./auxFunctions";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import RenderPreviewDrawer from "./helperComponents/RenderPreviewDrawer";
 
-const Generator = ({forceOverride}: GenProps) => {
-  // @ts-ignore
+const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
   const { options, setOptions, background, setBackground, frame, setFrame, data, selected, userInfo, cornersData,
     dotsData, setIsWrong }: GeneratorProps = useContext(Context);
-
   const [expanded, setExpanded] = useState<string>('style');
   const [error, setError] = useState<object | string | null>(null);
   const [anchor, setAnchor] = useState<object | null>(null);
   const [updating, setUpdating] = useState<boolean>(false);
   const [generatePdf, setGeneratePdf] = useState<object | null>(null);
   const [isReadable, setIsReadable] = useState<{ readable: boolean; } | boolean | null>(null);
+  const [openPreview, setOpenPreview] = useState<boolean>(false);
+
+  const isWideForPreview = useMediaQuery("(min-width:800px)", { noSsr: true });
 
   const qrImageData = useRef<any>(null);
   const doneFirst = useRef<boolean>(false);
@@ -242,13 +246,45 @@ const Generator = ({forceOverride}: GenProps) => {
     }
   }, [updating]);
 
+  useEffect(() => {
+    if (isWideForPreview && openPreview) { setOpenPreview(false); }
+  }, [isWideForPreview]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const renderQrGenerator = () => (
+    <>
+      <Box sx={{mt: {sm: 0, xs: 1}}}>
+        <QrGenerator
+          ref={qrImageData}
+          options={options}
+          frame={frame}
+          hidden={updating}
+          command={command}
+          cornersData={cornersData}
+          dotsData={dotsData} // @ts-ignore
+          overrideValue={dataToOverride}
+          background={!background.file ? null : background}/>
+        <Box sx={{width: '100%', height: '35px', mt: '-2px', textAlign: 'center'}}>
+          {isReadable ? ( // @ts-ignore
+            <Typography sx={{color: theme => isReadable.readable ? theme.palette.success.dark : theme.palette.error.dark, height: '25px'}}> {/* @ts-ignore */}
+              {`${isReadable.readable ? 'High' : 'Low'} chance to be readable.`}
+            </Typography>
+          ) : (
+            <Button variant="contained" onClick={checkForReadability} startIcon={<CropFreeIcon/>} sx={{width: '100%', height: '25px'}}>
+              {'Check for readability'}
+            </Button>
+          )}
+        </Box>
+      </Box>
+      <Button sx={{mt: '10px', width: '100%'}} variant="outlined" onClick={handleDownload} startIcon={<DownloadIcon/>}>
+        {'Download'}
+      </Button>
+   </>
+  );
+
   return (
     <> {/* @ts-ignore */}
-      {error && <Notifications open message={error} onClose={() => {
-        setError(null);
-      }}/>}
-      {background.type === 'image' &&
-        <input ref={fileInput} type="file" accept="image/*" style={{display: 'none'}} onChange={onLoadFile}/>}
+      {error && <Notifications open message={error} onClose={() => setError(null)}/>}
+      {background.type === 'image' && <input ref={fileInput} type="file" accept="image/*" style={{display: 'none'}} onChange={onLoadFile}/>}
       <Box sx={{border: '1px solid rgba(0, 0, 0, .125)', borderRadius: '5px', p: 1, width: '100%'}}>
         {!Boolean(userInfo) && forceOverride === undefined && <RenderNoUserWarning/>}
         <Box sx={{display: 'flex', width: '100%', position: 'relative'}}>
@@ -259,57 +295,8 @@ const Generator = ({forceOverride}: GenProps) => {
           </Box>
           {data.isDynamic && <NotifyDynamic styling={{position: 'absolute', right: '5px'}}/>}
         </Box>
-        <Box sx={{display: 'flex', flexDirection: {sm: 'row', xs: 'column'}, m: {sm: 2, xs: 0}}}>
-          <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            width: {sm: '430px', xs: '100%'}
-          }}>
-            {updating ? <Typography sx={{
-              position: 'absolute',
-              ml: 1,
-              mt: 1,
-              color: theme => theme.palette.text.disabled
-            }}>{'Generating QR...'}</Typography> : null}
-            <Box sx={{mt: {sm: 0, xs: 1}}}>
-              <QrGenerator
-                ref={qrImageData}
-                options={options}
-                frame={frame}
-                hidden={updating}
-                command={command}
-                cornersData={cornersData}
-                dotsData={dotsData} // @ts-ignore
-                overrideValue={dataToOverride}
-                background={!background.file ? null : background}/>
-              <Box sx={{width: '100%', height: '35px', mt: '-2px', textAlign: 'center'}}>
-                {isReadable ? ( // @ts-ignore
-                  <Typography sx={{color: theme => isReadable.readable ? theme.palette.success.dark : theme.palette.error.dark, height: '25px'}}>
-                    {/* @ts-ignore */}
-                    {`${isReadable.readable ? 'High' : 'Low'} chance to be readable.`}
-                  </Typography>
-                ) : (
-                  <Button variant="contained" onClick={checkForReadability} startIcon={<CropFreeIcon/>}
-                          sx={{width: '100%', height: '25px'}}>
-                    {'Check for readability'}
-                  </Button>
-                )}
-              </Box>
-            </Box>
-            <Button sx={{mt: '10px', width: '100%'}} variant="outlined" onClick={handleDownload}
-                    startIcon={<DownloadIcon/>}>
-              {'Download'}
-            </Button>
-          </Box>
-          <Box sx={{
-            width: '100%',
-            ml: {sm: 2, xs: 0},
-            mt: {sm: 0, xs: 2},
-            overflow: 'auto',
-            textAlign: 'left'
-          }}>
-            {/* @ts-ignore */}
+        <Box sx={{display: 'flex', m: {sm: 2, xs: 0}}}>
+          <Box sx={{ width: '100%', mr: isWideForPreview ? 2 : 0, overflow: 'auto', textAlign: 'left' }}> {/* @ts-ignore */}
             <Accordion expanded={expanded === 'style'} onChange={handleExpand('style')}>
               <AccordionSummary aria-controls="style-content" id="style-header">
                 <Typography>Body</Typography>
@@ -324,7 +311,7 @@ const Generator = ({forceOverride}: GenProps) => {
                   handleReset={handleReset}
                 />
               </AccordionDetails>
-            </Accordion>{/* @ts-ignore */}
+            </Accordion> {/* @ts-ignore */}
             <Accordion expanded={expanded === 'frame'} onChange={handleExpand('frame')}>
               <AccordionSummary aria-controls="frame-content" id="frame-header">
                 <Typography>Frame</Typography>
@@ -332,7 +319,7 @@ const Generator = ({forceOverride}: GenProps) => {
               <AccordionDetails>
                 <Frames frame={frame} handleMainFrame={handleMainFrame} handleFrame={handleFrame}/>
               </AccordionDetails>
-            </Accordion>{/* @ts-ignore */}
+            </Accordion> {/* @ts-ignore */}
             <Accordion expanded={expanded === 'logo'} onChange={handleExpand('logo')}>
               <AccordionSummary aria-controls="logo-content" id="logo-header">
                 <Typography>Logo</Typography>
@@ -342,8 +329,27 @@ const Generator = ({forceOverride}: GenProps) => {
               </AccordionDetails>
             </Accordion>
           </Box>
+          {isWideForPreview && (<Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: {sm: '430px', xs: '100%'}}}>
+            {updating ? <Typography sx={{ position: 'absolute', ml: 1, mt: 1, color: theme => theme.palette.text.disabled}}>{'Generating QR...'}</Typography> : null}
+            {renderQrGenerator()}
+          </Box>)}
         </Box>
       </Box>
+      {!isWideForPreview && !openPreview &&  (
+        <Button
+          onClick={() => setOpenPreview(true)}
+          variant="contained"
+          color="error"
+          sx={{position: 'fixed', bottom: '25px', right: '-5px'}}
+          startIcon={<OpenInNewIcon />}>
+          {'Preview'}
+        </Button>
+      )}
+      {openPreview && ( // @ts-ignore
+        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={470} border={10}>
+          <Box sx={{mx: '10px'}}>{renderQrGenerator()}</Box>
+        </RenderPreviewDrawer>
+      )}
       {Boolean(anchor) && (
         <RenderDownload
           frame={frame}
