@@ -166,7 +166,7 @@ function Common({msg, children}: CommonProps) {
       )}
       {userInfo ? (
         <Box sx={{ display: 'flex' }}>
-          <Box>
+          <Box sx={{ width: '100%' }}>
             <TextField
               label="QR name"
               required
