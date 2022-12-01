@@ -6,9 +6,7 @@ import Tab from '@mui/material/Tab';
 import Badge from '@mui/material/Badge';
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
-import Drawer from '@mui/material/Drawer';
 import Button from "@mui/material/Button";
-import CloseIcon from '@mui/icons-material/Close';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { styled } from "@mui/material/styles";
 
@@ -20,6 +18,7 @@ import Box from "@mui/material/Box";
 import RenderIframe from "../../RenderIframe";
 import RenderCellPhoneShape from "./RenderCellPhoneShape";
 import {NO_MICROSITE} from "../constants";
+import RenderPreviewDrawer from "./RenderPreviewDrawer";
 
 interface RenderTypeSelectorProps {
   selected?: string | null;
@@ -87,9 +86,7 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
   );
 
   useEffect(() => {
-    if (isWideForPreview && openPreview) {
-      setOpenPreview(false);
-    }
+    if (isWideForPreview && openPreview) { setOpenPreview(false); }
   }, [isWideForPreview]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -189,20 +186,8 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
           {'Sample'}
         </Button>
       )}
-      {openPreview && (
-        <Drawer anchor="right" open onClose={() => setOpenPreview(false)} sx={{'& .MuiPaper-root': {
-          height: '638px', borderRadius: '20px 0 0 35px', top: 'calc(50% - 320px)'}
-        }}>
-          <Box sx={{minWidth: '300px'}}>
-            <Box sx={{width: '100%', height: '40px', background: theme => theme.palette.primary.main, mb: '10px', display: 'flex', justifyContent: 'space-between'}}>
-              <Typography sx={{fontWeight: 'bold', color: '#fff', pt: '3px', pl: 2}} variant="h6">{'Sample'}</Typography>
-              <CloseIcon sx={{
-                color: '#fff', mt: '8px', mr: '5px', cursor: 'pointer', background: '#ffffff21', borderRadius: '50%'
-              }} onClick={() => setOpenPreview(false)} />
-            </Box>
-            {renderPreview(true)}
-          </Box>
-        </Drawer>
+      {openPreview && ( // @ts-ignore
+        <RenderPreviewDrawer setOpenPreview={setOpenPreview} height={638}>{renderPreview(true)}</RenderPreviewDrawer>
       )}
     </Box>
   );
