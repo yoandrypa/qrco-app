@@ -8,6 +8,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
+import LinearProgress from "@mui/material/LinearProgress";
 
 function createData(
   name: string,
@@ -28,13 +29,13 @@ const regionNames = new Intl.DisplayNames(
 export default function VisitTechnologyDetails({ visitData }: any) {
   let countriesRows: { name: string, visits: number, percent: number }[] = [];
   // @ts-ignore
-  Object.keys(visitData.countries).forEach(country => countriesRows.push(
+  Object.keys(visitData.countries || {}).forEach(country => countriesRows.push(
     createData(country, visitData.countries[country], visitData.total)
   ));
 
   let citiesRows: { name: string, visits: number, percent: number }[] = [];
   // @ts-ignore
-  Object.keys(visitData.cities).forEach((city) => citiesRows.push(
+  Object.keys(visitData.cities || {}).forEach((city) => citiesRows.push(
     createData(city, visitData.cities[city], visitData.total)
   ));
 
@@ -46,7 +47,7 @@ export default function VisitTechnologyDetails({ visitData }: any) {
           <TableHead>
             <TableRow>
               <TableCell>Countries</TableCell>
-              <TableCell align="right" sx={{ width: 100 }}>Visits</TableCell>
+              <TableCell align="center" sx={{ width: 100 }}>Visits</TableCell>
               <TableCell align="right" sx={{ width: 100 }}>%</TableCell>
             </TableRow>
           </TableHead>
@@ -57,7 +58,12 @@ export default function VisitTechnologyDetails({ visitData }: any) {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">{regionNames.of(row.name)}</TableCell>
-                <TableCell align="right">{row.visits}</TableCell>
+                <TableCell align="right" sx={{ width: 400 }}>
+                  <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-around">
+                    <LinearProgress variant="determinate" value={row.percent} sx={{width: "90%"}}/>
+                    <>{row.visits}</>
+                  </Stack>
+                </TableCell>
                 <TableCell align="right">{row.percent}</TableCell>
               </TableRow>
             ))}
@@ -70,7 +76,7 @@ export default function VisitTechnologyDetails({ visitData }: any) {
           <TableHead>
             <TableRow>
               <TableCell>Cities</TableCell>
-              <TableCell align="right" sx={{ width: 100 }}>Visits</TableCell>
+              <TableCell align="center" sx={{ width: 100 }}>Visits</TableCell>
               <TableCell align="right" sx={{ width: 100 }}>%</TableCell>
             </TableRow>
           </TableHead>
@@ -81,7 +87,12 @@ export default function VisitTechnologyDetails({ visitData }: any) {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">{row.name}</TableCell>
-                <TableCell align="right">{row.visits}</TableCell>
+                <TableCell align="right" sx={{ width: 400 }}>
+                  <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-around">
+                    <LinearProgress variant="determinate" value={row.percent} sx={{width: "90%"}}/>
+                    <>{row.visits}</>
+                  </Stack>
+                </TableCell>
                 <TableCell align="right">{row.percent}</TableCell>
               </TableRow>
             ))}

@@ -34,7 +34,7 @@ import { humanDate } from "../helpers/generalFunctions";
 import { handleDesignerString, handleInitialData } from "../../helpers/qr/helpers";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 
-const QrList = ({ qrs }: any) => {
+const QrList = ({ qrs, title }: any) => {
   const [deleteConfirm, setDeleteConfirm] = useState<{
     createdAt: number;
     userId: string;
@@ -114,7 +114,7 @@ const QrList = ({ qrs }: any) => {
       <IconButton color="primary" disabled={isLoading}
                   onClick={() => {
                     setLoading(true);
-                    router.push("/qr/" + (new Date(qr.shortLinkId.createdAt)).getTime() + "/details").then(() => setLoading(false));
+                    router.push("/qr/" + (new Date(qr.createdAt)).getTime() + "/details").then(() => setLoading(false));
                   }}>
         <InfoOutlinedIcon />
       </IconButton>
@@ -161,7 +161,7 @@ const QrList = ({ qrs }: any) => {
       <Stack spacing={2}>
         {qrs.items?.length > 0 ? (
           <>
-            <Typography variant="h6" style={{ fontWeight: "bold" }}>My QR Codes</Typography>
+            {title && <Typography variant="h6" style={{ fontWeight: "bold" }}>{title}</Typography>}
             {qrs.items.map((qr: any) => { // @ts-ignore
               const qrLink = sanitize.link(qr.shortLinkId || {}); // @ts-ignore
               if (qr.qrOptionsId?.background?.backColor === "") {
