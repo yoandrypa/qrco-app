@@ -123,7 +123,7 @@ function PlanCalculator() {
                         {discount > 0 && <FormHelperText>{discount}% Discount</FormHelperText>}
                     </FormControl>
                 </Grid>
-                <Grid item sx={{ m: 1, }}>
+                <Grid item sx={{ mt: 1 }}>
                     <Typography sx={{ mt: 1 }}>plan and create</Typography>
                 </Grid>
                 <Grid item sx={{ m: 1 }}>
@@ -142,7 +142,7 @@ function PlanCalculator() {
                 </Grid>
                 <Grid item sx={{ m: 1 }}>
                     <Typography sx={{ mt: 1 }} textAlign='left'>
-                        QRs, your bill will be ${Number(value).toFixed(2)}
+                        Dynamic QRs, your bill will be ${Number(value).toFixed(2)}
                     </Typography>
                 </Grid>
             </Grid>
