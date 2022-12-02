@@ -77,15 +77,8 @@ const AppContextProvider = (props: ContextProps) => {
   }, [data?.isDynamic, data.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (doneInitialRender.current && (router.pathname === QR_TYPE_ROUTE || (router.pathname === "/" && !isUserInfo))) {
-      if (selected !== null) {
-        clearData(true);
-      } else {
-        clearData(true);
-      }
-      if (step !== 0) {
-        setStep(0);
-      }
+    if (doneInitialRender.current) {
+      clearData(true);
       if (isWrong) {
         setIsWrong(false);
       }
