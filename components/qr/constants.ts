@@ -14,6 +14,32 @@ export const EMAIL = new RegExp('^\\w+(\\.\\w+)*(\\+\\w+(\\.\\w+)*)?@\\w+(\\.\\w
 export const PHONE = new RegExp('^(\\+\\d{1,3}\\s?)?((\\(\\d{1,3}\\))|\\d{1,3})(\\s|\\-)?(\\d+((\\s|\\-)\\d+)*)$');
 export const ZIP = new RegExp('^\\d{5}(-\\d{4})?$');
 
+export const EBANUX_PLATFORM_FEE = 0.04;
+
+
+export const QRCODE_PLANS = {
+  BASIC: {
+    MONTHLY_PRICE: 9,
+    YEARLY_PRICE: 90,
+    DYNAMIC_QR_LIMIT: 5,
+    EXTRA_QR_PRICE: 0.10
+  },
+  BUSINESS: {
+    MONTHLY_PRICE: 15,
+    YEARLY_PRICE: 135,
+    DYNAMIC_QR_LIMIT: 100,
+    EXTRA_QR_PRICE: 0.10
+  },
+  PREMIUM: {
+    MONTHLY_PRICE: 45,
+    YEARLY_PRICE: 360,
+    DYNAMIC_QR_LIMIT: 1000,
+    EXTRA_QR_PRICE: 0.10
+  }
+}
+
+
+
 export const DAYS = {
   sun: 'Sunday',
   mon: 'Monday',
