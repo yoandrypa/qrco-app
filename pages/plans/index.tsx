@@ -219,18 +219,23 @@ const Plans = (props: Props) => {
           <Tab label='Annual Plan' />
         </Tabs>
       </Box>
-      <Grid container marginTop={6} alignContent='center' display='flex' spacing={3} justifyContent={'center'}>
-        <Grid item xs={12} md={6} lg={4}>
+      <Grid container marginTop={2} alignContent='center' display='flex' spacing={1} justifyContent={'center'}>
+
+        <PlanCalculator />
+      </Grid>
+
+      <Grid container marginTop={6} alignContent='center' display='flex' spacing={1} justifyContent={'center'}>
+        <Grid item xs={12} sm={6} md={4} lg={4}>
           <PlanCard data={activeTab == 0 ? basic : basicAnnual}
             isCurrentPlan={false}
             clickAction={handleClick} />
         </Grid>
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid item xs={12} sm={6} md={4} lg={4}>
           <PlanCard data={activeTab == 0 ? business : businessAnnual}
             isCurrentPlan={false}
             clickAction={handleClick} />
         </Grid>
-        <Grid item xs={12} md={4} lg={4}>
+        <Grid item xs={12} sm={4} md={4} lg={4}>
           <PlanCard data={activeTab == 0 ? premium : premiumAnnual}
             isCurrentPlan={false}
             clickAction={handleClick} />
@@ -244,6 +249,7 @@ const Plans = (props: Props) => {
 // - Only if you need to pre-render a page whose data must be fetched at request time
 import { GetServerSideProps } from 'next'
 import { handleFetchResponse } from '../../handlers/helpers'
+import PlanCalculator from '../../components/plans/PlanCalculator'
 
 export const getServerSideProps: GetServerSideProps = async ({ query, req, res }) => {
 
