@@ -16,11 +16,11 @@ export default function QrHome({ qrData, userInformation }: any) {
     if (router.query.login) {
       setLoading(true);
       const { path } = router.query;
-      const route = { pathname: path !== undefined ? `${path}` : '/'};
+      const route = { pathname: path !== undefined ? `${path}` : "/" };
       if (router.query.selected) { // @ts-ignore
         route.query = { selected: router.query.selected };
       }
-      router.push(route, '/', {shallow: false})
+      router.push(route, "/", { shallow: false })
         .then(() => {
           setLoading(false);
         });
@@ -36,7 +36,7 @@ export default function QrHome({ qrData, userInformation }: any) {
         {qrData &&
           <Grid item xs={12}>
             {/*@ts-ignore*/}
-            <QrList qrs={qrData} />
+            <QrList qrs={qrData} title="My Qr Links" />
           </Grid>
         }
       </Grid>

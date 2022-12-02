@@ -8,6 +8,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import Stack from "@mui/material/Stack";
+import LinearProgress from "@mui/material/LinearProgress";
 
 function createData(
   name: string,
@@ -61,8 +62,8 @@ export default function VisitTechnologyDetails({ visitData }: any) {
           <TableHead>
             <TableRow>
               <TableCell>Devices</TableCell>
-              <TableCell align="right">Visits</TableCell>
-              <TableCell align="right">%</TableCell>
+              <TableCell align="center" sx={{ width: 100 }}>Visits</TableCell>
+              <TableCell align="right" sx={{ width: 100 }}>%</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -72,7 +73,12 @@ export default function VisitTechnologyDetails({ visitData }: any) {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">{row.name}</TableCell>
-                <TableCell align="right" sx={{ width: 100 }}>{row.visits}</TableCell>
+                <TableCell align="right" sx={{ width: 400 }}>
+                  <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-around">
+                    <LinearProgress variant="determinate" value={row.percent} sx={{width: "90%"}}/>
+                    <>{row.visits}</>
+                  </Stack>
+                </TableCell>
                 <TableCell align="right" sx={{ width: 100 }}>{row.percent}</TableCell>
               </TableRow>
             ))}
@@ -85,8 +91,8 @@ export default function VisitTechnologyDetails({ visitData }: any) {
           <TableHead>
             <TableRow>
               <TableCell>Operating Systems</TableCell>
-              <TableCell align="right">Visits</TableCell>
-              <TableCell align="right">%</TableCell>
+              <TableCell align="center" sx={{ width: 100 }}>Visits</TableCell>
+              <TableCell align="right" sx={{ width: 100 }}>%</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -96,7 +102,12 @@ export default function VisitTechnologyDetails({ visitData }: any) {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">{row.name}</TableCell>
-                <TableCell align="right" sx={{ width: 100 }}>{row.visits}</TableCell>
+                <TableCell align="right" sx={{ width: 400 }}>
+                  <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-around">
+                    <LinearProgress variant="determinate" value={row.percent} sx={{width: "90%"}}/>
+                    <>{row.visits}</>
+                  </Stack>
+                </TableCell>
                 <TableCell align="right" sx={{ width: 100 }}>{row.percent}</TableCell>
               </TableRow>
             ))}

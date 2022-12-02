@@ -38,7 +38,7 @@ interface PreviewProps {
   qr?: any;
 }
 
-const RenderPreview = ({qrDesign, qr, externalFrame, externalDesign, handleDone}: PreviewProps) => {
+const RenderPreview = ({qrDesign, qr, externalFrame, externalDesign, handleDone, ...qrProps}: PreviewProps) => {
   const [preview, setPreview] = useState<boolean>(false);
   const [qrData, setQrData] = useState<any>(null);
   const [current, setCurrent] = useState<string | null>(externalDesign || null);
@@ -129,7 +129,7 @@ const RenderPreview = ({qrDesign, qr, externalFrame, externalDesign, handleDone}
       <Box sx={{display: 'none'}}>{qrData}</Box>
       <Box onClick={handlePreView} sx={{cursor: 'pointer'}}>
         {current && !updating ? (
-          <QRRender qrData={current || ''} width={70} alt={name}/>
+          <QRRender qrData={current || ''} width={70} alt={name} {...qrProps}/>
         ) : (
           <CircularProgress color="primary" sx={{ml: '10px', my: 'auto'}}/>
         )}

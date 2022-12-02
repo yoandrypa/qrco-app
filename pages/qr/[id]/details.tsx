@@ -16,8 +16,8 @@ Amplify.configure(awsExports);
 
 export default function Details({ visitData, qrData }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <Authenticator components={components}>
-      <QrDetails visitData={visitData ? JSON.parse(visitData) : visitData} qrData={JSON.parse(qrData)} />
+    <Authenticator components={ components }>
+      <QrDetails visitData={ visitData ? JSON.parse(visitData) : visitData } qrData={ JSON.parse(qrData) } />
     </Authenticator>
   );
 };
@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
   const getUserInfo = async () => {
     try {
       let userInfo = {};
-      for (const [key, value] of Object.entries(req.cookies)) {
+      for (const [ key, value ] of Object.entries(req.cookies)) {
         // @ts-ignore
         userInfo[key.split(".").pop()] = value;
       }
@@ -59,11 +59,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
     user = await UserHandler.create({ id: userId });
   }
 
-  const createdAt = JSON.parse(params?.id as string);
-  const qrData = (await (await QrHandler.findByShortLink({
+  let createdAt = JSON.parse(params?.id as string);
+  const qrData = (await (await QrHandler.get({
     userId: user.id,
     createdAt
-  }))[0].populate({ properties: "shortLinkId" }));
+  })).populate({ properties: [ "shortLinkId", "qrOptionsId" ] }));
 
   if (!qrData) {
     return {
@@ -72,7 +72,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params, req }) =>
   }
   let visitData = null;
   // @ts-ignore
-  if (qrData.shortLinkId.visitCount > 0) {
+  if (qrData.shortLinkId?.visitCount > 0) {
+    // @ts-ignore
+    createdAt = (new Date(qrData.shortLinkId.createdAt)).getTime();
     visitData = (await VisitHandler.findByShortLink({ userId: user.id, createdAt }));
   }
 
