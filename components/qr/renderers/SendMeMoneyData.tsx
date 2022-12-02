@@ -44,10 +44,10 @@ const SendMeMoneyData = ({ data, handleValues, setIsWrong }: SendMeMoneyProps) =
     }, [data])
     return (
         <>
-            <Common msg='Recieve Payments worlwide'>
+            <Common msg='Receive payments worldwide'>
                 <Alert severity='info' sx={{ marginTop: 2 }} >
                     <Typography sx={{ display: { xs: "none", md: "block" } }}>
-                        {"In order to withdraw your funds to a credit card o bank account you'll "}
+                        {"For payout your funds to a credit card o bank account you'll "}
                         {"need a Payoneer or Stripe account. You can change your payout options "}
                         <span style={{ color: "blue" }}><Link href={(DEVELOPMENT ? 'https://dev-app.' : 'https://app.') + 'ebanux.com/onboarding'}>here.</Link></span>
                         {" For more information contact us at "}
