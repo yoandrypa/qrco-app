@@ -40,7 +40,6 @@ const AppContextProvider = (props: ContextProps) => {
 
   const [selected, setSelected] = useState<string | null>(null);
   const [step, setStep] = useState<number>(0);
-  const [forceClear, setForceClear] = useState<boolean>(false);
 
   const [userInfo, setUserInfo] = useState(null);
   const [verifying, setVerifying] = useState<boolean>(true);
@@ -49,14 +48,12 @@ const AppContextProvider = (props: ContextProps) => {
   const [isWrong, setIsWrong] = useState<boolean>(false);
 
   const doneInitialRender = useRef<boolean>(false);
-  const doNotNavigate = useRef<boolean>(false);
 
   const router = useRouter();
 
   const isUserInfo = useMemo(() => userInfo !== null, [userInfo]);
 
   const clearData = useCallback((keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean) => {
-    setForceClear(false);
     if (!keepType || doNot || takeAwaySelection) {
       setSelected(null);
     }
@@ -68,10 +65,6 @@ const AppContextProvider = (props: ContextProps) => {
     setLoading(false);
     setStep(0);
     setOptions(handleInitialData("Ebanux"));
-
-    if (data.mode === "edit" || doNot) {
-      doNotNavigate.current = true;
-    }
 
     let newData: DataType;
     if (!keepType || data.isDynamic) {
@@ -106,60 +99,7 @@ const AppContextProvider = (props: ContextProps) => {
   }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (doneInitialRender.current && !doNotNavigate.current) {
-      let pathLocation = QR_TYPE_ROUTE;
-      if (step === 1) {
-        pathLocation = QR_CONTENT_ROUTE;
-      } else if (step === 2) {
-        pathLocation = QR_DESIGN_ROUTE;
-      }
-      router.push(pathLocation, undefined, { shallow: true }).then(() => {
-        setLoading(false);
-      });
-    } else {
-      doneInitialRender.current = true;
-      doNotNavigate.current = false;
-    }
-  }, [step]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (router.pathname === QR_TYPE_ROUTE && step === 1 && selected) {
-      doNotNavigate.current = true;
-      setStep(0);
-    } else if (router.pathname === QR_CONTENT_ROUTE && step === 2 && selected) {
-      doNotNavigate.current = true;
-      setStep(1);
-    } else if (router.pathname === QR_DESIGN_ROUTE && step !== 2 && selected) {
-      doNotNavigate.current = true;
-      setStep(2);
-    } else if (options?.mode !== "edit" && router.query.mode !== "edit") {
-      if ([QR_CONTENT_ROUTE, QR_DESIGN_ROUTE].includes(router.pathname)) {
-        if (data?.isDynamic && !isUserInfo && !router.query.login) {
-          router.push({ pathname: "/", query: { path: router.pathname, login: true } }, "/").then(() => {
-            setLoading(false);
-          });
-        } else if (selected === null) {
-          router.push(QR_TYPE_ROUTE, undefined, { shallow: true }).then(() => {
-            setLoading(false);
-          });
-        }
-      }
-
-      if (["/", QR_TYPE_ROUTE].includes(router.pathname)) {
-        if (step === 2) {
-          if (isUserInfo) {
-            doNotNavigate.current = true;
-          }
-          clearData(true, undefined, true);
-        } else if (!router.query.login && step !== 0) {
-          setStep(0);
-        }
-      }
-    }
-
-    if (router.pathname === "/") {
-      clearData();
-    } else if (loading) {
+    if (loading) {
       setLoading(false);
     }
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -169,13 +109,6 @@ const AppContextProvider = (props: ContextProps) => {
       setVerifying(false);
     }
   }, [isUserInfo]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (forceClear) {
-      doNotNavigate.current = true;
-      clearData();
-    }
-  }, [forceClear]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const verify = async () => {
@@ -255,7 +188,7 @@ const AppContextProvider = (props: ContextProps) => {
         selected, setSelected,
         data, setData, isTrialMode,
         userInfo, setUserInfo,
-        step, setStep, setForceClear,
+        step, setStep, clearData,
         loading, setLoading,
         isWrong, setIsWrong
       }}>

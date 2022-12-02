@@ -6,8 +6,6 @@ import Tab from '@mui/material/Tab';
 import Badge from '@mui/material/Badge';
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
-import Button from "@mui/material/Button";
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { styled } from "@mui/material/styles";
 
 import TypeSelector from "./TypeSelector";
@@ -19,6 +17,7 @@ import RenderIframe from "../../RenderIframe";
 import RenderCellPhoneShape from "./RenderCellPhoneShape";
 import {NO_MICROSITE} from "../constants";
 import RenderPreviewDrawer from "./RenderPreviewDrawer";
+import RenderPreviewButton from "./RenderPreviewButton";
 
 interface RenderTypeSelectorProps {
   selected?: string | null;
@@ -77,12 +76,12 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
   );
 
   const renderPreview = (forbidStyle?: boolean, renderSampleMessage?: boolean) => (
-    <Box sx={{ml: !forbidStyle ? '20px' : 0, mt: !forbidStyle ? '64px' : 0}}>
-      <RenderCellPhoneShape width={270} height={570} offlineText="The selected card has no available sample">
+    <Box sx={{ml: !forbidStyle ? '20px' : 0, mt: !forbidStyle ? '60px' : 0}}>
+      <RenderCellPhoneShape width={270} height={550} offlineText="The selected card has no available sample">
         {selected && !NO_MICROSITE.includes(selected) ?
           <RenderIframe width="256px" height="536px" src={`${process.env.REACT_MICROSITES_ROUTE}/sample/${selected}`}/> : null}
       </RenderCellPhoneShape>
-      {renderSampleMessage && <Typography sx={{textAlign: 'center', fontSize: 'small', color: theme => theme.palette.text.disabled}}>Sample</Typography>}
+      {renderSampleMessage && <Typography sx={{textAlign: 'center', fontSize: 'small', color: theme => theme.palette.text.disabled, mt: '10px'}}>Sample</Typography>}
     </Box>
   );
 
@@ -177,18 +176,11 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
         </>) : null}
       </Grid>
       {isWideForPreview && selected && data.isDynamic && renderPreview(false, true)}
-      {!openPreview && !isWideForPreview && selected && data.isDynamic && (
-        <Button
-          onClick={() => setOpenPreview(true)}
-          variant="contained"
-          color="error"
-          sx={{position: 'fixed', bottom: '25px', right: '-5px'}}
-          startIcon={<OpenInNewIcon />}>
-          {'Sample'}
-        </Button>
+      {!openPreview && !isWideForPreview && selected && data.isDynamic && ( // @ts-ignore
+        <RenderPreviewButton setOpenPreview={setOpenPreview} message="Sample" />
       )}
       {openPreview && ( // @ts-ignore
-        <RenderPreviewDrawer setOpenPreview={setOpenPreview} height={638}>{renderPreview(true)}</RenderPreviewDrawer>
+        <RenderPreviewDrawer setOpenPreview={setOpenPreview} height={618}>{renderPreview(true)}</RenderPreviewDrawer>
       )}
     </Box>
   );

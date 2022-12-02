@@ -45,3 +45,22 @@ export const handleFetchResponse = async (fetchResponse: Response): Promise<any 
     return new Error('Bad Request. Error decoding JSON response');
   }
 }
+
+export const handleVerifier = (router: any, isDynamic: boolean, userLogged: boolean, selected: string | null,
+                               setLoading: (loading: boolean) => {}, setStep: (step: number) => {}, step: number,
+                               target: number) => {
+  if ((isDynamic && !userLogged) || !selected) {
+    const path = {pathname: '/'};
+
+    if (isDynamic && !userLogged) { // @ts-ignore
+      path.query = {login: true};
+    }
+
+    router.push(path, "/")
+      .then(() => {
+        setLoading(false);
+      });
+  } else if (step !== target && selected) {
+    setStep(target);
+  }
+};

@@ -17,17 +17,15 @@ import {DataType} from "../types/types";
 import Box from "@mui/material/Box";
 import RenderCellPhoneShape from "./RenderCellPhoneShape";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Button from "@mui/material/Button";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import RenderPreviewDrawer from "./RenderPreviewDrawer";
+import RenderPreviewButton from "./RenderPreviewButton";
 
 interface CommonProps {
   msg: string;
   children: ReactNode;
 }
 
-function Common({msg, children}: CommonProps) {
-  // @ts-ignore
+function Common({msg, children}: CommonProps) { // @ts-ignore
   const {selected, data, setData, userInfo} = useContext(Context);
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -97,11 +95,9 @@ function Common({msg, children}: CommonProps) {
   const getFiles = useCallback(async (key: string, item: string) => {
     try {
       const fileData = await download(key);
-      if (item === 'backgndImg') {
-        // @ts-ignore
+      if (item === 'backgndImg') { // @ts-ignore
         setBackImg(fileData.content);
-      } else {
-        // @ts-ignore
+      } else { // @ts-ignore
         setForeImg(fileData.content);
       }
     } catch {
@@ -144,8 +140,8 @@ function Common({msg, children}: CommonProps) {
 
   const renderPreview = (forbidStyle?: boolean, previewMessage?: boolean) => (
     <Box sx={{ml: !forbidStyle ? '20px' : 0, mt: !forbidStyle ? 1 : 0}}>
-      <RenderCellPhoneShape width={270} height={570} />
-      {previewMessage && <Typography sx={{textAlign: 'center', fontSize: 'small', color: theme => theme.palette.text.disabled}}>Preview</Typography>}
+      <RenderCellPhoneShape width={270} height={550} />
+      {previewMessage && <Typography sx={{textAlign: 'center', fontSize: 'small', color: theme => theme.palette.text.disabled, mt: '10px'}}>Preview</Typography>}
     </Box>
   );
 
@@ -204,18 +200,11 @@ function Common({msg, children}: CommonProps) {
           {isWideForPreview && !NO_MICROSITE.includes(selected) && data?.isDynamic && renderPreview(false, true)}
         </Box>
       ) : renderChildren()}
-      {!openPreview && !isWideForPreview && !NO_MICROSITE.includes(selected) && data?.isDynamic && (
-        <Button
-          onClick={() => setOpenPreview(true)}
-          variant="contained"
-          color="error"
-          sx={{position: 'fixed', bottom: '25px', right: '-5px'}}
-          startIcon={<OpenInNewIcon />}>
-          {'Preview'}
-        </Button>
+      {!openPreview && !isWideForPreview && !NO_MICROSITE.includes(selected) && data?.isDynamic && ( // @ts-ignore
+        <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />
       )}
       {openPreview && ( // @ts-ignore
-        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={638}>{renderPreview(true)}</RenderPreviewDrawer>
+        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={618}>{renderPreview(true)}</RenderPreviewDrawer>
       )}
     </>
   );

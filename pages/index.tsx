@@ -12,13 +12,20 @@ import { useRouter } from "next/router";
 import PleaseWait from "../components/PleaseWait";
 
 import QrGen from "./qr/type";
+import {useContext, useEffect} from "react";
+import Context from "../components/context/Context";
 
 Amplify.configure(awsExports);
 
 const noUser = "noUser";
 
 export default function Index({ qrData }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const router = useRouter();
+  const router = useRouter(); // @ts-ignore
+  const { clearData } = useContext(Context);
+
+  useEffect(() => {
+    clearData();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (router.isFallback) {
     return <PleaseWait />;

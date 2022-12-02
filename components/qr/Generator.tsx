@@ -24,8 +24,8 @@ import NotifyDynamic from "./helperComponents/NotifyDynamic";
 import Notifications from "../../components/notifications/Notifications";
 import {FRAMES_LENGTH} from "./constants";
 import {GeneratorProps, GenProps} from "./auxFunctions";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import RenderPreviewDrawer from "./helperComponents/RenderPreviewDrawer";
+import RenderPreviewButton from "./helperComponents/RenderPreviewButton";
 
 const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
   const { options, setOptions, background, setBackground, frame, setFrame, data, selected, userInfo, cornersData,
@@ -335,15 +335,8 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
           </Box>)}
         </Box>
       </Box>
-      {!isWideForPreview && !openPreview &&  (
-        <Button
-          onClick={() => setOpenPreview(true)}
-          variant="contained"
-          color="error"
-          sx={{position: 'fixed', bottom: '25px', right: '-5px'}}
-          startIcon={<OpenInNewIcon />}>
-          {'Preview'}
-        </Button>
+      {!isWideForPreview && !openPreview && ( // @ts-ignore
+        <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />
       )}
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={470} border={10}>

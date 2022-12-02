@@ -5,6 +5,7 @@ import { initialBackground, initialFrame } from "../../helpers/qr/data";
 export interface StepsProps {
   step: number;
   setStep: Function;
+  clearData: Function;
   selected: string;
   data: DataType;
   userInfo: {

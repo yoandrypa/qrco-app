@@ -33,6 +33,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { humanDate } from "../helpers/generalFunctions";
 import { handleDesignerString, handleInitialData } from "../../helpers/qr/helpers";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import {QR_CONTENT_ROUTE} from "./constants";
 
 const QrList = ({ qrs, title }: any) => {
   const [deleteConfirm, setDeleteConfirm] = useState<{
@@ -73,6 +74,7 @@ const QrList = ({ qrs, title }: any) => {
   const handleEdit = useCallback((qr: QrDataType) => {
     setLoading(true);
     setOptions({ ...qr.qrOptionsId, ...qr, mode: "edit" });
+    router.push(QR_CONTENT_ROUTE, undefined, { shallow: true }).then(() => setLoading(false));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {

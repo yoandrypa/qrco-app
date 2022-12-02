@@ -18,8 +18,8 @@ import {styled} from "@mui/material/styles";
 // @ts-ignore
 import {SketchPicker} from "react-color";
 import {COLORS, DEFAULT_COLORS} from "../../constants";
-import {ColorTypes} from "../../types/types";
 import RenderColorPreset from "./RenderColorPreset";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface ColorSelProps {
   colorLeft?: string;
@@ -41,6 +41,8 @@ const IconBtn = styled(IconButton)(({selected}: IconProps) => ({
 
 const RenderGradientSelector = ({ direction, colorLeft, handleData, colorRight }: ColorSelProps) => {
   const [anchor, setAnchor] = useState<HTMLDivElement | null>(null);
+  const widePrev = useMediaQuery("(min-width:972px)", { noSsr: true });
+  const isWideForPreview = useMediaQuery("(min-width:720px)", { noSsr: true });
 
   // @ts-ignore
   const handlePicker = ({ currentTarget }) => {
@@ -57,7 +59,7 @@ const RenderGradientSelector = ({ direction, colorLeft, handleData, colorRight }
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12}>
+      <Grid item xs={12} >
         <Typography>{'Presets'}</Typography>
         {COLORS.map(x => {
           const selected = (!colorLeft && !colorRight && x.p === DEFAULT_COLORS.p && x.s === DEFAULT_COLORS.s) ||
@@ -65,7 +67,7 @@ const RenderGradientSelector = ({ direction, colorLeft, handleData, colorRight }
           return <RenderColorPreset handleValue={handleData} colors={x} selected={selected} gradient key={x.p} />
         })}
       </Grid>
-      <Grid sm={8} xs={12} item>
+      <Grid sm={widePrev && isWideForPreview? 8 : 12} xs={12} item>
         <TextField
           sx={{
             '& .MuiInputBase-input': { backgroundImage: `linear-gradient(${direction === undefined ? '90deg' : direction}, ${colorLeft}, ${colorRight})` }
@@ -85,9 +87,9 @@ const RenderGradientSelector = ({ direction, colorLeft, handleData, colorRight }
                       cursor: 'pointer',
                       p: '3px',
                       mt: '-5px',
-                      ml: '-3px',
-                      width: '28px',
-                      height: '28px',
+                      ml: '-9px',
+                      width: '40px',
+                      height: '40px',
                       borderRadius: '5px',
                       border: 'solid 1px black',
                       borderColor: theme => theme.palette.text.disabled,
@@ -95,23 +97,23 @@ const RenderGradientSelector = ({ direction, colorLeft, handleData, colorRight }
                       backgroundColor: colorLeft || 'inherit'
                     }}
                     onClick={handlePicker} />
-                    <Typography sx={{ml: '10px', mt: '-2px'}}>{colorLeft}</Typography>
+                    <Typography sx={{ml: '10px', mt: '3px', display: {xs: 'none', sm: 'none', md: 'block'}}}>{colorLeft}</Typography>
                 </Box>
               </InputAdornment>
             ),
             endAdornment: (
-              <InputAdornment position="end" sx={{ mt: '5px', mr: '-5px' }}>
-                <Box sx={{ display: 'flex'}}>
-                  <Typography sx={{mr: '10px', mt: '-2px'}}>{colorRight}</Typography>
+              <InputAdornment position="end" sx={{mt: '5px', mr: '-5px'}}>
+                <Box sx={{display: 'flex'}}>
+                  <Typography sx={{mr: '10px', mt: '3px', display: {xs: 'none', sm: 'none', md: 'block'}}}>{colorRight}</Typography>
                   <Box
                     id="right"
                     sx={{
                       cursor: 'pointer',
                       p: '3px',
                       mt: '-5px',
-                      mr: '-3px',
-                      width: '28px',
-                      height: '28px',
+                      mr: '-9px',
+                      width: '40px',
+                      height: '40px',
                       borderRadius: '5px',
                       border: 'solid 1px black',
                       borderColor: theme => theme.palette.text.disabled,
@@ -125,8 +127,8 @@ const RenderGradientSelector = ({ direction, colorLeft, handleData, colorRight }
           }}
         />
       </Grid>
-      <Grid sm={4} xs={12} item>
-        <Stack direction="row" spacing={1} sx={{ mt: {sm: '10px', xs: 0} }}>
+      <Grid sm={widePrev && isWideForPreview ? 4 : 12} xs={12} item sx={{my: 'auto'}}>
+        <Stack direction="row" spacing={2} sx={{mt: widePrev && isWideForPreview ? 0 : '-8px'}}>
           <IconBtn selected={direction === undefined || direction === '90deg'} onClick={handleDirection('90deg')}>
             <EastIcon />
           </IconBtn>
