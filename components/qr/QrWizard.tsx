@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 
 import { generateId, generateShortLink } from "../../utils";
 import { EbanuxDonationPriceData, ProcessHanldlerType } from "./types/types";
-import { QR_TYPE_ROUTE } from "./constants";
+import {QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_TYPE_ROUTE} from "./constants";
 import { getUuid } from "../../helpers/qr/helpers";
 import * as QrHandler from "../../handlers/qrs";
 import * as StorageHandler from "../../handlers/storage";
@@ -44,13 +44,15 @@ const QrWizard = ({ children }: QrWizardProps) => {
   // @ts-ignore
   const {
     selected, step, setStep, data, userInfo, options, frame, background, cornersData,
-    dotsData, isWrong, loading, setOptions, setLoading, isTrialMode
+    dotsData, isWrong, loading, setOptions, setLoading, isTrialMode, clearData
   }: StepsProps = useContext(Context);
 
   const router = useRouter();
 
   const handleBack = () => {
-    setStep((prev: number) => prev - 1);
+    const currentStep = step;
+    setStep(currentStep - 1);
+    router.push(currentStep === 2 ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE, undefined,  { shallow: true }).then(() => setLoading(false));
   };
 
   const isLogged = Boolean(userInfo);
@@ -64,11 +66,20 @@ const QrWizard = ({ children }: QrWizardProps) => {
     forceUpdate();
   };
 
+  const lastStep = (goToList: boolean) => {
+    const item = document.getElementById('qrCodeReferenceId');
+    if (item) {
+      setForceDownload({ item });
+    } else {
+      clearData();
+      router.push(goToList ? "/" : QR_TYPE_ROUTE, undefined, { shallow: true }).then(() => setLoading(false));
+    }
+  }
+
   const handleNext = async () => {
     setLoading(true); // @ts-ignore
     if (step === 0 && data.isDynamic && !isLogged) {
-      router.push({ pathname: "/", query: { path: router.pathname, login: true, selected } }, "/")
-        .then(() => { setLoading(false); });
+      router.push({ pathname: "/", query: { path: router.pathname, login: true, selected } }, "/").then(() => { setLoading(false); });
     } else if (step === 1 && isLogged && data.isDynamic && !Boolean(options.id) && options.mode === undefined) {
       const id = getUuid();
       const shortCode = await generateId();
@@ -76,6 +87,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
         ...options, id, shortCode, data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN)
       });
       setStep(2);
+      router.push(QR_DESIGN_ROUTE, undefined,  { shallow: true }).then(() => setLoading(false));
     } else if (step === 2 && isLogged) {
       if (["pdf", "audio", "gallery", "video"].includes(selected)) { //Process assets before saving de QR Data
         updatingHandler("Uploading assets");
@@ -196,12 +208,14 @@ const QrWizard = ({ children }: QrWizardProps) => {
       cleaner(qrDesign, background, frame, cornersData, dotsData, data.mode === 'edit');
 
       try {
+        let edition = false;
         if (data.mode === undefined) {
           if (dataInfo.current.length) {
             updatingHandler("Saving QR Code data");
           }
           await QrHandler.create({ shortLink, qrDesign, qrData });
         } else {
+          edition = true;
           if (dataInfo.current.length) {
             updatingHandler("Updating QR Code data");
           }
@@ -218,7 +232,11 @@ const QrWizard = ({ children }: QrWizardProps) => {
         if (dataInfo.current.length) {
           updatingHandler(null, true);
         } else {
-          router.replace("/").then(() => { setLoading(false); });
+          if (!edition) {
+            lastStep(true);
+          } else {
+            router.replace("/").then(() => setLoading(false));
+          }
         }
       } catch {
         if (dataInfo.current.length) {
@@ -231,15 +249,11 @@ const QrWizard = ({ children }: QrWizardProps) => {
         updatingHandler("done");
       }
     } else if (step === 2 && !isLogged) {
-      const item = document.getElementById('qrCodeReferenceId');
-
-      if (item) {
-        setForceDownload({ item });
-      } else {
-        await router.push(QR_TYPE_ROUTE, "/", { shallow: true });
-      }
+      lastStep(false);
     } else {
-      setStep((prev: number) => prev + 1);
+      const currentStep = step;
+      setStep(currentStep + 1);
+      router.push(currentStep === 0 ? QR_CONTENT_ROUTE : QR_DESIGN_ROUTE, undefined,  { shallow: true }).then(() => setLoading(false));
     }
   };
 
@@ -291,7 +305,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
         (isError?: boolean) => {
           dataInfo.current = [];
           if (!isError) {
-            router.replace("/").then(() => { setLoading(false); });
+            setForceDownload(true);
           } else {
             forceUpdate();
           }
@@ -317,7 +331,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           externalFrame={frame}
           handleDone={async () => {
             setForceDownload(undefined);
-            await router.push(QR_TYPE_ROUTE, "/", { shallow: true });
+            router.push("/", undefined, { shallow: true }).then(() => setLoading(false));
           }} />
       )}
       {isError && (

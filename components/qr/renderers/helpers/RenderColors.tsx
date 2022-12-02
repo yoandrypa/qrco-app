@@ -33,14 +33,14 @@ const RenderColors = ({data, handleValue}: RenderColorProps) => {
               (x.p === data?.primary && x.s === data?.secondary);
             return <RenderColorPreset handleValue={handleValue} colors={x} selected={selected} key={x.p} />
           })}
-        <Grid container spacing={1}>
-          <Grid item xs={6}>
+        <Box sx={{ width: '100%', display: 'flex', flexDirection: {sm: 'row', xs: 'column'} }}>
+          <Box sx={{ minWidth: '120px', width: '100%', mr: {sm: '4px', xs: 0} }}>
             <ColorSelector label="Primary color" color={data?.primary || DEFAULT_COLORS.p} handleData={handleValue} property="primary"/>
-          </Grid>
-          <Grid item xs={6}>
+          </Box>
+          <Box sx={{ minWidth: '120px', width: '100%', ml: {sm: '4px', xs: 0} }}>
             <ColorSelector label="Secondary color" color={data?.secondary || DEFAULT_COLORS.s} handleData={handleValue} property="secondary"/>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </Paper>
       <Paper sx={{p: 1, mb: '10px'}} elevation={2}>
         <Typography>{'Background'}</Typography>
