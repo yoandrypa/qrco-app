@@ -109,7 +109,9 @@ export const getBase64FromUrl = async (url: string) => {
     reader.readAsDataURL(blob);
     reader.onloadend = () => {
       const base64data = reader.result;
+      setTimeout(() => {
       resolve(base64data);
+      }, 200);
     }
   });
 };
