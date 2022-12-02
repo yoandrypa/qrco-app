@@ -79,7 +79,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   const handleNext = async () => {
     setLoading(true); // @ts-ignore
     if (step === 0 && data.isDynamic && !isLogged) {
-      router.push({ pathname: "/", query: { path: router.pathname, login: true, selected } }, "/").then(() => { setLoading(false); });
+      router.push({ pathname: "/", query: { path: QR_CONTENT_ROUTE, login: true, selected } }, "/").then(() => { setLoading(false); });
     } else if (step === 1 && isLogged && data.isDynamic && !Boolean(options.id) && options.mode === undefined) {
       const id = getUuid();
       const shortCode = await generateId();
