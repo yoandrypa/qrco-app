@@ -239,7 +239,7 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
     if (updating) {
       setTimeout(() => {
         setUpdating(false);
-      }, 100);
+      }, 150);
     }
     if (!doneFirst.current) {
       doneFirst.current = true;
