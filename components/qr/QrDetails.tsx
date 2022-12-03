@@ -115,7 +115,7 @@ const QrDetails = ({ visitData, qrData }: any) => {
       </TabPanel>
       <SpeedDial
         ariaLabel="SpeedDial openIcon example"
-        sx={{ position: "absolute", bottom: 16, right: 16 }}
+        sx={{ position: "fixed", bottom: 16, right: 16 }}
         icon={<SpeedDialIcon onClick={() => {
           setLoading(true);
           router.replace(
