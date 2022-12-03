@@ -1,5 +1,5 @@
 type Match<T> = {
-  [K in keyof T]?: T[K] | [">" | ">=" | "<=" | "<", T[K]];
+  [K in keyof T]?: T[K] | [ ">" | ">=" | "<=" | "<", T[K] ];
 };
 
 interface UserType {
@@ -153,8 +153,10 @@ interface LinkSanitizedType {
   userId: string;
   domain?: string | undefined;
   banned: boolean;
-  id: string;
+  //id: string;
   bannedById: undefined;
+  paused: boolean;
+  pausedById: undefined;
 }
 
 interface LinkJoinedDomainType extends LinkType {

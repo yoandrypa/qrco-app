@@ -37,10 +37,10 @@ export const sanitize = {
     ...domain,
     bannedById: undefined
   }),
-  link: (link: LinkJoinedDomainType): LinkSanitizedType => <LinkSanitizedType>({
+  link: (link: LinkJoinedDomainType): LinkSanitizedType => <LinkSanitizedType><unknown>({
     ...link,
     bannedById: undefined,
-// @ts-ignore
+    // @ts-ignore
     link: generateShortLink(link.address, link.domain || process.env.REACT_APP_SHORT_URL_DOMAIN)
   })
 };

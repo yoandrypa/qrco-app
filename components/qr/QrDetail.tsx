@@ -4,6 +4,8 @@ import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import React from "react";
 import PublicIcon from "@mui/icons-material/Public";
+import PauseIcon from "@mui/icons-material/Pause";
+import BlockIcon from "@mui/icons-material/Block";
 import Link from "next/link";
 import { humanDate } from "../helpers/generalFunctions";
 import { sanitize } from "../../utils";
@@ -124,7 +126,57 @@ const QrDetail = ({ qrData }: any) => {
                 link</div> }
             </Grid>
           </Grid>
+          {/*-----*/ }
+          <Grid container xs={ 8 } alignItems="center">
+            <Grid item xs={ 1 }>
+              <PauseIcon sx={ { color: themeConfig().palette.primary.main } } />
+            </Grid>
+            <Divider orientation="vertical" />
+            <Grid item xs={ 3 } mb={ 2 } ml={ 1 } alignItems="center">
+              <Typography variant="caption">Paused?</Typography>
+              <Typography>{ qrLink?.paused ? "Yes" : "No" }</Typography>
+            </Grid>
 
+            { qrLink?.pausedById ?
+              <>
+                <Grid item xs={ 1 }>
+                  <PauseIcon sx={ { color: themeConfig().palette.primary.main } } />
+                </Grid>
+                <Divider orientation="vertical" />
+                <Grid item xs={ 3 } mb={ 2 } ml={ 1 } alignItems="center">
+                  <Typography variant="caption">Paused by</Typography>
+                  {/*@ts-ignore*/}
+                  <Typography>{ qrLink.pausedById.name }</Typography>
+                </Grid>
+              </> : null
+            }
+          </Grid>
+          {/*-----*/ }
+          <Grid container xs={ 8 } alignItems="center">
+            <Grid item xs={ 1 }>
+              <BlockIcon sx={ { color: themeConfig().palette.primary.main } } />
+            </Grid>
+            <Divider orientation="vertical" />
+            <Grid item xs={ 3 } mb={ 2 } ml={ 1 } alignItems="center">
+              <Typography variant="caption">Banned?</Typography>
+              <Typography>{ qrLink?.banned ? "Yes" : "No" }</Typography>
+            </Grid>
+
+            { qrLink?.bannedById ?
+              <>
+                <Grid item xs={ 1 }>
+                  <BlockIcon sx={ { color: themeConfig().palette.primary.main } } />
+                </Grid>
+                <Divider orientation="vertical" />
+                <Grid item xs={ 3 } mb={ 2 } ml={ 1 } alignItems="center">
+                  <Typography variant="caption">Banned by</Typography>
+                  {/*@ts-ignore*/}
+                  <Typography>{ qrLink.bannedById.name }</Typography>
+                </Grid>
+              </> : null
+            }
+          </Grid>
+          {/*-----*/ }
           <Grid container xs={ 8 } alignItems="center">
             <Grid item xs={ 1 }>
               <TodayIcon sx={ { color: themeConfig().palette.primary.main } } />
