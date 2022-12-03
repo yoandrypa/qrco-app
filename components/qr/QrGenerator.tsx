@@ -114,7 +114,7 @@ const QrGenerator = ({ hidden, options, frame, background, command, overrideValu
           backSize = sizeWH * background.size;
           posXY = Math.round((originalDimensions - backSize) / 2);
         } else if (background.size > 1) {
-          const dimensions = originalDimensions - (Boolean(frame.type) ? 20 : 0);
+          const dimensions = originalDimensions - (Boolean(frame?.type) ? 20 : 0);
           const newSize = Math.round(dimensions / background.size);
           const newPos = Math.round((originalDimensions - newSize) / 2);
           parsed.props.x = newPos;
