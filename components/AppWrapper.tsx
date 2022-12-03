@@ -41,7 +41,7 @@ function ElevationScroll({ children, window }: Props) {
     threshold: 0,
     target: window ? window() : undefined
   });
-  return cloneElement(children, {elevation: trigger ? 5 : 0});
+  return cloneElement(children, { elevation: trigger ? 5 : 0 });
 }
 
 interface AppWrapperProps {
@@ -81,7 +81,7 @@ export default function AppWrapper(props: AppWrapperProps) {
 
   const handleLogin = useCallback(() => {
     handleLoading();
-    const navigationOptions = { pathname: "/", query: { login: true }};
+    const navigationOptions = { pathname: "/", query: { login: true } };
     if (step !== 0) { //@ts-ignore
       navigationOptions.query.path = router.pathname;
     }
@@ -96,7 +96,7 @@ export default function AppWrapper(props: AppWrapperProps) {
       clearData(false, isEdit || !isInListView);
     }
     handleLoading();
-    const navigationOptions = {pathname: !isEdit && isInListView ? QR_TYPE_ROUTE : "/", query: {}};
+    const navigationOptions = { pathname: !isEdit && isInListView ? QR_TYPE_ROUTE : "/", query: {} };
     if (isEdit) { //@ts-ignore
       navigationOptions.query = { mode };
     }
@@ -195,7 +195,7 @@ export default function AppWrapper(props: AppWrapperProps) {
                       <MenuItem key="navigateMenuItem" onClick={handleNavigation}>
                         {router.pathname === "/" ? <QrCodeIcon /> : <FirstPageIcon />}
                         <Typography
-                          textAlign="center">{router.pathname === "/" ? "Create QR Code" : "My QR Codes"}</Typography>
+                          textAlign="center">{router.pathname === "/" ? "Create QR Link" : "My QR Links"}</Typography>
                       </MenuItem>
                     )}
                     {userInfo && <Divider />}

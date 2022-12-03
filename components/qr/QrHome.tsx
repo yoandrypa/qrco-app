@@ -36,7 +36,7 @@ export default function QrHome({ qrData, userInformation }: any) {
         {qrData &&
           <Grid item xs={12}>
             {/*@ts-ignore*/}
-            <QrList qrs={qrData} title="My Qr Links" />
+            <QrList qrs={qrData} title="My QR Links" />
           </Grid>
         }
       </Grid>

@@ -1,4 +1,4 @@
-import {useContext, useEffect, useMemo, useState} from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Tabs from '@mui/material/Tabs';
@@ -15,7 +15,7 @@ import { blue } from "@mui/material/colors";
 import Box from "@mui/material/Box";
 import RenderIframe from "../../RenderIframe";
 import RenderCellPhoneShape from "./RenderCellPhoneShape";
-import {NO_MICROSITE} from "../constants";
+import { NO_MICROSITE } from "../constants";
 import RenderPreviewDrawer from "./RenderPreviewDrawer";
 import RenderPreviewButton from "./RenderPreviewButton";
 
@@ -71,17 +71,17 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
         enabled={enabled}
         description={description}
         selected={selected === item}
-        handleSelect={handleSelect}/>
+        handleSelect={handleSelect} />
     </Grid>
   );
 
   const renderPreview = (forbidStyle?: boolean, renderSampleMessage?: boolean) => (
-    <Box sx={{ml: !forbidStyle ? '20px' : 0, mt: !forbidStyle ? '60px' : 0}}>
+    <Box sx={{ ml: !forbidStyle ? '20px' : 0, mt: !forbidStyle ? '60px' : 0 }}>
       <RenderCellPhoneShape width={270} height={550} offlineText="The selected card has no available sample">
         {selected && !NO_MICROSITE.includes(selected) ?
-          <RenderIframe width="256px" height="536px" src={`${process.env.REACT_MICROSITES_ROUTE}/sample/${selected}`}/> : null}
+          <RenderIframe width="256px" height="536px" src={`${process.env.REACT_MICROSITES_ROUTE}/sample/${selected}`} /> : null}
       </RenderCellPhoneShape>
-      {renderSampleMessage && <Typography sx={{textAlign: 'center', fontSize: 'small', color: theme => theme.palette.text.disabled, mt: '10px'}}>Sample</Typography>}
+      {renderSampleMessage && <Typography sx={{ textAlign: 'center', fontSize: 'small', color: theme => theme.palette.text.disabled, mt: '10px' }}>Sample</Typography>}
     </Box>
   );
 
@@ -90,7 +90,7 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
   }, [isWideForPreview]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Box sx={{display: 'flex'}}>
+    <Box sx={{ display: 'flex' }}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Tabs value={isDynamic ? 0 : 1} onChange={(_, newSel: number) => handleClick(newSel)}>
@@ -100,7 +100,7 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
                   <span>
                     <p>Dynamic QR codes:</p>
                     <ul style={{ paddingLeft: 0, listStylePosition: 'inside' }}>
-                      <li>Dynamic QR code + Short Link + Microsite</li>
+                      <li>QR code + Short Link + Microsite</li>
                       <li>Easy to customize</li>
                       <li>Easy to use</li>
                       <li>Unlimited content changes</li>
