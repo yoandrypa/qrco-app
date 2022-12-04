@@ -70,6 +70,16 @@ export default function AppWrapper(props: AppWrapperProps) {
     setAnchorElNav(null);
   }, []);
 
+  const beforeLogout = () => {
+    if (handleLogout) {
+      if (setIsTrialMode) {
+        setIsTrialMode(false);
+      }
+      setStartTrialDate(null);
+      handleLogout();
+    }
+  };
+
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
   const router = useRouter();
 
@@ -135,87 +145,90 @@ export default function AppWrapper(props: AppWrapperProps) {
         <AppBar component="nav" sx={{ background: "#fff", height }}>
           <Container sx={{ my: "auto" }}>
             <Toolbar
-              sx={{ display: "flex", justifyContent: "space-between", color: theme => theme.palette.text.primary }}>
+              sx={{ '&.MuiToolbar-root': { px: 0 }, display: "flex", justifyContent: "space-between", color: theme => theme.palette.text.primary }}>
               <Link href={{ pathname: !userInfo ? QR_TYPE_ROUTE : "/" }}>
                 <Box sx={{ display: "flex", cursor: "pointer" }}>
                   <Box component="img" alt="EBANUX" src="/ebanuxQr.svg" sx={{ width: "40px", display: isWide ? "block" : "none" }} />
                   <Typography sx={{ my: "auto", ml: "5px", fontSize: "28.8px", fontWeight: "bold" }}>{'The QR Link'}</Typography>
                 </Box>
               </Link>
-              {router.query[PARAM_QR_TEXT] === undefined && (<>
-                {isWide ? (<>
-                  {!userInfo ? (
-                    <Button
-                      startIcon={<LoginIcon />}
-                      onClick={handleLogin}
-                      variant="contained"
-                      sx={{ height: "28px", mr: "5px", my: "auto" }}>
-                      {"Login"}
-                    </Button>
-                  ) : (
-                    <Box sx={{ display: "flex" }}>
-                      <RenderNewQrButton pathname={router.pathname} handleNavigation={handleNavigation} />
+              <Box sx={{ display: 'flex' }}>
+                {router.query[PARAM_QR_TEXT] === undefined && (<>
+                  {isWide ? (<>
+                    {!userInfo ? (
                       <Button
-                        startIcon={<LogoutIcon />}
-                        onClick={handleLogout}
+                        startIcon={<LoginIcon />}
+                        onClick={handleLogin}
                         variant="contained"
-                        sx={{ height: "28px", ml: "10px", my: "auto" }}>
-                        {"Logout"}
+                        sx={{ height: "28px", mr: "5px", my: "auto" }}>
+                        {"Login"}
                       </Button>
-                    </Box>
-                  )}
-                </>) : (<>
-                  <IconButton
-                    size="large"
-                    aria-label="responsive-user-menu"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={handleOpenNavMenu}
-                    color="inherit"
-                  >
-                    <MenuIcon />
-                  </IconButton>
-                  <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorElNav}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-                    keepMounted
-                    transformOrigin={{ vertical: "top", horizontal: "left" }}
-                    open={anchorElNav !== null}
-                    onClose={handleCloseNavMenu}
-                    sx={{ display: { xs: "block", md: "none" } }}
-                  >
-                    {!userInfo && (
-                      <MenuItem key="loginMenuItem" onClick={handleLogin}>
-                        <LoginIcon />
-                        <Typography textAlign="center">{"Login"}</Typography>
-                      </MenuItem>
+                    ) : (
+                      <Box sx={{ display: "flex" }}>
+                        <RenderNewQrButton pathname={router.pathname} handleNavigation={handleNavigation} />
+                        <Button
+                          startIcon={<LogoutIcon />}
+                          onClick={beforeLogout}
+                          variant="contained"
+                          sx={{ height: "28px", ml: "10px", my: "auto" }}>
+                          {"Logout"}
+                        </Button>
+                      </Box>
                     )}
-                    {userInfo && (
-                      <MenuItem key="navigateMenuItem" onClick={handleNavigation}>
-                        {router.pathname === "/" ? <QrCodeIcon /> : <FirstPageIcon />}
-                        <Typography
-                          textAlign="center">{router.pathname === "/" ? "Create QR Link" : "My QR Links"}</Typography>
-                      </MenuItem>
-                    )}
-                    {userInfo && <Divider />}
-                    {userInfo && (
-                      <MenuItem key="logoutMenuItem" onClick={handleLogout}>
-                        <LogoutIcon />
-                        <Typography textAlign="center">{"Logout"}</Typography>
-                      </MenuItem>
-                    )}
-                  </Menu>
+                  </>) : (<>
+                    <IconButton
+                      size="large"
+                      aria-label="responsive-user-menu"
+                      aria-controls="menu-appbar"
+                      aria-haspopup="true"
+                      onClick={handleOpenNavMenu}
+                      color="inherit"
+                    >
+                      <MenuIcon />
+                    </IconButton>
+                    <Menu
+                      id="menu-appbar"
+                      anchorEl={anchorElNav}
+                      anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                      keepMounted
+                      transformOrigin={{ vertical: "top", horizontal: "left" }}
+                      open={anchorElNav !== null}
+                      onClose={handleCloseNavMenu}
+                      sx={{ display: { xs: "block", md: "none" } }}
+                    >
+                      {!userInfo && (
+                        <MenuItem key="loginMenuItem" onClick={handleLogin}>
+                          <LoginIcon />
+                          <Typography textAlign="center">{"Login"}</Typography>
+                        </MenuItem>
+                      )}
+                      {userInfo && (
+                        <MenuItem key="navigateMenuItem" onClick={handleNavigation}>
+                          {router.pathname === "/" ? <QrCodeIcon /> : <FirstPageIcon />}
+                          <Typography
+                            textAlign="center">{router.pathname === "/" ? "Create QR Link" : "My QR Links"}</Typography>
+                        </MenuItem>
+                      )}
+                      {userInfo && <Divider />}
+                      {userInfo && (
+                        <MenuItem key="logoutMenuItem" onClick={beforeLogout}>
+                          <LogoutIcon />
+                          <Typography textAlign="center">{"Logout"}</Typography>
+                        </MenuItem>
+                      )}
+                    </Menu>
+                  </>)}
                 </>)}
-              </>)}
+                {isTrialMode && startTrialDate && <CountDown startDate={startTrialDate} />}
+              </Box>
             </Toolbar>
-            {isTrialMode && startTrialDate && <CountDown startDate={startTrialDate} />}
+            {/*{isTrialMode && startTrialDate && <CountDown startDate={startTrialDate} />}*/}
           </Container>
         </AppBar>
       </ElevationScroll>)}
       <Container sx={{ width: "100%" }}>
         <Box sx={{ height }} /> {/* Aims to fill the header's gap */}
-        <Box sx={{ mx: "auto", minHeight: "calc(100vh - 145px)", pt: startTrialDate ? 3 : 0 }}>
+        <Box sx={{ mx: "auto", minHeight: "calc(100vh - 119px)" }}>
           {children}
         </Box>
         {handleLogout !== undefined && !router.query.login && (
