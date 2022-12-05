@@ -20,6 +20,7 @@ import {
   getOptionsObject
 } from "../../../helpers/qr/helpers";
 import {initialBackground} from "../../../helpers/qr/data";
+import PrintIcon from "@mui/icons-material/Print";
 
 interface QRRenderProps {
   qrData: string;
@@ -140,11 +141,14 @@ const RenderPreview = ({qrDesign, qr, externalFrame, externalDesign, handleDone,
             <Box sx={{width: '300px'}}>
               <QRRender qrData={!externalDesign ? (current || '') : externalDesign.outerHTML} width={300} alt={`${name}preview`}/>
               <Box sx={{display: 'flex'}}>
-                <Button sx={{mt: '10px', width: '100%'}} variant="outlined" onClick={handleDownload} endIcon={<DownloadIcon/>}>
+                <Button sx={{mt: '10px', width: '100%'}} variant="outlined" onClick={handleDownload} startIcon={<DownloadIcon/>}>
                   {'Download'}
                 </Button>
+                <Button sx={{mt: '10px', width: '160px', ml: '5px'}} variant="outlined" onClick={() => setGeneratePdf(true)} startIcon={<PrintIcon/>}>
+                  {'Print'}
+                </Button>
                 {handleDone !== undefined && (
-                  <Button sx={{ml: '5px', mt: '10px', width: '130px'}} variant="outlined" onClick={handleDone} endIcon={<DoneIcon />}>
+                  <Button sx={{ml: '5px', mt: '10px', width: '150px'}} variant="outlined" onClick={handleDone} startIcon={<DoneIcon />}>
                     {'Done'}
                   </Button>
                 )}
@@ -158,8 +162,7 @@ const RenderPreview = ({qrDesign, qr, externalFrame, externalDesign, handleDone,
           frame={frame}
           qrImageData={externalDesign || qrRef.current}
           anchor={anchor}
-          setAnchor={setAnchor}
-          setGeneratePdf={setGeneratePdf}/>
+          setAnchor={setAnchor} />
       )}
       {generatePdf && (
         <PDFGenDlg
