@@ -1,6 +1,8 @@
 import * as Qr from "../queries/qr";
 import { CustomError } from "../utils";
 import * as Visit from "../queries/visit";
+import * as Link from "../queries/link";
+import { LinkModel } from "../models/link";
 
 // @ts-ignore
 export const create = async (data) => {
@@ -30,7 +32,7 @@ export const list = async (query: Query) => {
     const { limit, startAt, search, all, userId } = query;
 
     const match = {
-      ...(!all && { userId: { eq: userId } })
+      ...(!all && { userId: { eq: userId } }),
     };
 
     // @ts-ignore
@@ -39,14 +41,15 @@ export const list = async (query: Query) => {
     //const count = await Qr.count(match, { search });
 
     // @ts-ignore
-    items = await items.populate({ properties: ["shortLinkId", "qrOptionsId"] });
+    items = await items.populate(
+      { properties: ["shortLinkId", "qrOptionsId"] });
 
     return {
       //count,
       limit,
       lastKey,
       // @ts-ignore
-      items
+      items,
     };
   } catch (e: any) {
     throw new CustomError(e.message, 500, e);
@@ -63,7 +66,8 @@ export const get = async (key: { userId: string, createdAt: number }) => {
 
 export const findByShortLink = async (shortLinkId: { userId: string, createdAt: number }) => {
   try {
-    return await Qr.find({ userId: { eq: shortLinkId.userId }, shortLinkId: { eq: shortLinkId } });
+    return await Qr.find(
+      { userId: { eq: shortLinkId.userId }, shortLinkId: { eq: shortLinkId } });
   } catch (e: any) {
     throw new CustomError(e.message, e.statusCode || 500, e);
   }
@@ -130,5 +134,22 @@ export const remove = async (key: { userId: string, createdAt: number }) => {
     return { message: "Qr has been deleted successfully." };
   } catch (e: any) {
     throw new CustomError(e.message, 500, e);
+  }
+};
+
+export const pauseQRLink = async (
+  shortLinkId: { userId: string, createdAt: number, paused: boolean }) => {
+  try {
+    const paused = !shortLinkId.paused;
+    return await Link.update({
+        userId: shortLinkId.userId,
+        createdAt: (new Date(shortLinkId.createdAt)).getTime(),
+      },
+      {
+        paused,
+        pausedById: paused ? shortLinkId.userId : undefined,
+      });
+  } catch (e: any) {
+    throw new CustomError(e.message, e.statusCode || 500, e);
   }
 };
