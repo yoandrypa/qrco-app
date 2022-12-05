@@ -13,7 +13,7 @@ AWS.config.update({
 
 
 export async function sendEmail(from: string, to: string[], message: string, name: string) {
-    const params: SendEmailRequest = {
+    const params = {
         Destination: {
             ToAddresses: to
         },
@@ -30,7 +30,8 @@ export async function sendEmail(from: string, to: string[], message: string, nam
 
         Source: "info@ebanux.com"
     }
-    //@ts-ignore
-    return AWS.SES.sendEmail(params).promise();
+    const result = await new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
+
+    return result;
 }
 
