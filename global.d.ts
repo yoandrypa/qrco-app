@@ -104,6 +104,8 @@ interface LinkType {
   address?: string | undefined;
   bannedById?: string;
   banned: boolean;
+  pausedById?: string;
+  paused: boolean;
   description?: string | undefined;
   domainId?: { userId: string, createdAt: number } | null;
   expireIn?: string | undefined;
