@@ -228,7 +228,7 @@ export default function AppWrapper(props: AppWrapperProps) {
       </ElevationScroll>)}
       <Container sx={{ width: "100%" }}>
         <Box sx={{ height }} /> {/* Aims to fill the header's gap */}
-        <Box sx={{ mx: "auto", minHeight: "calc(100vh - 119px)" }}>
+        <Box sx={{ mx: "auto", minHeight: "calc(100vh - 135px)" }}>
           {children}
         </Box>
         {handleLogout !== undefined && !router.query.login && (

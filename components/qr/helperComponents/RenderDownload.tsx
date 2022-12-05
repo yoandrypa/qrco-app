@@ -12,12 +12,11 @@ interface RenderDownloadProps {
   qrImageData: any;
   anchor: any;
   setAnchor: Function;
-  setGeneratePdf: Function;
   frame?: FramesType | { type: string } | null;
   contrast?: {color1?: string; color2: string} | undefined
 }
 
-const RenderDownload = ({ anchor, qrImageData, frame, setAnchor, setGeneratePdf, contrast }: RenderDownloadProps) => {
+const RenderDownload = ({ anchor, qrImageData, frame, setAnchor, contrast }: RenderDownloadProps) => {
   const [isReadable, setIsReadable] = useState<{readable: boolean} | undefined>(undefined);
 
   useEffect(() => {
@@ -51,27 +50,23 @@ const RenderDownload = ({ anchor, qrImageData, frame, setAnchor, setGeneratePdf,
         </Box>
         <Divider sx={{ my: 2 }} />
         <Typography sx={{ width: '100%', textAlign: 'center' }}>Download as</Typography>
-        <Button
-          variant="outlined"
-          onClick={() => {
-            // @ts-ignore
-            downloadAsPNG(qrImageData, Boolean(frame?.type) ? frame : { type: '' }, undefined, undefined);
-            setAnchor(null);
-          }}>PNG</Button>
-        <Button
-          variant="outlined"
-          sx={{ ml: '5px', display: 'inline' }}
-          onClick={() => {
-            downloadAsSVGOrVerify(qrImageData, undefined, undefined);
-            setAnchor(null);
-          }}>SVG</Button>
-        <Button
-          variant="outlined"
-          sx={{ ml: '5px', display: 'inline' }}
-          onClick={() => {
-            setGeneratePdf(true);
-            setAnchor(null);
-          }}>PDF...</Button>
+        <Box sx={{ display: 'flex' }}>
+          <Button
+            variant="outlined"
+            sx={{ width: '100%'}}
+            onClick={() => {
+              // @ts-ignore
+              downloadAsPNG(qrImageData, Boolean(frame?.type) ? frame : { type: '' }, undefined, undefined);
+              setAnchor(null);
+            }}>PNG</Button>
+          <Button
+            variant="outlined"
+            sx={{ ml: '5px', width: '100%' }}
+            onClick={() => {
+              downloadAsSVGOrVerify(qrImageData, undefined, undefined);
+              setAnchor(null);
+            }}>SVG</Button>
+        </Box>
       </Box>
     </Popover>
   );

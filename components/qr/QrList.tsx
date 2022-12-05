@@ -168,8 +168,7 @@ const QrList = ({ qrs, title }: any) => {
       <Stack spacing={2}>
         {qrs.items?.length > 0 ? (
           <>
-            {title && <Typography variant="h6"
-                                  style={{ fontWeight: "bold" }}>{title}</Typography>}
+            {title && <Typography variant="h6" style={{ fontWeight: "bold" }}>{title}</Typography>}
             {qrs.items.map((qr: any) => { // @ts-ignore
               const qrLink = sanitize.link(qr.shortLinkId || {}); // @ts-ignore
               if (qr.qrOptionsId?.background?.backColor === "") {

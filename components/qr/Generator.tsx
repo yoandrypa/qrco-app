@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import DownloadIcon from '@mui/icons-material/Download';
 import BrushIcon from '@mui/icons-material/Brush';
 import CropFreeIcon from '@mui/icons-material/CropFree';
+import PrintIcon from '@mui/icons-material/Print';
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import {Accordion, AccordionDetails, AccordionSummary} from '../renderers/Renderers';
@@ -34,7 +35,7 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
   const [error, setError] = useState<object | string | null>(null);
   const [anchor, setAnchor] = useState<object | null>(null);
   const [updating, setUpdating] = useState<boolean>(false);
-  const [generatePdf, setGeneratePdf] = useState<object | null>(null);
+  const [generatePdf, setGeneratePdf] = useState<boolean>(false);
   const [isReadable, setIsReadable] = useState<{ readable: boolean; } | boolean | null>(null);
   const [openPreview, setOpenPreview] = useState<boolean>(false);
 
@@ -275,9 +276,14 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
           )}
         </Box>
       </Box>
-      <Button sx={{mt: '10px', width: '100%'}} variant="outlined" onClick={handleDownload} startIcon={<DownloadIcon/>}>
-        {'Download'}
-      </Button>
+      <Box sx={{ display: 'flex' }}>
+        <Button sx={{mt: '10px', width: '100%'}} variant="outlined" onClick={handleDownload} startIcon={<DownloadIcon/>}>
+          {'Download'}
+        </Button>
+        <Button sx={{mt: '10px', width: '120px', ml: '5px'}} variant="outlined" onClick={() => setGeneratePdf(true)} startIcon={<PrintIcon/>}>
+          {'Print'}
+        </Button>
+      </Box>
    </>
   );
 
@@ -348,12 +354,11 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
           frame={frame}
           qrImageData={qrImageData.current}
           anchor={anchor}
-          setAnchor={setAnchor}
-          setGeneratePdf={setGeneratePdf}/>
+          setAnchor={setAnchor}/>
       )}
-      {Boolean(generatePdf) && (
+      {generatePdf && (
         <PDFGenDlg
-          data={qrImageData.current} // @ts-ignore
+          data={qrImageData.current}
           handleClose={() => setGeneratePdf(false)}
           isFramed={frame?.type && frame.type !== '/frame/frame0.svg' || false}/>
       )}

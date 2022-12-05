@@ -65,7 +65,6 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
   const renderTypeSelector = (item: string, label: string, description: string, enabled: boolean, isDynamic?: boolean) => (
     <Grid item lg={data.isDynamic && selected ? 4 : 3} md={4} sm={6} xs={12}>
       <TypeSelector
-        isDynamic={isDynamic || false}
         icon={item}
         label={label}
         enabled={enabled}

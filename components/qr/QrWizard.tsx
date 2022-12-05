@@ -44,7 +44,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   // @ts-ignore
   const {
     selected, step, setStep, data, userInfo, options, frame, background, cornersData,
-    dotsData, isWrong, loading, setOptions, setLoading, isTrialMode, clearData
+    dotsData, isWrong, loading, setOptions, setLoading, clearData
   }: StepsProps = useContext(Context);
 
   const router = useRouter();
@@ -298,7 +298,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           mode={data.mode} />
       </Box>
       <Box sx={{ position: 'absolute', top: '32px' }} ref={btnRef} />
-      <Box sx={{ minHeight: `calc(100vh - ${isTrialMode ? 215 : 205}px)` }}>
+      <Box sx={{ minHeight: 'calc(100vh - 205}px)' }}>
         {children}
       </Box>
       {dataInfo.current.length ? <ProcessHandler process={dataInfo.current} handleCommand={
