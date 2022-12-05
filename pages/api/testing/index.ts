@@ -18,6 +18,7 @@ export default async function handler(
   res: NextApiResponse<ResponseData>
 ) {
 
+
   const result = await sendEmail('info@ebanux.com', ['yosle007@gmail.com'], 'hello', 'test')
   res.status(200).json(result)
 
