@@ -18,13 +18,14 @@ const components = {
         <Typography variant="h4" sx={ { fontWeight: "bold" } }>The QR Link</Typography>    
       </Stack>
       <Stack direction="row" spacing={ 2 } alignItems="flex-end" justifyContent="center" margin={2}>
-    <Image
+   
+        <Typography sx={{mt:2}} variant="caption" >Powered by</Typography>
+        <Image
         alt="Ebanux Logo"
         src='/ebanux.svg'
         height='20%'
         width='20%'
         />
-        <Typography sx={{mt:2}} variant="caption" >Powered by Ebanux</Typography>
       </Stack>
       </>
 
