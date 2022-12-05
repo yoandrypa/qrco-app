@@ -28,7 +28,6 @@ export interface StepsProps {
   isWrong: boolean;
   loading: boolean;
   setLoading: (isLoading: boolean) => void;
-  isTrialMode?: boolean;
 }
 
 export interface GeneratorProps {
