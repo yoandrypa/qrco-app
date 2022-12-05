@@ -220,7 +220,6 @@ const Plans = (props: Props) => {
         </Tabs>
       </Box>
       <Grid container marginTop={2} alignContent='center' display='flex' spacing={1} justifyContent={'center'}>
-
         <PlanCalculator />
       </Grid>
 
