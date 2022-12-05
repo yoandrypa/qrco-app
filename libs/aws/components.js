@@ -28,7 +28,6 @@ const components = {
         />
       </Stack>
       </>
-
     );
   },
   SignIn: {
