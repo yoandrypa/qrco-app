@@ -1,7 +1,16 @@
 import { SendEmailRequest } from '@aws-sdk/client-ses';
-import { SES } from 'aws-sdk'
+import * as AWS from 'aws-sdk'
 
-const ses = new SES({ region: 'us-east-1' })
+
+AWS.config.update({
+    region: 'us-east-1', // Change it to match your region
+    credentials: {
+        accessKeyId: process.env.REACT_AWS_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.REACT_AWS_SECRET_ACCESS_KEY!,
+    },
+});
+
+
 
 export async function sendEmail(from: string, to: string[], message: string, name: string) {
     const params: SendEmailRequest = {
@@ -22,6 +31,6 @@ export async function sendEmail(from: string, to: string[], message: string, nam
         Source: "info@ebanux.com"
     }
     //@ts-ignore
-    return ses.sendEmail(params).promise();
+    return AWS.SES.sendEmail(params).promise();
 }
 
