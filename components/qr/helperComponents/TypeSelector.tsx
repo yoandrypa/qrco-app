@@ -1,17 +1,9 @@
-import {MouseEvent, useState} from "react";
+import {useState} from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Tooltip from "@mui/material/Tooltip";
-import Popover from "@mui/material/Popover";
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import IconButton from '@mui/material/IconButton';
 import {grey} from "@mui/material/colors";
-import {alpha} from "@mui/material/styles";
 
 import RenderIcon from "./RenderIcon";
-import RenderIframe from "../../RenderIframe";
-import {NO_MICROSITE} from "../constants";
-import RenderCellPhoneShape from "./RenderCellPhoneShape";
 import {useTheme} from "@mui/system";
 
 interface TypeSelectorProps {
@@ -21,11 +13,9 @@ interface TypeSelectorProps {
   icon: string;
   selected: boolean;
   enabled?: boolean;
-  isDynamic: boolean;
 }
 
-const TypeSelector = ({ handleSelect, label, description, icon, selected, isDynamic, enabled = true}: TypeSelectorProps) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+const TypeSelector = ({ handleSelect, label, description, icon, selected, enabled = true}: TypeSelectorProps) => {
   const [over, setOver] = useState<boolean>(selected);
   const theme = useTheme();
 
@@ -33,10 +23,6 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
     if (enabled && !['svg', 'BUTTON'].includes(event.target.tagName)) {
       handleSelect(icon);
     }
-  };
-
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
   };
 
   const handleOver = (): void => {
@@ -63,22 +49,6 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
         onMouseLeave={handleOver}
         onClick={beforeHandle}
       >
-        {isDynamic && !NO_MICROSITE.includes(icon) && (
-          <Tooltip title="View sample">
-            <IconButton
-              sx={{
-                position: 'absolute',
-                right: '5px',
-                bottom: 0,
-                color: alpha(theme.palette.primary.dark, 0.25),
-                '&:hover': {color: theme.palette.primary.dark}
-              }}
-              onClick={handleClick}
-              id={`example${icon}`}>
-              <OpenInNewIcon/>
-            </IconButton>
-          </Tooltip>
-        )}
         <Box sx={{display: 'flex', p: 1}}>
           <Box sx={{mt: '3px'}}>
             <RenderIcon icon={icon} enabled={enabled} color={!selected && !over ? grey[800] : undefined} />
@@ -99,22 +69,6 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, isDyna
           </Box>
         </Box>
       </Box>
-      {anchorEl && (
-        <Popover
-          elevation={0}
-          open={Boolean(anchorEl)}
-          anchorEl={anchorEl}
-          onClose={() => setAnchorEl(null)}
-          anchorOrigin={{vertical: 'top', horizontal: 'center'}}
-          transformOrigin={{vertical: 'bottom', horizontal: 'center'}}
-          disableRestoreFocus
-          sx={{ '.MuiPopover-paper': { borderRadius: '25px', boxShadow: '0px 7px 5px 0px rgb(0 0 0 / 50%)' } }}
-        >
-          <RenderCellPhoneShape width={270} height={550}>
-            <RenderIframe src={`${process.env.REACT_MICROSITES_ROUTE}/sample/${icon}`} width="256px" height="536px" />
-          </RenderCellPhoneShape>
-        </Popover>
-      )}
     </>
   );
 };
