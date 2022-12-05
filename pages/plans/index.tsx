@@ -212,7 +212,6 @@ const Plans = (props: Props) => {
       </Snackbar>
       <Typography variant='h6' color='blue' textAlign={'center'} marginBottom={3} marginTop={2}>PRICING PLANS</Typography>
       <Typography variant='h4' textAlign={'center'} marginBottom={3}>Save money with our annual plans</Typography>
-
       <Box sx={{ alignContent: 'center', display: 'flex', spacing: 3, justifyContent: 'center' }}>
         <Tabs value={activeTab} onChange={handleTabChange}>
           <Tab label='Monthly Plan' />
@@ -222,7 +221,6 @@ const Plans = (props: Props) => {
       <Grid container marginTop={2} alignContent='center' display='flex' spacing={1} justifyContent={'center'}>
         <PlanCalculator />
       </Grid>
-
       <Grid container marginTop={6} alignContent='center' display='flex' spacing={1} justifyContent={'center'}>
         <Grid item xs={12} sm={6} md={4} lg={4}>
           <PlanCard data={activeTab == 0 ? basic : basicAnnual}
