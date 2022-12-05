@@ -36,7 +36,7 @@ function PlanCalculator() {
     };
 
     function CalculateTotal(plan: string, qrAmount: number) {
-        const EXTRA_QR_PRICE = 0.05;
+        const EXTRA_QR_PRICE = 0.12;
         let extraQR = 0;
         let basePrice = 0;
         switch (plan) {

@@ -3,6 +3,7 @@ import * as UserHandler from "../handlers/users";
 import * as QrHandler from "../handlers/qrs";
 import QrHome from "../components/qr/QrHome";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { formFields } from "../libs/aws/components";
 
 import { Amplify } from "aws-amplify";
 import { Authenticator } from "@aws-amplify/ui-react";
@@ -12,7 +13,7 @@ import { useRouter } from "next/router";
 import PleaseWait from "../components/PleaseWait";
 
 import QrGen from "./qr/type";
-import {useContext, useEffect} from "react";
+import { useContext, useEffect } from "react";
 import Context from "../components/context/Context";
 
 Amplify.configure(awsExports);
@@ -37,7 +38,7 @@ export default function Index({ qrData }: InferGetServerSidePropsType<typeof get
   }
 
   return (
-    <Authenticator components={components}>
+    <Authenticator formFields={formFields} components={components}>
       {({ user }) => (
         <QrHome qrData={qrData !== noUser ? qrData : []} userInformation={user} />
       )}

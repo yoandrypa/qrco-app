@@ -10,6 +10,7 @@ import "@aws-amplify/ui-react/styles.css";
 import awsExports from "../../../libs/aws/aws-exports";
 import PleaseWait from "../../../components/PleaseWait";
 import components from "../../../libs/aws/components";
+import { formFields } from '../../../libs/aws/components';
 
 type Props = {
     logged: boolean,
@@ -31,7 +32,7 @@ const PlanType = (props: Props) => {
         return <PleaseWait />;
     }
     return (
-        <Authenticator components={components}>
+        <Authenticator formFields={formFields} components={components}>
             {({ user }) => (
                 <>
                     {console.log('user in athenticator', user)}
