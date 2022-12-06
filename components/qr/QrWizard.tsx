@@ -81,10 +81,12 @@ const QrWizard = ({ children }: QrWizardProps) => {
     if (step === 0) {
       if (data.isDynamic && !isLogged) {
         router.push({pathname: "/", query: {path: QR_CONTENT_ROUTE, login: true, selected}}, "/").then(() => setLoading(false));
-      } else if (isLogged && data.isDynamic && !Boolean(options.id) && options.mode === undefined) {
-        const id = getUuid();
-        const shortCode = await generateId(); // @ts-ignore
-        setOptions((prev: OptionsType) => ({...prev, id, shortCode, data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN)}));
+      } else if (isLogged) {
+        if (isLogged && data.isDynamic && !Boolean(options.id) && options.mode === undefined) {
+          const id = getUuid();
+          const shortCode = await generateId(); // @ts-ignore
+          setOptions((prev: OptionsType) => ({ ...prev, id, shortCode, data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN)}));
+        }
         setStep(1);
         router.push(QR_CONTENT_ROUTE, undefined,  { shallow: true }).then(() => setLoading(false));
       }

@@ -2,11 +2,13 @@ import {useEffect, useRef, useState} from "react";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
+import {DataType} from "./qr/types/types";
 
 interface IframeProps {
   src: string;
   width: string;
   height: string;
+  data?: DataType;
 }
 
 interface RenderMessageProps {
@@ -54,9 +56,10 @@ function RenderMessage({whatToRender}: RenderMessageProps) {
   );
 }
 
-export default function RenderIframe({src, width, height}: IframeProps) {
+export default function RenderIframe({src, width, height, data}: IframeProps) {
   const [whatToRender, setWhatToRender] = useState<string | null>(null);
   const [error, setError] = useState<boolean>(false);
+  const [isReady, setIsReady] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const iRef = useRef<HTMLIFrameElement | null>(null);
 
@@ -70,6 +73,12 @@ export default function RenderIframe({src, width, height}: IframeProps) {
   }
 
   useEffect(() => {
+    if (data && isReady) {
+      console.log('Here we go')
+    }
+  }, [data, isReady]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     const handler = (event: any) => {
       if (event.origin.replace('https://www.', 'https://') === process.env.REACT_MICROSITES_ROUTE) {
         try {
@@ -77,6 +86,7 @@ export default function RenderIframe({src, width, height}: IframeProps) {
           if (data.error) {
             setWhatToRender(data.message);
           } else if (data.ready) {
+            setIsReady(true);
             if (iRef.current) {
               setTimeout(() => { // @ts-ignore
                 iRef.current.contentWindow.postMessage(JSON.stringify({parentWidth: width, parentHeight: height}), '*');
