@@ -19,7 +19,7 @@ export default async function handler(
 ) {
 
 
-  const result = await sendEmail('info@ebanux.com', ['yosle007@gmail.com'], 'hello', 'test')
+  const result = await sendEmail('info@ebanux.com', ['yosle007@gmail.com'], 'hello', 'asunto', 'yosle')
   res.status(200).json(result)
 
   // if (req.method == 'POST') {
