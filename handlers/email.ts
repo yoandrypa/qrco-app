@@ -1,34 +1,26 @@
 import { SendEmailRequest } from '@aws-sdk/client-ses';
 import * as AWS from 'aws-sdk'
 
-
-AWS.config.update({
-    region: 'us-east-1', // Change it to match your region
-    credentials: {
-        accessKeyId: process.env.REACT_AWS_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.REACT_AWS_SECRET_ACCESS_KEY!,
-    },
-});
+AWS.config.loadFromPath('../consts/aws-config.json');
 
 
 
-export async function sendEmail(from: string, to: string[], message: string, name: string) {
-    const params = {
+export async function sendEmail(from: string, to: string[], message: string, subject: string, name: string) {
+    const params: AWS.SES.SendEmailRequest = {
         Destination: {
             ToAddresses: to
         },
         Message: {
             Body: {
                 Text: {
-                    Data: "From contact: "
+                    Data: message
                 }
             },
             Subject: {
-                Data: "fsvfv"
+                Data: subject
             }
         },
-
-        Source: "info@ebanux.com"
+        Source: from
     }
     const result = await new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
 
