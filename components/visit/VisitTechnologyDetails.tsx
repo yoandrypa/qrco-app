@@ -25,7 +25,7 @@ function createData(
 export default function VisitTechnologyDetails({ visitData }: any) {
   let deviceRows = [];
   if (visitData.dv_mobile > 0) {
-    deviceRows.push(createData("Movile", visitData.dv_mobile, visitData.total));
+    deviceRows.push(createData("Mobile", visitData.dv_mobile, visitData.total));
   }
   if (visitData.dv_desktop > 0) {
     deviceRows.push(createData("Desktop", visitData.dv_desktop, visitData.total));
@@ -35,6 +35,9 @@ export default function VisitTechnologyDetails({ visitData }: any) {
   }
   if (visitData.dv_smarttv > 0) {
     deviceRows.push(createData("Smart TV", visitData.dv_smarttv, visitData.total));
+  }
+  if (visitData.dv_other > 0) {
+    deviceRows.push(createData("Other", visitData.dv_other, visitData.total));
   }
 
   let osRows = [];

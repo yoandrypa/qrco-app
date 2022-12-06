@@ -20,16 +20,11 @@ dynamoose.aws.ddb.set(ddb);
 
 dynamoose.Table.defaults.set({
   create: true,
-  throughput: {
-    read: 5,
-    write: 5
-  },
+  throughput: "ON_DEMAND",
   prefix: process.env.REACT_NODE_ENV === "production" ? "prd_" : "dev_",
   suffix: "",
   waitForActive: process.env.REACT_NODE_ENV !== "production",
-  update: false,
-  populate: false,
-  expires: undefined
+  update: false
 });
 
 export default dynamoose;

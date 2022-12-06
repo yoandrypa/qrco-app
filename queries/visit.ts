@@ -40,7 +40,7 @@ export const find = async (key: { userId: string, createdAt: number }) => {
     const response: ExecuteStatementCommandOutput = await ddbClient.send(
       command);
     // @ts-ignore
-    return unmarshall(response.Items[0]);
+    return response.Items[0] ? unmarshall(response.Items[0]) : null;
   } catch (e) {
     throw e;
   }
