@@ -1,9 +1,5 @@
-import { SendEmailRequest } from '@aws-sdk/client-ses';
+
 import * as AWS from 'aws-sdk'
-
-AWS.config.loadFromPath('../consts/aws-config.json');
-
-
 
 export async function sendEmail(from: string, to: string[], message: string, subject: string, name: string) {
     const params: AWS.SES.SendEmailRequest = {
