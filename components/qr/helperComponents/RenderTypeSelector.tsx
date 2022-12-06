@@ -176,7 +176,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Sample"/>
       )}
       {openPreview && ( // @ts-ignore
-        <RenderPreviewDrawer setOpenPreview={setOpenPreview} height={702} border={35}> {/* @ts-ignore */}
+        <RenderPreviewDrawer setOpenPreview={setOpenPreview} height={708} border={35}> {/* @ts-ignore */}
           <RenderSamplePreview selected={selected} isDrawed />
         </RenderPreviewDrawer>
       )}

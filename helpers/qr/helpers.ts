@@ -357,7 +357,6 @@ export const handleInitialData = (value: string | null | undefined) => {
 
 export const dataCleaner = (options: any, mainObj?: boolean) => {
   const data = { ...options };
-
   const base = ['backgroundOptions', 'cornersDotOptions', 'cornersSquareOptions', 'dotsOptions', 'imageOptions',
     'qrOptions', 'margin', 'type', 'width', 'height', 'image', 'data'] as string[];
 
@@ -375,6 +374,25 @@ export const dataCleaner = (options: any, mainObj?: boolean) => {
       }
     });
   }
-
   return data;
+}
+
+export const cleanSelectionForMicrositeURL = (item: string): string => {
+  if (item === 'vcard+') {
+    return 'vcard';
+  }
+  if (item === 'link') {
+    return 'links';
+  }
+  if (item === 'donation') {
+    return 'donations';
+  }
+  return item;
+};
+
+export const getProperSampleUrl = (item: string): string => {
+  if (item === 'web') {
+    return 'https://a-qr.link/zDexu6';
+  }
+  return item;
 }

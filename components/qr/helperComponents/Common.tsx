@@ -191,7 +191,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
             ) : renderChildren()}
           </Box>
           {IS_DEV_ENV && isWideForPreview && !NO_MICROSITE.includes(selected) && data?.isDynamic && (
-            <RenderSamplePreview code={options?.shortCode || selected} save={() => {}} style={{mt: '8px', ml: '15px'}} saveDisabled={isWrong}/>
+            <RenderSamplePreview code={options?.shortCode || selected} save={() => {}} style={{mt: '8px', ml: '15px'}}
+                                 saveDisabled={isWrong} data={data} onlyQr={selected === 'web'} />
           )}
         </Box>
       ) : renderChildren()}
@@ -199,8 +200,9 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />
       )}
       {openPreview && ( // @ts-ignore
-        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={702} border={35}>
-          <RenderSamplePreview code={options?.shortCode || selected} save={() => {}} isDrawed saveDisabled={isWrong} />
+        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={708} border={35}>
+          <RenderSamplePreview code={options?.shortCode || selected} save={() => {}} isDrawed saveDisabled={isWrong}
+                               data={data} onlyQr={selected === 'web'} />
         </RenderPreviewDrawer>
       )}
     </>
