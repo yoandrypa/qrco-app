@@ -1,15 +1,14 @@
 import {ChangeEvent} from 'react';
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Box from "@mui/material/Box";
 
 import ColorSelector from "../../helperComponents/ColorSelector";
-import {COLORS, DEFAULT_COLORS} from "../../constants";
-import {ColorTypes, DataType} from "../../types/types";
+import {COLORS, DEFAULT_COLORS, IS_DEV_ENV} from "../../constants";
+import {DataType} from "../../types/types";
 import RenderGradientSelector from "./RenderGradientSelector";
 import RenderColorPreset from "./RenderColorPreset";
 
@@ -42,7 +41,7 @@ const RenderColors = ({data, handleValue}: RenderColorProps) => {
           </Box>
         </Box>
       </Paper>
-      <Paper sx={{p: 1, mb: '10px'}} elevation={2}>
+      {IS_DEV_ENV && (<Paper sx={{p: 1, mb: '10px'}} elevation={2}>
         <Typography>{'Background'}</Typography>
         <RadioGroup
           aria-labelledby="backgroundType"
@@ -55,15 +54,16 @@ const RenderColors = ({data, handleValue}: RenderColorProps) => {
           <FormControlLabel value="gradient" control={<Radio/>} label="Gradient"/>
         </RadioGroup>
         {(data?.backgroundType === undefined || data.backgroundType === 'single') ? (
-          <ColorSelector label="" color={data?.backgroundColor || '#ffffff'} allowClear handleData={handleValue} property="backgroundColor"/>
+          <ColorSelector label="" color={data?.backgroundColor || '#ffffff'} allowClear handleData={handleValue}
+                         property="backgroundColor"/>
         ) : (
           <RenderGradientSelector
             colorLeft={data?.backgroundColor || '#ffffff'}
             colorRight={data?.backgroundColorRight || '#ffffff'}
             direction={data?.backgroundDirection}
-            handleData={handleValue} />
+            handleData={handleValue}/>
         )}
-      </Paper>
+      </Paper>)}
     </Paper>
   );
 };

@@ -16,6 +16,7 @@ export const ZIP = new RegExp('^\\d{5}(-\\d{4})?$');
 
 export const EBANUX_PLATFORM_FEE = 0.04;
 
+export const IS_DEV_ENV = process.env.REACT_NODE_ENV === 'develop';
 
 export const QRCODE_PLANS = {
   BASIC: {

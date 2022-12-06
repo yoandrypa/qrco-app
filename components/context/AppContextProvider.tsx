@@ -77,11 +77,8 @@ const AppContextProvider = (props: ContextProps) => {
   }, [data?.isDynamic, data.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (doneInitialRender.current) {
+    if (doneInitialRender.current && options.mode === undefined) {
       clearData(true);
-      if (isWrong) {
-        setIsWrong(false);
-      }
     }
   }, [selected]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -114,6 +111,7 @@ const AppContextProvider = (props: ContextProps) => {
       }
     };
     verify();
+    doneInitialRender.current = true;
   }, []);
 
   useEffect(() => {

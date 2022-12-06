@@ -13,7 +13,7 @@ interface RenderPreviewDrawerProps {
   border?: number;
 }
 
-export default function RenderPreviewDrawer({border, setOpenPreview, children, height, minWidth, title}: RenderPreviewDrawerProps) {
+export default function RenderPreviewDrawer({setOpenPreview, children, height, minWidth, title, border}: RenderPreviewDrawerProps) {
   return (
     <Drawer
       anchor="right"
@@ -21,7 +21,7 @@ export default function RenderPreviewDrawer({border, setOpenPreview, children, h
       onClose={() => setOpenPreview(false)}
       sx={{'& .MuiPaper-root': {
         height: `${height}px`,
-        borderRadius: `10px 0 0 ${border || 35}px`,
+        borderRadius: `5px 0 0 ${border || 5}px`,
         top: `calc(50% - ${Math.ceil(height / 2)}px)`
       }
     }}>

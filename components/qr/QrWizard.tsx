@@ -6,7 +6,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useRouter } from "next/router";
 
 import { generateId, generateShortLink } from "../../utils";
-import { EbanuxDonationPriceData, ProcessHanldlerType } from "./types/types";
+import {EbanuxDonationPriceData, OptionsType, ProcessHanldlerType} from "./types/types";
 import {QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_TYPE_ROUTE} from "./constants";
 import { getUuid } from "../../helpers/qr/helpers";
 import * as QrHandler from "../../handlers/qrs";
@@ -78,16 +78,16 @@ const QrWizard = ({ children }: QrWizardProps) => {
 
   const handleNext = async () => {
     setLoading(true); // @ts-ignore
-    if (step === 0 && data.isDynamic && !isLogged) {
-      router.push({ pathname: "/", query: { path: QR_CONTENT_ROUTE, login: true, selected } }, "/").then(() => { setLoading(false); });
-    } else if (step === 1 && isLogged && data.isDynamic && !Boolean(options.id) && options.mode === undefined) {
-      const id = getUuid();
-      const shortCode = await generateId();
-      setOptions({
-        ...options, id, shortCode, data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN)
-      });
-      setStep(2);
-      router.push(QR_DESIGN_ROUTE, undefined,  { shallow: true }).then(() => setLoading(false));
+    if (step === 0) {
+      if (data.isDynamic && !isLogged) {
+        router.push({pathname: "/", query: {path: QR_CONTENT_ROUTE, login: true, selected}}, "/").then(() => setLoading(false));
+      } else if (isLogged && data.isDynamic && !Boolean(options.id) && options.mode === undefined) {
+        const id = getUuid();
+        const shortCode = await generateId(); // @ts-ignore
+        setOptions((prev: OptionsType) => ({...prev, id, shortCode, data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN)}));
+        setStep(1);
+        router.push(QR_CONTENT_ROUTE, undefined,  { shallow: true }).then(() => setLoading(false));
+      }
     } else if (step === 2 && isLogged) {
       if (["pdf", "audio", "gallery", "video"].includes(selected)) { //Process assets before saving de QR Data
         updatingHandler("Uploading assets");
@@ -305,7 +305,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
         (isError?: boolean) => {
           dataInfo.current = [];
           if (!isError) {
-            setForceDownload(true);
+            setForceDownload({item: document.getElementById('qrCodeReferenceId')});
           } else {
             forceUpdate();
           }
@@ -327,6 +327,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
       )}
       {forceDownload !== undefined && (
         <RenderPreview
+          avoidDuplicate
           externalDesign={forceDownload.item}
           externalFrame={frame}
           handleDone={async () => {
