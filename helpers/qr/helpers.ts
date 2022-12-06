@@ -291,7 +291,7 @@ export function getUuid(): string {
 }
 
 export const getFrameObject = (qrDesign: any) => (
-  qrDesign.frame?.type ? {
+  qrDesign?.frame?.type ? {
     type: qrDesign.frame?.type,
     text: qrDesign.frame?.text,
     color: qrDesign.frame?.color,
@@ -326,7 +326,7 @@ export const getOptionsObject = (qrDesign: any) => {
 };
 
 export const getBackgroundObject = (qrDesign: any) => (
-  !qrDesign.background?.type ? null : {
+  !qrDesign?.background?.type ? null : {
     type: qrDesign.background?.type,
     opacity: qrDesign.background?.opacity,
     size: qrDesign.background?.size,
@@ -339,7 +339,7 @@ export const getBackgroundObject = (qrDesign: any) => (
   });
 
 export const getCornersAndDotsObject = (qrDesign: any, item: string) => (
-  qrDesign[item] ? {
+  qrDesign?.[item] ? {
     topL: qrDesign[item].topL,
     topR: qrDesign[item].topR,
     bottom: qrDesign[item].bottom

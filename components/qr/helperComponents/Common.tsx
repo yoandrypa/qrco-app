@@ -6,19 +6,19 @@ import DesignServicesIcon from '@mui/icons-material/DesignServices';
 import TextField from "@mui/material/TextField";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { alpha } from "@mui/material/styles";
+import {alpha} from "@mui/material/styles";
 
 import Context from "../../context/Context";
 import RenderQRCommons from "../renderers/RenderQRCommons";
-import {DEFAULT_COLORS, NO_MICROSITE} from "../constants";
+import {DEFAULT_COLORS, IS_DEV_ENV, NO_MICROSITE} from "../constants";
 import {download} from "../../../handlers/storage";
 import Notifications from "../../notifications/Notifications";
 import {DataType} from "../types/types";
 import Box from "@mui/material/Box";
-import RenderCellPhoneShape from "./RenderCellPhoneShape";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import RenderPreviewDrawer from "./RenderPreviewDrawer";
 import RenderPreviewButton from "./RenderPreviewButton";
+import RenderSamplePreview from "./RenderSamplePreview";
 
 interface CommonProps {
   msg: string;
@@ -26,7 +26,7 @@ interface CommonProps {
 }
 
 function Common({msg, children}: CommonProps) { // @ts-ignore
-  const {selected, data, setData, userInfo} = useContext(Context);
+  const {selected, data, setData, userInfo, options, isWrong} = useContext(Context);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [backImg, setBackImg] = useState<any>(undefined);
@@ -138,13 +138,6 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     {children}
   </>);
 
-  const renderPreview = (forbidStyle?: boolean, previewMessage?: boolean) => (
-    <Box sx={{ml: !forbidStyle ? '20px' : 0, mt: !forbidStyle ? 1 : 0}}>
-      <RenderCellPhoneShape width={270} height={550} />
-      {previewMessage && <Typography sx={{textAlign: 'center', fontSize: 'small', color: theme => theme.palette.text.disabled, mt: '10px'}}>Preview</Typography>}
-    </Box>
-  );
-
   return (
     <>
       {error && (
@@ -197,14 +190,18 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
               </Box>
             ) : renderChildren()}
           </Box>
-          {isWideForPreview && !NO_MICROSITE.includes(selected) && data?.isDynamic && renderPreview(false, true)}
+          {IS_DEV_ENV && isWideForPreview && !NO_MICROSITE.includes(selected) && data?.isDynamic && (
+            <RenderSamplePreview code={options?.shortCode || selected} save={() => {}} style={{mt: '8px', ml: '15px'}} saveDisabled={isWrong}/>
+          )}
         </Box>
       ) : renderChildren()}
-      {!openPreview && !isWideForPreview && !NO_MICROSITE.includes(selected) && data?.isDynamic && ( // @ts-ignore
+      {IS_DEV_ENV && !openPreview && !isWideForPreview && !NO_MICROSITE.includes(selected) && data?.isDynamic && ( // @ts-ignore
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />
       )}
       {openPreview && ( // @ts-ignore
-        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={618}>{renderPreview(true)}</RenderPreviewDrawer>
+        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={702} border={35}>
+          <RenderSamplePreview code={options?.shortCode || selected} save={() => {}} isDrawed saveDisabled={isWrong} />
+        </RenderPreviewDrawer>
       )}
     </>
   );

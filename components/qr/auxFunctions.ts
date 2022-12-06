@@ -1,6 +1,18 @@
-import { BackgroundType, CornersAndDotsType, DataType, EditType, FramesType, OptionsType } from "./types/types";
-import { areEquals } from "../helpers/generalFunctions";
-import { initialBackground, initialFrame } from "../../helpers/qr/data";
+import {BackgroundType, CornersAndDotsType, DataType, EditType, FramesType, OptionsType} from "./types/types";
+import {areEquals} from "../helpers/generalFunctions";
+import {initialBackground, initialFrame} from "../../helpers/qr/data";
+
+interface UserInfoProps {
+  attributes: { sub: string },
+  signInUserSession: {
+    accessToken: {
+      jwtToken: string
+    },
+    idToken: {
+      jwtToken: string
+    }
+  }
+}
 
 export interface StepsProps {
   step: number;
@@ -8,17 +20,7 @@ export interface StepsProps {
   clearData: Function;
   selected: string;
   data: DataType;
-  userInfo: {
-    attributes: { sub: string },
-    signInUserSession: {
-      accessToken: {
-        jwtToken: string
-      },
-      idToken: {
-        jwtToken: string
-      }
-    }
-  };
+  userInfo: UserInfoProps;
   options: OptionsType;
   frame: FramesType;
   background: BackgroundType;
