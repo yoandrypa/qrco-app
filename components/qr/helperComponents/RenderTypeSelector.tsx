@@ -14,10 +14,12 @@ import {styled} from "@mui/material/styles";
 import Context from "../../context/Context";
 import {DataType} from "../types/types";
 
-import RenderPreviewDrawer from "./RenderPreviewDrawer";
-import RenderPreviewButton from "./RenderPreviewButton";
-import RenderSamplePreview from "./RenderSamplePreview";
+import RenderPreviewDrawer from "./smallpieces/RenderPreviewDrawer";
+import RenderPreviewButton from "./smallpieces/RenderPreviewButton";
+import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
 import {IS_DEV_ENV} from "../constants";
+import RenderProDesc from "./smallpieces/RenderProDesc";
+import RenderFreeDesc from "./smallpieces/RenderFreeDesc";
 
 interface RenderTypeSelectorProps {
   selected?: string | null;
@@ -92,24 +94,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
             sx={{background: grey[100]}}>
             <Tab sx={{pr: '37px', mr: '3px'}} label={
               <MyBadge badgeContent={
-                <Tooltip title={
-                  <span>
-                    <p>Dynamic QR codes:</p>
-                    <ul style={{paddingLeft: 0, listStylePosition: 'inside'}}>
-                      <li>QR code + Short Link + Microsite</li>
-                      <li>Easy to customize</li>
-                      <li>Easy to use</li>
-                      <li>Unlimited content changes</li>
-                      <li>Ability to fix mistakes</li>
-                      <li>Ability to be shared as a Short URL</li>
-                      <li>Reusable QR codes after printing</li>
-                      <li>QR content in a mobile-friendly microsite</li>
-                      <li>Microsite easy to share with other apps</li>
-                      <li>Scans tracking and other statistics included</li>
-                      <li>Available for authenticated users only</li>
-                    </ul>
-                  </span>
-                } arrow>
+                <Tooltip title={<RenderProDesc/>} arrow>
                   <span>Pro</span>
                 </Tooltip>
               } color="primary" pro>
@@ -118,21 +103,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
             }/>
             <Tab sx={{pr: '39px'}} label={
               <MyBadge badgeContent={
-                <Tooltip title={
-                  <span>
-                    <p>Static QR codes:</p>
-                    <ul style={{paddingLeft: 0, listStylePosition: 'inside'}}>
-                      <li>100% free</li>
-                      <li>Easy to customize</li>
-                      <li>Easy to use</li>
-                      <li>Effective for simple uses</li>
-                      <li>Take longer to scan</li>
-                      <li>Non-editable content</li>
-                      <li>Unlimited for both authenticated and guest users</li>
-                      <li>Stored for authenticated users only</li>
-                    </ul>
-                  </span>
-                } arrow>
+                <Tooltip title={<RenderFreeDesc />} arrow>
                   <span>Free</span>
                 </Tooltip>} color="success">
                 <Typography>{isWide ? "Static QR Codes" : "Static"}</Typography>

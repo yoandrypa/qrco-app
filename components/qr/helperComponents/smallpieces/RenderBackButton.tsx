@@ -1,5 +1,5 @@
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import StepperButtons from "./StepperButtons";
+import StepperButtons from "../StepperButtons";
 
 interface RenderBackProps {
   loading: boolean;

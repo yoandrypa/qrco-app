@@ -16,9 +16,9 @@ import Notifications from "../../notifications/Notifications";
 import {DataType} from "../types/types";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import RenderPreviewDrawer from "./RenderPreviewDrawer";
-import RenderPreviewButton from "./RenderPreviewButton";
-import RenderSamplePreview from "./RenderSamplePreview";
+import RenderPreviewDrawer from "./smallpieces/RenderPreviewDrawer";
+import RenderPreviewButton from "./smallpieces/RenderPreviewButton";
+import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
 
 interface CommonProps {
   msg: string;

@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 
-import RenderIcon from './helperComponents/RenderIcon';
+import RenderIcon from './helperComponents/smallpieces/RenderIcon';
 
 import Context from '../context/Context';
 import SingleData from './renderers/SingleData';
@@ -15,7 +15,7 @@ import EmailData from './renderers/EmailData';
 import SMSData from './renderers/SMSData';
 import TwitterData from './renderers/TwitterData';
 import AssetData from './renderers/AssetData';
-import NotifyDynamic from "./helperComponents/NotifyDynamic";
+import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
 import BusinessData from "./renderers/BusinessData";
 import NetworksData from "./renderers/NetworksData.";
 import CouponData from "./renderers/CouponData";
@@ -26,7 +26,7 @@ import SendMeMoneyData from './renderers/SendMeMoneyData';
 import { DataType, SocialProps } from './types/types';
 import LinksData from "./renderers/LinksData";
 import PleaseWait from "../PleaseWait";
-import RenderNoUserWarning from "./helperComponents/RenderNoUserWarning";
+import RenderNoUserWarning from "./helperComponents/smallpieces/RenderNoUserWarning";
 
 type QrContentHandlerProps = {
   data: DataType;
