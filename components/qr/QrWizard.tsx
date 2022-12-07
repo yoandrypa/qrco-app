@@ -81,7 +81,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
     if (step === 0) {
       if (data.isDynamic && !isLogged) {
         router.push({pathname: "/", query: {path: QR_CONTENT_ROUTE, login: true, selected}}, "/").then(() => setLoading(false));
-      } else if (isLogged) {
+      } else {
         if (isLogged && data.isDynamic && !Boolean(options.id) && options.mode === undefined) {
           const id = getUuid();
           const shortCode = await generateId(); // @ts-ignore
