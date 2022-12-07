@@ -56,7 +56,9 @@ export const FRAMES_LENGTH = 10 as number;
 
 export const DEFAULT_COLORS = { p: '#0f4d8c', s: '#99c4f0' } as ColorTypes;
 
-export const COLORS = [DEFAULT_COLORS, {p: '#187510', s: '#9ece99'}, {p: '#aa8412', s: '#d7c89a'}, {p: '#b30909', s: '#dba8a8'},
-  {p: '#8c0f4a', s: '#dd9ebc'}, {p: '#40310f', s: '#a8a6a1'}, {p: '#f704ce', s: '#f7ac04bf'}, {p: '#5473b7', s: '#5dc37c'},
-  {p: '#2d3a2c', s: '#ca9f2a'}, {p: '#25877f', s: '#d71818'}, {p: '#f0d629', s: '#445b97'}, {p: '#f0630c', s: '#adb6cc'}] as ColorTypes[];
+export const COLORS = [DEFAULT_COLORS, {p: '#187510', s: '#9ece99'}, {p: '#aa8412', s: '#d7c89a'},
+  {p: '#b30909', s: '#dba8a8'}, {p: '#8c0f4a', s: '#dd9ebc'}, {p: '#40310f', s: '#a8a6a1'},
+  {p: '#f704ce', s: '#f7ac04'}, {p: '#5473b7', s: '#5dc37c'}, {p: '#2d3a2c', s: '#ca9f2a'},
+  {p: '#25877f', s: '#d71818'}, {p: '#f0d629', s: '#445b97'}, {p: '#f0630c', s: '#adb6cc'}, {p: '#0cd8f0', s: '#d8da07'}
+] as ColorTypes[];
 

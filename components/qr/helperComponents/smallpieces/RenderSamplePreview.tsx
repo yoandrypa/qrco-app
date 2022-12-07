@@ -1,6 +1,6 @@
 import {MouseEvent, useState} from "react";
-import RenderIframe from "../../RenderIframe";
-import RenderCellPhoneShape from "./RenderCellPhoneShape";
+import RenderIframe from "../../../RenderIframe";
+import RenderCellPhoneShape from "../RenderCellPhoneShape";
 import Box from "@mui/material/Box";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
@@ -11,13 +11,13 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import Typography from "@mui/material/Typography";
 import {grey} from "@mui/material/colors";
 
-import {NO_MICROSITE, REDEFINE_URL} from "../constants";
+import {NO_MICROSITE, REDEFINE_URL} from "../../constants";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import RenderPreview from "../renderers/RenderPreview";
-import Notifications from "../../notifications/Notifications";
-import {cleanSelectionForMicrositeURL, getProperSampleUrl} from "../../../helpers/qr/helpers";
-import {DataType} from "../types/types";
+import RenderPreview from "../../renderers/RenderPreview";
+import Notifications from "../../../notifications/Notifications";
+import {cleanSelectionForMicrositeURL, getProperSampleUrl} from "../../../../helpers/qr/helpers";
+import {DataType} from "../../types/types";
 
 interface SamplePrevProps {
   style?: object;
@@ -71,13 +71,16 @@ export default function RenderSamplePreview({onlyQr, data, selected, style, save
           </IconButton>
         </Box>
       </Box>
-      <Box sx={{display: 'flex', justifyContent: 'space-between', my: '10px', ml: !isDrawed ? 0 : '10px', width: !isDrawed ? '100%' : 'calc(100% - 20px)'}}>
+      <Box sx={{
+        display: 'flex', justifyContent: 'space-between', my: '8px', ml: !isDrawed ? 0 : '10px',
+        width: !isDrawed ? '100%' : 'calc(100% - 20px)'
+      }}>
         <ToggleButtonGroup value={prev} exclusive onChange={handleToggle} sx={{width: '100%'}}>
-          <ToggleButton value="preview" sx={{height: '23px', width: '60%'}} disabled={onlyQr}>
+          <ToggleButton value="preview" sx={{height: '23px', width: '50%'}} disabled={onlyQr}>
             <WebIcon fontSize="small" sx={{mr: '5px'}}/>
-            <Typography>{'Preview'}</Typography>
+            <Typography>{'Page'}</Typography>
           </ToggleButton>
-          <ToggleButton value="qr" sx={{height: '23px', width: '40%'}}>
+          <ToggleButton value="qr" sx={{height: '23px', width: '50%'}}>
             <QrCodeIcon fontSize="small" sx={{mr: '5px'}}/>
             <Typography>{'QR'}</Typography>
           </ToggleButton>
@@ -87,8 +90,8 @@ export default function RenderSamplePreview({onlyQr, data, selected, style, save
       <Box sx={{width: '280px', p: 1, pt: 0, ml: isDrawed ? '5px' : 0}}>
         {prev === 'preview' ? (
           <RenderCellPhoneShape width={270} height={550} offlineText="The selected card has no available sample">
-            {selected && !NO_MICROSITE.includes(selected) ?
-              <RenderIframe width="256px" height="536px" src={URL} data={data}/> : null}
+            {code || (selected && !NO_MICROSITE.includes(selected)) ?
+              <RenderIframe width="256px" height="536px" src={!code ? URL : `${process.env.REACT_MICROSITES_ROUTE}/sample/empty`} data={data}/> : null}
           </RenderCellPhoneShape>) : <RenderPreview width={270} override={URL}/>}
       </Box>
       {copied && (

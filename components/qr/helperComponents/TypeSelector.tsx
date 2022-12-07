@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {grey} from "@mui/material/colors";
 
-import RenderIcon from "./RenderIcon";
+import RenderIcon from "./smallpieces/RenderIcon";
 import {useTheme} from "@mui/system";
 
 interface TypeSelectorProps {

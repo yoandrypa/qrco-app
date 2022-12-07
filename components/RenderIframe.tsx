@@ -17,42 +17,42 @@ interface RenderMessageProps {
 
 function RenderMessage({whatToRender}: RenderMessageProps) {
   return (
-      <Box sx={{
-        m: 0,
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        textAlign: 'center'
-      }}>
-        {whatToRender !== undefined ? (
-          <>
-            <Typography sx={{fontWeight: 'bold'}}>
-              {'The requested example failed to load'}
-            </Typography>
-            <Divider sx={{mt: '10px'}}/>
-            <Typography sx={{fontSize: 'small'}}>
-              {whatToRender === 'IO Error' ? 'Containing file was not found or is offline' : (
-                whatToRender === 'offline' ? 'Current example is offline' : 'Unknown cause'
-              )}
-            </Typography>
-            <Divider/>
-            <Typography
-              sx={{color: theme => theme.palette.text.disabled, mx: 'auto', mt: '10px', fontSize: 'small'}}>
-              {"Please, contact support by clicking "}
-              <a target="_blank" href="mailto:info@ebanux.com"
-                 rel="noopener noreferrer"
-                 style={{color: "royalblue"}}>{"here"}</a>
-              {"."}
-            </Typography>
-          </>
-        ) : (
-          <>
-            <Typography>{'Loading...'}</Typography>
-            <Typography sx={{ color: theme => theme.palette.text.disabled}}>{'Please wait...'}</Typography>
-          </>
-        )}
-      </Box>
+    <Box sx={{
+      m: 0,
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      textAlign: 'center'
+    }}>
+      {whatToRender !== undefined ? (
+        <>
+          <Typography sx={{fontWeight: 'bold'}}>
+            {'The requested example failed to load'}
+          </Typography>
+          <Divider sx={{mt: '10px'}}/>
+          <Typography sx={{fontSize: 'small'}}>
+            {whatToRender === 'IO Error' ? 'Containing file was not found or is offline' : (
+              whatToRender === 'offline' ? 'Current example is offline' : 'Unknown cause'
+            )}
+          </Typography>
+          <Divider/>
+          <Typography
+            sx={{color: theme => theme.palette.text.disabled, mx: 'auto', mt: '10px', fontSize: 'small'}}>
+            {"Please, contact support by clicking "}
+            <a target="_blank" href="mailto:info@ebanux.com"
+               rel="noopener noreferrer"
+               style={{color: "royalblue"}}>{"here"}</a>
+            {"."}
+          </Typography>
+        </>
+      ) : (
+        <>
+          <Typography>{'Loading...'}</Typography>
+          <Typography sx={{ color: theme => theme.palette.text.disabled}}>{'Please wait...'}</Typography>
+        </>
+      )}
+    </Box>
   );
 }
 
@@ -74,7 +74,11 @@ export default function RenderIframe({src, width, height, data}: IframeProps) {
 
   useEffect(() => {
     if (data && isReady) {
-      console.log('Here we go')
+      if (iRef.current) {
+        setTimeout(() => { // @ts-ignore
+          iRef.current.contentWindow.postMessage(JSON.stringify({previewData: data}), process.env.REACT_MICROSITES_ROUTE);
+        }, 150);
+      }
     }
   }, [data, isReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -82,16 +86,17 @@ export default function RenderIframe({src, width, height, data}: IframeProps) {
     const handler = (event: any) => {
       if (event.origin.replace('https://www.', 'https://') === process.env.REACT_MICROSITES_ROUTE) {
         try {
-          const data = JSON.parse(event.data)
-          if (data.error) {
-            setWhatToRender(data.message);
-          } else if (data.ready) {
-            setIsReady(true);
+          const dataFromOutside = JSON.parse(event.data);
+          if (dataFromOutside.error) {
+            setWhatToRender(dataFromOutside.message);
+          } else if (dataFromOutside.ready) {
             if (iRef.current) {
               setTimeout(() => { // @ts-ignore
                 iRef.current.contentWindow.postMessage(JSON.stringify({parentWidth: width, parentHeight: height}), '*');
               }, 150);
             }
+          } else if (dataFromOutside.readyForDuty) {
+            setIsReady(true);
           }
         } catch (e) {
           console.error(e);

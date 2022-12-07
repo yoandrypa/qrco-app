@@ -29,10 +29,8 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
   const [expander, setExpander] = useState<string | null>(null);
 
   const renderItem = (item: string, label: string, required?: boolean) => {
-    let isError = false as boolean;
-    // @ts-ignore
+    let isError = false as boolean; // @ts-ignore
     const value = data?.[item] || '' as string;
-
     if ((value.trim().length === 0 && ['urlOptionLabel', 'urlOptionLink'].includes(item)) ||
       (item === 'urlOptionLink' && !isValidUrl(value))) {
       isError = true;
@@ -41,7 +39,6 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
       (item === 'zip' && !ZIP.test(value)))) {
         isError = true;
     }
-
     if (item === 'urlOptionLabel') {
       return (<RenderProposalsTextFields
         options={['View menu', 'Shop online', 'Book now', 'Apply now', 'Learn more']}
@@ -52,7 +49,6 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
         handleValues={handleValues}
       />);
     }
-
     return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={handleValues} required={required} />;
   };
 
@@ -89,8 +85,7 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Common
-      msg="Your business or company details. Users can contact your business or company right the way.">
+    <Common msg="Your business or company details. Users can contact your business or company right the way.">
       <Topics message={'Business info'}/>
       <Grid container spacing={1}>
         <Grid item xs={12} style={{paddingTop: 0}}>
@@ -121,8 +116,7 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
       <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography sx={{ my: 'auto' }}>{'Option button'}</Typography>
-          <Button sx={{ mb: '5px' }} variant="contained"
-            color={data.urlOptionLabel === undefined ? 'primary' : 'error'} onClick={handleOptionButton}>
+          <Button sx={{ mb: '5px' }} variant="contained" color={data.urlOptionLabel === undefined ? 'primary' : 'error'} onClick={handleOptionButton}>
             {data.urlOptionLabel === undefined ? 'Add an option button' : 'Remove option button'}
           </Button>
         </Box>

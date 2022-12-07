@@ -20,13 +20,13 @@ import {initialBackground, initialFrame} from '../../helpers/qr/data';
 import RenderDownload from './helperComponents/RenderDownload';
 import PDFGenDlg from './helperComponents/PDFGenDlg';
 import Context from '../context/Context';
-import RenderNoUserWarning from "./helperComponents/RenderNoUserWarning";
-import NotifyDynamic from "./helperComponents/NotifyDynamic";
+import RenderNoUserWarning from "./helperComponents/smallpieces/RenderNoUserWarning";
+import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
 import Notifications from "../../components/notifications/Notifications";
 import {FRAMES_LENGTH} from "./constants";
 import {GeneratorProps, GenProps} from "./auxFunctions";
-import RenderPreviewDrawer from "./helperComponents/RenderPreviewDrawer";
-import RenderPreviewButton from "./helperComponents/RenderPreviewButton";
+import RenderPreviewDrawer from "./helperComponents/smallpieces/RenderPreviewDrawer";
+import RenderPreviewButton from "./helperComponents/smallpieces/RenderPreviewButton";
 
 const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
   const { options, setOptions, background, setBackground, frame, setFrame, data, selected, userInfo, cornersData,

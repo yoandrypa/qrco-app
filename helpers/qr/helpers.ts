@@ -384,8 +384,8 @@ export const cleanSelectionForMicrositeURL = (item: string): string => {
   if (item === 'link') {
     return 'links';
   }
-  if (item === 'donation') {
-    return 'donations';
+  if (item === 'donations') {
+    return 'donation';
   }
   return item;
 };

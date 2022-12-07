@@ -16,9 +16,9 @@ import Notifications from "../../notifications/Notifications";
 import {DataType} from "../types/types";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import RenderPreviewDrawer from "./RenderPreviewDrawer";
-import RenderPreviewButton from "./RenderPreviewButton";
-import RenderSamplePreview from "./RenderSamplePreview";
+import RenderPreviewDrawer from "./smallpieces/RenderPreviewDrawer";
+import RenderPreviewButton from "./smallpieces/RenderPreviewButton";
+import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
 
 interface CommonProps {
   msg: string;
@@ -138,6 +138,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     {children}
   </>);
 
+  const handleSave = () => {}
+
   return (
     <>
       {error && (
@@ -191,8 +193,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
             ) : renderChildren()}
           </Box>
           {IS_DEV_ENV && isWideForPreview && !NO_MICROSITE.includes(selected) && data?.isDynamic && (
-            <RenderSamplePreview code={options?.shortCode || selected} save={() => {}} style={{mt: '8px', ml: '15px'}}
-                                 saveDisabled={isWrong} data={data} onlyQr={selected === 'web'} />
+            <RenderSamplePreview code={options?.shortCode || selected} save={handleSave} style={{mt: '8px', ml: '15px'}}
+                                 saveDisabled={isWrong} data={{...data, qrType: selected}} onlyQr={selected === 'web'} />
           )}
         </Box>
       ) : renderChildren()}
@@ -201,7 +203,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       )}
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={708} border={35}>
-          <RenderSamplePreview code={options?.shortCode || selected} save={() => {}} isDrawed saveDisabled={isWrong}
+          <RenderSamplePreview code={options?.shortCode || selected} save={handleSave} isDrawed saveDisabled={isWrong}
                                data={data} onlyQr={selected === 'web'} />
         </RenderPreviewDrawer>
       )}

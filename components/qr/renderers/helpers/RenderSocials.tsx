@@ -5,7 +5,7 @@ import SquareSelector from "../../helperComponents/SquareSelector";
 import TextField from "@mui/material/TextField";
 import {capitalize} from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
-import RenderIcon from "../../helperComponents/RenderIcon";
+import RenderIcon from "../../helperComponents/smallpieces/RenderIcon";
 import {DataType, SocialNetworksType, SocialsType} from "../../types/types";
 import {PHONE} from "../../constants";
 
