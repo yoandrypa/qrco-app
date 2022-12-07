@@ -17,11 +17,13 @@ import CircularProgress from "@mui/material/CircularProgress";
 import ImageCropper from "./helpers/ImageCropper";
 import RenderColors from "./helpers/RenderColors";
 import {DataType} from "../types/types";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface QRCommonsProps {
   omitPrimaryImg?: boolean;
   data?: DataType;
   loading?: boolean;
+  isWideForPreview?: boolean;
   backgndImg?: File | string;
   foregndImg?: File | string;
   backError?: boolean;
@@ -29,10 +31,12 @@ interface QRCommonsProps {
   handleValue: Function;
 }
 
-function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg, backError, foreError, handleValue}: QRCommonsProps) { // @ts-ignore
+function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg, backError, foreError, handleValue, isWideForPreview}: QRCommonsProps) { // @ts-ignore
   const [selectFile, setSelectFile] = useState<string | null>(null);
   const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+
+  const isWideEnough = useMediaQuery("(min-width:1083px)", { noSsr: true });
 
   const handleSelectFile = (kind: string) => () => {
     setSelectFile(kind);
@@ -64,6 +68,8 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
     </>
   );
 
+  const shrink = isWideForPreview && !isWideEnough && (backgndImg || foregndImg);
+
   return (
     <>
       <Box sx={{p: 1, mt: 1}}>
@@ -80,11 +86,11 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
           width: '100%',
           display: 'flex',
           textAlign: 'center',
-          flexDirection: {md: "row", xs: "column"},
+          flexDirection: shrink ? "column" : {md: "row", xs: "column"},
           mt: 2
         }}>
           <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
-            <Tooltip title="Click for selecting the background image">
+            <Tooltip title="Click for selecting the banner image">
               <Button
                 sx={{width: '100%'}}
                 disabled={loading}
@@ -93,13 +99,13 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
                 color="primary"
                 onClick={handleSelectFile('backgndImg')}
               >
-                {`${backgndImg && !loading ? 'Image loaded /' : 'Select'} background image`}
+                {`Banner image${backgndImg && !loading ? ' / Loaded' : ''}`}
               </Button>
             </Tooltip>
             {backgndImg && !loading && renderOptions('backgndImg')}
           </ButtonGroup>
           {!omitPrimaryImg && (
-            <ButtonGroup sx={{mt: {xs: 1, md: 0}, width: '100%'}}>
+            <ButtonGroup sx={{mt: shrink ? 1 : {xs: 1, md: 0}, width: '100%'}}>
               <Tooltip title="Click for selecting the main image">
                 <Button
                   sx={{width: '100%'}}
@@ -109,7 +115,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
                   onClick={handleSelectFile('foregndImg')}
                   color="primary"
                 >
-                  {`${foregndImg && !loading ? 'Image loaded /' : 'Select'} main image`}
+                  {`Main image${backgndImg && !loading ? ' / Loaded' : ''}`}
                 </Button>
               </Tooltip>
               {foregndImg && !loading && renderOptions('foregndImg')}
