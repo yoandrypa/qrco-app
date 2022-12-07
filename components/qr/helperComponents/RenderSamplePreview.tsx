@@ -87,8 +87,8 @@ export default function RenderSamplePreview({onlyQr, data, selected, style, save
       <Box sx={{width: '280px', p: 1, pt: 0, ml: isDrawed ? '5px' : 0}}>
         {prev === 'preview' ? (
           <RenderCellPhoneShape width={270} height={550} offlineText="The selected card has no available sample">
-            {selected && !NO_MICROSITE.includes(selected) ?
-              <RenderIframe width="256px" height="536px" src={URL} data={data}/> : null}
+            {code || (selected && !NO_MICROSITE.includes(selected)) ?
+              <RenderIframe width="256px" height="536px" src={!code ? URL : `${process.env.REACT_MICROSITES_ROUTE}/sample/empty`} data={data}/> : null}
           </RenderCellPhoneShape>) : <RenderPreview width={270} override={URL}/>}
       </Box>
       {copied && (
