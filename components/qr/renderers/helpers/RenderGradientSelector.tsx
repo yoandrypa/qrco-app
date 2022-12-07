@@ -17,7 +17,7 @@ import {styled} from "@mui/material/styles";
 
 // @ts-ignore
 import {SketchPicker} from "react-color";
-import {COLORS, DEFAULT_COLORS} from "../../constants";
+import {COLORS} from "../../constants";
 import RenderColorPreset from "./RenderColorPreset";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
@@ -59,19 +59,16 @@ const RenderGradientSelector = ({ direction, colorLeft, handleData, colorRight }
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} >
+      <Grid item xs={12} sx={{mb: '-17px'}}>
         <Typography>{'Presets'}</Typography>
         {COLORS.map(x => {
-          const selected = (!colorLeft && !colorRight && x.p === DEFAULT_COLORS.p && x.s === DEFAULT_COLORS.s) ||
-            (x.p === colorLeft && x.s === colorRight);
+          const selected = x.p === colorLeft && x.s === colorRight;
           return <RenderColorPreset handleValue={handleData} colors={x} selected={selected} gradient key={x.p} />
         })}
       </Grid>
       <Grid sm={widePrev && isWideForPreview? 8 : 12} xs={12} item>
         <TextField
-          sx={{
-            '& .MuiInputBase-input': { backgroundImage: `linear-gradient(${direction === undefined ? '90deg' : direction}, ${colorLeft}, ${colorRight})` }
-          }}
+          sx={{'& .MuiInputBase-input': { backgroundImage: `linear-gradient(${direction === undefined ? '90deg' : direction}, ${colorLeft}, ${colorRight})` }}}
           size="small"
           fullWidth
           margin="dense"

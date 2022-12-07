@@ -15,7 +15,7 @@ import RenderImgPreview from "./helpers/RenderImgPreview";
 import RenderForeImgTypePicker from "./helpers/RenderForeImgTypePicker";
 import CircularProgress from "@mui/material/CircularProgress";
 import ImageCropper from "./helpers/ImageCropper";
-import RenderColors from "./helpers/RenderColors";
+import RenderColorsAndBackgnd from "./helpers/RenderColorsAndBackgnd";
 import {DataType} from "../types/types";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
@@ -73,7 +73,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
   return (
     <>
       <Box sx={{p: 1, mt: 1}}>
-        <RenderColors handleValue={handleValue} data={data} />
+        <RenderColorsAndBackgnd handleValue={handleValue} data={data} />
         {loading && (
           <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center', mt: '10px', mb: '-10px' }}>
             <CircularProgress size={20} sx={{ mr: '5px' }} />
@@ -127,7 +127,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
       {selectFile !== null && (
         <RenderImagePicker
           handleClose={() => setSelectFile(null)}
-          title={selectFile === 'foregndImg' ? 'main' : 'background'}
+          title={selectFile === 'foregndImg' ? 'main' : 'banner'}
           kind={selectFile}
           handleAcept={handleAccept}
           wasError={(selectFile === 'foregndImg' && foreError) || (selectFile === 'backgndImg' && backError)}

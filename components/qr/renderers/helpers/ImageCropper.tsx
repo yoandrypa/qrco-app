@@ -173,7 +173,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
         <Box sx={{ p: '1px' }}>
           <Box sx={{ display: 'flex', mb: '10px' }}>
             <PhotoSizeSelectLargeIcon sx={{ color: theme => theme.palette.info.dark, mr: '5px' }} />
-            <Typography sx={{ fontWeight: 'bold' }}>{`Adjust the ${kind === 'backgndImg' ? 'background' : 'main'} image for the microsite`}</Typography>
+            <Typography sx={{ fontWeight: 'bold' }}>{`Adjust the ${kind === 'backgndImg' ? 'banner' : 'main'} image for the microsite`}</Typography>
           </Box>
           <Box sx={{ width: '100%', textAlign: 'center' }}>
             <canvas
