@@ -3,6 +3,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import {DataType} from "./qr/types/types";
+import {convertBase64} from "../helpers/qr/helpers";
 
 interface IframeProps {
   src: string;
@@ -75,9 +76,16 @@ export default function RenderIframe({src, width, height, data}: IframeProps) {
   useEffect(() => {
     if (data && isReady) {
       if (iRef.current) {
-        setTimeout(() => { // @ts-ignore
-          iRef.current.contentWindow.postMessage(JSON.stringify({previewData: data}), process.env.REACT_MICROSITES_ROUTE);
-        }, 150);
+        setTimeout(async () => {
+          const previewData = { ...data }; // @ts-ignore
+          if (previewData.backgndImg) { // @ts-ignore
+            previewData.backgndImg = await convertBase64(previewData.backgndImg);
+          }
+          if (previewData.foregndImg) { // @ts-ignore
+            previewData.foregndImg = await convertBase64(previewData.foregndImg);
+          } // @ts-ignore
+          iRef.current.contentWindow.postMessage(JSON.stringify({previewData}), process.env.REACT_MICROSITES_ROUTE);
+        }, 250);
       }
     }
   }, [data, isReady]); // eslint-disable-line react-hooks/exhaustive-deps

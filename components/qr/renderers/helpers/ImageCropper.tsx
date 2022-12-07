@@ -167,8 +167,6 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
     initial.current = false;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  console.log(zoom)
-
   return (
     <Dialog onClose={handleClose} open={true}>
       <DialogContent dividers>

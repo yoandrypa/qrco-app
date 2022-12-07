@@ -180,6 +180,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                 </Tabs>
                 {tabSelected === 0 ? renderChildren() : (
                   <RenderQRCommons
+                    isWideForPreview={isWideForPreview}
                     handleValue={handleValue}
                     omitPrimaryImg={!['vcard+', 'link', 'business', 'social', 'donations'].includes(selected) || !data?.isDynamic}
                     backgndImg={data.mode === 'edit' ? (Array.isArray(data?.backgndImg) ? backImg || undefined : data?.backgndImg) : data?.backgndImg}
