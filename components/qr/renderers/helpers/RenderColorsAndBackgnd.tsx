@@ -11,6 +11,7 @@ import {COLORS, DEFAULT_COLORS, IS_DEV_ENV} from "../../constants";
 import {DataType} from "../../types/types";
 import RenderGradientSelector from "./RenderGradientSelector";
 import RenderColorPreset from "./RenderColorPreset";
+import SectionSelector from "../../helperComponents/SectionSelector";
 
 interface RenderColorProps {
   data?: DataType;
@@ -62,7 +63,31 @@ const RenderColorsAndBackgnd = ({data, handleValue}: RenderColorProps) => {
             handleData={handleValue}/>
         )}
         {data?.backgroundType === 'image' && (
-          <>!!!</>
+          <Box sx={{ mt: 2 }}>
+            <SectionSelector
+              icon="/images/backgnds/back1.png" label="Background 1" separate h='100px' w='100px'
+              selected={data?.backgroundImage === '/images/backgnds/back1.png'}
+              handleSelect={() => {}} />
+            <SectionSelector
+              icon="/images/backgnds/back2.png" label="Background 2" separate h='100px' w='100px'
+              selected={data?.backgroundImage === '/images/backgnds/back2.png'}
+              handleSelect={() => {}} />
+            <SectionSelector
+              icon="/images/backgnds/back3.png" label="Background 3" separate h='100px' w='100px'
+              selected={data?.backgroundImage === '/images/backgnds/back3.png'}
+              handleSelect={() => {}} />
+            <SectionSelector
+              icon="/images/backgnds/back4.png" label="Background 4" separate h='100px' w='100px'
+              selected={data?.backgroundImage === '/images/backgnds/back4.png'}
+              handleSelect={() => {}} />
+            <SectionSelector
+              icon="/images/backgnds/back5.png" label="Background 5" separate h='100px' w='100px'
+              selected={data?.backgroundImage === '/images/backgnds/back5.png'}
+              handleSelect={() => {}} />
+            <SectionSelector
+              isUpload icon={''} h='100px' w='100px' label="Upload" selected={false}
+              handleSelect={() => {}} />
+          </Box>
         )}
       </Paper>)}
     </Paper>

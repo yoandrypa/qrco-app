@@ -30,10 +30,12 @@ const SquareSelector = ({colors, tooltips, selected, item, label, handleSelectio
             width: !tooltips ? '100px' : '55px',
             minWidth: !tooltips ? '100px' : '55px',
             height: !tooltips ? '60px' : '50px',
-            backgroundColor: theme => alpha(!colors ? theme.palette.info.light : colors.s, selected ? 0.25 : 0.1),
-            cursor: !tooltips ? 'pointer' : 'auto',
+            background: theme => alpha(theme.palette.info.light, 0.03),
+            cursor: 'pointer',
+            border: theme => `solid 1px ${theme.palette.text.disabled}`,
+            boxShadow: selected ? '0 0 3px 2px #286ED6' : 'none',
             '&:hover': {
-              backgroundColor: !tooltips ? theme => alpha(!colors ? theme.palette.info.light : colors.s, 0.4) : 'inherit'
+              boxShadow: !selected ? '0 0 2px 2px #849abb' : '0 0 2px 2px #286ED6'
             }
           }}
           variant={selected ? 'outlined' : 'text'}
