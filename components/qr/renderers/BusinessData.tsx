@@ -131,7 +131,7 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
           </Grid>
         )}
       </Paper>
-      <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
+      <Paper elevation={2} sx={{ p: 1, my: 2 }}>
         <Expander expand={expander} setExpand={setExpander} item="address" title="Address" />
         {expander === "address" && (
           <Grid container spacing={1}>
@@ -153,11 +153,11 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
           </Grid>
         )}
       </Paper>
-      <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
+      <Paper elevation={2} sx={{ p: 1, my: 2 }}>
         <Expander expand={expander} setExpand={setExpander} item="opening" title="Opening Time" />
         {expander === "opening" && <RenderOpeningTime data={data} setData={setData} />}
       </Paper>
-      <Paper elevation={2} sx={{ p: 1, my: 1 }}>
+      <Paper elevation={2} sx={{ p: 1, my: 2 }}>
         <Expander expand={expander} setExpand={setExpander} item="easiness" title="Business Easiness" />
         {expander === "easiness" && <RenderEasiness data={data} setData={setData} />}
       </Paper>

@@ -66,8 +66,8 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
   };
 
   const renderTypeSelector = (item: string, label: string, description: string, enabled: boolean) => (
-    <Grid item lg={IS_DEV_ENV && data.isDynamic && selected ? (isWideForThreeColumns ? 4 : 6) : 3}
-          md={!IS_DEV_ENV || !selected || !data.isDynamic ? 4 : (isWideForThreeColumns ? 4 : 6)} sm={6} xs={12}>
+    <Grid item lg={IS_DEV_ENV && selected ? (isWideForThreeColumns ? 4 : 6) : 3}
+          md={!IS_DEV_ENV || !selected ? 4 : (isWideForThreeColumns ? 4 : 6)} sm={6} xs={12}>
       <TypeSelector
         icon={item}
         label={label}
@@ -88,10 +88,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
     <Box sx={{display: 'flex'}}>
       <Grid container spacing={1}>
         <Grid item xs={12}>
-          <Tabs
-            value={isDynamic ? 0 : 1}
-            onChange={(_, newSel: number) => handleClick(newSel)}
-            sx={{background: grey[100]}}>
+          <Tabs value={isDynamic ? 0 : 1} onChange={(_, newSel: number) => handleClick(newSel)}>
             <Tab sx={{pr: '37px', mr: '3px'}} label={
               <MyBadge badgeContent={
                 <Tooltip title={<RenderProDesc/>} arrow>
@@ -142,13 +139,13 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
           {renderTypeSelector("video", "Video Files", "Share video files", true)}
         </>) : null}
       </Grid>
-      {IS_DEV_ENV && isWideForPreview && selected && data.isDynamic && <RenderSamplePreview selected={selected} style={{ml: '15px'}} />}
+      {IS_DEV_ENV && isWideForPreview && selected && <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '18px', width: '370px'}} onlyQr={!data.isDynamic} />}
       {IS_DEV_ENV && !openPreview && !isWideForPreview && selected && data.isDynamic && ( // @ts-ignore
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Sample"/>
       )}
       {openPreview && ( // @ts-ignore
-        <RenderPreviewDrawer setOpenPreview={setOpenPreview} height={708} border={35}> {/* @ts-ignore */}
-          <RenderSamplePreview selected={selected} isDrawed />
+        <RenderPreviewDrawer setOpenPreview={setOpenPreview} height={675} border={35}> {/* @ts-ignore */}
+          <RenderSamplePreview selected={selected} isDrawed style={{mt: '-15px'}} />
         </RenderPreviewDrawer>
       )}
     </Box>

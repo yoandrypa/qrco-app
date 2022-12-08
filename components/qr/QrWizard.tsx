@@ -44,7 +44,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   // @ts-ignore
   const {
     selected, step, setStep, data, userInfo, options, frame, background, cornersData,
-    dotsData, isWrong, loading, setOptions, setLoading, clearData
+    dotsData, isWrong, loading, setOptions, setLoading, setRedirecting, clearData
   }: StepsProps = useContext(Context);
 
   const router = useRouter();
@@ -340,7 +340,8 @@ const QrWizard = ({ children }: QrWizardProps) => {
           externalFrame={frame}
           handleDone={async () => {
             setForceDownload(undefined);
-            router.push("/", undefined, { shallow: true }).then(() => setLoading(false));
+            setRedirecting(true);
+            router.push("/", undefined, { shallow: true }).then(() => { setLoading(false); setRedirecting(false); })
           }} />
       )}
       {isError && (

@@ -11,7 +11,12 @@ export default function RenderPreviewButton({setOpenPreview, message}: RenderPre
     <Button
       onClick={() => setOpenPreview(true)}
       variant="contained"
-      sx={{position: 'fixed', bottom: '25px', right: '-5px', background: theme => theme.palette.warning.dark }}
+      sx={{
+        position: 'fixed',
+        bottom: '25px',
+        right: '-5px',
+        background: theme => theme.palette.primary.dark
+      }}
       startIcon={<OpenInNewIcon />}>
       {message}
     </Button>
