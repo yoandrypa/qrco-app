@@ -30,6 +30,7 @@ export interface StepsProps {
   isWrong: boolean;
   loading: boolean;
   setLoading: (isLoading: boolean) => void;
+  setRedirecting: (isRedirecting: boolean) => void;
 }
 
 export interface GeneratorProps {

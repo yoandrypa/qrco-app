@@ -26,7 +26,7 @@ interface CommonProps {
 }
 
 function Common({msg, children}: CommonProps) { // @ts-ignore
-  const {selected, data, setData, userInfo, options, isWrong} = useContext(Context);
+  const {selected, data, setData, userInfo, options, isWrong, background, frame, cornersData, dotsData} = useContext(Context);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [backImg, setBackImg] = useState<any>(undefined);
@@ -140,6 +140,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
 
   const handleSave = () => {}
 
+  const optionsForPreview = () => ({...options, background, frame, corners: cornersData, cornersDot: dotsData});
+
   return (
     <>
       {error && (
@@ -193,9 +195,11 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
               </Box>
             ) : renderChildren()}
           </Box>
-          {IS_DEV_ENV && isWideForPreview && !NO_MICROSITE.includes(selected) && data?.isDynamic && (
-            <RenderSamplePreview code={options?.shortCode || selected} save={handleSave} style={{mt: '8px', ml: '15px'}}
-                                 saveDisabled={isWrong} data={{...data, qrType: selected}} onlyQr={selected === 'web'} />
+          {IS_DEV_ENV && isWideForPreview && !NO_MICROSITE.includes(selected) && (
+            <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
+                                 save={handleSave} style={{mt: '-13px', ml: '15px'}} saveDisabled={isWrong}
+                                 qrOptions={optionsForPreview()} data={{...data, qrType: selected}}
+                                 onlyQr={selected === 'web' || !data.isDynamic} />
           )}
         </Box>
       ) : renderChildren()}
@@ -203,9 +207,10 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />
       )}
       {openPreview && ( // @ts-ignore
-        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={708} border={35}>
-          <RenderSamplePreview code={options?.shortCode || selected} save={handleSave} isDrawed saveDisabled={isWrong}
-                               data={data} onlyQr={selected === 'web'} />
+        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={675} border={35}>
+          <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
+                               save={handleSave} isDrawed saveDisabled={isWrong} data={data} style={{mt: '-15px'}}
+                               qrOptions={optionsForPreview()} onlyQr={selected === 'web' || !data.isDynamic} />
         </RenderPreviewDrawer>
       )}
     </>

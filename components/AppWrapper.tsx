@@ -52,12 +52,13 @@ interface AppWrapperProps {
   handleLogout?: () => void;
   clearData?: (keepType?: boolean, doNot?: boolean) => void;
   setLoading?: (loading: boolean) => void;
+  setRedirecting?: (redirecting: boolean) => void;
   setIsTrialMode?: (isTrialMode: boolean) => void;
   isTrialMode?: boolean;
 }
 
 export default function AppWrapper(props: AppWrapperProps) {
-  const { children, userInfo, handleLogout, clearData, setLoading, setIsTrialMode, mode, isTrialMode, step } = props;
+  const { children, userInfo, handleLogout, clearData, setLoading, setIsTrialMode, mode, isTrialMode, step, setRedirecting } = props;
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
@@ -102,6 +103,8 @@ export default function AppWrapper(props: AppWrapperProps) {
     const isInListView = router.pathname === '/';
     const isEdit = !isInListView && mode === 'edit';
 
+    if (setRedirecting && !isInListView) { setRedirecting(true); }
+
     if (clearData !== undefined) {
       clearData(false, isEdit || !isInListView);
     }
@@ -111,9 +114,11 @@ export default function AppWrapper(props: AppWrapperProps) {
       navigationOptions.query = { mode };
     }
 
-    router.push(navigationOptions, isInListView ? QR_TYPE_ROUTE : '/', { shallow: true }).then(() => { handleLoading(false); });
+    router.push(navigationOptions, isInListView ? QR_TYPE_ROUTE : '/', { shallow: true }).then(() => {
+      handleLoading(false);
+      if (setRedirecting) { setRedirecting(false); }
+    });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
-
 
   useEffect(() => {
     if (userInfo) {

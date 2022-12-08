@@ -43,6 +43,7 @@ const AppContextProvider = (props: ContextProps) => {
 
   const [userInfo, setUserInfo] = useState(null);
   const [verifying, setVerifying] = useState<boolean>(true);
+  const [redirecting, setRedirecting] = useState<boolean>(false);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [isWrong, setIsWrong] = useState<boolean>(false);
@@ -89,9 +90,8 @@ const AppContextProvider = (props: ContextProps) => {
   }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (loading) {
-      setLoading(false);
-    }
+    if (loading) { setLoading(false); }
+    if (redirecting) { setRedirecting(false); }
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -141,11 +141,11 @@ const AppContextProvider = (props: ContextProps) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (router.pathname.startsWith("/qr") && ![QR_TYPE_ROUTE, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE].includes(router.pathname)) {
-    return (<>{children}</>);
+    return <>{children}</>;
   }
 
   if (verifying) {
-    return (<PleaseWait />);
+    return <PleaseWait />;
   }
 
   const renderContent = () => {
@@ -161,8 +161,9 @@ const AppContextProvider = (props: ContextProps) => {
     } else {
       return (
         <AppWrapper userInfo={userInfo} handleLogout={logout} clearData={clearData} setLoading={setLoading}
-                    isTrialMode={isTrialMode} setIsTrialMode={setIsTrialMode} mode={data.mode} step={step}>
-          {children}
+                    mode={data.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} step={step}
+                    setIsTrialMode={setIsTrialMode}>
+          {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>
       );
     }
@@ -180,7 +181,7 @@ const AppContextProvider = (props: ContextProps) => {
         data, setData, isTrialMode,
         userInfo, setUserInfo,
         step, setStep, clearData,
-        loading, setLoading,
+        loading, setLoading, setRedirecting,
         isWrong, setIsWrong
       }}>
         {renderContent()}
