@@ -28,7 +28,6 @@ const RenderColorsAndBackgnd = ({data, handleValue}: RenderColorProps) => {
       <Typography sx={{fontWeight: 'bold', color: theme => theme.palette.primary.dark}}>{'Main Design'}</Typography>
       <Paper sx={{p: 1, mb: '10px'}} elevation={2}>
         <Typography sx={{fontWeight: 'bold'}}>{'Main colors'}</Typography>
-        <Typography>{'Presets'}</Typography>
         {COLORS.map(x => {
           const selected = (!data?.primary && !data?.secondary && x.p === DEFAULT_COLORS.p && x.s === DEFAULT_COLORS.s) ||
             (x.p === data?.primary && x.s === data?.secondary);
@@ -47,7 +46,7 @@ const RenderColorsAndBackgnd = ({data, handleValue}: RenderColorProps) => {
         <Typography sx={{fontWeight: 'bold'}}>{'Background'}</Typography>
         <RadioGroup
           aria-labelledby="backgroundType" name="backgroundType" value={data?.backgroundType || 'single'}
-          onChange={handleSelectBackground} row sx={{mb: '-10px'}}>
+          onChange={handleSelectBackground} row sx={{mb: '-12px'}}>
           <FormControlLabel value="single" control={<Radio/>} label="Single color"/>
           <FormControlLabel value="gradient" control={<Radio/>} label="Gradient"/>
           <FormControlLabel value="image" control={<Radio/>} label="Image"/>
@@ -65,27 +64,27 @@ const RenderColorsAndBackgnd = ({data, handleValue}: RenderColorProps) => {
         {data?.backgroundType === 'image' && (
           <Box sx={{ mt: 2 }}>
             <SectionSelector
-              icon="/images/backgnds/back1.png" label="Background 1" separate h='100px' w='100px'
+              icon="/images/backgnds/back1.png" separate h='100px' w='100px'
               selected={data?.backgroundImage === '/images/backgnds/back1.png'}
               handleSelect={() => {}} />
             <SectionSelector
-              icon="/images/backgnds/back2.png" label="Background 2" separate h='100px' w='100px'
+              icon="/images/backgnds/back2.png" separate h='100px' w='100px'
               selected={data?.backgroundImage === '/images/backgnds/back2.png'}
               handleSelect={() => {}} />
             <SectionSelector
-              icon="/images/backgnds/back3.png" label="Background 3" separate h='100px' w='100px'
+              icon="/images/backgnds/back3.png" separate h='100px' w='100px'
               selected={data?.backgroundImage === '/images/backgnds/back3.png'}
               handleSelect={() => {}} />
             <SectionSelector
-              icon="/images/backgnds/back4.png" label="Background 4" separate h='100px' w='100px'
+              icon="/images/backgnds/back4.png" separate h='100px' w='100px'
               selected={data?.backgroundImage === '/images/backgnds/back4.png'}
               handleSelect={() => {}} />
             <SectionSelector
-              icon="/images/backgnds/back5.png" label="Background 5" separate h='100px' w='100px'
+              icon="/images/backgnds/back5.png" separate h='100px' w='100px'
               selected={data?.backgroundImage === '/images/backgnds/back5.png'}
               handleSelect={() => {}} />
             <SectionSelector
-              isUpload icon={''} h='100px' w='100px' label="Upload" selected={false}
+              isUpload icon={''} h='100px' w='100px' selected={false}
               handleSelect={() => {}} />
           </Box>
         )}

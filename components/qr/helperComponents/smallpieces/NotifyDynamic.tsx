@@ -11,7 +11,7 @@ interface DynamicProps {
 export default function NotifyDynamic({styling}: DynamicProps) {
   return (
     <Tooltip title={<RenderProDesc />}>
-      <Box sx={styling || { cursor: 'default', float: 'right', display: 'flex', color: theme => theme.palette.text.disabled }}>
+      <Box sx={{...styling, cursor: 'default', float: 'right', display: 'flex', color: theme => theme.palette.text.disabled }}>
         <Typography sx={{fontSize: 'small'}}>{'PRO (Dynamic)'}</Typography>
         <AutorenewIcon fontSize="small" />
       </Box>

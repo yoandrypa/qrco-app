@@ -40,8 +40,6 @@ export const QRCODE_PLANS = {
   }
 }
 
-
-
 export const DAYS = {
   sun: 'Sunday',
   mon: 'Monday',
