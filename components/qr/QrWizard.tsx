@@ -263,7 +263,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
       }
       genShortLinkAndId();
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const observer = new IntersectionObserver((payload: IntersectionObserverEntry[]) => {
