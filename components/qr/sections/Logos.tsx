@@ -12,7 +12,7 @@ interface LogosProps {
 
 const Logos = ({ image, handleMainData }: LogosProps) => (
   <Box sx={{ width: '100%', overflow: 'auto' }}>
-    <Stack direction="row" spacing={2}>
+    <Stack direction="row" spacing={2} sx={{margin: '3px'}}>
       <SectionSelector
         label="No logo"
         icon={null}

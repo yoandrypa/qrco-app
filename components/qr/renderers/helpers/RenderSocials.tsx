@@ -1,13 +1,13 @@
 import {ChangeEvent, useCallback, useRef} from "react";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import SquareSelector from "../../helperComponents/SquareSelector";
 import TextField from "@mui/material/TextField";
 import {capitalize} from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import RenderIcon from "../../helperComponents/smallpieces/RenderIcon";
 import {DataType, SocialNetworksType, SocialsType} from "../../types/types";
 import {PHONE} from "../../constants";
+import SectionSelector from "../../helperComponents/SectionSelector";
 
 interface RenderSocialsProps {
   data: DataType;
@@ -112,46 +112,30 @@ const RenderSocials = ({data, setData}: RenderSocialsProps) => {
     <Grid container spacing={1}>
       <Grid item xs={12}>
         <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: 'fit-content', margin: '0 auto'}}>
-          <SquareSelector
-            selected={exists('facebook')}
-            item="facebook"
-            label="Facebook"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={exists('whatsapp')}
-            item="whatsapp"
-            label="Whatsapp"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={exists('twitter')}
-            item="twitter"
-            label="Twitter"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={exists('instagram')}
-            item="instagram"
-            label="Instagram"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={exists('youtube')}
-            item="youtube"
-            label="YouTube"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={exists('linkedin')}
-            item="linkedin"
-            label="LinkedIn"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={exists('pinterest')}
-            item="pinterest"
-            label="Pinterest"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={exists('telegram')}
-            item="telegram"
-            label="Telegram"
-            handleSelection={handleSelection}/>
+          <SectionSelector
+            icon="_" separate h='50px' w='55px' mw='55px' property="facebook" selected={exists('facebook')}
+            handleSelect={handleSelection} tooltip="Facebook" />
+          <SectionSelector
+            icon="_" separate h='50px' w='55px' mw='55px' property="whatsapp" selected={exists('whatsapp')}
+            handleSelect={handleSelection} tooltip="Whatsapp" />
+          <SectionSelector
+            icon="_" separate h='50px' w='55px' mw='55px' property="twitter" selected={exists('twitter')}
+            handleSelect={handleSelection} tooltip="Twitter" />
+          <SectionSelector
+            icon="_" separate h='50px' w='55px' mw='55px' property="instagram" selected={exists('instagram')}
+            handleSelect={handleSelection} tooltip="Instagram" />
+          <SectionSelector
+            icon="_" separate h='50px' w='55px' mw='55px' property="youtube" selected={exists('youtube')}
+            handleSelect={handleSelection} tooltip="YouTube" />
+          <SectionSelector
+            icon="_" separate h='50px' w='55px' mw='55px' property="linkedin" selected={exists('linkedin')}
+            handleSelect={handleSelection} tooltip="LinkedIn" />
+          <SectionSelector
+            icon="_" separate h='50px' w='55px' mw='55px' property="pinterest" selected={exists('pinterest')}
+            handleSelect={handleSelection} tooltip="Pinterest" />
+          <SectionSelector
+            icon="_" separate h='50px' w='55px' mw='55px' property="telegram" selected={exists('telegram')}
+            handleSelect={handleSelection} tooltip="Telegram" />
         </Box>
       </Grid>
       {renderSocialNetworks()}

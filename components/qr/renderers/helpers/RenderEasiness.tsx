@@ -2,7 +2,7 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 
 import {CardDataProps, DataType} from "../../types/types";
-import SquareSelector from "../../helperComponents/SquareSelector";
+import SectionSelector from "../../helperComponents/SectionSelector";
 
 export default function RenderEasiness({data, setData}: CardDataProps) {
   const handleSelection = (item: string) => {
@@ -10,13 +10,10 @@ export default function RenderEasiness({data, setData}: CardDataProps) {
       const x = {...prev};
       if (!x.easiness) {
         x.easiness = {};
-      }
-      // @ts-ignore
-      if (!x.easiness[item]) {
-        // @ts-ignore
+      } // @ts-ignore
+      if (!x.easiness[item]) { // @ts-ignore
         x.easiness[item] = true;
-      } else {
-        // @ts-ignore
+      } else { // @ts-ignore
         delete x.easiness[item];
         if (!Object.keys(x.easiness).length) {
           delete x.easiness;
@@ -30,138 +27,72 @@ export default function RenderEasiness({data, setData}: CardDataProps) {
     <Grid container spacing={1}>
       <Grid item xs={12}>
         <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: 'fit-content', margin: '0 auto'}}>
-          <SquareSelector
-            selected={data.easiness?.wifi || false}
-            tooltips
-            item="wifi"
-            label="WiFi"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.accessible || false}
-            tooltips
-            item="accessible"
-            label="Accessible"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.health || false}
-            tooltips
-            item="health"
-            label="Health"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.toilet || false}
-            tooltips
-            item="toilet"
-            label="Toilets"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.seat || false}
-            tooltips
-            item="seat"
-            label="Seats"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.child || false}
-            tooltips
-            item="child"
-            label="Children friendly"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.pets || false}
-            tooltips
-            item="pets"
-            label="Pets friendly"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.park || false}
-            tooltips
-            item="park"
-            label="Parks or open spaces"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.restaurant || false}
-            tooltips
-            item="restaurant"
-            label="Restaurant"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.cafe || false}
-            tooltips
-            item="cafe"
-            label="Cafeteria"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.bar || false}
-            tooltips
-            item="bar"
-            label="Bar"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.fastfood || false}
-            tooltips
-            item="fastfood"
-            label="Fast food"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.bed || false}
-            tooltips
-            item="bed"
-            label="Bedrooms"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.shower || false}
-            tooltips
-            item="shower"
-            label="Showers"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.gym || false}
-            tooltips
-            item="gym"
-            label="Sports friendly"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.smoking || false}
-            tooltips
-            item="smoking"
-            label="Smoking areas"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.climate || false}
-            tooltips
-            item="climate"
-            label="Climate"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.training || false}
-            tooltips
-            item="training"
-            label="Training"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.parking || false}
-            tooltips
-            item="parking"
-            label="Parking"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.train || false}
-            tooltips
-            item="train"
-            label="Train"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.bus || false}
-            tooltips
-            item="bus"
-            label="Bus"
-            handleSelection={handleSelection}/>
-          <SquareSelector
-            selected={data.easiness?.taxi || false}
-            tooltips
-            item="taxi"
-            label="Taxi"
-            handleSelection={handleSelection}/>
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="wifi" selected={data.easiness?.wifi || false}
+            handleSelect={handleSelection} tooltip="Wifi" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="accessible"
+            selected={data.easiness?.accessible || false} handleSelect={handleSelection} tooltip="Acessible" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="health"
+            selected={data.easiness?.health || false} handleSelect={handleSelection} tooltip="Health" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="toilet"
+            selected={data.easiness?.toilet || false} handleSelect={handleSelection} tooltip="Toilets and sinks" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="seat"
+            selected={data.easiness?.seat || false} handleSelect={handleSelection} tooltip="Seats" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="child"
+            selected={data.easiness?.child || false} handleSelect={handleSelection} tooltip="Children friendly" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="pets"
+            selected={data.easiness?.pets || false} handleSelect={handleSelection} tooltip="Pets friendly" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="park"
+            selected={data.easiness?.park || false} handleSelect={handleSelection} tooltip="Parks or open spaces" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="restaurant"
+            selected={data.easiness?.restaurant || false} handleSelect={handleSelection} tooltip="Restaurant" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="cafe"
+            selected={data.easiness?.cafe || false} handleSelect={handleSelection} tooltip="Cafeteria" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="bar"
+            selected={data.easiness?.bar || false} handleSelect={handleSelection} tooltip="Bar" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="fastfood"
+            selected={data.easiness?.fastfood || false} handleSelect={handleSelection} tooltip="Fast food" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="bed"
+            selected={data.easiness?.bed || false} handleSelect={handleSelection} tooltip="Bedrooms" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="shower"
+            selected={data.easiness?.shower || false} handleSelect={handleSelection} tooltip="Showers" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="gym"
+            selected={data.easiness?.gym || false} handleSelect={handleSelection} tooltip="Sports friendly" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="smoking"
+            selected={data.easiness?.smoking || false} handleSelect={handleSelection} tooltip="Smoking areas" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="climate"
+            selected={data.easiness?.climate || false} handleSelect={handleSelection} tooltip="Climate" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="training"
+            selected={data.easiness?.training || false} handleSelect={handleSelection} tooltip="Training" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="parking"
+            selected={data.easiness?.parking || false} handleSelect={handleSelection} tooltip="Parking" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="train"
+            selected={data.easiness?.train || false} handleSelect={handleSelection} tooltip="Train" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="bus"
+            selected={data.easiness?.bus || false} handleSelect={handleSelection} tooltip="Bus" />
+          <SectionSelector
+            icon="_" separate h='50px' w='50px' mw='50px' property="taxi"
+            selected={data.easiness?.taxi || false} handleSelect={handleSelection} tooltip="Taxi" />
         </Box>
       </Grid>
     </Grid>

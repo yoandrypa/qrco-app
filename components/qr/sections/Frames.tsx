@@ -25,7 +25,7 @@ const Frames = ({ frame, handleFrame, handleMainFrame }: FramesProps) => {
   return (
     <>
       <Box sx={{ width: '100%', overflow: 'auto' }}>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={2} sx={{margin: '3px'}}>
           <SectionSelector
             icon={null}
             label="No frame"

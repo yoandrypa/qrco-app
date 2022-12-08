@@ -168,6 +168,7 @@ export type DataType = {
   backgroundColor?: string;
   backgroundColorRight?: string;
   backgroundDirection?: string;
+  backgroundImage?: File | string;
   primary?: string;
   secondary?: string;
   isDynamic?: boolean;

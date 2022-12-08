@@ -60,7 +60,6 @@ const RenderGradientSelector = ({ direction, colorLeft, handleData, colorRight }
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} sx={{mb: '-17px'}}>
-        <Typography>{'Presets'}</Typography>
         {COLORS.map(x => {
           const selected = x.p === colorLeft && x.s === colorRight;
           return <RenderColorPreset handleValue={handleData} colors={x} selected={selected} gradient key={x.p} />
