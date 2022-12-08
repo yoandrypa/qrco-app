@@ -19,6 +19,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import RenderPreviewDrawer from "./smallpieces/RenderPreviewDrawer";
 import RenderPreviewButton from "./smallpieces/RenderPreviewButton";
 import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
+import {previewQRGenerator} from "../../../helpers/qr/helpers";
 
 interface CommonProps {
   msg: string;
@@ -198,7 +199,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           {IS_DEV_ENV && isWideForPreview && !NO_MICROSITE.includes(selected) && (
             <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
                                  save={handleSave} style={{mt: '-13px', ml: '15px'}} saveDisabled={isWrong}
-                                 qrOptions={optionsForPreview()} data={{...data, qrType: selected}}
+                                 qrOptions={optionsForPreview()} data={previewQRGenerator(data, selected)}
                                  onlyQr={selected === 'web' || !data.isDynamic} />
           )}
         </Box>
@@ -209,8 +210,9 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={675} border={35}>
           <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
-                               save={handleSave} isDrawed saveDisabled={isWrong} data={data} style={{mt: '-15px'}}
-                               qrOptions={optionsForPreview()} onlyQr={selected === 'web' || !data.isDynamic} />
+                               save={handleSave} isDrawed saveDisabled={isWrong} style={{mt: '-15px'}}
+                               data={previewQRGenerator(data, selected)} qrOptions={optionsForPreview()}
+                               onlyQr={selected === 'web' || !data.isDynamic} />
         </RenderPreviewDrawer>
       )}
     </>
