@@ -104,29 +104,40 @@ const QrList = ({ qrs, title }: any) => {
 
   const renderOptions = (qr: any) => (
     <Stack direction="row" justifyContent="flex-end" alignItems="center">
-      <IconButton color="primary" disabled={isLoading}
-                  onClick={() => {
-                    setLoading(true);
-                    router.push(
-                      "/qr/" + (new Date(qr.createdAt)).getTime() + "/details").
-                      then(() => setLoading(false));
-                  }}>
-        <InfoOutlinedIcon/>
-      </IconButton>
-      <IconButton color="primary" disabled={isLoading}
-                  onClick={() => handleEdit(qr)}>
-        <EditOutlined/>
-      </IconButton>
-      {qr.shortLinkId ? <IconButton color="primary" disabled={isLoading}
-                                    onClick={() => pauseQRLink(qr.shortLinkId)}>
-        {qr.shortLinkId.paused ? <PlayCircleOutlineIcon/> :
-          <PauseCircleOutlineIcon/>}
-      </IconButton> : null}
+      <Tooltip title="Details">
+        <IconButton color="primary" disabled={isLoading}
+                    onClick={() => {
+                      setLoading(true);
+                      router.push(
+                        "/qr/" + (new Date(qr.createdAt)).getTime() +
+                        "/details").
+                        then(() => setLoading(false));
+                    }}>
+          <InfoOutlinedIcon/>
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Edit">
+        <IconButton color="primary" disabled={isLoading}
+                    onClick={() => handleEdit(qr)}>
+          <EditOutlined/>
+        </IconButton>
+      </Tooltip>
+      {qr.shortLinkId
+        ? <Tooltip title={qr.shortLinkId.paused ? "Active QR Link" : "Pause QR Link"}>
+          <IconButton color="primary" disabled={isLoading}
+                      onClick={() => pauseQRLink(qr.shortLinkId)}>
+            {qr.shortLinkId.paused ? <PlayCircleOutlineIcon/> :
+              <PauseCircleOutlineIcon/>}
+          </IconButton></Tooltip>
+        : null
+      }
+      <Tooltip title="Delete">
       <IconButton color="error" disabled={isLoading}
                   onClick={() => showConfirmationDialog(qr.userId,
                     qr.createdAt)}>
         <DeleteOutlineRounded/>
       </IconButton>
+      </Tooltip>
       {(qr.qrType === "donations" && !!qr.donationProductId) &&
         (
           <a target="_blank"
@@ -168,7 +179,8 @@ const QrList = ({ qrs, title }: any) => {
       <Stack spacing={2}>
         {qrs.items?.length > 0 ? (
           <>
-            {title && <Typography variant="h6" style={{ fontWeight: "bold" }}>{title}</Typography>}
+            {title && <Typography variant="h6"
+                                  style={{ fontWeight: "bold" }}>{title}</Typography>}
             {qrs.items.map((qr: any) => { // @ts-ignore
               const qrLink = sanitize.link(qr.shortLinkId || {}); // @ts-ignore
               if (qr.qrOptionsId?.background?.backColor === "") {
