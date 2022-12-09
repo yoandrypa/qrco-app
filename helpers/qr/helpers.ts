@@ -7,41 +7,20 @@ import frame4 from '../../components/qr/frames/frame4';
 import frame5 from '../../components/qr/frames/frame5';
 import frame6 from '../../components/qr/frames/frame6';
 import frame7 from '../../components/qr/frames/frame7';
-import { DataType, FramesType, SocialNetworksType, SocialsType } from '../../components/qr/types/types';
+import {DataType, FramesType} from '../../components/qr/types/types';
 import initialOptions from "./data";
-
-const exists = (socials: SocialNetworksType[] | undefined, item: SocialsType): boolean => (
-  socials !== undefined && socials.length > 0 && socials.some((x: SocialNetworksType) => x.network === item)
-);
-
-const getValue = (socials: SocialNetworksType[] | undefined, item: SocialsType): string => {
-  if (socials) {
-    const network = socials.find((x: SocialNetworksType) => x.network === item);
-    if (network) {
-      return network.value || '';
-    }
-  }
-  return '';
-};
 
 export const handleDesignerString = (selected: string | null | undefined, data: DataType): string => {
   let designerString = '';
   switch (selected) {
     case 'text':
-    case 'web': {
-      designerString = data.value || '';
-      break;
-    }
-    case 'sms': {
-      designerString = `SMSTO:${data.number || ''}:${data.message}`;
-      break;
-    }
+    case 'web': { return data.value || ''; }
+    case 'sms': { return `SMSTO:${data.number || ''}:${data.message}`; }
     case 'email': {
       const params: { subject?: string; body?: string; } = {};
       if (data.subject) { params.subject = data.subject; }
       if (data.body) { params.body = data.body; }
-      designerString = `mailto:${data?.email || ''}${Object.keys(params).length ? `?${new URLSearchParams(params).toString()}` : ''}`;
-      break;
+      return `mailto:${data?.email || ''}${Object.keys(params).length ? `?${new URLSearchParams(params).toString()}` : ''}`;
     }
     case 'wifi': {
       designerString = `WIFI:S:${data.name};P:${data.password || ''}`;
@@ -67,36 +46,22 @@ export const handleDesignerString = (selected: string | null | undefined, data: 
       if (data.email) { designerString += `EMAIL:${data.email}\n`; }
       if (data.web) { designerString += `URL:${data.web}\n`; }
       designerString += 'VERSION:3.0\nEND:VCARD\n';
-      if (exists(data.socials, 'facebook')) { designerString += `facebook:${getValue(data.socials, 'facebook')}\n` }
-      if (exists(data.socials, 'twitter')) { designerString += `twitter:${getValue(data.socials, 'twitter')}\n` }
-      if (exists(data.socials, 'instagram')) { designerString += `instagram:${getValue(data.socials, 'instagram')}\n` }
-      if (exists(data.socials, 'youtube')) { designerString += `youtube:${getValue(data.socials, 'youtube')}\n` }
-      if (exists(data.socials, 'whatsapp')) { designerString += `whatsapp:${getValue(data.socials, 'whatsapp')}\n` }
-      if (exists(data.socials, 'linkedin')) { designerString += `linkedin:${getValue(data.socials, 'linkedin')}\n` }
-      if (exists(data.socials, 'pinterest')) { designerString += `pinterest:${getValue(data.socials, 'pinterest')}\n` }
-      if (exists(data.socials, 'telegram')) { designerString += `facebook:${getValue(data.socials, 'telegram')}\n` }
       break;
     }
     case 'twitter': {
-      designerString += `https://twitter.com/intent/tweet?text=${encodeURIComponent(data.text || '')}`;
+      designerString = `https://twitter.com/intent/tweet?text=${encodeURIComponent(data.text || '')}`;
       designerString += `${data.url ? encodeURIComponent(` ${data.url}`) : ''}`;
       designerString += `${data.hashtags ? encodeURIComponent(` ${data.hashtags.split(',').map((x: string) => `#${x}`).join(' ')}`) : ''}`;
       designerString += `${data.via ? encodeURIComponent(` @${data.via}`) : ''}`;
       break;
     }
     case 'whatsapp': {
-      designerString += `https://wa.me/${data.number || ''}`;
+      designerString = `https://wa.me/${data.number || ''}`;
       if (data.message) { designerString += `?text=${encodeURIComponent(data.message)}`; }
       break;
     }
-    case 'facebook': {
-      designerString += `https://www.facebook.com/sharer.php?u=${encodeURIComponent(data.message || '')}`;
-      break;
-    }
-    case 'crypto': {
-      designerString += `Blockchain: ${data.urlOptionLabel || 'btc'},to: ${data.subject} info: ${data.message || ''}`;
-      break;
-    }
+    case 'facebook': { return `https://www.facebook.com/sharer.php?u=${encodeURIComponent(data.message || '')}`; }
+    case 'crypto': { return `Blockchain: ${data.urlOptionLabel || 'btc'},to: ${data.subject} info: ${data.message || ''}`; }
   }
   return designerString;
 };
@@ -133,8 +98,7 @@ export const checkForAlpha = (file: Blob): Promise<{ depth: number; type: string
   return new Promise((resolve, reject) => {
     const fileReader = new FileReader();
     fileReader.readAsArrayBuffer(file);
-    fileReader.onload = () => {
-      // @ts-ignore
+    fileReader.onload = () => { // @ts-ignore
       const view = new DataView(fileReader.result);
       if (view.getUint32(0) === 0x89504E47 && view.getUint32(4) === 0x0D0A1A0A) {
         const depth = view.getUint8(8 + 8 + 8);
@@ -200,14 +164,12 @@ const delta = (rgbA: number[], rgbB: number[]): number => {
 export const downloadAsSVGOrVerify = (qrImageData: { outerHTML: string; }, verify: Function | undefined, contrast: { color1?: string; color2: string } | undefined): void => {
   const svgData = qrImageData.outerHTML.replaceAll(' href', ' xlink:href');
   const data = new Blob([svgData], { type: 'image/svg+xml' });
-  if (verify) {
-    // @ts-ignore
+  if (verify) { // @ts-ignore
     if (contrast && delta(getRGB(contrast.color1), getRGB(contrast.color2)) <= 45) {
       verify({ readable: false });
     } else {
       QrScanner.scanImage(data, { returnDetailedScanResult: true })
-        .then(() => { verify({ readable: true }); })
-        .catch(() => { verify({ readable: false }); });
+        .then(() => verify({ readable: true })).catch(() => verify({ readable: false }));
     }
   } else {
     const element = document.createElement('a');
@@ -226,13 +188,10 @@ export const downloadAsPNG = async (svgData: { outerHTML: string | number | bool
   const canvas = document.createElement('canvas');
   imageToHandle.onload = () => {
     const w: number = 280;
-    const h: number = frame.type !== '' && frame.type !== '/frame/frame0.svg' ? 330 : 280;
-    // @ts-ignore
-    canvas.setAttribute('width', w);
-    // @ts-ignore
+    const h: number = frame.type !== '' && frame.type !== '/frame/frame0.svg' ? 330 : 280; // @ts-ignore
+    canvas.setAttribute('width', w); // @ts-ignore
     canvas.setAttribute('height', h);
-    const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
-    // @ts-ignore
+    const context: CanvasRenderingContext2D | null = canvas.getContext('2d'); // @ts-ignore
     context.drawImage(imageToHandle, 0, 0, w, h);
     const data = canvas.toDataURL('image/png', 1);
     if (!verify) {
@@ -241,14 +200,12 @@ export const downloadAsPNG = async (svgData: { outerHTML: string | number | bool
       anchor.href = data;
       anchor.click();
       anchor.remove();
-    } else {
-      // @ts-ignore
+    } else { // @ts-ignore
       if (contrast && delta(getRGB(contrast.color1), getRGB(contrast.color2)) <= 45) {
         verify({ readable: false });
       } else {
         QrScanner.scanImage(data, { returnDetailedScanResult: true })
-          .then(() => { verify({ readable: true }); })
-          .catch(() => { verify({ readable: false }); });
+          .then(() => verify({ readable: true })).catch(() => verify({ readable: false }));
       }
     }
     imageToHandle.remove();
@@ -260,7 +217,6 @@ export const getFrame = (frame: FramesType): string => {
   let result: string;
   const defaultColor: string = '#000000';
   const renderFrameText = () => frame.text !== undefined ? frame.text : 'SCAN ME' as string;
-
   if (frame.type === '/frame/frame0.svg') {
     result = frame0(frame.color);
   } else if (frame.type === '/frame/frame1.svg') {
@@ -362,37 +318,92 @@ export const dataCleaner = (options: any, mainObj?: boolean) => {
 
   if (!mainObj) {
     [...base, 'qrOptionsId', 'shortLinkId', 'qrData', 'qrDesign', 'id', 'qrType', 'userId'].forEach((x: string) => {
-      if (data[x]) {
-        delete data[x];
-      }
+      if (data[x]) { delete data[x]; }
     });
   } else {
     const checkFor = [...base, 'id', 'userId', 'shortCode', 'qrType', 'mode'] as string[];
     Object.keys(data).forEach((x: string) => {
-      if (!checkFor.includes(x)) {
-        delete data[x];
-      }
+      if (!checkFor.includes(x)) { delete data[x]; }
     });
   }
   return data;
 }
 
+export const previewQRGenerator = (data: DataType, selected: string) => {
+  const obj = {...data, qrType: selected};
+
+  if (Object.keys(data).length <= 1) { // @ts-ignore
+    const populate = (item: string, value: any): void => { if (obj[item] === undefined) { obj[item] = value; }}
+    const genAddress = () => {
+      populate('address', 'Our Address ST 12345');
+      populate('city', 'Our City');
+      populate('zip', '12345');
+      populate('state', 'Our State');
+      populate('country', 'Our Country');
+    }
+    const genSocials = () => {populate('socials', [{network: 'twitter', value: 'twitter_account'}, { network: 'facebook', value: 'facebook_account'}])};
+
+    if (selected === 'business') {
+      populate('company', 'Sample Company Name');
+      populate('title', 'Title for the Company');
+      populate('subtitle', 'Subtitle for the Company');
+      populate('web', 'https://www.example.com');
+      populate('email', 'mybusinessemail@email.com');
+      populate('contact', 'Contact Name');
+      populate('phone', '5551234567890');
+      populate('about', 'This is a brief description to the company');
+      populate('urlOptionLabel', 'Our website');
+      populate('urlOptionLink', 'https://www.example.com');
+      genAddress();
+      populate('openingTime', { wed: [{ini: '0830', end: '1800'}], fri: [{ini: '0830', end: '1800'}] });
+      populate('easiness', {wifi: true, accessible: true, health: true});
+      genSocials();
+    } else if (selected === 'vcard+') {
+      populate('prefix', 'Sir');
+      populate('firstName', 'Name');
+      populate('lastName', 'Lastname');
+      populate('cell', '5551234567890');
+      populate('phone', '5551234567890');
+      populate('fax', '5551234567890');
+      populate('organization', 'Sample Organization');
+      populate('position', 'Position at Sample Organization');
+      genAddress();
+      populate('email', 'myemail@email.com');
+      populate('web', 'https://www.example.com');
+      genSocials();
+    } else if (selected === 'social') {
+      populate('socials', [{network: 'twitter', value: 'twitter_account'}, { network: 'facebook', value: 'facebook_account'},
+        {network: 'telegram', value: 'telegram_account'}, { network: 'youtube', value: 'youtube_account'}, { network: 'whatsapp', value: '1234567890'}])
+    } else if (selected === 'link') {
+      populate('title', 'Sample Links');
+      populate('about', 'This is a brief description for the links');
+      populate('links', [{label: 'My website', link: 'https://www.example.com'}, {label: 'My blog', link: 'https://www.example.com'},
+        {label: 'My portfolio', link: 'https://www.example.com'}]);
+      genSocials();
+    } else if (selected === 'coupon') {
+      populate('company', 'Sample Company');
+      populate('title', 'Title of the Coupon');
+      populate('about', 'This is just a brief description for the Coupon, or whatever you\'d like to say');
+      populate('prefix', 'Badge');
+      populate('urlOptionLabel', 'Link to a website');
+      populate('urlOptionLink', 'https://www.example.com');
+      populate('name', 'CouponCode');
+      populate('value', '1669934672000');
+      populate('text', 'Wanna add some terms and conditions? No problem! You can set them here.');
+      genAddress();
+    }
+  }
+  return obj;
+}
+
 export const cleanSelectionForMicrositeURL = (item: string): string => {
-  if (item === 'vcard+') {
-    return 'vcard';
-  }
-  if (item === 'link') {
-    return 'links';
-  }
-  if (item === 'donations') {
-    return 'donation';
-  }
+  if (item === 'vcard+') { return 'vcard'; }
+  if (item === 'link') { return 'links'; }
+  if (item === 'donations') { return 'donation'; }
   return item;
 };
 
 export const getProperSampleUrl = (item: string): string => {
-  if (item === 'web') {
-    return 'https://a-qr.link/zDexu6';
-  }
+  if (item === 'web') { return 'https://a-qr.link/zDexu6'; }
   return item;
 }
