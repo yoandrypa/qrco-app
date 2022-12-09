@@ -19,7 +19,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import RenderPreviewDrawer from "./smallpieces/RenderPreviewDrawer";
 import RenderPreviewButton from "./smallpieces/RenderPreviewButton";
 import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
-import {previewQRGenerator} from "../../../helpers/qr/helpers";
+import {previewQRGenerator} from "../../../helpers/qr/auxFunctions";
 
 interface CommonProps {
   msg: string;
