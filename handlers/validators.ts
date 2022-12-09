@@ -1,5 +1,4 @@
 import { isAfter, subHours, subDays } from "date-fns";
-import axios from "axios";
 import { CustomError } from "../utils";
 import * as User from "../queries/user";
 import * as Link from "../queries/link";
@@ -9,11 +8,12 @@ import * as Host from "../queries/host";
 //import { promisify } from "util";
 
 export const coolDown = (user: UserType) => {
-  if (!process.env.REACT_APP_GOOGLE_SAFE_BROWSING_KEY || !user || !user.coolDowns) return;
+  if (!process.env.REACT_APP_GOOGLE_SAFE_BROWSING_KEY || !user ||
+    !user.coolDowns) return;
 
   // If it has active cooldown then throw error
   const hasCooldownNow = user.coolDowns.some(coolDown =>
-    isAfter(subHours(new Date(), 12), new Date(coolDown))
+    isAfter(subHours(new Date(), 12), new Date(coolDown)),
   );
 
   if (hasCooldownNow) {
@@ -25,41 +25,51 @@ export const coolDown = (user: UserType) => {
 export const malware = async (user: UserType, target: string) => {
   if (!process.env.REACT_APP_GOOGLE_SAFE_BROWSING_KEY) return;
 
-  const isMalware = await axios.post(
+  const response = await fetch(
     `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${process.env.REACT_APP_GOOGLE_SAFE_BROWSING_KEY}`,
     {
-      client: {
-        // @ts-ignore
-        clientId: process.env.REACT_APP_DEFAULT_DOMAIN.toLowerCase().replace(".", ""),
-        clientVersion: "1.0.0"
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      threatInfo: {
-        threatTypes: [
-          "THREAT_TYPE_UNSPECIFIED",
-          "MALWARE",
-          "SOCIAL_ENGINEERING",
-          "UNWANTED_SOFTWARE",
-          "POTENTIALLY_HARMFUL_APPLICATION"
-        ],
-        platformTypes: ["ANY_PLATFORM", "PLATFORM_TYPE_UNSPECIFIED"],
-        threatEntryTypes: [
-          "EXECUTABLE",
-          "URL",
-          "THREAT_ENTRY_TYPE_UNSPECIFIED"
-        ],
-        threatEntries: [{ url: target }]
-      }
-    }
+      body: JSON.stringify({
+        client: {
+          // @ts-ignore
+          clientId: process.env.REACT_APP_DEFAULT_DOMAIN.toLowerCase().
+            replace(".", ""),
+          clientVersion: "1.0.0",
+        },
+        threatInfo: {
+          threatTypes: [
+            "THREAT_TYPE_UNSPECIFIED",
+            "MALWARE",
+            "SOCIAL_ENGINEERING",
+            "UNWANTED_SOFTWARE",
+            "POTENTIALLY_HARMFUL_APPLICATION",
+          ],
+          platformTypes: ["ANY_PLATFORM", "PLATFORM_TYPE_UNSPECIFIED"],
+          threatEntryTypes: [
+            "EXECUTABLE",
+            "URL",
+            "THREAT_ENTRY_TYPE_UNSPECIFIED",
+          ],
+          threatEntries: [{ url: target }],
+        },
+      }),
+    },
   );
-  if (!isMalware.data || !isMalware.data.matches) return;
+
+  const isMalware = await response.json();
+
+  if (!isMalware || !isMalware.matches) return;
 
   if (user) {
     const userExist = await User.find({ id: { eq: user.id } });
     const updatedUser = await User.update(
       { id: user.id },
       {
-        coolDowns: userExist.coolDowns.concat(new Date().toISOString())
-      }
+        coolDowns: userExist.coolDowns.concat(new Date().toISOString()),
+      },
     );
 
     // Ban if too many coolDowns
@@ -71,7 +81,7 @@ export const malware = async (user: UserType, target: string) => {
   }
 
   throw new CustomError(
-    user ? "Malware detected! Cooldown for 12h." : "Malware detected!"
+    user ? "Malware detected! Cooldown for 12h." : "Malware detected!",
   );
 
   return true;
@@ -82,13 +92,13 @@ export const linksCount = async (user?: UserType) => {
     if (!user) return;
     const count = await Link.total({
       userId: { eq: user.id },
-      createdAt: { gt: subDays(new Date(), 1).valueOf() }
+      createdAt: { gt: subDays(new Date(), 1).valueOf() },
     });
 
     // @ts-ignore
     if (count > process.env.REACT_APP_USER_LIMIT_PER_DAY) {
       throw new CustomError(
-        `You have reached your daily limit (${process.env.REACT_APP_USER_LIMIT_PER_DAY}). Please wait 24h.`
+        `You have reached your daily limit (${process.env.REACT_APP_USER_LIMIT_PER_DAY}). Please wait 24h.`,
       );
     }
   } catch (e: any) {
@@ -100,7 +110,7 @@ export const bannedDomain = async (userId: string, domain: string) => {
   const isBanned = (await Domain.find({
     userId: { eq: userId },
     address: { eq: domain },
-    banned: { eq: true }
+    banned: { eq: true },
   }))[0];
   if (isBanned) {
     throw new CustomError("URL is containing malware/scam.", 400);
@@ -121,7 +131,7 @@ export const bannedHost = async (userId: string, domain: string) => {
       userId: { eq: userId },
       // @ts-ignore
       address: { eq: dnsRes.address },
-      banned: { eq: true }
+      banned: { eq: true },
     }))[0];
   } catch (error) {
     isBanned = undefined;
@@ -152,5 +162,5 @@ export const preservedUrls = [
   "privacy",
   "protected",
   "report",
-  "pricing"
+  "pricing",
 ];
