@@ -53,6 +53,8 @@ export const previewQRGenerator = (data: DataType, selected: string) => {
       populate('web', 'https://www.example.com');
       genSocials();
     } else if (selected === 'social') {
+      populate('title', 'Sample Social Networks');
+      populate('about', 'This is a brief description for the social networks');
       populate('socials', [
         {network: 'twitter', value: 'twitter_account'}, {network: 'facebook', value: 'facebook_account'},
         {network: 'telegram', value: 'telegram_account'}, {network: 'youtube', value: 'youtube_account'},
