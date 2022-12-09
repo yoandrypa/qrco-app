@@ -55,11 +55,23 @@ export default function RenderSamplePreview({onlyQr, data, selected, style, save
 
   return (
     <Box sx={style}>
-      <Box sx={{height: '30px', display: 'flex', justifyContent: 'space-between', ml: !isDrawed ? 0 : '5px', width: !isDrawed ? '100%' : 'calc(100% - 10px)'}}>
+      <Box sx={{
+        height: '30px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        ml: !isDrawed ? 0 : '5px',
+        width: !isDrawed ? '100%' : 'calc(100% - 10px)'
+      }}>
         <Box sx={{display: 'flex'}}>
           <LinkIcon sx={{ color: theme => theme.palette.primary.dark, mt: '12px', mr: '-7px' }} />
           <Typography sx={{
-            mt: '14px', ml: '10px', whiteSpace: 'nowrap', maxWidth: '222px', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '13px'
+            mt: '14px',
+            ml: '10px',
+            whiteSpace: 'nowrap',
+            maxWidth: '222px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            fontSize: '13px'
           }}>{URL.slice(URL.indexOf('//') + 2)}</Typography>
         </Box>
         <Box sx={{display: 'flex'}}>
@@ -102,7 +114,7 @@ export default function RenderSamplePreview({onlyQr, data, selected, style, save
           <RenderCellPhoneShape width={270} height={550} offlineText="The selected card has no available sample">
             {code || (selected && !NO_MICROSITE.includes(selected)) ?
               <RenderIframe width="256px" height="536px" src={!code ? URL : `${process.env.REACT_MICROSITES_ROUTE}/sample/empty`} data={data}/> : null}
-          </RenderCellPhoneShape>) : <RenderPreview width={270} qrDesign={qrOptions} />}
+          </RenderCellPhoneShape>) : <RenderPreview width={270} qrDesign={qrOptions} override={!qrOptions ? URL : undefined} />}
       </Box>
       {copied && (
         <Notifications

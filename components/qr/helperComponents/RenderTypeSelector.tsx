@@ -139,7 +139,9 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
           {renderTypeSelector("video", "Video Files", "Share video files", true)}
         </>) : null}
       </Grid>
-      {IS_DEV_ENV && isWideForPreview && selected && <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '18px', width: '370px'}} onlyQr={!data.isDynamic} />}
+      {IS_DEV_ENV && isWideForPreview && selected && (
+        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '18px', width: '370px'}} onlyQr={!data.isDynamic} />
+      )}
       {IS_DEV_ENV && !openPreview && !isWideForPreview && selected && data.isDynamic && ( // @ts-ignore
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Sample"/>
       )}
