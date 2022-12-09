@@ -7,15 +7,23 @@ describe('Static QR code', () => {
     //Finding the button parent of the span and clicking the button
     cy.get('@stqr').parent().click()
     // Finding in the new page the qr type
-    //cy.contains('Website').parentsUntil('.MuiBox-root')
     cy.contains('Website').parent().parent().parent().parent().click()
     cy.get('body').contains('Next').click()
   })
 
-  it('Required url',() =>{
-    cy.get('body').contains('div', 'Website').find('input').first()//.type('https://server.cenit.io')
-    //cy.get('body').get('[id^=ru-]')
+
+  it('Content',() =>{
+    cy.get('input[type=text]').should('have.value', '').type('https://server.cenit.io')
+    cy.get('body').contains('Next').click()
+
+  })
+
+  it('QR Desing',() =>{
+    cy.get('input[value=square]')
+    //cy.get('body').contains('Next').click()
+
   })
 })
+
 
 export {}
