@@ -89,8 +89,7 @@ export const previewQRGenerator = (data: DataType, selected: string) => {
       populate('files', [
         {"name": "0land.jpg", "Key": "galleries/0land.jpg"}, {"name": "1land.jpg", "Key": "galleries/1land.jpg"},
         {"name": "2land.jpg", "Key": "galleries/2land.jpg"}, {"name": "3land.jpg", "Key": "galleries/3land.jpg"},
-        {"name": "4land.jpg", "Key": "galleries/4land.jpg"}, {"name": "5land.jpg", "Key": "galleries/5land.jpg"},
-        {"name": "6land.jpg", "Key": "galleries/6land.jpg"}, {"name": "7land.jpg", "Key": "galleries/7land.jpg"}
+        {"name": "4land.jpg", "Key": "galleries/4land.jpg"}, {"name": "5land.jpg", "Key": "galleries/5land.jpg"}
       ]);
     }
   }
