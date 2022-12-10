@@ -44,7 +44,7 @@ const components = {
       const { tokens } = useTheme();
       return (
         <Heading padding={ `${ tokens.space.xl } 0 0 ${ tokens.space.xl }` } level={ 5 }>
-          <Alert severity="info">
+          <Alert severity="info" sx={{ marginRight: 4}}>
             Password must be at least 8 characters long, and contain one or more special symbols (like @,%,#) and capital letters.
           </Alert>
         </Heading>
