@@ -116,7 +116,7 @@ const QrContentHandler = () => { // @ts-ignore
       case 'video': {
         return <AssetData type={selected} data={data} setData={handlePayload} handleValues={handleValues} />;
       }
-      case 'donations': {
+      case 'donation': {
         return <DonationsData data={data} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong} />
       }
       case 'paylink': {

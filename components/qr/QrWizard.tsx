@@ -6,15 +6,15 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useRouter } from "next/router";
 
 import { generateId, generateShortLink } from "../../utils";
-import {EbanuxDonationPriceData, OptionsType, ProcessHanldlerType} from "./types/types";
-import {QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_TYPE_ROUTE} from "./constants";
+import { EbanuxDonationPriceData, OptionsType, ProcessHanldlerType } from "./types/types";
+import { QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { getUuid } from "../../helpers/qr/helpers";
 import * as QrHandler from "../../handlers/qrs";
 import * as StorageHandler from "../../handlers/storage";
 import * as EbanuxHandler from "../../handlers/ebanux";
 import Notifications from "../notifications/Notifications";
 import ProcessHandler from "./renderers/ProcessHandler";
-import {cleaner, finalCleanForEdtion, generateObjectToEdit, steps, StepsProps} from "./auxFunctions";
+import { cleaner, finalCleanForEdtion, generateObjectToEdit, steps, StepsProps } from "./auxFunctions";
 import RenderNextButton from "./helperComponents/smallpieces/RenderNextButton";
 import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
 import RenderFloatingButtons from "./helperComponents/smallpieces/RenderFloatingButtons";
@@ -52,7 +52,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   const handleBack = () => {
     const currentStep = step;
     setStep(currentStep - 1);
-    router.push(currentStep === 2 ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE, undefined,  { shallow: true }).then(() => setLoading(false));
+    router.push(currentStep === 2 ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE, undefined, { shallow: true }).then(() => setLoading(false));
   };
 
   const isLogged = Boolean(userInfo);
@@ -80,10 +80,10 @@ const QrWizard = ({ children }: QrWizardProps) => {
     setLoading(true); // @ts-ignore
     if (step === 0) {
       if (data.isDynamic && !isLogged) {
-        router.push({pathname: "/", query: {path: QR_CONTENT_ROUTE, login: true, selected}}, "/").then(() => setLoading(false));
+        router.push({ pathname: "/", query: { path: QR_CONTENT_ROUTE, login: true, selected } }, "/").then(() => setLoading(false));
       } else {
         setStep(1);
-        router.push(QR_CONTENT_ROUTE, undefined,  { shallow: true }).then(() => setLoading(false));
+        router.push(QR_CONTENT_ROUTE, undefined, { shallow: true }).then(() => setLoading(false));
       }
     } else if (step === 2 && isLogged) {
       if (["pdf", "audio", "gallery", "video"].includes(selected)) { //Process assets before saving de QR Data
@@ -144,7 +144,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
         }
       }
 
-      if (selected === "donations") {
+      if (selected === "donation") {
         let priceData: EbanuxDonationPriceData;
         priceData = {
           name: `Donate ${data["title"]}` || "Donation",
@@ -250,7 +250,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
     } else {
       const currentStep = step;
       setStep(currentStep + 1);
-      router.push(currentStep === 0 ? QR_CONTENT_ROUTE : QR_DESIGN_ROUTE, undefined,  { shallow: true }).then(() => setLoading(false));
+      router.push(currentStep === 0 ? QR_CONTENT_ROUTE : QR_DESIGN_ROUTE, undefined, { shallow: true }).then(() => setLoading(false));
     }
   };
 
@@ -259,7 +259,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
       const genShortLinkAndId = async () => {
         const id = getUuid();
         const shortCode = await generateId(); // @ts-ignore
-        setOptions((prev: OptionsType) => ({ ...prev, id, shortCode, data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN)}));
+        setOptions((prev: OptionsType) => ({ ...prev, id, shortCode, data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN) }));
       }
       genShortLinkAndId();
     }
@@ -290,7 +290,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           handleBack={handleBack}
           mode={data.mode}
           selected={selected} />
-        <Stepper activeStep={step} sx={{width: "100%", my: 0}}>
+        <Stepper activeStep={step} sx={{ width: "100%", my: 0 }}>
           {steps.map((label: string) => <Step key={label}>
             <StepLabel>{isWide ? label : ''}</StepLabel>
           </Step>)}
@@ -313,7 +313,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
         (isError?: boolean) => {
           dataInfo.current = [];
           if (!isError) {
-            setForceDownload({item: document.getElementById('qrCodeReferenceId')});
+            setForceDownload({ item: document.getElementById('qrCodeReferenceId') });
           } else {
             forceUpdate();
           }

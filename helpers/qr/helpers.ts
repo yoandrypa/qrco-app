@@ -7,7 +7,7 @@ import frame4 from '../../components/qr/frames/frame4';
 import frame5 from '../../components/qr/frames/frame5';
 import frame6 from '../../components/qr/frames/frame6';
 import frame7 from '../../components/qr/frames/frame7';
-import {DataType, FramesType} from '../../components/qr/types/types';
+import { DataType, FramesType } from '../../components/qr/types/types';
 import initialOptions from "./data";
 
 export const handleDesignerString = (selected: string | null | undefined, data: DataType): string => {
@@ -75,7 +75,7 @@ export const getBase64FromUrl = async (url: string) => {
     reader.onloadend = () => {
       const base64data = reader.result;
       setTimeout(() => {
-      resolve(base64data);
+        resolve(base64data);
       }, 200);
     }
   });
@@ -332,7 +332,7 @@ export const dataCleaner = (options: any, mainObj?: boolean) => {
 export const cleanSelectionForMicrositeURL = (item: string): string => {
   if (item === 'vcard+') { return 'vcard'; }
   if (item === 'link') { return 'links'; }
-  if (item === 'donations') { return 'donation'; }
+  if (item === 'donation') { return 'donation'; }
   return item;
 };
 

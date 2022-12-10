@@ -127,7 +127,7 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
             {renderTypeSelector("social", "Social Networks", "Share your social networks information", true)}
             {renderTypeSelector("link", "Link-in-Bio", "Share your own links, including social info", true)}
             {renderTypeSelector("coupon", "Coupon", "Share a coupon", true)}
-            {renderTypeSelector("donations", "Donation", "Get donations from your supporters worldwide", true)}
+            {renderTypeSelector("donation", "Donation", "Get donations from your supporters worldwide", true)}
             {IS_DEV_ENV && renderTypeSelector("fundme", "Fund Me", "Start your own charity or fundraising campaign", true)}
             {IS_DEV_ENV && renderTypeSelector("paylink", "Send Me Money", "Receive payments worldwide", true)}
           </>)

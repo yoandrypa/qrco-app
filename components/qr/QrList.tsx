@@ -106,49 +106,49 @@ const QrList = ({ qrs, title }: any) => {
     <Stack direction="row" justifyContent="flex-end" alignItems="center">
       <Tooltip title="Details">
         <IconButton color="primary" disabled={isLoading}
-                    onClick={() => {
-                      setLoading(true);
-                      router.push(
-                        "/qr/" + (new Date(qr.createdAt)).getTime() +
-                        "/details").
-                        then(() => setLoading(false));
-                    }}>
-          <InfoOutlinedIcon/>
+          onClick={() => {
+            setLoading(true);
+            router.push(
+              "/qr/" + (new Date(qr.createdAt)).getTime() +
+              "/details").
+              then(() => setLoading(false));
+          }}>
+          <InfoOutlinedIcon />
         </IconButton>
       </Tooltip>
       <Tooltip title="Edit">
         <IconButton color="primary" disabled={isLoading}
-                    onClick={() => handleEdit(qr)}>
-          <EditOutlined/>
+          onClick={() => handleEdit(qr)}>
+          <EditOutlined />
         </IconButton>
       </Tooltip>
       {qr.shortLinkId
         ? <Tooltip title={qr.shortLinkId.paused ? "Active QR Link" : "Pause QR Link"}>
           <IconButton color="primary" disabled={isLoading}
-                      onClick={() => pauseQRLink(qr.shortLinkId)}>
-            {qr.shortLinkId.paused ? <PlayCircleOutlineIcon/> :
-              <PauseCircleOutlineIcon/>}
+            onClick={() => pauseQRLink(qr.shortLinkId)}>
+            {qr.shortLinkId.paused ? <PlayCircleOutlineIcon /> :
+              <PauseCircleOutlineIcon />}
           </IconButton></Tooltip>
         : null
       }
       <Tooltip title="Delete">
-      <IconButton color="error" disabled={isLoading}
-                  onClick={() => showConfirmationDialog(qr.userId,
-                    qr.createdAt)}>
-        <DeleteOutlineRounded/>
-      </IconButton>
+        <IconButton color="error" disabled={isLoading}
+          onClick={() => showConfirmationDialog(qr.userId,
+            qr.createdAt)}>
+          <DeleteOutlineRounded />
+        </IconButton>
       </Tooltip>
-      {(qr.qrType === "donations" && !!qr.donationProductId) &&
+      {(qr.qrType === "donation" && !!qr.donationProductId) &&
         (
           <a target="_blank"
-             href={process.env.REACT_NODE_ENV === "develop"
-               ? "https://dev-app.ebanux.com/checkouts"
-               : "https://app.ebanux.com/checkouts"}
-             rel="noopener noreferrer">
+            href={process.env.REACT_NODE_ENV === "develop"
+              ? "https://dev-app.ebanux.com/checkouts"
+              : "https://app.ebanux.com/checkouts"}
+            rel="noopener noreferrer">
             <Tooltip title="Go to Dashboard">
               <IconButton color="info" disabled={isLoading}
-                          onClick={handleDashboard}>
-                <DashboardIcon/>
+                onClick={handleDashboard}>
+                <DashboardIcon />
               </IconButton>
             </Tooltip>
           </a>
@@ -159,8 +159,8 @@ const QrList = ({ qrs, title }: any) => {
 
   const renderStaticDynamic = (is: boolean) => (
     <Typography variant="caption" style={{ color: "gray" }}>
-      {is ? <SyncIcon fontSize="inherit"/> : <SyncDisabledIcon
-        fontSize="inherit"/>}
+      {is ? <SyncIcon fontSize="inherit" /> : <SyncDisabledIcon
+        fontSize="inherit" />}
       {is ? " Dynamic" : " Static"}
     </Typography>
   );
@@ -171,7 +171,7 @@ const QrList = ({ qrs, title }: any) => {
       options.image = null;
     }
     options.data = value;
-    return <RenderPreview qrDesign={options} qr={qr}/>;
+    return <RenderPreview qrDesign={options} qr={qr} />;
   };
 
   return (
@@ -180,7 +180,7 @@ const QrList = ({ qrs, title }: any) => {
         {qrs.items?.length > 0 ? (
           <>
             {title && <Typography variant="h6"
-                                  style={{ fontWeight: "bold" }}>{title}</Typography>}
+              style={{ fontWeight: "bold" }}>{title}</Typography>}
             {qrs.items.map((qr: any) => { // @ts-ignore
               const qrLink = sanitize.link(qr.shortLinkId || {}); // @ts-ignore
               if (qr.qrOptionsId?.background?.backColor === "") {
@@ -191,9 +191,9 @@ const QrList = ({ qrs, title }: any) => {
               }
               return (
                 <Paper sx={{ width: "100%", overflow: "hidden" }} elevation={3}
-                       key={qr.createdAt}>
+                  key={qr.createdAt}>
                   <Grid container justifyContent="flex-start"
-                        alignItems="center" spacing={2}>
+                    alignItems="center" spacing={2}>
                     <Grid item sm={5} xs={12}>
                       <Box sx={{
                         display: "flex",
@@ -202,10 +202,10 @@ const QrList = ({ qrs, title }: any) => {
                         <Box sx={{ display: "flex" }}>
                           <Box sx={{ width: "70px", mx: 1 }}>
                             {!qr.qrOptionsId ||
-                            !Object.keys(qr.qrOptionsId).length ? (
+                              !Object.keys(qr.qrOptionsId).length ? (
                               <Box sx={{ mt: 2, mb: 1.5 }}>
                                 <Image src="/ebanuxQr.svg" width={55}
-                                       height={55} alt={qr.qrName}/>
+                                  height={55} alt={qr.qrName} />
                               </Box>
                             ) : (
                               <Box sx={{ mt: 1 }}>
@@ -217,23 +217,23 @@ const QrList = ({ qrs, title }: any) => {
                           </Box>
                           <Stack direction="column" sx={{ my: "auto" }}>
                             <Typography variant="subtitle2"
-                                        sx={{
-                                          color: "orange",
-                                          mb: "-7px",
-                                        }}>{capitalize(qr.qrType)}</Typography>
+                              sx={{
+                                color: "orange",
+                                mb: "-7px",
+                              }}>{capitalize(qr.qrType)}</Typography>
                             <Typography variant="h6" sx={{
                               fontWeight: "bold",
                               mb: "-2px",
                             }}>{qr.qrName}</Typography>
                             {isWide ? (
                               <Typography variant="caption"
-                                          sx={{ color: "gray" }}>
+                                sx={{ color: "gray" }}>
                                 {`Created at: ${humanDate(
                                   new Date(qr.createdAt).getTime())}`}
                               </Typography>
                             ) : (
                               <Typography variant="caption"
-                                          sx={{ color: "gray" }}>{/*@ts-ignore*/}
+                                sx={{ color: "gray" }}>{/*@ts-ignore*/}
                                 <Link href={qrLink.link}>{qrLink.link}</Link>
                               </Typography>
                             )}
@@ -259,23 +259,23 @@ const QrList = ({ qrs, title }: any) => {
                     </Grid>) : (<Grid item xs={4}>
                       <Box sx={{ display: "flex" }}>
                         <Divider orientation="vertical" flexItem
-                                 sx={{ mx: 2 }}/>
+                          sx={{ mx: 2 }} />
                         <Stack direction="column" spacing={0.8}
-                               justifyContent="flex-start"
-                               alignItems="flex-start"
-                               sx={{ ml: { xs: 2, sm: 0 } }}>
+                          justifyContent="flex-start"
+                          alignItems="flex-start"
+                          sx={{ ml: { xs: 2, sm: 0 } }}>
                           {renderStaticDynamic(qr.isDynamic)}
                           {qrLink.address ? (
                             <Typography variant="caption"
-                                        sx={{ color: "gray" }}>{/*@ts-ignore*/}
-                              <Public fontSize="inherit"/> <Link
+                              sx={{ color: "gray" }}>{/*@ts-ignore*/}
+                              <Public fontSize="inherit" /> <Link
                                 href={qrLink.link}>{qrLink.link.split(
-                                "//")[1]}</Link>
+                                  "//")[1]}</Link>
                             </Typography>) : <></>}
                           <Typography variant="caption" sx={{ color: "gray" }}>
                             <Edit
-                              fontSize="inherit"/> {`Updated at: ${humanDate(
-                            new Date(qr.updatedAt).getTime())}`}
+                              fontSize="inherit" /> {`Updated at: ${humanDate(
+                                new Date(qr.updatedAt).getTime())}`}
                           </Typography>
                         </Stack>
                       </Box>
@@ -287,8 +287,8 @@ const QrList = ({ qrs, title }: any) => {
                       }}>
                         {qr.isDynamic ? (
                           <Stack direction="column" spacing={1.2}
-                                 justifyContent="flex-start"
-                                 alignItems="center">
+                            justifyContent="flex-start"
+                            alignItems="center">
                             <Typography variant="h4" style={{
                               color: qrLink.visitCount > 0
                                 ? "blue"
@@ -297,11 +297,11 @@ const QrList = ({ qrs, title }: any) => {
                               {qrLink.visitCount || 0}
                             </Typography>
                             <Typography variant="caption"
-                                        style={{ color: "gray" }}>
+                              style={{ color: "gray" }}>
                               Visits
                             </Typography>
                           </Stack>
-                        ) : <div/>}
+                        ) : <div />}
                         {isWide && renderOptions(qr)}
                       </Box>
                     </Grid>)}
@@ -313,10 +313,10 @@ const QrList = ({ qrs, title }: any) => {
           </>
         ) : (
           <Grid container justifyContent="center" alignItems="center"
-                sx={{ height: "calc( 100vh - 200px );" }}>
+            sx={{ height: "calc( 100vh - 200px );" }}>
             <Grid item>
               <Alert severity="info" variant="outlined"
-                     action={<RenderNewQrButton/>} sx={{ width: 450, p: 5 }}>
+                action={<RenderNewQrButton />} sx={{ width: 450, p: 5 }}>
                 There are no QR codes.
               </Alert>
             </Grid>
