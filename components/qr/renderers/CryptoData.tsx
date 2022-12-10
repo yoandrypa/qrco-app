@@ -189,7 +189,6 @@ function CryptoData({ setIsWrong, data, handleValues }: CryptoDataProps) {
                     Double check this, this wallet address seems to be invalid. You can still send this address anyway. This warning won&apos;t be shown on the QR view.
                 </Alert>}
                 <TextField
-                    error={walletInput.length === 0}
                     sx={{ marginTop: 2 }}
                     label="Address"
                     size="small"
