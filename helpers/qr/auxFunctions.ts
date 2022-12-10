@@ -2,8 +2,11 @@ import {DataType} from "../../components/qr/types/types";
 
 export const previewQRGenerator = (data: DataType, selected: string) => {
   const obj = {...data, qrType: selected};
+  let sum = 1;
+  if (obj.name) { sum += 1; }
+  if (obj.files && !obj.files.length) { sum += 1; }
 
-  if (Object.keys(data).length <= 1) {
+  if (Object.keys(obj).length >= sum) {
     const populate = (item: string, value: any): void => { // @ts-ignore
       if (obj[item] === undefined) { // @ts-ignore
         obj[item] = value;
@@ -79,6 +82,16 @@ export const previewQRGenerator = (data: DataType, selected: string) => {
       populate('value', '1669934672000');
       populate('text', 'Wanna add some terms and conditions? No problem! You can set them here.');
       genAddress();
+    } else if (selected === 'gallery') {
+      populate('title', 'Title of the Gallery');
+      populate('about', 'A description for your images gallery');
+      populate('isSample', true);
+      populate('files', [
+        {"name": "0land.jpg", "Key": "galleries/0land.jpg"}, {"name": "1land.jpg", "Key": "galleries/1land.jpg"},
+        {"name": "2land.jpg", "Key": "galleries/2land.jpg"}, {"name": "3land.jpg", "Key": "galleries/3land.jpg"},
+        {"name": "4land.jpg", "Key": "galleries/4land.jpg"}, {"name": "5land.jpg", "Key": "galleries/5land.jpg"},
+        {"name": "6land.jpg", "Key": "galleries/6land.jpg"}, {"name": "7land.jpg", "Key": "galleries/7land.jpg"}
+      ]);
     }
   }
   return obj;

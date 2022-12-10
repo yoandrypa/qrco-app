@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import {useContext, useEffect, useMemo, useState} from "react";
 import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Tabs from '@mui/material/Tabs';
@@ -8,16 +8,16 @@ import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import TypeSelector from "./TypeSelector";
 import Box from "@mui/material/Box";
-import { blue, grey } from "@mui/material/colors";
-import { styled } from "@mui/material/styles";
+import {blue} from "@mui/material/colors";
+import {styled} from "@mui/material/styles";
 
 import Context from "../../context/Context";
-import { DataType } from "../types/types";
+import {DataType} from "../types/types";
 
 import RenderPreviewDrawer from "./smallpieces/RenderPreviewDrawer";
 import RenderPreviewButton from "./smallpieces/RenderPreviewButton";
 import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
-import { IS_DEV_ENV } from "../constants";
+import {IS_DEV_ENV} from "../constants";
 import RenderProDesc from "./smallpieces/RenderProDesc";
 import RenderFreeDesc from "./smallpieces/RenderFreeDesc";
 
@@ -33,7 +33,7 @@ interface ContextData {
   useInfo: any;
 }
 
-const MyBadge = styled(Badge)(({ pro }: { pro?: boolean }) => ({
+const MyBadge = styled(Badge)(({pro}: { pro?: boolean }) => ({
   '& .MuiBadge-badge': {
     top: 11,
     right: pro ? -20 : -22,
@@ -44,21 +44,21 @@ const MyBadge = styled(Badge)(({ pro }: { pro?: boolean }) => ({
   }
 }));
 
-const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps) => { // @ts-ignore
-  const { data, setData }: ContextData = useContext(Context);
-  const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
-  const isWideForPreview = useMediaQuery("(min-width:925px)", { noSsr: true });
-  const isWideForThreeColumns = useMediaQuery("(min-width:1045px)", { noSsr: true });
+const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) => { // @ts-ignore
+  const {data, setData}: ContextData = useContext(Context);
+  const isWide = useMediaQuery("(min-width:600px)", {noSsr: true});
+  const isWideForPreview = useMediaQuery("(min-width:925px)", {noSsr: true});
+  const isWideForThreeColumns = useMediaQuery("(min-width:1045px)", {noSsr: true});
   const isDynamic = useMemo(() => data.isDynamic || false, [data.isDynamic]);
   const [openPreview, setOpenPreview] = useState<boolean>(false);
 
   const handleClick = (selection: number) => { // @ts-ignore
     const dynamic = selection === 0;
     if (dynamic) { // @ts-ignore
-      setData((prev: DataType) => ({ ...prev, isDynamic: dynamic }));
+      setData((prev: DataType) => ({...prev, isDynamic: dynamic}));
     } else if (data.isDynamic !== undefined) { // @ts-ignore
       setData((prev: DataType) => {
-        const tempoData = { ...prev };
+        const tempoData = {...prev};
         delete tempoData.isDynamic;
         return tempoData;
       });
@@ -67,14 +67,14 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
 
   const renderTypeSelector = (item: string, label: string, description: string, enabled: boolean) => (
     <Grid item lg={IS_DEV_ENV && selected ? (isWideForThreeColumns ? 4 : 6) : 3}
-      md={!IS_DEV_ENV || !selected ? 4 : (isWideForThreeColumns ? 4 : 6)} sm={6} xs={12}>
+          md={!IS_DEV_ENV || !selected ? 4 : (isWideForThreeColumns ? 4 : 6)} sm={6} xs={12}>
       <TypeSelector
         icon={item}
         label={label}
         enabled={enabled}
         description={description}
         selected={selected === item}
-        handleSelect={handleSelect} />
+        handleSelect={handleSelect}/>
     </Grid>
   );
 
@@ -85,27 +85,27 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
   }, [isWideForPreview]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{display: 'flex'}}>
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <Tabs value={isDynamic ? 0 : 1} onChange={(_, newSel: number) => handleClick(newSel)}>
-            <Tab sx={{ pr: '37px', mr: '3px' }} label={
+            <Tab sx={{pr: '37px', mr: '3px'}} label={
               <MyBadge badgeContent={
-                <Tooltip title={<RenderProDesc />} arrow>
+                <Tooltip title={<RenderProDesc/>} arrow>
                   <span>Pro</span>
                 </Tooltip>
               } color="primary" pro>
                 <Typography>{isWide ? "Dynamic QR Codes" : "Dynamic"}</Typography>
               </MyBadge>
-            } />
-            <Tab sx={{ pr: '39px' }} label={
+            }/>
+            <Tab sx={{pr: '39px'}} label={
               <MyBadge badgeContent={
                 <Tooltip title={<RenderFreeDesc />} arrow>
                   <span>Free</span>
                 </Tooltip>} color="success">
                 <Typography>{isWide ? "Static QR Codes" : "Static"}</Typography>
               </MyBadge>
-            } />
+            }/>
           </Tabs>
         </Grid>
         {renderTypeSelector("web", isDynamic ? "Short URL" : "Website",
@@ -140,14 +140,14 @@ const RenderTypeSelector = ({ selected, handleSelect }: RenderTypeSelectorProps)
         </>) : null}
       </Grid>
       {IS_DEV_ENV && isWideForPreview && selected && (
-        <RenderSamplePreview selected={selected} style={{ ml: '15px', mt: '18px', width: '370px' }} onlyQr={!data.isDynamic} />
+        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '18px', width: '370px'}} onlyQr={!data.isDynamic} />
       )}
       {IS_DEV_ENV && !openPreview && !isWideForPreview && selected && data.isDynamic && ( // @ts-ignore
-        <RenderPreviewButton setOpenPreview={setOpenPreview} message="Sample" />
+        <RenderPreviewButton setOpenPreview={setOpenPreview} message="Sample"/>
       )}
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer setOpenPreview={setOpenPreview} height={675} border={35}> {/* @ts-ignore */}
-          <RenderSamplePreview selected={selected} isDrawed style={{ mt: '-15px' }} />
+          <RenderSamplePreview selected={selected} isDrawed style={{mt: '-15px'}} />
         </RenderPreviewDrawer>
       )}
     </Box>

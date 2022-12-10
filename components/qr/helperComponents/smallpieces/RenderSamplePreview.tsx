@@ -1,24 +1,28 @@
-import {MouseEvent, useState} from "react";
-import RenderIframe from "../../../RenderIframe";
-import RenderCellPhoneShape from "../RenderCellPhoneShape";
+import {MouseEvent, Suspense, useState} from "react";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import WebIcon from '@mui/icons-material/Web';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import QrCodeIcon from '@mui/icons-material/QrCode';
+import WebIcon from "@mui/icons-material/Web";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import QrCodeIcon from "@mui/icons-material/QrCode";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import Typography from "@mui/material/Typography";
-import LinkIcon from '@mui/icons-material/Link';
-import SaveIcon from '@mui/icons-material/Save';
+import LinkIcon from "@mui/icons-material/Link";
+import SaveIcon from "@mui/icons-material/Save";
 
 import {NO_MICROSITE, REDEFINE_URL} from "../../constants";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
+
 import RenderPreview from "../../renderers/RenderPreview";
 import Notifications from "../../../notifications/Notifications";
 import {cleanSelectionForMicrositeURL, getProperSampleUrl} from "../../../../helpers/qr/helpers";
 import {DataType} from "../../types/types";
+import RenderCellPhoneShape from "../RenderCellPhoneShape";
+
+import dynamic from "next/dynamic";
+
+const RenderIframe = dynamic(() => import('../../../RenderIframe'), {suspense: false, ssr: false});
 
 interface SamplePrevProps {
   style?: object;
@@ -113,7 +117,9 @@ export default function RenderSamplePreview({onlyQr, data, selected, style, save
         {prev === 'preview' ? (
           <RenderCellPhoneShape width={270} height={550} offlineText="The selected card has no available sample">
             {code || (selected && !NO_MICROSITE.includes(selected)) ?
-              <RenderIframe width="256px" height="536px" src={!code ? URL : `${process.env.REACT_MICROSITES_ROUTE}/sample/empty`} data={data}/> : null}
+              <Suspense fallback={'Loading...'}>
+                <RenderIframe selected={selected} width="256px" height="536px" src={!code ? URL : `${process.env.REACT_MICROSITES_ROUTE}/sample/empty`} data={data}/>
+              </Suspense> : null}
           </RenderCellPhoneShape>) : <RenderPreview width={270} qrDesign={qrOptions} override={!qrOptions ? URL : undefined} />}
       </Box>
       {copied && (
