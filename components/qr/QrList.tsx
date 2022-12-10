@@ -37,7 +37,7 @@ import {
   handleDesignerString,
   handleInitialData,
 } from "../../helpers/qr/helpers";
-import DashboardIcon from "@mui/icons-material/Dashboard";
+import DashboardIcon from "@mui/icons-material/Payment";
 import { QR_CONTENT_ROUTE } from "./constants";
 
 const QrList = ({ qrs, title }: any) => {
@@ -140,19 +140,19 @@ const QrList = ({ qrs, title }: any) => {
       </Tooltip>
       {(qr.qrType === "donation" && !!qr.donationProductId) &&
         (
-          <a target="_blank"
-            href={process.env.REACT_NODE_ENV === "develop"
-              ? "https://dev-app.ebanux.com/checkouts"
-              : "https://app.ebanux.com/checkouts"}
-            rel="noopener noreferrer">
-            <Tooltip title="Go to Dashboard">
-              <IconButton color="info" disabled={isLoading}
-                onClick={handleDashboard}>
-                <DashboardIcon />
-              </IconButton>
-            </Tooltip>
-          </a>
-
+          <Link href={process.env.REACT_NODE_ENV === "develop"
+            ? "https://dev-app.ebanux.com/checkouts"
+            : "https://app.ebanux.com/checkouts"} target='_blank'>
+            <a target="_blank"
+              rel="noopener noreferrer">
+              <Tooltip title="Go to Dashboard">
+                <IconButton color="info" disabled={isLoading}
+                  onClick={handleDashboard}>
+                  <DashboardIcon />
+                </IconButton>
+              </Tooltip>
+            </a>
+          </Link>
         )}
     </Stack>
   );
