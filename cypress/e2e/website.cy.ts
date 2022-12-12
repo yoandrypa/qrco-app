@@ -12,17 +12,22 @@ describe('Static QR code', () => {
   })
 
 
-  it('Content',() =>{
+  it('Complete Content',() =>{
     cy.get('input[type=text]').should('have.value', '').type('https://server.cenit.io')
     cy.get('body').contains('Next').click()
 
   })
 
-  it('QR Desing',() =>{
-    cy.get('input[value=square]')
+  it('Complete QR Desing',() =>{
+    //cy.get('input[value=square]').click()
     //cy.get('body').contains('Next').click()
+    cy.contains('Squares').parent().parent().parent().click()
 
   })
+ /* it('Save and dowload QR',() =>{
+    //cy.get('body').contains('Done')//.click()
+   })*/
+
 })
 
 
