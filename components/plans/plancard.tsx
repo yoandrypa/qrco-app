@@ -59,7 +59,7 @@ const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
       {data.features?.map((feature, index) => {
 
         return (
-          <Grid key={index} container sx={{ marginLeft: 1, paddingBottom: 2 }}>
+          <Grid key={index} container sx={{ marginLeft: 1, paddingBottom: 2, marginBottom: 2 }}>
             <Grid item key={index} xs={2} sx={{ display: 'flex', justifyContent: 'right', paddingRight: 1 }}>
               <Done color='success' />
             </Grid>

@@ -22,6 +22,7 @@ import CouponData from "./renderers/CouponData";
 import DonationsData, { DonationsProps } from './renderers/DonationsData';
 import CryptoData from './renderers/CryptoData';
 import SendMeMoneyData from './renderers/SendMeMoneyData';
+import FundMe from './renderers/FundMeData';
 
 import { DataType, SocialProps } from './types/types';
 import LinksData from "./renderers/LinksData";
@@ -116,7 +117,7 @@ const QrContentHandler = () => { // @ts-ignore
       case 'video': {
         return <AssetData type={selected} data={data} setData={handlePayload} handleValues={handleValues} />;
       }
-      case 'donations': {
+      case 'donation': {
         return <DonationsData data={data} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong} />
       }
       case 'paylink': {
@@ -124,6 +125,9 @@ const QrContentHandler = () => { // @ts-ignore
       }
       case 'crypto': {
         return <CryptoData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
+      }
+      case 'fundme': {
+        return <FundMe data={data} setData={setData} handleValues={handleValues} />
       }
       default: {
         return <NetworksData data={data} setData={handlePayload} setIsWrong={setIsWrong} />

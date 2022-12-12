@@ -57,7 +57,7 @@ const Plans = (props: Props) => {
   const basic = {
     title: "Basic Account",
     description: "For small businesses/freelancers at an affordable price",
-    buttonText: "START NOW",
+    buttonText: "SUBSCRIBE",
     plan_type: "basic",
     legend: "A good choice to get started",
     highlighted: false,
@@ -76,7 +76,7 @@ const Plans = (props: Props) => {
   const basicAnnual = {
     title: "Basic Account",
     description: 'A good choice to get started and save some cash.',
-    buttonText: "START NOW",
+    buttonText: "SUBSCRIBE",
     plan_type: "basicAnnual",
     legend: "Save two months",
     highlighted: false,
@@ -96,7 +96,7 @@ const Plans = (props: Props) => {
   const business = {
     title: "Business Account",
     description: "For medium businesses who need a larger solution",
-    buttonText: "START NOW",
+    buttonText: "SUBSCRIBE",
     plan_type: "business",
     legend: "Have plenty of room to grow.",
     highlighted: true,
@@ -114,7 +114,7 @@ const Plans = (props: Props) => {
   const businessAnnual = {
     title: "Business Account",
     description: 'Receive a fair discount with our annual plan.',
-    buttonText: "START NOW",
+    buttonText: "SUBSCRIBE",
     plan_type: "businessAnnual",
     legend: 'Save three months',
     highlighted: true,
@@ -135,7 +135,7 @@ const Plans = (props: Props) => {
   const premium = {
     title: "Premium Account",
     description: "The definitive plan. You're completely covered.",
-    buttonText: "START NOW",
+    buttonText: "SUBSCRIBE",
     plan_type: "premium",
     legend: "Limitless",
     highlighted: true,
@@ -153,7 +153,7 @@ const Plans = (props: Props) => {
   const premiumAnnual = {
     title: "Premium Account",
     description: 'Receive a great discount and get completely covered.',
-    buttonText: "START NOW",
+    buttonText: "SUBSCRIBE",
     plan_type: "premiumAnnual",
     legend: 'Save four months',
     highlighted: true,
