@@ -299,7 +299,7 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
             <Typography variant="h6">QR Designer</Typography>
             <Typography>QR Code appearance settings</Typography>
           </Box>
-          {data.isDynamic && <NotifyDynamic styling={{position: 'absolute', right: 0}} />}
+          <NotifyDynamic styling={{position: 'absolute', right: 0}} isDynamic={Boolean(data.isDynamic)}/>
         </Box>
         <Box sx={{display: 'flex', m: {sm: 2, xs: 0}}}>
           <Box sx={{ width: '100%', mr: isWideForPreview ? 2 : 0, overflow: 'auto', textAlign: 'left' }}> {/* @ts-ignore */}

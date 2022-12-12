@@ -199,7 +199,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
         </Box>
       </DialogContent>
       <DialogActions sx={{p: 2}}>
-        <Button startIcon={<CropIcon />} variant="outlined" onClick={beforeSend}>Crop and use</Button>
+        <Button startIcon={<CropIcon />} variant="outlined" onClick={beforeSend}>{'Done'}</Button>
         <Button variant="outlined" onClick={handleClose}>Close</Button>
       </DialogActions>
     </Dialog>

@@ -10,83 +10,61 @@ interface IframeProps {
   width: string;
   height: string;
   data?: DataType;
+  selected?: string;
 }
 
-interface RenderMessageProps {
-  whatToRender?: string;
-}
+const style= {
+  m: 0,
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  textAlign: 'center'
+};
 
-function RenderMessage({whatToRender}: RenderMessageProps) {
-  return (
-    <Box sx={{
-      m: 0,
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      textAlign: 'center'
-    }}>
-      {whatToRender !== undefined ? (
-        <>
-          <Typography sx={{fontWeight: 'bold'}}>
-            {'The requested example failed to load'}
-          </Typography>
-          <Divider sx={{mt: '10px'}}/>
-          <Typography sx={{fontSize: 'small'}}>
-            {whatToRender === 'IO Error' ? 'Containing file was not found or is offline' : (
-              whatToRender === 'offline' ? 'Current example is offline' : 'Unknown cause'
-            )}
-          </Typography>
-          <Divider/>
-          <Typography
-            sx={{color: theme => theme.palette.text.disabled, mx: 'auto', mt: '10px', fontSize: 'small'}}>
-            {"Please, contact support by clicking "}
-            <a target="_blank" href="mailto:info@ebanux.com"
-               rel="noopener noreferrer"
-               style={{color: "royalblue"}}>{"here"}</a>
-            {"."}
-          </Typography>
-        </>
-      ) : (
-        <>
-          <Typography>{'Loading...'}</Typography>
-          <Typography sx={{ color: theme => theme.palette.text.disabled}}>{'Please wait...'}</Typography>
-        </>
-      )}
-    </Box>
-  );
-}
-
-export default function RenderIframe({src, width, height, data}: IframeProps) {
+export default function RenderIframe({src, width, height, data, selected}: IframeProps) {
   const [whatToRender, setWhatToRender] = useState<string | null>(null);
   const [error, setError] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const iRef = useRef<HTMLIFrameElement | null>(null);
 
   const handleLoad = () => {
-    setLoading(false);
+    setIsLoading(false);
   }
 
   const handleError = () => {
-    setLoading(false);
+    setIsLoading(false);
     setError(true);
   }
 
   useEffect(() => {
     if (data && isReady) {
-      if (iRef.current) {
-        setTimeout(async () => {
-          const previewData = { ...data }; // @ts-ignore
-          if (previewData.backgndImg) { // @ts-ignore
-            previewData.backgndImg = await convertBase64(previewData.backgndImg);
-          }
-          if (previewData.foregndImg) { // @ts-ignore
-            previewData.foregndImg = await convertBase64(previewData.foregndImg);
+      setTimeout(async () => {
+        const previewData = {...data};
+        if (data.backgndImg) { // @ts-ignore
+          previewData.backgndImg = await convertBase64(data.backgndImg);
+        }
+        if (data.foregndImg) { // @ts-ignore
+          previewData.foregndImg = await convertBase64(data.foregndImg);
+        }
+
+        // @ts-ignore
+        if (data.files && !data.isSample) {
+          const files = [] as string[]; // @ts-ignore
+          for (let i = 0, l = data.files.length; i < l; i += 1) { // @ts-ignore
+            const x = data.files[i] as File | string;
+            if (typeof x === 'string') { // @ts-ignore
+              files.push(x);
+            } else { // @ts-ignore
+              files.push(await convertBase64(x));
+            }
           } // @ts-ignore
-          iRef.current.contentWindow.postMessage(JSON.stringify({previewData}), process.env.REACT_MICROSITES_ROUTE);
-        }, 250);
-      }
+          previewData.files = files;
+        } // @ts-ignore
+        iRef.current.contentWindow.postMessage(JSON.stringify({previewData}), process.env.REACT_MICROSITES_ROUTE);
+      }, 50);
     }
   }, [data, isReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -97,12 +75,8 @@ export default function RenderIframe({src, width, height, data}: IframeProps) {
           const dataFromOutside = JSON.parse(event.data);
           if (dataFromOutside.error) {
             setWhatToRender(dataFromOutside.message);
-          } else if (dataFromOutside.ready) {
-            if (iRef.current) {
-              setTimeout(() => { // @ts-ignore
-                iRef.current.contentWindow.postMessage(JSON.stringify({parentWidth: width, parentHeight: height}), '*');
-              }, 150);
-            }
+          } else if (dataFromOutside.ready && iRef.current?.contentWindow) {
+            iRef.current.contentWindow.postMessage(JSON.stringify({ parentWidth: width, parentHeight: height }), '*');
           } else if (dataFromOutside.readyForDuty) {
             setIsReady(true);
           }
@@ -114,25 +88,49 @@ export default function RenderIframe({src, width, height, data}: IframeProps) {
 
     window.addEventListener("message", handler);
 
-    return () => window.removeEventListener("message", handler)
+    return () => window.removeEventListener("message", handler);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (whatToRender !== null) { setWhatToRender(null); }
     if (error) { setError(false); }
-  } ,[src]); // eslint-disable-line react-hooks/exhaustive-deps
+  },[src]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (whatToRender !== null) {
-    return <RenderMessage whatToRender={whatToRender} />;
-  }
+  useEffect(() => {
+    setIsLoading(true);
+  }, [selected]);
 
-  if (error) {
-    return <RenderMessage whatToRender="offline" />;
+  if (whatToRender !== null || error) {
+    return (
+      <Box sx={style}>
+        <Typography sx={{fontWeight: 'bold'}}>
+          {'The requested example failed to load'}
+        </Typography>
+        <Divider sx={{mt: '10px'}}/>
+        <Typography sx={{fontSize: 'small'}}>
+          {whatToRender === 'IO Error' ? 'Containing file was not found or is offline' : (
+            whatToRender === 'offline' ? 'Current example is offline' : 'Unknown cause'
+          )}
+        </Typography>
+        <Divider/>
+        <Typography
+          sx={{color: theme => theme.palette.text.disabled, mx: 'auto', mt: '10px', fontSize: 'small'}}>
+          {"Please, contact support by clicking "}
+          <a target="_blank" href="mailto:info@ebanux.com"
+             rel="noopener noreferrer"
+             style={{color: "royalblue"}}>{"here"}</a>
+          {"."}
+        </Typography>
+      </Box>
+    );
   }
 
   return (
     <>
-      {loading && <RenderMessage />}
+      {isLoading && (<Box sx={style}>
+        <Typography>{'Loading...'}</Typography>
+        <Typography sx={{ color: theme => theme.palette.text.disabled}}>{'Please wait...'}</Typography>
+      </Box>)}
       <iframe
         src={src}
         width={width}

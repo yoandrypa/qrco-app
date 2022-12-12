@@ -1,9 +1,15 @@
 import {DataType} from "../../components/qr/types/types";
 
 export const previewQRGenerator = (data: DataType, selected: string) => {
+  let sum = 0;
+
+  if (data.qrName) { sum += 1; }
+  if (data.isDynamic) { sum += 1; }
+  if (data.files !== undefined && !data.files.length) { sum += 1; }
+
   const obj = {...data, qrType: selected};
 
-  if (Object.keys(data).length <= 1) {
+  if (Object.keys(data).length <= sum) {
     const populate = (item: string, value: any): void => { // @ts-ignore
       if (obj[item] === undefined) { // @ts-ignore
         obj[item] = value;
@@ -79,6 +85,16 @@ export const previewQRGenerator = (data: DataType, selected: string) => {
       populate('value', '1669934672000');
       populate('text', 'Wanna add some terms and conditions? No problem! You can set them here.');
       genAddress();
+    } else if (selected === 'gallery') {
+      if (obj.files !== undefined) { delete obj.files; }
+      populate('title', 'Title of the Gallery');
+      populate('about', 'A description for your images gallery');
+      populate('isSample', true);
+      populate('files', [
+        {name: "0land.jpg", Key: "galleries/0land.jpg"}, {name: "1land.jpg", Key: "galleries/1land.jpg"},
+        {name: "2land.jpg", Key: "galleries/2land.jpg"}, {name: "3land.jpg", Key: "galleries/3land.jpg"},
+        {name: "4land.jpg", Key: "galleries/4land.jpg"}
+      ]);
     }
   }
   return obj;

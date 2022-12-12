@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import {ReactNode, useCallback, useContext, useEffect, useState} from "react";
 import Typography from "@mui/material/Typography";
 import InputAdornment from "@mui/material/InputAdornment";
 import ArticleIcon from '@mui/icons-material/Article';
@@ -6,28 +6,27 @@ import DesignServicesIcon from '@mui/icons-material/DesignServices';
 import TextField from "@mui/material/TextField";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { alpha } from "@mui/material/styles";
 
 import Context from "../../context/Context";
 import RenderQRCommons from "../renderers/RenderQRCommons";
-import { DEFAULT_COLORS, IS_DEV_ENV, NO_MICROSITE } from "../constants";
-import { download } from "../../../handlers/storage";
+import {DEFAULT_COLORS, IS_DEV_ENV, NO_MICROSITE} from "../constants";
+import {download} from "../../../handlers/storage";
 import Notifications from "../../notifications/Notifications";
-import { DataType } from "../types/types";
+import {DataType} from "../types/types";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import RenderPreviewDrawer from "./smallpieces/RenderPreviewDrawer";
 import RenderPreviewButton from "./smallpieces/RenderPreviewButton";
 import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
-import { previewQRGenerator } from "../../../helpers/qr/auxFunctions";
+import {previewQRGenerator} from "../../../helpers/qr/auxFunctions";
 
 interface CommonProps {
   msg: string;
   children: ReactNode;
 }
 
-function Common({ msg, children }: CommonProps) { // @ts-ignore
-  const { selected, data, setData, userInfo, options, isWrong, background, frame, cornersData, dotsData } = useContext(Context);
+function Common({msg, children}: CommonProps) { // @ts-ignore
+  const {selected, data, setData, userInfo, options, isWrong, background, frame, cornersData, dotsData} = useContext(Context);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [backImg, setBackImg] = useState<any>(undefined);
@@ -45,26 +44,26 @@ function Common({ msg, children }: CommonProps) { // @ts-ignore
   const handleValue = useCallback((prop: string) => (payload: any) => {
     if (payload === undefined) {
       setData((prev: any) => {
-        const tempo = { ...prev };
+        const tempo = {...prev};
         delete tempo[prop];
         return tempo;
       })
     } else if (!prop.startsWith('both')) {
       if (prop === 'backgndImg' && backImg !== undefined) {
         setBackImg(undefined); // @ts-ignore
-        setData((prev: DataType) => ({ ...prev, backgndImg: payload, prevBackImg: prev.backgndImg[0].Key }));
+        setData((prev: DataType) => ({...prev, backgndImg: payload, prevBackImg: prev.backgndImg[0].Key}));
       } else if (prop === 'foregndImg' && foreImg !== undefined) {
         setForeImg(undefined); // @ts-ignore
-        setData((prev: DataType) => ({ ...prev, foregndImg: payload, prevForeImg: prev.foregndImg[0].Key }));
+        setData((prev: DataType) => ({...prev, foregndImg: payload, prevForeImg: prev.foregndImg[0].Key}));
       } else if (payload.clear) {
         setData((prev: any) => {
-          const tempo = { ...prev };
+          const tempo = {...prev};
           delete tempo[prop];
           return tempo;
         })
       } else if (prop === 'backgroundType') {
         setData((prev: any) => {
-          const tempo = { ...prev };
+          const tempo = {...prev};
           if (tempo.backgroundColor !== undefined) { delete tempo.backgroundColor }
           if (tempo.backgroundColorRight !== undefined) { delete tempo.backgroundColorRight }
           tempo.backgroundType = payload.target.value;
@@ -77,10 +76,10 @@ function Common({ msg, children }: CommonProps) { // @ts-ignore
       }
     } else if (payload.p !== DEFAULT_COLORS.p || payload.s !== DEFAULT_COLORS.s) {
       const isMain = prop === 'both';
-      setData((prev: any) => ({ ...prev, [isMain ? 'primary' : 'backgroundColor']: payload.p, [isMain ? 'secondary' : 'backgroundColorRight']: payload.s }));
+      setData((prev: any) => ({...prev, [isMain ? 'primary' : 'backgroundColor']: payload.p, [isMain ? 'secondary' : 'backgroundColorRight']: payload.s}));
     } else {
       setData((prev: any) => {
-        const temp = { ...prev };
+        const temp = {...prev};
         if (prop === 'both') {
           if (temp.primary) { delete temp.primary; }
           if (temp.secondary) { delete temp.secondary; }
@@ -139,9 +138,9 @@ function Common({ msg, children }: CommonProps) { // @ts-ignore
     {children}
   </>);
 
-  const handleSave = () => { }
+  const handleSave = () => {}
 
-  const optionsForPreview = () => ({ ...options, background, frame, corners: cornersData, cornersDot: dotsData });
+  const optionsForPreview = () => ({...options, background, frame, corners: cornersData, cornersDot: dotsData});
 
   return (
     <>
@@ -177,42 +176,42 @@ function Common({ msg, children }: CommonProps) { // @ts-ignore
             />
             {!NO_MICROSITE.includes(selected) && data?.isDynamic ? (
               <Box sx={{ width: '100%' }}>
-                <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ borderBottom: theme => `1px solid ${alpha(theme.palette.text.disabled, 0.2)}`, mb: 1 }}>
-                  <Tab label="Content" icon={<ArticleIcon fontSize="small" />} iconPosition="start" sx={{ mt: '-10px', mb: '-15px' }} />
-                  <Tab label="Design" icon={<DesignServicesIcon fontSize="small" />} iconPosition="start" sx={{ mt: '-10px', mb: '-15px' }} />
+                <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>
+                  <Tab label="Content" icon={<ArticleIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
+                  <Tab label="Design" icon={<DesignServicesIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
                 </Tabs>
                 {tabSelected === 0 ? renderChildren() : (
                   <RenderQRCommons
                     isWideForPreview={isWideForPreview}
                     handleValue={handleValue}
-                    omitPrimaryImg={!['vcard+', 'link', 'business', 'social', 'donation'].includes(selected) || !data?.isDynamic}
+                    omitPrimaryImg={!['vcard+', 'link', 'business', 'social', 'donations'].includes(selected) || !data?.isDynamic}
                     backgndImg={data.mode === 'edit' ? (Array.isArray(data?.backgndImg) ? backImg || undefined : data?.backgndImg) : data?.backgndImg}
                     foregndImg={data.mode === 'edit' ? (Array.isArray(data?.foregndImg) ? foreImg || undefined : data?.foregndImg) : data?.foregndImg}
                     loading={loading}
                     foreError={foreImg === null}
                     backError={backImg === null}
-                    data={data} />
+                    data={data}/>
                 )}
               </Box>
             ) : renderChildren()}
           </Box>
           {IS_DEV_ENV && isWideForPreview && !NO_MICROSITE.includes(selected) && (
             <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
-              save={handleSave} style={{ mt: '-13px', ml: '15px' }} saveDisabled={isWrong}
-              qrOptions={optionsForPreview()} data={previewQRGenerator(data, selected)}
-              onlyQr={selected === 'web' || !data.isDynamic} />
+                                 save={handleSave} style={{mt: '-13px', ml: '15px'}} saveDisabled={isWrong}
+                                 qrOptions={optionsForPreview()} data={previewQRGenerator(data, selected)}
+                                 onlyQr={selected === 'web' || !data.isDynamic} step={1} />
           )}
         </Box>
       ) : renderChildren()}
-      {IS_DEV_ENV && !openPreview && !isWideForPreview && !NO_MICROSITE.includes(selected) && data?.isDynamic && ( // @ts-ignore
+      {IS_DEV_ENV && !openPreview && !isWideForPreview && !NO_MICROSITE.includes(selected) && ( // @ts-ignore
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />
       )}
       {openPreview && ( // @ts-ignore
-        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={675} border={35}>
+        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={selected === 'web' || !data.isDynamic ? 400 : 675} border={35}>
           <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
-            save={handleSave} isDrawed saveDisabled={isWrong} style={{ mt: '-15px' }}
-            data={previewQRGenerator(data, selected)} qrOptions={optionsForPreview()}
-            onlyQr={selected === 'web' || !data.isDynamic} />
+                               save={handleSave} isDrawed saveDisabled={isWrong} style={{mt: '-15px'}}
+                               data={previewQRGenerator(data, selected)} qrOptions={optionsForPreview()}
+                               onlyQr={selected === 'web' || !data.isDynamic} step={1} />
         </RenderPreviewDrawer>
       )}
     </>
