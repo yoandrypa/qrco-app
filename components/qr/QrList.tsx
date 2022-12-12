@@ -172,7 +172,7 @@ const QrList = ({ qrs, title }: any) => {
 
   return (
     <>
-      <Stack spacing={2}>
+      <Stack spacing={2} sx={{mt: '5px'}}>
         {qrs.items?.length > 0 ? (
           <>
             {title && <Typography variant="h6"
