@@ -30,7 +30,6 @@ interface RenderTypeSelectorProps {
 interface ContextData {
   data: DataType;
   setData: (vale: DataType) => void;
-  useInfo: any;
 }
 
 const MyBadge = styled(Badge)(({pro}: { pro?: boolean }) => ({
@@ -65,12 +64,12 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
     }
   };
 
-  const renderTypeSelector = (item: string, label: string, description: string, enabled: boolean) => (
+  const renderTypeSelector = (item: string, description: string, enabled: boolean) => (
     <Grid item lg={IS_DEV_ENV && selected ? (isWideForThreeColumns ? 4 : 6) : 3}
           md={!IS_DEV_ENV || !selected ? 4 : (isWideForThreeColumns ? 4 : 6)} sm={6} xs={12}>
       <TypeSelector
         icon={item}
-        label={label}
+        isDynamic={isDynamic}
         enabled={enabled}
         description={description}
         selected={selected === item}
@@ -108,46 +107,45 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
             }/>
           </Tabs>
         </Grid>
-        {renderTypeSelector("web", isDynamic ? "Short URL" : "Website",
-          isDynamic ? "Transform a long URL in a shortened link" : "Link to any page on the web", true)}
+        {renderTypeSelector("web",  isDynamic ? "Transform a long URL in a shortened link" : "Link to any page on the web", true)}
         {!isDynamic ?
           (<>
-            {renderTypeSelector("vcard", "vCard", "Share your contact details", true)}
-            {renderTypeSelector("email", "Email", "Send email messages", true)}
-            {renderTypeSelector("sms", "SMS", "Send text messages", true)}
-            {renderTypeSelector("text", "Text", "Display a short text message", true)}
-            {renderTypeSelector("wifi", "WiFi", "Get connected to a WiFi network", true)}
-            {renderTypeSelector("twitter", "Twitter", "Post a tweet", true)}
-            {renderTypeSelector("whatsapp", "WhatsApp", "Send a WhatsApp message", true)}
-            {renderTypeSelector("facebook", "Facebook", "Share an URL in your wall", true)}
-            {IS_DEV_ENV && renderTypeSelector("crypto", "Crypto Payment", "Recieve crypto on your eWallet", true)}
+            {renderTypeSelector("vcard", "Share your contact details", true)}
+            {renderTypeSelector("email", "Send email messages", true)}
+            {renderTypeSelector("sms", "Send text messages", true)}
+            {renderTypeSelector("text", "Display a short text message", true)}
+            {renderTypeSelector("wifi", "Get connected to a WiFi network", true)}
+            {renderTypeSelector("twitter", "Post a tweet", true)}
+            {renderTypeSelector("whatsapp", "Send a WhatsApp message", true)}
+            {renderTypeSelector("facebook", "Share an URL in your wall", true)}
+            {IS_DEV_ENV && renderTypeSelector("crypto", "Recieve crypto on your eWallet", true)}
           </>) : (<>
-            {renderTypeSelector("vcard+", "vCard Plus", "Share your contact and social details", true)}
-            {renderTypeSelector('business', 'Business', 'Describe your business or company', true)}
-            {renderTypeSelector("social", "Social Networks", "Share your social networks information", true)}
-            {renderTypeSelector("link", "Link-in-Bio", "Share your own links, including social info", true)}
-            {renderTypeSelector("coupon", "Coupon", "Share a coupon", true)}
-            {renderTypeSelector("donation", "Donation", "Get donations from your supporters worldwide", true)}
-            {IS_DEV_ENV && renderTypeSelector("fundme", "Fund Me", "Start your own charity or fundraising campaign", true)}
-            {IS_DEV_ENV && renderTypeSelector("paylink", "Send Me Money", "Receive payments worldwide", true)}
+            {renderTypeSelector("vcard+", "Share your contact and social details", true)}
+            {renderTypeSelector('business', 'Describe your business or company', true)}
+            {renderTypeSelector("social", "Share your social networks information", true)}
+            {renderTypeSelector("link", "Share your own links, including social info", true)}
+            {renderTypeSelector("coupon", "Share a coupon", true)}
+            {renderTypeSelector("donation", "Get donations from your supporters worldwide", true)}
+            {IS_DEV_ENV && renderTypeSelector("fundme", "Start your own charity or fundraising campaign", true)}
+            {IS_DEV_ENV && renderTypeSelector("paylink", "Receive payments worldwide", true)}
           </>)
         }
         {isDynamic ? (<>
-          {renderTypeSelector("pdf", "PDF File", "Share a PDF file", true)}
-          {renderTypeSelector("audio", "Audio File", "Share an audio file", true)}
-          {renderTypeSelector("gallery", "Gallery", "Share a gallery of images", true)}
-          {renderTypeSelector("video", "Video Files", "Share video files", true)}
+          {renderTypeSelector("pdf", "Share a PDF file", true)}
+          {renderTypeSelector("audio", "Share an audio file", true)}
+          {renderTypeSelector("gallery", "Share a gallery of images", true)}
+          {renderTypeSelector("video", "Share video files", true)}
         </>) : null}
       </Grid>
       {IS_DEV_ENV && isWideForPreview && selected && (
-        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '18px', width: '370px'}} onlyQr={!data.isDynamic} />
+        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '18px', width: '370px'}} onlyQr={!data.isDynamic} step={0} />
       )}
-      {IS_DEV_ENV && !openPreview && !isWideForPreview && selected && data.isDynamic && ( // @ts-ignore
+      {IS_DEV_ENV && !openPreview && !isWideForPreview && selected && ( // @ts-ignore
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Sample"/>
       )}
       {openPreview && ( // @ts-ignore
-        <RenderPreviewDrawer setOpenPreview={setOpenPreview} height={675} border={35}> {/* @ts-ignore */}
-          <RenderSamplePreview selected={selected} isDrawed style={{mt: '-15px'}} />
+        <RenderPreviewDrawer setOpenPreview={setOpenPreview} border={35} height={!data.isDynamic ? 500 : 675} > {/* @ts-ignore */}
+          <RenderSamplePreview selected={selected} isDrawed style={{mt: '-15px'}} step={0} onlyQr={selected === 'web' || !data.isDynamic} />
         </RenderPreviewDrawer>
       )}
     </Box>

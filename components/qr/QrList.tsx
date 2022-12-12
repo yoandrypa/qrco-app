@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -17,14 +17,13 @@ import SyncIcon from "@mui/icons-material/Sync";
 import SyncDisabledIcon from "@mui/icons-material/SyncDisabled";
 import Public from "@mui/icons-material/Public";
 import IconButton from "@mui/material/IconButton";
-import { sanitize } from "../../utils";
+import {sanitize} from "../../utils";
 import Link from "next/link";
 import * as QrHandler from "../../handlers/qrs";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import Context from "../context/Context";
 import RenderNewQrButton from "../renderers/RenderNewQrButton";
 import RenderPreview from "./renderers/RenderPreview";
-import { capitalize } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -32,13 +31,10 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { humanDate } from "../helpers/generalFunctions";
-import {
-  handleDesignerString,
-  handleInitialData,
-} from "../../helpers/qr/helpers";
-import DashboardIcon from "@mui/icons-material/Payment";
-import { QR_CONTENT_ROUTE } from "./constants";
+import {humanDate} from "../helpers/generalFunctions";
+import {handleDesignerString, handleInitialData, qrNameDisplayer} from "../../helpers/qr/helpers";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import {QR_CONTENT_ROUTE} from "./constants";
 
 const QrList = ({ qrs, title }: any) => {
   const [deleteConfirm, setDeleteConfirm] = useState<{
@@ -171,7 +167,7 @@ const QrList = ({ qrs, title }: any) => {
       options.image = null;
     }
     options.data = value;
-    return <RenderPreview qrDesign={options} qr={qr} />;
+    return <RenderPreview qrDesign={options} qr={qr} onlyPreview/>;
   };
 
   return (
@@ -217,10 +213,10 @@ const QrList = ({ qrs, title }: any) => {
                           </Box>
                           <Stack direction="column" sx={{ my: "auto" }}>
                             <Typography variant="subtitle2"
-                              sx={{
-                                color: "orange",
-                                mb: "-7px",
-                              }}>{capitalize(qr.qrType)}</Typography>
+                                        sx={{
+                                          color: "orange",
+                                          mb: "-7px",
+                                        }}>{qrNameDisplayer(qr.qrType, qr.isDynamic)}</Typography>
                             <Typography variant="h6" sx={{
                               fontWeight: "bold",
                               mb: "-2px",

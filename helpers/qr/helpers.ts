@@ -9,6 +9,7 @@ import frame6 from '../../components/qr/frames/frame6';
 import frame7 from '../../components/qr/frames/frame7';
 import { DataType, FramesType } from '../../components/qr/types/types';
 import initialOptions from "./data";
+import {capitalize} from "@mui/material";
 
 export const handleDesignerString = (selected: string | null | undefined, data: DataType): string => {
   let designerString = '';
@@ -327,6 +328,17 @@ export const dataCleaner = (options: any, mainObj?: boolean) => {
     });
   }
   return data;
+};
+
+export const qrNameDisplayer = (name: string, isDynamic: boolean): string => {
+  const types = {
+    vcard: 'vCard', sms: 'SMS', wifi: 'WiFi', whatsapp: 'WhatsApp', crypto: 'Crypto Payment', 'vcard+': 'vCard Plus',
+    social: 'Social Networks', link: 'Link-In-Bio', donations: 'Donation', fundme: 'Fund me', paylink: 'Send Me Money',
+    pdf: 'PDF File', audio: 'Audio File', video: 'Video Files'
+  } // @ts-ignore
+  if (types[name] !== undefined) { return types[name]; }
+  if (name === 'web') { return isDynamic ? 'Short URL' : 'Website'; }
+  return capitalize(name);
 }
 
 export const cleanSelectionForMicrositeURL = (item: string): string => {

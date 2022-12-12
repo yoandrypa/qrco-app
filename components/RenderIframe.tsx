@@ -48,8 +48,10 @@ export default function RenderIframe({src, width, height, data, selected}: Ifram
         }
         if (data.foregndImg) { // @ts-ignore
           previewData.foregndImg = await convertBase64(data.foregndImg);
-        } // @ts-ignore
-        if (previewData.files && !previewData.isSample) {
+        }
+
+        // @ts-ignore
+        if (data.files && !data.isSample) {
           const files = [] as string[]; // @ts-ignore
           for (let i = 0, l = data.files.length; i < l; i += 1) { // @ts-ignore
             const x = data.files[i] as File | string;

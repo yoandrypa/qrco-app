@@ -28,6 +28,7 @@ import { DataType, SocialProps } from './types/types';
 import LinksData from "./renderers/LinksData";
 import PleaseWait from "../PleaseWait";
 import RenderNoUserWarning from "./helperComponents/smallpieces/RenderNoUserWarning";
+import {qrNameDisplayer} from "../../helpers/qr/helpers";
 
 type QrContentHandlerProps = {
   data: DataType;
@@ -143,9 +144,9 @@ const QrContentHandler = () => { // @ts-ignore
           <Box sx={{ display: 'inline' }}>
             <RenderIcon icon={selected} enabled adjust />
           </Box>
-          <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{selected?.toUpperCase() || ''}</Typography>
-          <Typography sx={{ display: 'inline' }}>: Enter the QR data</Typography>
-          {data.isDynamic && <NotifyDynamic />}
+          <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{qrNameDisplayer(selected || '', data.isDynamic || false)}</Typography>
+          <Typography sx={{ display: 'inline' }}>: Enter the content</Typography>
+          <NotifyDynamic isDynamic={data.isDynamic || false} />
           <Divider sx={{ my: '10px' }} />
           <Box sx={{ textAlign: 'left', width: '100%' }}>
             {renderSel()}
