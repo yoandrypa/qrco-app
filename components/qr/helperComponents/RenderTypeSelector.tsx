@@ -17,7 +17,7 @@ import {DataType} from "../types/types";
 import RenderPreviewDrawer from "./smallpieces/RenderPreviewDrawer";
 import RenderPreviewButton from "./smallpieces/RenderPreviewButton";
 import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
-import {IS_DEV_ENV} from "../constants";
+import {IS_DEV_ENV, ONLY_QR} from "../constants";
 import RenderProDesc from "./smallpieces/RenderProDesc";
 import RenderFreeDesc from "./smallpieces/RenderFreeDesc";
 
@@ -138,14 +138,15 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
         </>) : null}
       </Grid>
       {IS_DEV_ENV && isWideForPreview && selected && (
-        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '18px', width: '370px'}} onlyQr={!data.isDynamic} step={0} />
+        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '18px', width: '370px'}}
+                             onlyQr={ONLY_QR.includes(selected) || !data.isDynamic} step={0} />
       )}
       {IS_DEV_ENV && !openPreview && !isWideForPreview && selected && ( // @ts-ignore
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Sample"/>
       )}
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer setOpenPreview={setOpenPreview} border={35} height={!data.isDynamic ? 500 : 675} > {/* @ts-ignore */}
-          <RenderSamplePreview selected={selected} isDrawed style={{mt: '-15px'}} step={0} onlyQr={selected === 'web' || !data.isDynamic} />
+          <RenderSamplePreview selected={selected} isDrawed style={{mt: '-15px'}} step={0} onlyQr={[...ONLY_QR, 'web'].includes(selected) || !data.isDynamic} />
         </RenderPreviewDrawer>
       )}
     </Box>
