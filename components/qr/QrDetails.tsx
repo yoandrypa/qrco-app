@@ -20,6 +20,11 @@ import BlockIcon from "@mui/icons-material/Block";
 import { useRouter } from "next/router";
 import Context from "../context/Context";
 import { QR_CONTENT_ROUTE } from "./constants";
+import RenderSamplePreview
+  from "./helperComponents/smallpieces/RenderSamplePreview";
+import { previewQRGenerator } from "../../helpers/qr/auxFunctions";
+import RenderPreviewDrawer
+  from "./helperComponents/smallpieces/RenderPreviewDrawer";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -95,44 +100,54 @@ const QrDetails = ({ visitData, qrData }: any) => {
   ];
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider", width: "100%" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          variant="fullWidth"
-          sx={{ height: "30px", alignItems: "center" }}
+    <Box sx={{ display: "flex" }}>
+      <Box sx={{ width: "100%" }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider", width: "100%" }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            sx={{ height: "30px", alignItems: "center" }}
+          >
+            <Tab icon={<DescriptionIcon fontSize="small"/>} iconPosition="start"
+                 label="Details" sx={{ mt: '-10px', mb: '-15px'}}/>
+            <Tab icon={<QueryStatsIcon fontSize="small"/>} iconPosition="start"
+                 label="Stats" sx={{ mt: '-10px', mb: '-15px'}}/>
+          </Tabs>
+        </Box>
+        <TabPanel value={value} index={0}>
+          <QrDetail qrData={qrData}/>
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <VisitDetailsSections visitData={visitData}/>
+        </TabPanel>
+        <SpeedDial
+          ariaLabel="SpeedDial openIcon example"
+          sx={{ position: "fixed", bottom: 16, right: 16 }}
+          icon={<SpeedDialIcon onClick={() => {
+            setLoading(true);
+            router.replace(
+              "/qr/" + (new Date(qrData.createdAt)).getTime() + "/details").
+              then(() => setLoading(false));
+          }} openIcon={<RefreshIcon/>}/>}
         >
-          <Tab icon={<DescriptionIcon/>} iconPosition="start" label="Details"/>
-          <Tab icon={<QueryStatsIcon/>} iconPosition="start" label="Stats"/>
-        </Tabs>
+          {actions.map((action) => (
+            <SpeedDialAction
+              key={action.name}
+              icon={action.icon}
+              tooltipTitle={action.name}
+              tooltipOpen
+              onClick={action.action}
+            />
+          ))}
+        </SpeedDial>
       </Box>
-      <TabPanel value={value} index={0}>
-        <QrDetail qrData={qrData}/>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <VisitDetailsSections visitData={visitData}/>
-      </TabPanel>
-      <SpeedDial
-        ariaLabel="SpeedDial openIcon example"
-        sx={{ position: "fixed", bottom: 16, right: 16 }}
-        icon={<SpeedDialIcon onClick={() => {
-          setLoading(true);
-          router.replace(
-            "/qr/" + (new Date(qrData.createdAt)).getTime() + "/details").
-            then(() => setLoading(false));
-        }} openIcon={<RefreshIcon/>}/>}
-      >
-        {actions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-            tooltipOpen
-            onClick={action.action}
-          />
-        ))}
-      </SpeedDial>
+      <RenderSamplePreview
+        code={qrData.qrOptionsId?.data ? qrData.qrOptionsId.data.slice(
+          qrData.qrOptionsId.data.lastIndexOf("/") + 1) : qrData.qrType}
+        isDrawed={true} style={{ mt: "-15px" }}
+        data={previewQRGenerator(qrData, qrData.qrType)}
+        qrOptions={qrData.qrOptionsId}
+        onlyQr={qrData.qrType === "web" || !qrData.isDynamic} step={1}/>
     </Box>
   );
 };
