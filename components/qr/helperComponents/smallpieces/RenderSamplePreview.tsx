@@ -23,7 +23,7 @@ import RenderCellPhoneShape from "../RenderCellPhoneShape";
 import dynamic from "next/dynamic";
 import PleaseWait from "../../../PleaseWait";
 
-const RenderIframe = dynamic(() => import('../../../RenderIframe'), {suspense: true, ssr: false});
+const RenderIframe = dynamic(() => import('../../../RenderIframe'), {suspense: true});
 
 interface SamplePrevProps {
   style?: object;
