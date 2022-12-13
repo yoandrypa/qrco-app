@@ -1,4 +1,4 @@
-import {MouseEvent, useState} from "react";
+import {MouseEvent, Suspense, useEffect, useState} from "react";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
@@ -12,7 +12,7 @@ import Typography from "@mui/material/Typography";
 import LinkIcon from "@mui/icons-material/Link";
 import SaveIcon from "@mui/icons-material/Save";
 
-import {NO_MICROSITE, REDEFINE_URL} from "../../constants";
+import {NO_MICROSITE, ONLY_QR, REDEFINE_URL} from "../../constants";
 
 import RenderPreview from "../../renderers/RenderPreview";
 import Notifications from "../../../notifications/Notifications";
@@ -21,8 +21,9 @@ import {DataType} from "../../types/types";
 import RenderCellPhoneShape from "../RenderCellPhoneShape";
 
 import dynamic from "next/dynamic";
+import PleaseWait from "../../../PleaseWait";
 
-const RenderIframe = dynamic(() => import('../../../RenderIframe'), {suspense: false, ssr: false});
+const RenderIframe = dynamic(() => import('../../../RenderIframe'), {suspense: true, ssr: false});
 
 interface SamplePrevProps {
   style?: object;
@@ -54,6 +55,12 @@ const RenderSamplePreview = ({step, onlyQr, data, selected, style, save, code, i
       setPrev(newSel);
     }
   }
+
+  useEffect(() => {
+    if (selected && ONLY_QR.includes(selected) && prev !== 'qr') {
+      setPrev('qr');
+    }
+  }, [selected]);
 
   const URL = selected && REDEFINE_URL.includes(selected) ? getProperSampleUrl(selected) :
     `${process.env.REACT_MICROSITES_ROUTE}/${selected ? `sample/${cleanSelectionForMicrositeURL(selected)}` : code}`;
@@ -119,8 +126,11 @@ const RenderSamplePreview = ({step, onlyQr, data, selected, style, save, code, i
       <Box sx={{width: '270px', p: 1, pt: 0, ml: isDrawed ? '5px' : 0}}>
         {prev === 'preview' ? (
           <RenderCellPhoneShape width={270} height={550} offlineText="The selected card has no available sample">
-            {code || (selected && !NO_MICROSITE.includes(selected)) ?
-                <RenderIframe selected={selected} width="256px" height="536px" src={!code ? URL : `${process.env.REACT_MICROSITES_ROUTE}/sample/empty`} data={data}/> : null}
+            {code || (selected && !NO_MICROSITE.includes(selected)) ? (
+              <Suspense fallback={<PleaseWait />}>
+                <RenderIframe selected={selected} width="256px" height="536px" src={!code ? URL : `${process.env.REACT_MICROSITES_ROUTE}/sample/empty`} data={data}/>
+              </Suspense>
+            ) : null}
           </RenderCellPhoneShape>) : <RenderPreview width={270} qrDesign={qrOptions} override={!qrOptions ? URL : undefined} />}
       </Box>
       {copied && (

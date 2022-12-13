@@ -1,6 +1,19 @@
-import {BackgroundType, CornersAndDotsType, DataType, EditType, FramesType, OptionsType} from "./types/types";
+import {
+  BackgroundType,
+  CornersAndDotsType,
+  DataType,
+  EbanuxDonationPriceData,
+  EditType,
+  FramesType,
+  OptionsType, ProcessHanldlerType
+} from "./types/types";
 import {areEquals} from "../helpers/generalFunctions";
 import {initialBackground, initialFrame} from "../../helpers/qr/data";
+import * as StorageHandler from "../../handlers/storage";
+import * as EbanuxHandler from "../../handlers/ebanux";
+import {getUuid} from "../../helpers/qr/helpers";
+import {generateId, generateShortLink} from "../../utils";
+import * as QrHandler from "../../handlers/qrs";
 
 interface UserInfoProps {
   attributes: { sub: string },
@@ -114,3 +127,195 @@ export const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign:
 
   return objToEdit;
 };
+
+/**
+ * dataInfo would be dataInfo.current.length at QrWizard component
+ * @param data
+ * @param userInfo
+ * @param options
+ * @param frame
+ * @param background
+ * @param cornersData
+ * @param dotsData
+ * @param selected
+ * @param setLoading
+ * @param setIsError
+ * @param router
+ * @param lastStep
+ * @param dataInfo
+ * @param updatingHandler
+ */
+export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, options: OptionsType, frame: FramesType,
+                                   background: BackgroundType, cornersData: CornersAndDotsType,
+                                   dotsData: CornersAndDotsType, selected: string,
+                                   setLoading: (loading: boolean) => void, setIsError: (isError: boolean) => void,
+                                   router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
+                                   updatingHandler?: (value: string | null, status?: boolean) => void) => {
+  const prevUpdatingHandler = (value: string | null, status?: boolean) => {
+    if (updatingHandler) {
+      updatingHandler(value, status);
+    }
+  }
+
+  const dataLength = updatingHandler !== undefined && dataInfo !== undefined && dataInfo > 0;
+
+  if (updatingHandler && ["pdf", "audio", "gallery", "video"].includes(selected)) { //Process assets before saving de QR Data
+    updatingHandler("Uploading assets");
+    try { // @ts-ignore
+      data["files"] = await StorageHandler.upload(data["files"], `${userInfo.attributes.sub}/${selected}s`);
+      updatingHandler(null, true);
+    } catch {
+      updatingHandler(null, false);
+    }
+  }
+
+  if (data.backgndImg !== undefined) {
+    if (!Array.isArray(data.backgndImg)) {
+      prevUpdatingHandler("Uploading background image");
+      try { // @ts-ignore
+        data.backgndImg = await StorageHandler.upload([data.backgndImg], `${userInfo.attributes.sub}/${selected}s/design`);
+        prevUpdatingHandler(null, true);
+      } catch {
+        prevUpdatingHandler(null, false);
+      }
+    } else {
+      delete data.backgndImg;
+    }
+  }
+  if (data.prevBackImg !== undefined) {
+    prevUpdatingHandler("Removing previous background image");
+    try {
+      await StorageHandler.remove([{ Key: data.prevBackImg }]);
+      delete data.prevBackImg;
+      prevUpdatingHandler(null, true);
+    } catch {
+      prevUpdatingHandler(null, false);
+    }
+  }
+
+  if (data.foregndImg !== undefined) {
+    if (!Array.isArray(data.foregndImg)) {
+      prevUpdatingHandler("Uploading main image");
+      try { // @ts-ignore
+        data.foregndImg = await StorageHandler.upload([data.foregndImg], `${userInfo.attributes.sub}/${selected}s/design`);
+        prevUpdatingHandler(null, true);
+      } catch {
+        prevUpdatingHandler(null, false);
+      }
+    } else {
+      delete data.foregndImg;
+    }
+  }
+  if (data.prevForeImg !== undefined) {
+    prevUpdatingHandler("Deleting previous main image");
+    try {
+      await StorageHandler.remove([{ Key: data.prevForeImg }]);
+      delete data.prevForeImg;
+      prevUpdatingHandler(null, true);
+    } catch {
+      prevUpdatingHandler(null, false);
+    }
+  }
+
+  if (selected === "donation") {
+    let priceData: EbanuxDonationPriceData;
+    priceData = {
+      name: `Donate ${data["title"]}` || "Donation",
+      unitAmountUSD: data["donationUnitAmount"] || 1,
+      redirectUrl: data["web"] || ""
+    };
+    if (data["donationPriceId"]) {
+      try {
+        prevUpdatingHandler("Updating donation payment data");
+        prevUpdatingHandler(null, true);
+      } catch (error) {
+        setIsError(true);
+        prevUpdatingHandler(null, false);
+      }
+
+    } else {
+
+      try {
+        prevUpdatingHandler("Creating Donation microsite");
+        const temp = (process.env.REACT_NODE_ENV != 'production') ?
+          userInfo.signInUserSession.idToken.jwtToken :
+          userInfo.signInUserSession.accessToken.jwtToken;
+        const price = await EbanuxHandler.createEbanuxDonationPrice(userInfo.attributes.sub,
+          temp,
+          priceData);
+        data["donationPriceId"] = price.result.price.id;
+        data["donationProductId"] = price.result.product.id;
+        prevUpdatingHandler(null, true)
+      } catch (error) {
+        setIsError(true);
+        console.log(error)
+        prevUpdatingHandler(null, false)
+      }
+    }
+  }
+
+  let shortLink;
+  const qrData = { ...data, qrType: selected };
+  const qrDesign = { ...options };
+
+  if (data.mode === undefined) {
+    const qrDesignId = getUuid();
+    const qrId = options.id || getUuid(); // @ts-ignore
+    qrData.qrOptionsId = qrDesignId;
+    qrData.userId = userInfo.attributes.sub;
+
+    if (data.isDynamic) { // @ts-ignore
+      qrData.shortLinkId = { userId: userInfo.attributes.sub, createdAt: Date.now() };
+      shortLink = {
+        target: generateShortLink(`qr/${qrId}`),
+        address: options.shortCode || await generateId(), // @ts-ignore
+        ...qrData.shortLinkId
+      };
+    }
+    qrDesign.id = qrDesignId;
+  }
+
+  cleaner(qrDesign, background, frame, cornersData, dotsData, data.mode === 'edit');
+
+  try {
+    let edition = false;
+    if (data.mode === undefined) {
+      if (dataLength) {
+        prevUpdatingHandler("Saving QR Code data");
+      }
+      await QrHandler.create({ shortLink, qrDesign, qrData });
+    } else {
+      edition = true;
+      if (dataLength) {
+        prevUpdatingHandler("Updating QR Code data");
+      }
+
+      delete data.mode;
+      delete qrData.mode;
+
+      const objToEdit = generateObjectToEdit(qrData, data, qrDesign);
+      finalCleanForEdtion(objToEdit);
+
+      await QrHandler.edit(objToEdit);
+    }
+
+    if (dataLength) {
+      prevUpdatingHandler(null, true);
+    } else if (lastStep !== undefined && router !== undefined) {
+      if (!edition) {
+        lastStep(true);
+      } else {
+        router.replace("/").then(() => setLoading(false));
+      }
+    }
+  } catch {
+    if (dataLength) {
+      prevUpdatingHandler(null, false);
+    }
+    setIsError(true);
+    setLoading(false);
+  }
+  if (dataLength) {
+    prevUpdatingHandler("done");
+  }
+}
