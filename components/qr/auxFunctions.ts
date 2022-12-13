@@ -5,7 +5,7 @@ import {
   EbanuxDonationPriceData,
   EditType,
   FramesType,
-  OptionsType, ProcessHanldlerType
+  OptionsType
 } from "./types/types";
 import {areEquals} from "../helpers/generalFunctions";
 import {initialBackground, initialFrame} from "../../helpers/qr/data";
