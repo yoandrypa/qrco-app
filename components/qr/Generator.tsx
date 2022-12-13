@@ -8,25 +8,29 @@ import CropFreeIcon from '@mui/icons-material/CropFree';
 import PrintIcon from '@mui/icons-material/Print';
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+import dynamic from "next/dynamic";
+
 import {Accordion, AccordionDetails, AccordionSummary} from '../renderers/Renderers';
 
 import {checkForAlpha, convertBase64, downloadAsSVGOrVerify, handleDesignerString} from '../../helpers/qr/helpers';
 import {OptionsType} from './types/types';
-import Code from './sections/Code';
-import Frames from './sections/Frames';
-import Logos from './sections/Logos';
+
 import QrGenerator from './QrGenerator';
 import {initialBackground, initialFrame} from '../../helpers/qr/data';
-import RenderDownload from './helperComponents/RenderDownload';
-import PDFGenDlg from './helperComponents/PDFGenDlg';
 import Context from '../context/Context';
-import RenderNoUserWarning from "./helperComponents/smallpieces/RenderNoUserWarning";
 import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
-import Notifications from "../../components/notifications/Notifications";
 import {FRAMES_LENGTH} from "./constants";
 import {GeneratorProps, GenProps} from "./auxFunctions";
-import RenderPreviewDrawer from "./helperComponents/smallpieces/RenderPreviewDrawer";
-import RenderPreviewButton from "./helperComponents/smallpieces/RenderPreviewButton";
+
+const PDFGenDlg = dynamic(() => import('./helperComponents/PDFGenDlg'));
+const RenderDownload = dynamic(() => import('./helperComponents/RenderDownload'));
+const Notifications = dynamic(() => import('../../components/notifications/Notifications'));
+const RenderPreviewButton = dynamic(() => import('./helperComponents/smallpieces/RenderPreviewButton'));
+const RenderPreviewDrawer = dynamic(() => import('./helperComponents/smallpieces/RenderPreviewDrawer'));
+const RenderNoUserWarning = dynamic(() => import('./helperComponents/smallpieces/RenderNoUserWarning'));
+const Code = dynamic(() => import('./sections/Code'));
+const Frames = dynamic(() => import('./sections/Frames'));
+const Logos = dynamic(() => import('./sections/Logos'));
 
 const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
   const { options, setOptions, background, setBackground, frame, setFrame, data, selected, userInfo, cornersData,

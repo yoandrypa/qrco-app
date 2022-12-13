@@ -140,6 +140,7 @@ export const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign:
  * @param selected
  * @param setLoading
  * @param setIsError
+ * @param success
  * @param router
  * @param lastStep
  * @param dataInfo
@@ -149,7 +150,7 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
                                    background: BackgroundType, cornersData: CornersAndDotsType,
                                    dotsData: CornersAndDotsType, selected: string,
                                    setLoading: (loading: boolean) => void, setIsError: (isError: boolean) => void,
-                                   router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
+                                   success?: () => void, router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
                                    updatingHandler?: (value: string | null, status?: boolean) => void) => {
   const prevUpdatingHandler = (value: string | null, status?: boolean) => {
     if (updatingHandler) {
@@ -237,7 +238,7 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
 
       try {
         prevUpdatingHandler("Creating Donation microsite");
-        const temp = (process.env.REACT_NODE_ENV != 'production') ?
+        const temp = (process.env.REACT_NODE_ENV !== 'production') ?
           userInfo.signInUserSession.idToken.jwtToken :
           userInfo.signInUserSession.accessToken.jwtToken;
         const price = await EbanuxHandler.createEbanuxDonationPrice(userInfo.attributes.sub,
@@ -284,6 +285,7 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
         prevUpdatingHandler("Saving QR Code data");
       }
       await QrHandler.create({ shortLink, qrDesign, qrData });
+      if (success) { success(); }
     } else {
       edition = true;
       if (dataLength) {

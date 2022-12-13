@@ -27,7 +27,7 @@ const RenderIframe = dynamic(() => import('../../../RenderIframe'), {suspense: t
 
 interface SamplePrevProps {
   style?: object;
-  save?: Function;
+  save?: () => void;
   saveDisabled?: boolean;
   isDrawed?: boolean;
   data?: DataType;
@@ -119,7 +119,7 @@ const RenderSamplePreview = ({step, onlyQr, data, selected, style, save, code, i
           </ToggleButton>
         </ToggleButtonGroup>
         {save && (
-          <Button startIcon={<SaveIcon fontSize="small" sx={{mb: '1px'}} />} variant="contained"
+          <Button startIcon={<SaveIcon fontSize="small" sx={{mb: '1px'}} />} variant="contained" onClick={save}
                   sx={{height: '23px', ml: '5px'}} disabled={saveDisabled}>{'SAVE'}</Button>
         )}
       </Box>

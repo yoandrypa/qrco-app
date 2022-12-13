@@ -14,12 +14,15 @@ import {styled} from "@mui/material/styles";
 import Context from "../../context/Context";
 import {DataType} from "../types/types";
 
-import RenderPreviewDrawer from "./smallpieces/RenderPreviewDrawer";
-import RenderPreviewButton from "./smallpieces/RenderPreviewButton";
-import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
+import dynamic from "next/dynamic";
+
 import {IS_DEV_ENV, ONLY_QR} from "../constants";
 import RenderProDesc from "./smallpieces/RenderProDesc";
 import RenderFreeDesc from "./smallpieces/RenderFreeDesc";
+
+const RenderPreviewDrawer = dynamic(() => import('./smallpieces/RenderPreviewDrawer'));
+const RenderPreviewButton = dynamic(() => import('./smallpieces/RenderPreviewButton'));
+const RenderSamplePreview = dynamic(() => import('./smallpieces/RenderSamplePreview'));
 
 interface RenderTypeSelectorProps {
   selected?: string | null;

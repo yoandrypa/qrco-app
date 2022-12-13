@@ -4,31 +4,33 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 
 import RenderIcon from './helperComponents/smallpieces/RenderIcon';
-
 import Context from '../context/Context';
-import SingleData from './renderers/SingleData';
-import WhatsAppData from './renderers/WhatsAppData';
-import FacebookData from './renderers/FacebookData';
-import WifiData from './renderers/WifiData';
-import CardData from './renderers/CardData';
-import EmailData from './renderers/EmailData';
-import SMSData from './renderers/SMSData';
-import TwitterData from './renderers/TwitterData';
-import AssetData from './renderers/AssetData';
-import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
-import BusinessData from "./renderers/BusinessData";
-import NetworksData from "./renderers/NetworksData.";
-import CouponData from "./renderers/CouponData";
-import DonationsData, { DonationsProps } from './renderers/DonationsData';
-import CryptoData from './renderers/CryptoData';
-import SendMeMoneyData from './renderers/SendMeMoneyData';
-import FundMe from './renderers/FundMeData';
-
 import { DataType, SocialProps } from './types/types';
-import LinksData from "./renderers/LinksData";
-import PleaseWait from "../PleaseWait";
-import RenderNoUserWarning from "./helperComponents/smallpieces/RenderNoUserWarning";
+
+import dynamic from "next/dynamic";
+
+import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
+import DonationsData, { DonationsProps } from './renderers/DonationsData';
 import {qrNameDisplayer} from "../../helpers/qr/helpers";
+
+const SingleData = dynamic(() => import('./renderers/SingleData'));
+const WhatsAppData = dynamic(() => import('./renderers/WhatsAppData'));
+const FacebookData = dynamic(() => import('./renderers/FacebookData'));
+const WifiData = dynamic(() => import('./renderers/WifiData'));
+const CardData = dynamic(() => import('./renderers/CardData'));
+const EmailData = dynamic(() => import('./renderers/EmailData'));
+const SMSData = dynamic(() => import('./renderers/SMSData'));
+const TwitterData = dynamic(() => import('./renderers/TwitterData'));
+const AssetData = dynamic(() => import('./renderers/AssetData'));
+const BusinessData = dynamic(() => import('./renderers/BusinessData'));
+const NetworksData = dynamic(() => import('./renderers/NetworksData'));
+const CouponData = dynamic(() => import('./renderers/CouponData'));
+const CryptoData = dynamic(() => import('./renderers/CryptoData'));
+const SendMeMoneyData = dynamic(() => import('./renderers/SendMeMoneyData'));
+const FundMe = dynamic(() => import('./renderers/FundMeData'));
+const LinksData = dynamic(() => import('./renderers/LinksData'));
+const PleaseWait = dynamic(() => import('../PleaseWait'));
+const RenderNoUserWarning = dynamic(() => import('./helperComponents/smallpieces/RenderNoUserWarning'));
 
 type QrContentHandlerProps = {
   data: DataType;

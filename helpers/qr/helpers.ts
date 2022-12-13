@@ -344,7 +344,7 @@ export const qrNameDisplayer = (name: string, isDynamic: boolean): string => {
 export const cleanSelectionForMicrositeURL = (item: string): string => {
   if (item === 'vcard+') { return 'vcard'; }
   if (item === 'link') { return 'links'; }
-  if (item === 'donation') { return 'donation'; }
+  if (item === 'donation') { return 'donations'; }
   return item;
 };
 
