@@ -5,9 +5,9 @@ describe('Static QR code', () => {
   })
 
   it('Complete Content',() =>{
-    cy.get('.css-1gvpih1-MuiButtonBase-root-MuiTab-root').click();// > .MuiBadge-root > .MuiTypography-root').click();
+    cy.get('.css-1gvpih1-MuiButtonBase-root-MuiTab-root').click();
     cy.get(':nth-child(2) > .css-b69al4 > .css-1ckupud > .css-cblyn4 > .MuiBox-root > .MuiTypography-root').click();
-    cy.get('body').contains('Next').click();
+    cy.get('#buttonNext').click();
     cy.get('#\\:r3\\:').should('have.value', '').type('https://server.cenit.io');
     cy.get('body').contains('Next').click();
   })
