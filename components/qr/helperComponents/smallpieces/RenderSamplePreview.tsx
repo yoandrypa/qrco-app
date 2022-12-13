@@ -1,4 +1,4 @@
-import {MouseEvent, Suspense, useState} from "react";
+import {MouseEvent, useState} from "react";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
@@ -45,7 +45,7 @@ interface WithSCode extends SamplePrevProps {
   code: string;
 }
 
-export default function RenderSamplePreview({step, onlyQr, data, selected, style, save, code, isDrawed, saveDisabled, qrOptions}: WithSelection | WithSCode) {
+const RenderSamplePreview = ({step, onlyQr, data, selected, style, save, code, isDrawed, saveDisabled, qrOptions}: WithSelection | WithSCode) => {
   const [prev, setPrev] = useState<string>(!onlyQr ? 'preview' : 'qr');
   const [copied, setCopied] = useState<boolean>(false);
 
@@ -120,9 +120,7 @@ export default function RenderSamplePreview({step, onlyQr, data, selected, style
         {prev === 'preview' ? (
           <RenderCellPhoneShape width={270} height={550} offlineText="The selected card has no available sample">
             {code || (selected && !NO_MICROSITE.includes(selected)) ?
-              <Suspense fallback={'Loading...'}>
-                <RenderIframe selected={selected} width="256px" height="536px" src={!code ? URL : `${process.env.REACT_MICROSITES_ROUTE}/sample/empty`} data={data}/>
-              </Suspense> : null}
+                <RenderIframe selected={selected} width="256px" height="536px" src={!code ? URL : `${process.env.REACT_MICROSITES_ROUTE}/sample/empty`} data={data}/> : null}
           </RenderCellPhoneShape>) : <RenderPreview width={270} qrDesign={qrOptions} override={!qrOptions ? URL : undefined} />}
       </Box>
       {copied && (
@@ -137,3 +135,5 @@ export default function RenderSamplePreview({step, onlyQr, data, selected, style
     </Box>
   );
 }
+
+export default RenderSamplePreview;

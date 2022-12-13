@@ -13,7 +13,7 @@ interface IframeProps {
   selected?: string;
 }
 
-const style= {
+const style = {
   m: 0,
   position: 'absolute',
   top: '50%',
@@ -22,22 +22,13 @@ const style= {
   textAlign: 'center'
 };
 
-export default function RenderIframe({src, width, height, data, selected}: IframeProps) {
+const RenderIframe = ({src, width, height, data, selected}: IframeProps) => {
   const [whatToRender, setWhatToRender] = useState<string | null>(null);
   const [error, setError] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const iRef = useRef<HTMLIFrameElement | null>(null);
-
-  const handleLoad = () => {
-    setIsLoading(false);
-  }
-
-  const handleError = () => {
-    setIsLoading(false);
-    setError(true);
-  }
 
   useEffect(() => {
     if (data && isReady) {
@@ -48,21 +39,24 @@ export default function RenderIframe({src, width, height, data, selected}: Ifram
         }
         if (data.foregndImg) { // @ts-ignore
           previewData.foregndImg = await convertBase64(data.foregndImg);
-        }
-
-        // @ts-ignore
-        if (data.files && !data.isSample) {
-          const files = [] as string[]; // @ts-ignore
-          for (let i = 0, l = data.files.length; i < l; i += 1) { // @ts-ignore
-            const x = data.files[i] as File | string;
-            if (typeof x === 'string') { // @ts-ignore
-              files.push(x);
-            } else { // @ts-ignore
-              files.push(await convertBase64(x));
+        } // @ts-ignore
+        if (data.files) {
+          let files: string[] = []; // @ts-ignore
+          if (!data.isSample) {
+          for (let i = 0, l = data.files.length; i < l; i += 1) {
+            const x = data.files[i] as File | string; // @ts-ignore
+              if (typeof x === 'string') { // @ts-ignore
+                files.push(x);
+              } else { // @ts-ignore
+                files.push(await convertBase64(x));
+              }
             }
+          }  else { // @ts-ignore
+            files = data.files;
           } // @ts-ignore
           previewData.files = files;
-        } // @ts-ignore
+        }
+        // @ts-ignore
         iRef.current.contentWindow.postMessage(JSON.stringify({previewData}), process.env.REACT_MICROSITES_ROUTE);
       }, 50);
     }
@@ -70,12 +64,10 @@ export default function RenderIframe({src, width, height, data, selected}: Ifram
 
   useEffect(() => {
     const handler = (event: any) => {
-      if (event.origin.replace('https://www.', 'https://') === process.env.REACT_MICROSITES_ROUTE) {
+      if (!isReady && event.origin.replace('https://www.', 'https://') === process.env.REACT_MICROSITES_ROUTE) {
         try {
           const dataFromOutside = JSON.parse(event.data);
-          if (dataFromOutside.error) {
-            setWhatToRender(dataFromOutside.message);
-          } else if (dataFromOutside.ready && iRef.current?.contentWindow) {
+          if (dataFromOutside.ready && iRef.current?.contentWindow) {
             iRef.current.contentWindow.postMessage(JSON.stringify({ parentWidth: width, parentHeight: height }), '*');
           } else if (dataFromOutside.readyForDuty) {
             setIsReady(true);
@@ -99,6 +91,15 @@ export default function RenderIframe({src, width, height, data, selected}: Ifram
   useEffect(() => {
     setIsLoading(true);
   }, [selected]);
+
+  const handleLoad = () => {
+    setIsLoading(false);
+  }
+
+  const handleError = () => {
+    setIsLoading(false);
+    setError(true);
+  }
 
   if (whatToRender !== null || error) {
     return (
@@ -142,3 +143,5 @@ export default function RenderIframe({src, width, height, data, selected}: Ifram
     </>
   );
 }
+
+export default RenderIframe;
