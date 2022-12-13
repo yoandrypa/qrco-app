@@ -1,0 +1,15 @@
+name: Cypress E2E tests
+on: [pull_request]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          install: yarn install
+          build: yarn run build
+          start: yarn start
