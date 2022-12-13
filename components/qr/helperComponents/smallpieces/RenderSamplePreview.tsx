@@ -60,7 +60,7 @@ const RenderSamplePreview = ({step, onlyQr, data, selected, style, save, code, i
     if (selected && ONLY_QR.includes(selected) && prev !== 'qr') {
       setPrev('qr');
     }
-  }, [selected]);
+  }, [selected]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const URL = selected && REDEFINE_URL.includes(selected) ? getProperSampleUrl(selected) :
     `${process.env.REACT_MICROSITES_ROUTE}/${selected ? `sample/${cleanSelectionForMicrositeURL(selected)}` : code}`;
