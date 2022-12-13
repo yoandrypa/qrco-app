@@ -83,8 +83,8 @@ const QrWizard = ({ children }: QrWizardProps) => {
         router.push(QR_CONTENT_ROUTE, undefined, { shallow: true }).then(() => setLoading(false));
       }
     } else if (step === 2 && isLogged) {
-      saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setIsError,
-        router, lastStep, dataInfo.current.length, updatingHandler);
+      await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setIsError,
+        undefined, router, lastStep, dataInfo.current.length, updatingHandler);
     } else if (step === 2 && !isLogged) {
       lastStep(false);
     } else {

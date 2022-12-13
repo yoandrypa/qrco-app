@@ -8,16 +8,19 @@ import WallpaperIcon from '@mui/icons-material/Wallpaper';
 import ImageIcon from '@mui/icons-material/Image';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
-
-import RenderImagePicker from "./helpers/RenderImagePicker";
 import Tooltip from "@mui/material/Tooltip";
-import RenderImgPreview from "./helpers/RenderImgPreview";
-import RenderForeImgTypePicker from "./helpers/RenderForeImgTypePicker";
 import CircularProgress from "@mui/material/CircularProgress";
-import ImageCropper from "./helpers/ImageCropper";
-import RenderColorsAndBackgnd from "./helpers/RenderColorsAndBackgnd";
-import {DataType} from "../types/types";
 import useMediaQuery from "@mui/material/useMediaQuery";
+
+import RenderColorsAndBackgnd from "./helpers/RenderColorsAndBackgnd";
+
+import dynamic from "next/dynamic";
+import {DataType} from "../types/types";
+
+const RenderImagePicker = dynamic(() =>  import('./helpers/RenderImagePicker'));
+const RenderImgPreview = dynamic(() => import('./helpers/RenderImgPreview'));
+const RenderForeImgTypePicker = dynamic(() => import ('./helpers/RenderForeImgTypePicker'));
+const ImageCropper = dynamic(() => import('./helpers/ImageCropper'));
 
 interface QRCommonsProps {
   omitPrimaryImg?: boolean;

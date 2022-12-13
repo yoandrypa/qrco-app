@@ -157,9 +157,7 @@ const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign
             <QRRender qrData={current || ''} width={width || 70} alt={name} {...qrProps}/>
             {!onlyPreview && <Box sx={{ pl: '18px' }}>{renderDownload()}</Box>}
           </>
-        ) : (
-          <CircularProgress color="primary" sx={{ml: '10px', my: 'auto'}}/>
-        )}
+        ) : <CircularProgress color="primary" sx={{ml: '10px', my: 'auto'}}/>}
       </Box>)}
       {(preview || externalDesign !== undefined) && (
         <Dialog onClose={handlePreView} open={true} onKeyDown={getJson}>

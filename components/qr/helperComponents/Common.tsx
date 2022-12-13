@@ -1,4 +1,4 @@
-import {ReactNode, useCallback, useContext, useEffect, useState} from "react";
+import {ReactNode, useCallback, useContext, useEffect, useRef, useState} from "react";
 import Typography from "@mui/material/Typography";
 import InputAdornment from "@mui/material/InputAdornment";
 import ArticleIcon from '@mui/icons-material/Article';
@@ -6,19 +6,23 @@ import DesignServicesIcon from '@mui/icons-material/DesignServices';
 import TextField from "@mui/material/TextField";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
+import dynamic from "next/dynamic";
 
 import Context from "../../context/Context";
 import RenderQRCommons from "../renderers/RenderQRCommons";
 import {DEFAULT_COLORS, IS_DEV_ENV, NO_MICROSITE} from "../constants";
 import {download} from "../../../handlers/storage";
-import Notifications from "../../notifications/Notifications";
 import {DataType} from "../types/types";
-import Box from "@mui/material/Box";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import RenderPreviewDrawer from "./smallpieces/RenderPreviewDrawer";
-import RenderPreviewButton from "./smallpieces/RenderPreviewButton";
-import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
 import {previewQRGenerator} from "../../../helpers/qr/auxFunctions";
+import {saveOrUpdate} from "../auxFunctions";
+
+const Notifications = dynamic(() => import('../../notifications/Notifications'));
+const RenderPreviewDrawer = dynamic(() => import('./smallpieces/RenderPreviewDrawer'));
+const RenderPreviewButton = dynamic(() => import('./smallpieces/RenderPreviewButton'));
+const RenderSamplePreview = dynamic(() => import('./smallpieces/RenderSamplePreview'));
 
 interface CommonProps {
   msg: string;
@@ -26,14 +30,16 @@ interface CommonProps {
 }
 
 function Common({msg, children}: CommonProps) { // @ts-ignore
-  const {selected, data, setData, userInfo, options, isWrong, background, frame, cornersData, dotsData} = useContext(Context);
+  const {selected, data, setData, userInfo, options, isWrong, background, frame, cornersData, dotsData, setLoading} = useContext(Context);
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLocalLoading] = useState<boolean>(false);
   const [backImg, setBackImg] = useState<any>(undefined);
   const [foreImg, setForeImg] = useState<any>(undefined);
   const [error, setError] = useState<boolean>(false);
   const [tabSelected, setTabSelected] = useState<number>(0);
   const [openPreview, setOpenPreview] = useState<boolean>(false);
+
+  const lastAction = useRef<string | undefined>(undefined);
 
   const isWideForPreview = useMediaQuery("(min-width:720px)", { noSsr: true });
 
@@ -70,9 +76,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           return tempo;
         })
       } else {
-        setData((prev: any) => ({
-          ...prev, [prop]: payload.target?.value !== undefined ? payload.target.value : payload
-        }));
+        setData((prev: any) => ({ ...prev, [prop]: payload.target?.value !== undefined ? payload.target.value : payload }));
       }
     } else if (payload.p !== DEFAULT_COLORS.p || payload.s !== DEFAULT_COLORS.s) {
       const isMain = prop === 'both';
@@ -94,6 +98,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
 
   const getFiles = useCallback(async (key: string, item: string) => {
     try {
+      lastAction.current = 'loading the background/main images';
       const fileData = await download(key);
       if (item === 'backgndImg') { // @ts-ignore
         setBackImg(fileData.content);
@@ -113,11 +118,11 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   useEffect(() => {
     if (data.mode === 'edit') {
       if (data.backgndImg) {
-        setLoading(true);
+        setLocalLoading(true);
         getFiles(data.backgndImg[0].Key, 'backgndImg');
       }
       if (data.foregndImg) {
-        setLoading(true);
+        setLocalLoading(true);
         getFiles(data.foregndImg[0].Key, 'foregndImg');
       }
     }
@@ -125,7 +130,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
 
   useEffect(() => {
     if ((backImg !== undefined && !data.foregndImg) || (foreImg !== undefined && !data.backgndImg) || (foreImg !== undefined && backImg !== undefined)) {
-      setLoading(false);
+      setLocalLoading(false);
     }
   }, [backImg, foreImg]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -138,7 +143,16 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     {children}
   </>);
 
-  const handleSave = () => {}
+  const handleSave = async () => {
+    lastAction.current = 'saving the data';
+    setLoading(true);
+    await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setError, () => {
+      if (data.mode === undefined) {
+        setData((prev: DataType) => ({...prev, mode: 'edit'}));
+      }
+      setLoading(false);
+    });
+  };
 
   const optionsForPreview = () => ({...options, background, frame, corners: cornersData, cornersDot: dotsData});
 
@@ -147,7 +161,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       {error && (
         <Notifications
           title="Something went wrong"
-          message="There was an error loading the background/main images"
+          message={`There was an error ${lastAction.current}`}
           onClose={() => setError(false)}
           vertical="bottom"
           horizontal="center"

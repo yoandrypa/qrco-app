@@ -1,18 +1,15 @@
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 
 import { Amplify, Auth } from "aws-amplify";
-
 import Context from "./Context";
 import { initialData, initialBackground, initialFrame } from "../../helpers/qr/data";
 import { BackgroundType, CornersAndDotsType, DataType, FramesType, OptionsType } from "../qr/types/types";
 import { PARAM_QR_TEXT, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE, QR_TYPE_ROUTE } from "../qr/constants";
 import AppWrapper from "../AppWrapper";
 import awsExports from "../../libs/aws/aws-exports";
-import PleaseWait from "../PleaseWait";
-import Generator from "../qr/Generator";
-import Loading from "../Loading";
 import {
   dataCleaner,
   getBackgroundObject,
@@ -20,6 +17,10 @@ import {
   getFrameObject,
   handleInitialData
 } from "../../helpers/qr/helpers";
+
+const Loading = dynamic(() => import('../Loading'));
+const PleaseWait = dynamic(() => import('../PleaseWait'));
+const Generator = dynamic(() => import('../qr/Generator'));
 
 Amplify.configure(awsExports);
 
