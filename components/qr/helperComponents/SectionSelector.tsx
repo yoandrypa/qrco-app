@@ -8,6 +8,7 @@ import Tooltip from "@mui/material/Tooltip";
 
 import Notifications from '../../../components/notifications/Notifications';
 import RenderIcon from "./smallpieces/RenderIcon";
+import {readableFileSize} from "../auxFunctions";
 
 interface SectionSelectorProps {
   handleSelect: Function;
@@ -118,7 +119,7 @@ const SectionSelector = ({w, h, mw, label, handleSelect, icon, selected, isUploa
       {error && (
         <Notifications onClose={() => {
           setError(false);
-        }} message={`The selected file is larger than ${maxSize || 30} kilobytes.`}/>
+        }} message={`The selected file is larger than ${readableFileSize(maxSize || 30720)}.`}/>
       )}
     </Box>
   );
