@@ -3,13 +3,10 @@ import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Badge from '@mui/material/Badge';
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import TypeSelector from "./TypeSelector";
 import Box from "@mui/material/Box";
-import {blue} from "@mui/material/colors";
-import {styled} from "@mui/material/styles";
 
 import Context from "../../context/Context";
 import {DataType} from "../types/types";
@@ -19,10 +16,11 @@ import dynamic from "next/dynamic";
 import {IS_DEV_ENV, ONLY_QR} from "../constants";
 import RenderProDesc from "./smallpieces/RenderProDesc";
 import RenderFreeDesc from "./smallpieces/RenderFreeDesc";
+import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
+import {MyBadge} from "./smallpieces/StyledComponents";
 
 const RenderPreviewDrawer = dynamic(() => import('./smallpieces/RenderPreviewDrawer'));
 const RenderPreviewButton = dynamic(() => import('./smallpieces/RenderPreviewButton'));
-const RenderSamplePreview = dynamic(() => import('./smallpieces/RenderSamplePreview'));
 
 interface RenderTypeSelectorProps {
   selected?: string | null;
@@ -34,17 +32,6 @@ interface ContextData {
   data: DataType;
   setData: (vale: DataType) => void;
 }
-
-const MyBadge = styled(Badge)(({pro}: { pro?: boolean }) => ({
-  '& .MuiBadge-badge': {
-    top: 11,
-    right: pro ? -20 : -22,
-    height: 18,
-    fontSize: '0.55rem',
-    borderRadius: '4px',
-    background: pro ? '#000' : blue[800]
-  }
-}));
 
 const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) => { // @ts-ignore
   const {data, setData}: ContextData = useContext(Context);

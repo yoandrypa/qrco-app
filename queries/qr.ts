@@ -15,11 +15,15 @@ export const create = async (data: { shortLink: ObjectType; qrDesign: ObjectType
     if (data.qrDesign) {
       transactions.push(QrOptionsModel.transaction.create(data.qrDesign));
     }
+    const creationDate = Date.now();
     if (data.qrData) {
-      data.qrData.createdAt = Date.now();
+      data.qrData.createdAt = creationDate;
       transactions.push(QrDataModel.transaction.create(data.qrData));
     }
-    return await dynamoose.transaction(transactions);
+
+    const txResponse = await dynamoose.transaction(transactions);
+
+    return {...txResponse, creationDate};
   } catch (e) {
     throw e;
   }
