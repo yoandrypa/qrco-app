@@ -119,8 +119,9 @@ const RenderSamplePreview = ({step, onlyQr, data, selected, style, save, code, i
           </ToggleButton>
         </ToggleButtonGroup>
         {save && (
-          <Button startIcon={<SaveIcon fontSize="small" sx={{mb: '1px'}} />} variant="contained" onClick={save}
-                  sx={{height: '23px', ml: '5px'}} disabled={saveDisabled}>{'SAVE'}</Button>
+          <Button variant="contained" onClick={save} sx={{height: '24px', ml: '5px'}} disabled={saveDisabled}>
+            <SaveIcon fontSize="small" sx={{mb: '1px'}} />
+          </Button>
         )}
       </Box>
       <Box sx={{width: '270px', p: 1, pt: 0, ml: isDrawed ? '5px' : 0}}>

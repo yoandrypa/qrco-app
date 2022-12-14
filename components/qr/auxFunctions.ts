@@ -66,7 +66,7 @@ export interface GenProps {
 
 export const steps = ["Type", "Content", "QR Design"];
 
-export const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame: FramesType,
+const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame: FramesType,
   cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, edit: boolean): void => {
   if (!areEquals(frame, initialFrame)) {
     qrDesign.frame = frame;
@@ -94,20 +94,7 @@ export const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame
   }
 };
 
-export const finalCleanForEdtion = (objToEdit: EditType) => {
-  if (objToEdit.qrOptionsId?.background?.backColor === null) {
-    objToEdit.qrOptionsId.background.backColor = '';
-  }
-  if (objToEdit.qrOptionsId?.background?.file === null) {
-    objToEdit.qrOptionsId.background.file = '';
-  }
-  if (objToEdit.background !== undefined && objToEdit.qrOptionsId?.background !== undefined &&
-    objToEdit.background.type === 'image' && objToEdit.qrOptionsId.background === 'solid') {
-    objToEdit.background = initialBackground;
-  }
-}
-
-export const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: OptionsType): EditType => {
+const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: OptionsType): EditType => {
   const objToEdit = {
     ...qrData,
     userId: qrDesign.userId,
@@ -116,14 +103,25 @@ export const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign:
     qrName: qrData.qrName
   } as EditType;
 
-  if (objToEdit.updatedAt) {
-    delete objToEdit.updatedAt;
-  }
-  if (data.isDynamic) {
-    objToEdit.isDynamic = true;
-  }
+  if (objToEdit.updatedAt) { delete objToEdit.updatedAt; }
+  if (data.isDynamic) { objToEdit.isDynamic = true; }
+  if (objToEdit.mode) { delete objToEdit.mode; }
 
   objToEdit.qrOptionsId = qrDesign;
+
+  if (objToEdit.qrOptionsId?.background?.backColor === null) {
+    objToEdit.qrOptionsId.background.backColor = '';
+  }
+  if (objToEdit.qrOptionsId?.background?.file === null) {
+    objToEdit.qrOptionsId.background.file = '';
+  }
+  if (objToEdit.qrOptionsId?.image === null) {
+    objToEdit.qrOptionsId.image = '';
+  }
+  if (objToEdit.background !== undefined && objToEdit.qrOptionsId?.background !== undefined &&
+    objToEdit.background.type === 'image' && objToEdit.qrOptionsId.background === 'solid') {
+    objToEdit.background = initialBackground;
+  }
 
   return objToEdit;
 };
@@ -150,7 +148,8 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
                                    background: BackgroundType, cornersData: CornersAndDotsType,
                                    dotsData: CornersAndDotsType, selected: string,
                                    setLoading: (loading: boolean) => void, setIsError: (isError: boolean) => void,
-                                   success?: () => void, router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
+                                   success?: (creationData?: string) => void, router?: any,
+                                   lastStep?: (go: boolean) => void, dataInfo?: number,
                                    updatingHandler?: (value: string | null, status?: boolean) => void) => {
   const prevUpdatingHandler = (value: string | null, status?: boolean) => {
     if (updatingHandler) {
@@ -284,23 +283,26 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
       if (dataLength) {
         prevUpdatingHandler("Saving QR Code data");
       }
-      await QrHandler.create({ shortLink, qrDesign, qrData });
-      if (success) { success(); }
+      const response = await QrHandler.create({ shortLink, qrDesign, qrData });
+      if (success && response?.creationDate) { success(response.creationDate); }
     } else {
       edition = true;
       if (dataLength) {
         prevUpdatingHandler("Updating QR Code data");
       }
 
-      delete data.mode;
-      delete qrData.mode;
-
       const objToEdit = generateObjectToEdit(qrData, data, qrDesign);
-      finalCleanForEdtion(objToEdit);
+
+      if (!objToEdit.userId) {
+        objToEdit.userId = userInfo.attributes.sub;
+      }
+
+      console.log(objToEdit)
+      debugger;
 
       await QrHandler.edit(objToEdit);
+      if (success) { success(); }
     }
-
     if (dataLength) {
       prevUpdatingHandler(null, true);
     } else if (lastStep !== undefined && router !== undefined) {

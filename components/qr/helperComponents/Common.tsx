@@ -47,6 +47,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     setTabSelected(newValue);
   }
 
+  console.log(data);
+
   const handleValue = useCallback((prop: string) => (payload: any) => {
     if (payload === undefined) {
       setData((prev: any) => {
@@ -146,9 +148,15 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   const handleSave = async () => {
     lastAction.current = 'saving the data';
     setLoading(true);
-    await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setError, () => {
+    await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setError, (creationDate?: string) => {
       if (data.mode === undefined) {
-        setData((prev: DataType) => ({...prev, mode: 'edit'}));
+        setData((prev: DataType) => {
+          const newData = {...prev, mode: 'edit'};
+          if (creationDate) { // @ts-ignore
+            newData.createdAt = creationDate;
+          }
+          return newData;
+        });
       }
       setLoading(false);
     });

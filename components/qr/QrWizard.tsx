@@ -142,8 +142,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           step={step}
           isWrong={isWrong}
           selected={selected}
-          qrName={data.qrName}
-          mode={data.mode} />
+          qrName={data.qrName} />
       </Box>
       <Box sx={{ position: 'absolute', top: '32px' }} ref={btnRef} />
       <Box sx={{ minHeight: 'calc(100vh - 205}px)' }}>
