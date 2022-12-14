@@ -1,8 +1,7 @@
-import {useState} from "react";
+import {ChangeEvent, useState} from "react";
 import Box from "@mui/material/Box";
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from "@mui/material/Button";
-import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import WallpaperIcon from '@mui/icons-material/Wallpaper';
 import ImageIcon from '@mui/icons-material/Image';
@@ -12,10 +11,16 @@ import Tooltip from "@mui/material/Tooltip";
 import CircularProgress from "@mui/material/CircularProgress";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import RenderColorsAndBackgnd from "./helpers/RenderColorsAndBackgnd";
-
 import dynamic from "next/dynamic";
 import {DataType} from "../types/types";
+import {COLORS, DEFAULT_COLORS, IS_DEV_ENV} from "../constants";
+import RenderColorPreset from "./helpers/RenderColorPreset";
+import ColorSelector from "../helperComponents/ColorSelector";
+import Paper from "@mui/material/Paper";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import RenderGradientSelector from "./helpers/RenderGradientSelector";
 
 const RenderImagePicker = dynamic(() =>  import('./helpers/RenderImagePicker'));
 const RenderImgPreview = dynamic(() => import('./helpers/RenderImgPreview'));
@@ -55,6 +60,10 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
     setCropper(null);
   };
 
+  const handleSelectBackground = (event: ChangeEvent<HTMLInputElement>) => {
+    handleValue('backgroundType')(event);
+  };
+
   const renderOptions = (kind: string) => (
     <>
       <Tooltip title="Preview">
@@ -75,58 +84,94 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
 
   return (
     <>
+      {loading && (
+        <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center', mt: '10px', mb: '-10px' }}>
+          <CircularProgress size={20} sx={{ mr: '5px' }} />
+          <Typography sx={{ fontSize: 'small', color: theme => theme.palette.text.disabled}}>
+            {'Loading data. Please wait...'}
+          </Typography>
+        </Box>
+      )}
       <Box sx={{p: 1, mt: 1}}>
-        <RenderColorsAndBackgnd handleValue={handleValue} data={data} />
-        {loading && (
-          <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center', mt: '10px', mb: '-10px' }}>
-            <CircularProgress size={20} sx={{ mr: '5px' }} />
-            <Typography sx={{ fontSize: 'small', color: theme => theme.palette.text.disabled}}>
-              {'Loading data. Please wait...'}
-            </Typography>
+        <Paper sx={{p: 1, mb: '10px'}} elevation={2}>
+          <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Main colors'}</Typography>
+          {COLORS.map(x => {
+            const selected = (!data?.primary && !data?.secondary && x.p === DEFAULT_COLORS.p && x.s === DEFAULT_COLORS.s) ||
+              (x.p === data?.primary && x.s === data?.secondary);
+            return <RenderColorPreset handleValue={handleValue} colors={x} selected={selected} key={x.p}/>
+          })}
+          <Box sx={{width: '100%', display: 'flex', flexDirection: {sm: 'row', xs: 'column'}}}>
+            <Box sx={{minWidth: '120px', width: '100%', mr: {sm: '4px', xs: 0}}}>
+              <ColorSelector label="Primary color" color={data?.primary || DEFAULT_COLORS.p} handleData={handleValue} property="primary"/>
+            </Box>
+            <Box sx={{minWidth: '120px', width: '100%', ml: {sm: '4px', xs: 0}}}>
+              <ColorSelector label="Secondary color" color={data?.secondary || DEFAULT_COLORS.s} handleData={handleValue} property="secondary"/>
+            </Box>
           </Box>
-        )}
-        <Box sx={{
-          width: '100%',
-          display: 'flex',
-          textAlign: 'center',
-          flexDirection: shrink ? "column" : {md: "row", xs: "column"},
-          mt: 2
-        }}>
-          <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
-            <Tooltip title="Click for selecting the banner image">
-              <Button
-                sx={{width: '100%'}}
-                disabled={loading}
-                startIcon={<WallpaperIcon sx={{ color: theme => backError ? theme.palette.error.dark : undefined }}/>}
-                variant="outlined"
-                color="primary"
-                onClick={handleSelectFile('backgndImg')}
-              >
-                {`Banner image${backgndImg && !loading ? ' / Loaded' : ''}`}
-              </Button>
-            </Tooltip>
-            {backgndImg && !loading && renderOptions('backgndImg')}
-          </ButtonGroup>
-          {!omitPrimaryImg && (
-            <ButtonGroup sx={{mt: shrink ? 1 : {xs: 1, md: 0}, width: '100%'}}>
-              <Tooltip title="Click for selecting the main image">
+        </Paper>
+        <Paper sx={{p: 1, mb: '10px'}} elevation={2}>
+          <Typography sx={{fontWeight: 'bold'}}>{'Images'}</Typography>
+          <Box sx={{
+            width: '100%',
+            display: 'flex',
+            textAlign: 'center',
+            flexDirection: shrink ? "column" : {md: "row", xs: "column"},
+            mt: 2
+          }}>
+            <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
+              <Tooltip title="Click for selecting the banner image">
                 <Button
                   sx={{width: '100%'}}
-                  startIcon={<ImageIcon sx={{ color: theme => foreError ? theme.palette.error.dark : undefined }}/>}
-                  variant="outlined"
                   disabled={loading}
-                  onClick={handleSelectFile('foregndImg')}
+                  startIcon={<WallpaperIcon sx={{ color: theme => backError ? theme.palette.error.dark : undefined }}/>}
+                  variant="outlined"
                   color="primary"
+                  onClick={handleSelectFile('backgndImg')}
                 >
-                  {`Main image${backgndImg && !loading ? ' / Loaded' : ''}`}
+                  {`Banner image${backgndImg && !loading ? ' / Loaded' : ''}`}
                 </Button>
               </Tooltip>
-              {foregndImg && !loading && renderOptions('foregndImg')}
+              {backgndImg && !loading && renderOptions('backgndImg')}
             </ButtonGroup>
+            {!omitPrimaryImg && (
+              <ButtonGroup sx={{mt: shrink ? 1 : {xs: 1, md: 0}, width: '100%'}}>
+                <Tooltip title="Click for selecting the main image">
+                  <Button
+                    sx={{width: '100%'}}
+                    startIcon={<ImageIcon sx={{ color: theme => foreError ? theme.palette.error.dark : undefined }}/>}
+                    variant="outlined"
+                    disabled={loading}
+                    onClick={handleSelectFile('foregndImg')}
+                    color="primary"
+                  >
+                    {`Main image${backgndImg && !loading ? ' / Loaded' : ''}`}
+                  </Button>
+                </Tooltip>
+                {foregndImg && !loading && renderOptions('foregndImg')}
+              </ButtonGroup>
+            )}
+          </Box>
+        </Paper>
+        {IS_DEV_ENV && (<Paper sx={{p: 1}} elevation={2}>
+          <Typography sx={{fontWeight: 'bold'}}>{'Background'}</Typography>
+          <RadioGroup
+            aria-labelledby="backgroundType" name="backgroundType" value={data?.backgroundType || 'single'}
+            onChange={handleSelectBackground} row sx={{mb: '-12px'}}>
+            <FormControlLabel value="single" control={<Radio/>} label="Single color"/>
+            <FormControlLabel value="gradient" control={<Radio/>} label="Gradient"/>
+          </RadioGroup>
+          {(data?.backgroundType === undefined || data.backgroundType === 'single') && (
+            <ColorSelector label="" color={data?.backgroundColor || '#ffffff'} allowClear handleData={handleValue} property="backgroundColor"/>
           )}
-        </Box>
+          {data?.backgroundType === 'gradient' && (
+            <RenderGradientSelector
+              colorLeft={data?.backgroundColor || DEFAULT_COLORS.p}
+              colorRight={data?.backgroundColorRight || DEFAULT_COLORS.s}
+              direction={data?.backgroundDirection}
+              handleData={handleValue}/>
+          )}
+        </Paper>)}
       </Box>
-      <Divider sx={{my: '10px'}}/>
       {selectFile !== null && (
         <RenderImagePicker
           handleClose={() => setSelectFile(null)}
