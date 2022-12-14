@@ -3,13 +3,10 @@ import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Badge from '@mui/material/Badge';
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import TypeSelector from "./TypeSelector";
 import Box from "@mui/material/Box";
-import {blue} from "@mui/material/colors";
-import {styled} from "@mui/material/styles";
 
 import Context from "../../context/Context";
 import {DataType} from "../types/types";
