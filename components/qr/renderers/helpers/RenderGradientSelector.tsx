@@ -67,7 +67,7 @@ const RenderGradientSelector = ({ direction, colorLeft, handleData, colorRight }
       </Grid>
       <Grid sm={widePrev && isWideForPreview? 8 : 12} xs={12} item>
         <TextField
-          sx={{'& .MuiInputBase-input': { backgroundImage: `linear-gradient(${direction === undefined ? '90deg' : direction}, ${colorLeft}, ${colorRight})` }}}
+          sx={{'& .MuiInputBase-input': { backgroundImage: `linear-gradient(${direction === undefined ? '180deg' : direction}, ${colorLeft}, ${colorRight})` }}}
           size="small"
           fullWidth
           margin="dense"
@@ -125,11 +125,11 @@ const RenderGradientSelector = ({ direction, colorLeft, handleData, colorRight }
       </Grid>
       <Grid sm={widePrev && isWideForPreview ? 4 : 12} xs={12} item sx={{my: 'auto'}}>
         <Stack direction="row" spacing={2} sx={{mt: widePrev && isWideForPreview ? 0 : '-8px'}}>
-          <IconBtn selected={direction === undefined || direction === '90deg'} onClick={handleDirection('90deg')}>
-            <EastIcon />
-          </IconBtn>
-          <IconBtn selected={direction === '180deg'} onClick={handleDirection('180deg')}>
+          <IconBtn selected={direction === undefined || direction === '180deg'} onClick={handleDirection('180deg')}>
             <SouthIcon />
+          </IconBtn>
+          <IconBtn selected={direction === '90deg'} onClick={handleDirection('90deg')}>
+            <EastIcon />
           </IconBtn>
           <IconBtn selected={direction === '135deg'} onClick={handleDirection('135deg')}>
             <SouthEastIcon />

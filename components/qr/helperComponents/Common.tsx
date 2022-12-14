@@ -47,8 +47,6 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     setTabSelected(newValue);
   }
 
-  console.log(data);
-
   const handleValue = useCallback((prop: string) => (payload: any) => {
     if (payload === undefined) {
       setData((prev: any) => {
@@ -72,11 +70,12 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       } else if (prop === 'backgroundType') {
         setData((prev: any) => {
           const tempo = {...prev};
-          if (tempo.backgroundColor !== undefined) { delete tempo.backgroundColor }
-          if (tempo.backgroundColorRight !== undefined) { delete tempo.backgroundColorRight }
+          if (tempo.backgroundColor !== undefined) { delete tempo.backgroundColor; }
+          if (tempo.backgroundColorRight !== undefined) { delete tempo.backgroundColorRight; }
+          if (tempo.backgroundDirection !== undefined) { delete tempo.backgroundDirection; }
           tempo.backgroundType = payload.target.value;
           return tempo;
-        })
+        });
       } else {
         setData((prev: any) => ({ ...prev, [prop]: payload.target?.value !== undefined ? payload.target.value : payload }));
       }

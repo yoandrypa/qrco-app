@@ -49,7 +49,6 @@ const RenderColorsAndBackgnd = ({data, handleValue}: RenderColorProps) => {
           onChange={handleSelectBackground} row sx={{mb: '-12px'}}>
           <FormControlLabel value="single" control={<Radio/>} label="Single color"/>
           <FormControlLabel value="gradient" control={<Radio/>} label="Gradient"/>
-          <FormControlLabel value="image" control={<Radio/>} label="Image"/>
         </RadioGroup>
         {(data?.backgroundType === undefined || data.backgroundType === 'single') && (
           <ColorSelector label="" color={data?.backgroundColor || '#ffffff'} allowClear handleData={handleValue} property="backgroundColor"/>
@@ -60,33 +59,6 @@ const RenderColorsAndBackgnd = ({data, handleValue}: RenderColorProps) => {
             colorRight={data?.backgroundColorRight || DEFAULT_COLORS.s}
             direction={data?.backgroundDirection}
             handleData={handleValue}/>
-        )}
-        {data?.backgroundType === 'image' && (
-          <Box sx={{ mt: 2 }}>
-            <SectionSelector
-              icon="/images/backgnds/back1.png" separate h='100px' w='100px'
-              selected={data?.backgroundImage === '/images/backgnds/back1.png'}
-              handleSelect={() => {}} />
-            <SectionSelector
-              icon="/images/backgnds/back2.png" separate h='100px' w='100px'
-              selected={data?.backgroundImage === '/images/backgnds/back2.png'}
-              handleSelect={() => {}} />
-            <SectionSelector
-              icon="/images/backgnds/back3.png" separate h='100px' w='100px'
-              selected={data?.backgroundImage === '/images/backgnds/back3.png'}
-              handleSelect={() => {}} />
-            <SectionSelector
-              icon="/images/backgnds/back4.png" separate h='100px' w='100px'
-              selected={data?.backgroundImage === '/images/backgnds/back4.png'}
-              handleSelect={() => {}} />
-            <SectionSelector
-              icon="/images/backgnds/back5.png" separate h='100px' w='100px'
-              selected={data?.backgroundImage === '/images/backgnds/back5.png'}
-              handleSelect={() => {}} />
-            <SectionSelector
-              isUpload icon={''} h='100px' w='100px' selected={false}
-              handleSelect={() => {}} />
-          </Box>
         )}
       </Paper>)}
     </Paper>

@@ -78,7 +78,7 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
         }
         setBackground(back);
       } else {
-        setError('The selected file is larger than 50 kilobytes.')
+        setError('The selected file is larger than 50 kB.')
       }
     }
     fileInput.current.value = '';

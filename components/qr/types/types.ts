@@ -164,6 +164,7 @@ export type DataType = {
     taxi?: boolean;
     wifi?: boolean;
   } | undefined;
+  backgroundImageFile?: string;
   backgroundType?: string;
   backgroundColor?: string;
   backgroundColorRight?: string;
