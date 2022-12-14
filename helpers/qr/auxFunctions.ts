@@ -12,6 +12,9 @@ export const previewQRGenerator = (data: DataType, selected: string) => {
   if (data.files !== undefined && data.files.length === 0) {
     sum += 1;
   }
+  if (selected === 'link' && data.links) {
+    sum += 1;
+  }
 
   const obj = {...data, qrType: selected};
 
@@ -80,6 +83,7 @@ export const previewQRGenerator = (data: DataType, selected: string) => {
     } else if (selected === 'link') {
       populate('title', 'Sample Links');
       populate('about', 'This is a brief description for the links');
+      delete obj.links;
       populate('links', [
         {label: 'My website', link: 'https://www.example.com'}, {label: 'My blog', link: 'https://www.example.com'},
         {label: 'My portfolio', link: 'https://www.example.com'}
