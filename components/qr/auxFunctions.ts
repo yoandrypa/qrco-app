@@ -297,9 +297,6 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
         objToEdit.userId = userInfo.attributes.sub;
       }
 
-      console.log(objToEdit)
-      debugger;
-
       await QrHandler.edit(objToEdit);
       if (success) { success(); }
     }
