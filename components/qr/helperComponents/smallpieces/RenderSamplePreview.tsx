@@ -33,22 +33,16 @@ interface SamplePrevProps {
   data?: DataType;
   onlyQr?: boolean;
   qrOptions?: any;
+  isDynamic: boolean;
   step: number;
 }
+interface WithSelection extends SamplePrevProps { selected: string; code?: never; }
+interface WithSCode extends SamplePrevProps { selected?: never; code: string; }
 
-interface WithSelection extends SamplePrevProps {
-  selected: string;
-  code?: never;
-}
-
-interface WithSCode extends SamplePrevProps {
-  selected?: never;
-  code: string;
-}
-
-const RenderSamplePreview = ({step, onlyQr, data, selected, style, save, code, isDrawed, saveDisabled, qrOptions}: WithSelection | WithSCode) => {
+const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, save, code, isDrawed, saveDisabled, qrOptions}: WithSelection | WithSCode) => {
   const [prev, setPrev] = useState<string>(!onlyQr ? 'preview' : 'qr');
   const [copied, setCopied] = useState<boolean>(false);
+  const [updating, setUpdating] = useState<boolean>(false);
 
   const handleToggle = (_: MouseEvent<HTMLElement>, newSel: string | null) => {
     if (newSel !== null) {
@@ -56,14 +50,28 @@ const RenderSamplePreview = ({step, onlyQr, data, selected, style, save, code, i
     }
   }
 
+  const URL = selected && (REDEFINE_URL.includes(selected) && isDynamic) ? getProperSampleUrl(selected) :
+    `${process.env.REACT_MICROSITES_ROUTE}/${selected ? `sample/${cleanSelectionForMicrositeURL(selected)}` : code}`;
+
+  useEffect(() => {
+    if (!updating) {
+      setUpdating(true);
+    }
+  }, [URL, qrOptions]);
+
+  useEffect(() => {
+    if (updating) {
+      setTimeout(() => {
+        setUpdating(false);
+      }, 100);
+    }
+  }, [updating]);
+
   useEffect(() => {
     if (selected && ONLY_QR.includes(selected) && prev !== 'qr') {
       setPrev('qr');
     }
   }, [selected]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const URL = selected && REDEFINE_URL.includes(selected) ? getProperSampleUrl(selected) :
-    `${process.env.REACT_MICROSITES_ROUTE}/${selected ? `sample/${cleanSelectionForMicrositeURL(selected)}` : code}`;
 
   return (
     <Box sx={style}>
@@ -132,7 +140,13 @@ const RenderSamplePreview = ({step, onlyQr, data, selected, style, save, code, i
                 <RenderIframe selected={selected} width="256px" height="536px" src={!code ? URL : `${process.env.REACT_MICROSITES_ROUTE}/sample/empty`} data={data}/>
               </Suspense>
             ) : null}
-          </RenderCellPhoneShape>) : <RenderPreview width={270} qrDesign={qrOptions} override={!qrOptions ? URL : undefined} />}
+          </RenderCellPhoneShape>
+        ) : (!updating ? <RenderPreview width={270} qrDesign={qrOptions} override={!qrOptions ? URL : undefined} /> : (
+          <Box sx={{width: '100%', textAlign: 'center', pd: 3}}>
+            <Typography>{'Preparing QR preview'}</Typography>
+            <Typography sx={{color: theme => theme.palette.text.disabled}}>{'Please wait...'}</Typography>
+          </Box>
+        ))}
       </Box>
       {copied && (
         <Notifications

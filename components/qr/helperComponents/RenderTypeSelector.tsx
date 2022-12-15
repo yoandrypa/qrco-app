@@ -64,8 +64,13 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
   const handleClick = (selection: number) => {
     const compareWith = {...initialOptions, data: options.data}; // @ts-ignore
     if (options.id) { compareWith.id = options.id; } // @ts-ignore
-    if (options.shortCode) {compareWith.shortCode = options.shortCode;}
-    if (!areEquals(data, initialData) || !areEquals(options, compareWith)) {
+    if (options.shortCode) { compareWith.shortCode = options.shortCode; }
+    const dataComp = {...data};
+    if (initialData.isDynamic !== undefined) {
+      dataComp.isDynamic = initialData.isDynamic;
+    }
+
+    if (!areEquals(dataComp, initialData) || !areEquals(options, compareWith)) {
       setDisplayConfirm({select: selection});
     } else {
       proceed(selection);
@@ -147,15 +152,16 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
         </>) : null}
       </Grid>
       {IS_DEV_ENV && isWideForPreview && selected && (
-        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '18px', width: '370px'}}
-                             onlyQr={ONLY_QR.includes(selected) || !data.isDynamic} step={0} />
+        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '18px', width: '370px'}} step={0}
+                             isDynamic={data.isDynamic || false} onlyQr={ONLY_QR.includes(selected) || !data.isDynamic} />
       )}
       {IS_DEV_ENV && !openPreview && !isWideForPreview && selected && ( // @ts-ignore
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Sample"/>
       )}
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer setOpenPreview={setOpenPreview} border={35} height={!data.isDynamic ? 500 : 675} > {/* @ts-ignore */}
-          <RenderSamplePreview selected={selected} isDrawed style={{mt: '-15px'}} step={0} onlyQr={[...ONLY_QR, 'web'].includes(selected) || !data.isDynamic} />
+          <RenderSamplePreview onlyQr={[...ONLY_QR, 'web'].includes(selected) || !data.isDynamic} selected={selected}
+                               isDrawed style={{mt: '-15px'}} step={0} isDynamic={data.isDynamic || false} />
         </RenderPreviewDrawer>
       )}
       {displayConfirm && (
