@@ -195,7 +195,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                 )
               }}
             />
-            {!NO_MICROSITE.includes(selected) && data?.isDynamic ? (
+            {![...NO_MICROSITE, 'web'].includes(selected) && data?.isDynamic ? (
               <Box sx={{ width: '100%' }}>
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>
                   <Tab label="Content" icon={<ArticleIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
@@ -219,8 +219,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           {IS_DEV_ENV && isWideForPreview && !NO_MICROSITE.includes(selected) && (
             <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
                                  save={handleSave} style={{mt: '-13px', ml: '15px'}} saveDisabled={isWrong}
-                                 qrOptions={optionsForPreview()} data={previewQRGenerator(data, selected)}
-                                 onlyQr={selected === 'web' || !data.isDynamic} step={1} />
+                                 qrOptions={optionsForPreview()} data={previewQRGenerator(data, selected)} step={1}
+                                 onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false} />
           )}
         </Box>
       ) : renderChildren()}
@@ -230,9 +230,9 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={selected === 'web' || !data.isDynamic ? 400 : 675} border={35}>
           <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
-                               save={handleSave} isDrawed saveDisabled={isWrong} style={{mt: '-15px'}}
+                               save={handleSave} isDrawed saveDisabled={isWrong} style={{mt: '-15px'}} step={1}
                                data={previewQRGenerator(data, selected)} qrOptions={optionsForPreview()}
-                               onlyQr={selected === 'web' || !data.isDynamic} step={1} />
+                               onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false} />
         </RenderPreviewDrawer>
       )}
     </>

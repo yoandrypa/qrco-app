@@ -23,8 +23,6 @@ import { QR_CONTENT_ROUTE } from "./constants";
 import RenderSamplePreview
   from "./helperComponents/smallpieces/RenderSamplePreview";
 import { previewQRGenerator } from "../../helpers/qr/auxFunctions";
-import RenderPreviewDrawer
-  from "./helperComponents/smallpieces/RenderPreviewDrawer";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -142,6 +140,7 @@ const QrDetails = ({ visitData, qrData }: any) => {
         </SpeedDial>
       </Box>
       <RenderSamplePreview
+        isDynamic={qrData.isDynamic || false}
         code={qrData.qrOptionsId?.data ? qrData.qrOptionsId.data.slice(
           qrData.qrOptionsId.data.lastIndexOf("/") + 1) : qrData.qrType}
         isDrawed={true} style={{ mt: "-15px" }}

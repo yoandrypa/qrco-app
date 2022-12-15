@@ -34,7 +34,11 @@ const QrTypeSelector = () => { // @ts-ignore
     const compareWith = {...initialOptions, data: options.data}; // @ts-ignore
     if (options.id) {compareWith.id = options.id;} // @ts-ignore
     if (options.shortCode) {compareWith.shortCode = options.shortCode;}
-    if (!areEquals(data, initialData) || !areEquals(options, compareWith)) {
+    const dataComp = {...data};
+    if (initialData.isDynamic !== undefined) {
+      dataComp.isDynamic = initialData.isDynamic;
+    }
+    if (!areEquals(dataComp, initialData) || !areEquals(options, compareWith)) {
       setDisplayConfirm(payload);
     } else {
       proceedWithSelection(payload);
