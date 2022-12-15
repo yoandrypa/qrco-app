@@ -19,7 +19,7 @@ import RenderFreeDesc from "./smallpieces/RenderFreeDesc";
 import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
 import {MyBadge} from "./smallpieces/StyledComponents";
 import {areEquals} from "../../helpers/generalFunctions";
-import initialOptions from "../../../helpers/qr/data";
+import initialOptions, {initialData} from "../../../helpers/qr/data";
 
 const RenderLoseDataConfirm = dynamic(() => import("./smallpieces/RenderLoseDataConfirm"));
 const RenderPreviewDrawer = dynamic(() => import('./smallpieces/RenderPreviewDrawer'));
@@ -65,7 +65,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
     const compareWith = {...initialOptions, data: options.data}; // @ts-ignore
     if (options.id) { compareWith.id = options.id; } // @ts-ignore
     if (options.shortCode) {compareWith.shortCode = options.shortCode;}
-    if (!areEquals(options, compareWith)) {
+    if (!areEquals(data, initialData) || !areEquals(options, compareWith)) {
       setDisplayConfirm({select: selection});
     } else {
       proceed(selection);
