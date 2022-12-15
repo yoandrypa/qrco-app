@@ -44,10 +44,17 @@ const Code = ({ options, handleData, background, handleBackground, handleReset, 
     } else {
       mainObj = null;
     }
+
     if (isCorners) {
       setCornersData(mainObj);
+      if (!mainObj && editColor === 'corners') {
+        setEditColors(null);
+      }
     } else {
       setDotsData(mainObj);
+      if (!mainObj && editColor === 'dots') {
+        setEditColors(null);
+      }
     }
   };
 
