@@ -9,7 +9,7 @@ export default function RenderLoseDataConfirm({handleOk, handleCancel}: RenderLo
   return (<RenderConfirmDlg
     handleCancel={handleCancel}
     handleOk={handleOk}
-    message="You will lose the changes."
+    message="The data you entered will be discarded."
     confirmationMsg="Are you sure?"
     yesMsg="yes"
     noMsg="no"
