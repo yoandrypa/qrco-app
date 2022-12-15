@@ -195,7 +195,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                 )
               }}
             />
-            {!NO_MICROSITE.includes(selected) && data?.isDynamic ? (
+            {![...NO_MICROSITE, 'web'].includes(selected) && data?.isDynamic ? (
               <Box sx={{ width: '100%' }}>
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>
                   <Tab label="Content" icon={<ArticleIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
