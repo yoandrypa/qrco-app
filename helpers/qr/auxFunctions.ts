@@ -3,15 +3,12 @@ import {DataType} from "../../components/qr/types/types";
 export const previewQRGenerator = (data: DataType, selected: string) => {
   let sum = 0;
 
-  if (data.qrName) { sum += 1; }
-  if (data.isDynamic) { sum += 1; }
+  ['qrName', 'isDynamic', 'backgroundColor', 'backgroundType', 'backgroundDirection', 'backgroundColorRight',
+  'primary', 'secondary', 'backgndImg', 'foregndImg', 'foregndImgType'].forEach(x => {  // @ts-ignore
+    if (data[x]) { sum += 1; }
+  })
+
   if (data.files !== undefined && data.files.length === 0) { sum += 1; }
-  if (data.backgroundColor) { sum += 1; }
-  if (data.backgroundType) { sum += 1; }
-  if (data.backgroundDirection) { sum += 1; }
-  if (data.backgroundColorRight) { sum += 1; }
-  if (data.primary) { sum += 1; }
-  if (data.secondary) { sum += 1; }
   if (selected === 'link' && data.links) { sum += 1; }
 
   const obj = {...data, qrType: selected};

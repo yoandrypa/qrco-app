@@ -126,7 +126,7 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Common msg="Your contact details. Users can store your info or contact you right away.">
+    <Common msg="Add at least one link to your websites.">
       <Topics message="Main info" top="3px"/>
       <Grid container spacing={1}>
         <Grid item sm={4} xs={12} style={{paddingTop: 0}}>{/* @ts-ignore */}
@@ -172,7 +172,7 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
                             <TableCell sx={{p: 0, width: '50%', borderBottom: 'none'}}>
                               <RenderTextFields
                                 required
-                                placeholder="Link here"
+                                placeholder="URL here"
                                 value={x.link}
                                 handleValues={handleChangeValue('link', index)}
                                 isError={x.link.trim().length > 0 && !isValidUrl(x.link)}

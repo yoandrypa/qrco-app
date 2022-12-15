@@ -38,7 +38,7 @@ function FacebookData({setIsWrong, data, setData}: FacebookDataProps) {
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Common msg="URL to be shared in your wall.">
+    <Common msg="URL to be shared in the user's profile.">
       <TextField
         rows={3}
         autoFocus

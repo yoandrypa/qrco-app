@@ -56,8 +56,9 @@ const RenderIframe = ({src, width, height, data, selected}: IframeProps) => {
           } // @ts-ignore
           previewData.files = files;
         }
-        // @ts-ignore
-        iRef.current.contentWindow.postMessage(JSON.stringify({previewData}), process.env.REACT_MICROSITES_ROUTE);
+        if (iRef.current?.contentWindow) { // @ts-ignore
+          iRef.current.contentWindow.postMessage(JSON.stringify({previewData}), process.env.REACT_MICROSITES_ROUTE);
+        }
       }, 50);
     }
   }, [data, isReady]); // eslint-disable-line react-hooks/exhaustive-deps

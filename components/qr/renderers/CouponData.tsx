@@ -74,8 +74,8 @@ const CouponData = ({data, setData, handleValues, setIsWrong}: CouponProps) => {
   // the date goes to the field value
 
   return (
-    <Common msg="Share a coupon.">
-      <Topics message={'Offer information'} />
+    <Common msg="Share a coupon for sales promotion.">
+      <Topics message={'Promotion info'} />
       <Grid container spacing={1}>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
           {renderItem('company', 'Company')}

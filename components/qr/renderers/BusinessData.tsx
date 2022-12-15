@@ -85,7 +85,7 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Common msg="Your business or company details. Users can contact your business or company right the way.">
+    <Common msg="Your business or company details. Users can contact your business or company right away.">
       <Topics message={'Business info'}/>
       <Grid container spacing={1}>
         <Grid item xs={12} style={{paddingTop: 0}}>
@@ -104,7 +104,7 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
           {renderItem('email', 'Email')}
         </Grid>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('contact', 'Contact')}
+          {renderItem('contact', 'Contact name')}
         </Grid>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
           {renderItem('phone', 'Phone')}
@@ -115,9 +115,9 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
       </Grid>
       <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography sx={{ my: 'auto' }}>{'Option button'}</Typography>
+          <Typography sx={{ my: 'auto' }}>{'Action button'}</Typography>
           <Button sx={{ mb: '5px' }} variant="contained" color={data.urlOptionLabel === undefined ? 'primary' : 'error'} onClick={handleOptionButton}>
-            {data.urlOptionLabel === undefined ? 'Add an option button' : 'Remove option button'}
+            {data.urlOptionLabel === undefined ? 'Add action button' : 'Remove action button'}
           </Button>
         </Box>
         {data.urlOptionLabel !== undefined && (
@@ -154,11 +154,11 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
         )}
       </Paper>
       <Paper elevation={2} sx={{ p: 1, my: 2 }}>
-        <Expander expand={expander} setExpand={setExpander} item="opening" title="Opening Time" />
+        <Expander expand={expander} setExpand={setExpander} item="opening" title="Opening time" />
         {expander === "opening" && <RenderOpeningTime data={data} setData={setData} />}
       </Paper>
       <Paper elevation={2} sx={{ p: 1, my: 2 }}>
-        <Expander expand={expander} setExpand={setExpander} item="easiness" title="Business Easiness" />
+        <Expander expand={expander} setExpand={setExpander} item="easiness" title="Business easiness" />
         {expander === "easiness" && <RenderEasiness data={data} setData={setData} />}
       </Paper>
       <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
