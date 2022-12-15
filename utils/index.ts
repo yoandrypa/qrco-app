@@ -5,6 +5,7 @@ import {
   differenceInHours,
   differenceInMonths
 } from "date-fns";
+import { EMAIL, PHONE, ZIP } from "../components/qr/constants";
 
 export const generateShortLink = (id: string | undefined, customDomain?: string | null): string => {
   const protocol =
@@ -227,3 +228,39 @@ export const conjunctMethods = {
     return A.filter(a => !B.some(b => compareFunction(a, b)));
   }
 };
+
+export const validate = (data: any, type:string) => {
+  let isError = false as boolean;
+    // @ts-ignore
+    switch (type) {
+      case 'string':
+      case 'text':
+        break;
+      case 'phone':
+      case 'fax':
+      case 'cell':
+        if (!PHONE.test(data)) {
+          isError = true;
+        }
+        break;
+      case 'zip':
+        if (!ZIP.test(data)) {
+          isError = true;
+        }
+        break;
+      case 'url':
+      case 'web':
+        if (!isValidUrl(data)) {
+          isError = true;
+        }
+        break;
+      case 'email':
+        if (!EMAIL.test(data)) {
+          isError = true;
+        }
+        break;
+      default:
+        break;
+    }
+  return isError;
+}

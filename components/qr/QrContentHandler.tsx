@@ -17,6 +17,7 @@ import TwitterData from './renderers/TwitterData';
 import AssetData from './renderers/AssetData';
 import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
 import BusinessData from "./renderers/BusinessData";
+import PetIdData from "./renderers/PetIdData";
 import NetworksData from "./renderers/NetworksData.";
 import CouponData from "./renderers/CouponData";
 import DonationsData, { DonationsProps } from './renderers/DonationsData';
@@ -124,6 +125,9 @@ const QrContentHandler = () => { // @ts-ignore
       }
       case 'crypto': {
         return <CryptoData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
+      }
+      case 'petId':{
+        return <PetIdData data={data} handlePayload={handlePayload} setData={setData} setIsWrong={setIsWrong} handleValues={handleValues} />
       }
       default: {
         return <NetworksData data={data} setData={handlePayload} setIsWrong={setIsWrong} />

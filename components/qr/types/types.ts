@@ -178,8 +178,26 @@ export type DataType = {
   foregndImg?: File | string;
   foregndImgType?: 'circle' | 'smooth' | 'square' | null;
   files?: File[];
+  petName?: string;
+  petBreed?: string;
+  petYearOfBirth?: string;
+  petGender?: string;
+  headingTextText?: string;
+  headingTextHeading?: string;
+  contactTitle?: string;
+  otherDetails?:HeadAndItemsType
+  urls?:HeadAndItemsType
+  
 };
-
+export type validTypes = 'text' | 'email' | 'phone' | 'web' | 'number'| 'date' | 'fax'|'url' | 'string';
+export type HeadAndItemsType = {
+  heading: string;
+  items: [{
+    label: string;
+    value: string;
+    type?: validTypes
+  }];
+}
 export type EbanuxDonationPriceData = {
   priceId?: string,
   productId?: string,

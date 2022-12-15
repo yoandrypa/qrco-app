@@ -130,6 +130,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
             {renderTypeSelector("donations", "Donation", "Get donations from your supporters worldwide", true)}
             {IS_DEV_ENV && renderTypeSelector("fundme", "Fund Me", "Start your own charity or fundraising campaign", true)}
             {IS_DEV_ENV && renderTypeSelector("paylink", "Send Me Money", "Receive payments worldwide", true)}
+            {IS_DEV_ENV && renderTypeSelector("petId", "Pet ID", "Share your pet's information", true)}
           </>)
         }
         {isDynamic ? (<>
