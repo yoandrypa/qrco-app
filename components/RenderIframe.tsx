@@ -68,8 +68,6 @@ const RenderIframe = ({src, width, height, data, selected}: IframeProps) => {
         try {
           const dataFromOutside = JSON.parse(event.data);
           if (dataFromOutside.ready && iRef.current?.contentWindow) {
-            iRef.current.contentWindow.postMessage(JSON.stringify({ parentWidth: width, parentHeight: height }), '*');
-          } else if (dataFromOutside.readyForDuty) {
             setIsReady(true);
           }
         } catch (e) {
