@@ -114,7 +114,7 @@ export default function PetIdData({
           {renderItem('name', 'Name')}
         </Grid>
         <Grid item sm={4} xs={12} style={{ paddingTop: 0 }}>
-          {renderItem('cell', 'Cell number')}
+          {renderItem('phone', 'Cell number')}
         </Grid>
         <Grid item sm={4} xs={12} style={{ paddingTop: 0 }}>
           {renderItem('fax', 'Fax')}
