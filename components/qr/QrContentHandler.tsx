@@ -23,6 +23,7 @@ const SMSData = dynamic(() => import('./renderers/SMSData'));
 const TwitterData = dynamic(() => import('./renderers/TwitterData'));
 const AssetData = dynamic(() => import('./renderers/AssetData'));
 const BusinessData = dynamic(() => import('./renderers/BusinessData'));
+const PetIdData = dynamic(() => import('./renderers/PetIdData'));
 const NetworksData = dynamic(() => import('./renderers/NetworksData'));
 const CouponData = dynamic(() => import('./renderers/CouponData'));
 const CryptoData = dynamic(() => import('./renderers/CryptoData'));
@@ -131,6 +132,9 @@ const QrContentHandler = () => { // @ts-ignore
       }
       case 'fundme': {
         return <FundMe data={data} setData={setData} handleValues={handleValues} />
+      }
+      case 'petId':{
+        return <PetIdData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
       }
       default: {
         return <NetworksData data={data} setData={handlePayload} setIsWrong={setIsWrong} />

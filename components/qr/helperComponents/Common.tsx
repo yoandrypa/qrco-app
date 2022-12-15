@@ -205,7 +205,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                   <RenderQRCommons
                     isWideForPreview={isWideForPreview}
                     handleValue={handleValue}
-                    omitPrimaryImg={!['vcard+', 'link', 'business', 'social', 'donations'].includes(selected) || !data?.isDynamic}
+                    omitPrimaryImg={!['vcard+', 'link', 'business', 'social', 'donations', 'petId'].includes(selected) || !data?.isDynamic}
                     backgndImg={data.mode === 'edit' ? (Array.isArray(data?.backgndImg) ? backImg || undefined : data?.backgndImg) : data?.backgndImg}
                     foregndImg={data.mode === 'edit' ? (Array.isArray(data?.foregndImg) ? foreImg || undefined : data?.foregndImg) : data?.foregndImg}
                     loading={loading}
