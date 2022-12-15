@@ -18,7 +18,10 @@ import RenderProDesc from "./smallpieces/RenderProDesc";
 import RenderFreeDesc from "./smallpieces/RenderFreeDesc";
 import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
 import {MyBadge} from "./smallpieces/StyledComponents";
+import {areEquals} from "../../helpers/generalFunctions";
+import initialOptions from "../../../helpers/qr/data";
 
+const RenderLoseDataConfirm = dynamic(() => import("./smallpieces/RenderLoseDataConfirm"));
 const RenderPreviewDrawer = dynamic(() => import('./smallpieces/RenderPreviewDrawer'));
 const RenderPreviewButton = dynamic(() => import('./smallpieces/RenderPreviewButton'));
 
@@ -34,14 +37,18 @@ interface ContextData {
 }
 
 const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) => { // @ts-ignore
-  const {data, setData}: ContextData = useContext(Context);
+  const {options, data, setData}: ContextData = useContext(Context);
+
+  const [openPreview, setOpenPreview] = useState<boolean>(false);
+  const [displayConfirm, setDisplayConfirm] = useState<{select: number} | null>(null);
+
   const isWide = useMediaQuery("(min-width:600px)", {noSsr: true});
   const isWideForPreview = useMediaQuery("(min-width:925px)", {noSsr: true});
   const isWideForThreeColumns = useMediaQuery("(min-width:1045px)", {noSsr: true});
-  const isDynamic = useMemo(() => data.isDynamic || false, [data.isDynamic]);
-  const [openPreview, setOpenPreview] = useState<boolean>(false);
 
-  const handleClick = (selection: number) => { // @ts-ignore
+  const isDynamic = useMemo(() => data.isDynamic || false, [data.isDynamic]);
+
+  const proceed = (selection: number) => {
     const dynamic = selection === 0;
     if (dynamic) { // @ts-ignore
       setData((prev: DataType) => ({...prev, isDynamic: dynamic}));
@@ -51,6 +58,17 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
         delete tempoData.isDynamic;
         return tempoData;
       });
+    }
+  }
+
+  const handleClick = (selection: number) => {
+    const compareWith = {...initialOptions, data: options.data}; // @ts-ignore
+    if (options.id) { compareWith.id = options.id; } // @ts-ignore
+    if (options.shortCode) {compareWith.shortCode = options.shortCode;}
+    if (!areEquals(options, compareWith)) {
+      setDisplayConfirm({select: selection});
+    } else {
+      proceed(selection);
     }
   };
 
@@ -101,14 +119,14 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
         {!isDynamic ?
           (<>
             {renderTypeSelector("vcard", "Share your contact details", true)}
-            {renderTypeSelector("email", "Send email messages", true)}
-            {renderTypeSelector("sms", "Send text messages", true)}
-            {renderTypeSelector("text", "Display a short text message", true)}
-            {renderTypeSelector("wifi", "Get connected to a WiFi network", true)}
-            {renderTypeSelector("twitter", "Post a tweet", true)}
-            {renderTypeSelector("whatsapp", "Send a WhatsApp message", true)}
-            {renderTypeSelector("facebook", "Share an URL in your wall", true)}
-            {IS_DEV_ENV && renderTypeSelector("crypto", "Recieve crypto on your eWallet", true)}
+            {renderTypeSelector("email", "Receive email messages", true)}
+            {renderTypeSelector("sms", "Receive text messages", true)}
+            {renderTypeSelector("text", "Share a short text message", true)}
+            {renderTypeSelector("wifi", "Invite to get connected to a WiFi network", true)}
+            {renderTypeSelector("twitter", "Invite to post a tweet", true)}
+            {renderTypeSelector("whatsapp", "Receive WhatsApp messages", true)}
+            {renderTypeSelector("facebook", "Invite to share an URL in Facebook", true)}
+            {IS_DEV_ENV && renderTypeSelector("crypto", "Receive crypto on your eWallet", true)}
           </>) : (<>
             {renderTypeSelector("vcard+", "Share your contact and social details", true)}
             {renderTypeSelector('business', 'Describe your business or company', true)}
@@ -138,6 +156,11 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
         <RenderPreviewDrawer setOpenPreview={setOpenPreview} border={35} height={!data.isDynamic ? 500 : 675} > {/* @ts-ignore */}
           <RenderSamplePreview selected={selected} isDrawed style={{mt: '-15px'}} step={0} onlyQr={[...ONLY_QR, 'web'].includes(selected) || !data.isDynamic} />
         </RenderPreviewDrawer>
+      )}
+      {displayConfirm && (
+        <RenderLoseDataConfirm
+          handleOk={() => { proceed(displayConfirm.select); setDisplayConfirm(null); }}
+          handleCancel={() => setDisplayConfirm(null)} />
       )}
     </Box>
   );

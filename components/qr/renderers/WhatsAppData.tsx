@@ -35,7 +35,7 @@ function WhatsAppData({data, setData, setIsWrong}: WhatsAppProps) {
   }, [data.number, data.message]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Common msg="Enter the message you will send through Whatsapp, up to 500 chatacters.">
+    <Common msg="Enter the message users will send via Whatsapp, up to 500 characters.">
       <TextField
         label="Number"
         size="small"

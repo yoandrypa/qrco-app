@@ -35,7 +35,7 @@ const SMSData = ({ data, setData, setIsWrong }: SMSDataProps) => {
   }, [data.number, data.message]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Common msg="You can send SMSs in the number you provide. The message max size is up to 160 characters.">
+    <Common msg="An SMS will be sent to the number you provide. The message max size is 160 characters.">
       <>
         <TextField
           label="Number"
