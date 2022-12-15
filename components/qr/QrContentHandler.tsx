@@ -134,7 +134,7 @@ const QrContentHandler = () => { // @ts-ignore
         return <FundMe data={data} setData={setData} handleValues={handleValues} />
       }
       case 'petId':{
-        return <PetIdData data={data} handlePayload={handlePayload} setData={setData} setIsWrong={setIsWrong} handleValues={handleValues} />
+        return <PetIdData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
       }
       default: {
         return <NetworksData data={data} setData={handlePayload} setIsWrong={setIsWrong} />

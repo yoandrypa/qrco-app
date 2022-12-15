@@ -17,7 +17,6 @@ import MultipleField from '../helperComponents/MultipleField';
 
 interface PetIdDataProps {
   data: DataType;
-  setData: Function;
   handlePayload: Function;
   handleValues: Function;
   setIsWrong: (isWrong: boolean) => void;
@@ -29,7 +28,6 @@ interface RenderType {
 
 export default function PetIdData({
   data,
-  setData,
   handlePayload,
   handleValues,
   setIsWrong
