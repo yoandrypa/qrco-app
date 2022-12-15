@@ -7,16 +7,16 @@ import {
   FramesType,
   OptionsType
 } from "./types/types";
-import {areEquals} from "../helpers/generalFunctions";
-import {initialBackground, initialFrame} from "../../helpers/qr/data";
+import { areEquals } from "../helpers/generalFunctions";
+import { initialBackground, initialFrame } from "../../helpers/qr/data";
 import * as StorageHandler from "../../handlers/storage";
 import * as EbanuxHandler from "../../handlers/ebanux";
-import {getUuid} from "../../helpers/qr/helpers";
-import {generateId, generateShortLink} from "../../utils";
+import { getUuid } from "../../helpers/qr/helpers";
+import { generateId, generateShortLink } from "../../utils";
 import * as QrHandler from "../../handlers/qrs";
 
 interface UserInfoProps {
-  attributes: { sub: string },
+  attributes: { sub: string, email: string },
   signInUserSession: {
     accessToken: {
       jwtToken: string
@@ -145,12 +145,12 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
  * @param updatingHandler
  */
 export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, options: OptionsType, frame: FramesType,
-                                   background: BackgroundType, cornersData: CornersAndDotsType,
-                                   dotsData: CornersAndDotsType, selected: string,
-                                   setLoading: (loading: boolean) => void, setIsError: (isError: boolean) => void,
-                                   success?: (creationData?: string) => void, router?: any,
-                                   lastStep?: (go: boolean) => void, dataInfo?: number,
-                                   updatingHandler?: (value: string | null, status?: boolean) => void) => {
+  background: BackgroundType, cornersData: CornersAndDotsType,
+  dotsData: CornersAndDotsType, selected: string,
+  setLoading: (loading: boolean) => void, setIsError: (isError: boolean) => void,
+  success?: (creationData?: string) => void, router?: any,
+  lastStep?: (go: boolean) => void, dataInfo?: number,
+  updatingHandler?: (value: string | null, status?: boolean) => void) => {
   const prevUpdatingHandler = (value: string | null, status?: boolean) => {
     if (updatingHandler) {
       updatingHandler(value, status);
