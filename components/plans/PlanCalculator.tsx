@@ -107,13 +107,13 @@ function PlanCalculator() {
                             onChange={handleChange}
                             size='small'
                         >
-                            <MenuItem value="">
+                            <MenuItem value="" disabled>
                                 <em>Monthly Plans</em>
                             </MenuItem>
                             <MenuItem value='basic'>Basic</MenuItem>
                             <MenuItem value='business'>Business</MenuItem>
                             <MenuItem value='premium'>Premium</MenuItem>
-                            <MenuItem value="" unselectable='on'>
+                            <MenuItem value="" disabled>
                                 <em>Yearly Plans</em>
                             </MenuItem>
                             <MenuItem value='basic-annual'>Basic (17% off)</MenuItem>

@@ -164,6 +164,7 @@ export type DataType = {
     taxi?: boolean;
     wifi?: boolean;
   } | undefined;
+  backgroundImageFile?: string;
   backgroundType?: string;
   backgroundColor?: string;
   backgroundColorRight?: string;
@@ -227,6 +228,7 @@ export type EditType = {
   qrOptionsId?: any;
   backgndImg?: any;
   foregndImg?: any;
+  mode?: string;
   value?: string;
   primary?: string;
   secondary?: string;

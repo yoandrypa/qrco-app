@@ -5,17 +5,18 @@ import {grey} from "@mui/material/colors";
 
 import RenderIcon from "./smallpieces/RenderIcon";
 import {useTheme} from "@mui/system";
+import {qrNameDisplayer} from "../../../helpers/qr/helpers";
 
 interface TypeSelectorProps {
   handleSelect: (payload: string) => void;
-  label: string;
   description: string;
   icon: string;
   selected: boolean;
   enabled?: boolean;
+  isDynamic?: boolean;
 }
 
-const TypeSelector = ({ handleSelect, label, description, icon, selected, enabled = true}: TypeSelectorProps) => {
+const TypeSelector = ({ isDynamic, handleSelect, description, icon, selected, enabled = true}: TypeSelectorProps) => {
   const [over, setOver] = useState<boolean>(selected);
   const theme = useTheme();
 
@@ -60,7 +61,7 @@ const TypeSelector = ({ handleSelect, label, description, icon, selected, enable
                 fontWeight: 'bold',
                 color: !enabled ? grey[500] : (selected || over ? theme.palette.primary.dark : grey[800])
               }} variant="h6">
-                {label}
+                {qrNameDisplayer(icon, isDynamic || false)}
               </Typography>
             </Box>
             <Typography sx={{width: '100%', color: !enabled ? grey[500] : grey[selected || over ? 800 : 700]}}>

@@ -38,11 +38,12 @@ interface PreviewProps {
   qrDesign?: any;
   qr?: any;
   avoidDuplicate?: boolean;
+  onlyPreview?: boolean;
   width?: number;
   override?: string;
 }
 
-const RenderPreview = ({qrDesign, qr, externalFrame, externalDesign, handleDone, override, width, avoidDuplicate, ...qrProps}: PreviewProps) => {
+const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign, handleDone, override, width, avoidDuplicate, ...qrProps}: PreviewProps) => {
   const [preview, setPreview] = useState<boolean>(false);
   const [qrData, setQrData] = useState<any>(null);
   const [current, setCurrent] = useState<string | null>(externalDesign || null);
@@ -54,7 +55,7 @@ const RenderPreview = ({qrDesign, qr, externalFrame, externalDesign, handleDone,
   const done = useRef(false);
 
   const handlePreView = (): void => {
-    if (!override) {
+    if (onlyPreview) {
       setPreview((previous: boolean) => !previous);
     }
   };
@@ -130,11 +131,12 @@ const RenderPreview = ({qrDesign, qr, externalFrame, externalDesign, handleDone,
   }
 
   const renderDownload = () => (
-    <Box sx={{display: 'flex', flexDirection: !override ? 'row' : 'column', width: !override ? '100%' : 'calc(100% - 20px)', paddingLeft: !override ? 0 : '18px'}}>
-      <Button sx={{mt: '10px', width: '100%'}} variant="outlined" onClick={handleDownload} startIcon={<DownloadIcon/>}>
+    <Box sx={{display: 'flex', width: '100%'}}>
+      <Button sx={{mt: '10px', width: handleDone ? '100%' : '60%', mr: handleDone ? '5px' : '10px'}} variant="outlined"
+              onClick={handleDownload} startIcon={<DownloadIcon/>}>
         {'Download'}
       </Button>
-      <Button sx={{mt: '10px', width: !override ? '160px' : '100%', ml: !override ? '5px' : 0}} variant="outlined"
+      <Button sx={{mt: '10px', width: handleDone ? '160px' : '40%'}} variant="outlined"
               onClick={() => setGeneratePdf(true)} startIcon={<PrintIcon/>}>
         {'Print'}
       </Button>
@@ -153,11 +155,9 @@ const RenderPreview = ({qrDesign, qr, externalFrame, externalDesign, handleDone,
         {current && !updating ? (
           <>
             <QRRender qrData={current || ''} width={width || 70} alt={name} {...qrProps}/>
-            {override && renderDownload()}
+            {!onlyPreview && <Box sx={{ pl: '18px' }}>{renderDownload()}</Box>}
           </>
-        ) : (
-          <CircularProgress color="primary" sx={{ml: '10px', my: 'auto'}}/>
-        )}
+        ) : <CircularProgress color="primary" sx={{ml: '10px', my: 'auto'}}/>}
       </Box>)}
       {(preview || externalDesign !== undefined) && (
         <Dialog onClose={handlePreView} open={true} onKeyDown={getJson}>

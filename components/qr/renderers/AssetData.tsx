@@ -21,11 +21,6 @@ type AssetDataProps = {
 }
 
 const AssetData = ({ type, data, setData, handleValues }: AssetDataProps) => {
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === "clickaway") {
-      return;
-    }
-  };
   // @ts-ignore
   const { setIsWrong } = useContext(Context);
 

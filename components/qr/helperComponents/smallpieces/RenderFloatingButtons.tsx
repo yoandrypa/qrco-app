@@ -36,7 +36,6 @@ export default function RenderFloatingButtons(
         isLogged={isLogged}
         isWrong={isWrong}
         selected={selected}
-        mode={mode}
         qrName={qrName}
       /> : <Box />}
     </Box>
