@@ -1,7 +1,6 @@
 import { ChangeEvent, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 
 import RenderIcon from './helperComponents/smallpieces/RenderIcon';
 import Context from '../context/Context';
@@ -153,7 +152,6 @@ const QrContentHandler = () => { // @ts-ignore
           <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{qrNameDisplayer(selected || '', data.isDynamic || false)}</Typography>
           <Typography sx={{ display: 'inline' }}>: Enter the content</Typography>
           <NotifyDynamic isDynamic={data.isDynamic || false} />
-          <Divider sx={{ my: '10px' }} />
           <Box sx={{ textAlign: 'left', width: '100%' }}>
             {renderSel()}
           </Box>
