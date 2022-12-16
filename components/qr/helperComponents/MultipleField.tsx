@@ -148,7 +148,6 @@ export default function MultipleField({ item }: MultipleFieldDataProps) {
                   </TableRow>
                 </TableHead>
               </Table>
-
               <Table size="small">
                 <TableBody {...provided.droppableProps} ref={provided.innerRef}>
                   {data?.[item.key]?.items.map((i: any, index: number) => {
@@ -176,12 +175,12 @@ export default function MultipleField({ item }: MultipleFieldDataProps) {
                                 width: '5%',
                                 borderBottom: 'none'
                               }}>
-                              <DragIndicator
+                              { data[item.key].items.length>1 &&(<DragIndicator
                                 sx={{
                                   color: theme => theme.palette.text.disabled,
                                   mt: '8px'
                                 }}
-                              />
+                              />)}
                             </TableCell>
                             <TableCell
                               sx={{
@@ -262,7 +261,9 @@ export default function MultipleField({ item }: MultipleFieldDataProps) {
                                 </IconButton>
                               </Tooltip>
                             </TableCell>
-                            <TableCell>
+                            <TableCell
+                              sx={{ p: 0, borderBottom: 'none', width: '5%' }}
+                              align="right">
                               <Tooltip title={'Remove a item'}>
                                 <IconButton onClick={() => remove(index)}>
                                   <Delete color="error" />
