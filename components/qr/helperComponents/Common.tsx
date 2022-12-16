@@ -169,7 +169,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       opts.data = handleDesignerString(selected, data || initialData);
     }
     return opts;
-  }, [data]);
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

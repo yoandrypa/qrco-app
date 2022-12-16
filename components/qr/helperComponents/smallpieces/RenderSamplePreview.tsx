@@ -55,18 +55,18 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
   const URL = selected && (REDEFINE_URL.includes(selected) && isDynamic) ? getProperSampleUrl(selected) :
     `${process.env.REACT_MICROSITES_ROUTE}/${selected ? `sample/${cleanSelectionForMicrositeURL(selected)}` : code}`;
 
-  const repaint = useCallback(debounce((value: string) => {
+  const repaint = useCallback(debounce(() => { // eslint-disable-line react-hooks/exhaustive-deps
     setUpdating(true);
-  }, 500), []);
+  }, 500), []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!updating && step === 0) {
       setUpdating(true);
     } else if (step === 1 && !isDynamic) {
       forceHide.current = true;
-      repaint(qrOptions?.data || '');
+      repaint();
     }
-  }, [URL, qrOptions?.data]);
+  }, [URL, qrOptions?.data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (updating) {
@@ -79,7 +79,7 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
         setUpdating(false);
       }
     }
-  }, [updating]);
+  }, [updating]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (selected && ONLY_QR.includes(selected) && prev !== 'qr') {
@@ -155,7 +155,9 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
               </Suspense>
             ) : null}
           </RenderCellPhoneShape>
-        ) : (!updating && !forceHide.current ? <RenderPreview width={270} qrDesign={qrOptions} override={!qrOptions ? URL : undefined} /> : (
+        ) : (!updating && !forceHide.current ? (
+          <RenderPreview width={270} qrDesign={qrOptions} override={!qrOptions ? URL : undefined} onlyPreview={step === 0 && !isDynamic} />
+        ) : (
           <Box sx={{width: '100%', textAlign: 'center', pd: 3}}>
             <Typography>{'Preparing QR preview'}</Typography>
             <Typography sx={{color: theme => theme.palette.text.disabled}}>{'Please wait...'}</Typography>
