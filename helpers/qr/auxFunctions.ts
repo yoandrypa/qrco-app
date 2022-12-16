@@ -127,6 +127,41 @@ export const previewQRGenerator = (data: DataType, selected: string) => {
         ETag: '"7ead95e45c3545b88ec3c1721c2a0921"',
         Key: 'videos/Facebook 0330478876988862(MP4).mp4'
       }]);
+    }else if ( selected ==='petId'){
+      cleanAssets();
+      populate('petName', 'Fido');
+      populate('petBreed', 'Pug');
+      populate('petGender', 'Male');
+      populate('Country', 'USA');
+      populate('city', 'New York');
+      populate('otherDetails', {
+        "heading": "Details",
+        "items": [
+          {
+            "value": "Ball",
+            "label": "Favorite Toy"
+          }
+        ]
+      });
+      populate('headingTextText', 'Fido is a 3 year old Pug. He is very friendly and loves to play with his ball.');
+      populate('headingText', 'About');
+      populate('phone', '+54543434')
+      populate('urls',{
+        "heading": "Fido personal Links",
+        "items": [
+          {
+            "value": "fido.store.com",
+            "label": "Store"
+          }
+        ]
+      });
+      populate('contactTitle', 'Owner Info');
+      populate('petYearOfBirth', '2020')
+      populate('state', "NY")
+      populate('name', 'Rick Daniels Gonzalez')
+      populate('address1', '1234 Main St');
+      populate('email', 'fido@gmail.com');
+      populate('zip', '91500');
     }
   }
   return obj;

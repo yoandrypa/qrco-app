@@ -48,7 +48,7 @@ export default function PetIdData({
         isError = true;
       } else if (item === 'zip' && !ZIP.test(value)) {
         isError = true;
-      } else if (item === 'web' && !isValidUrl(value)) {
+      } else if (item === 'website' && !isValidUrl(value)) {
         isError = true;
       } else if (item === 'email' && !EMAIL.test(value)) {
         isError = true;
@@ -66,7 +66,7 @@ export default function PetIdData({
       />
     );
   };
-  const checkData = () => {}
+  const checkData = () => {};
   useEffect(() => {
     let errors = false;
     if (!data.petName?.trim().length) {
@@ -82,7 +82,7 @@ export default function PetIdData({
   return (
     <Common msg="Your Pet Information">
       <Topics message={'Presentation'} />
-      <Grid container spacing={1}>
+      <Grid container spacing={1} sx={{mt:1}}>
         <Grid item sm={5} xs={12} style={{ paddingTop: 0 }}>
           {renderItem('petName', 'Name')}
         </Grid>
@@ -97,7 +97,7 @@ export default function PetIdData({
         </Grid>
       </Grid>
       <Topics message={'Heading Text'} />
-      <Grid container spacing={1}>
+      <Grid container spacing={1} sx={{mt:1}}>
         <Grid item sm={6} xs={12} style={{ paddingTop: 0 }}>
           {renderItem('headingText', 'Heading')}
         </Grid>
@@ -106,7 +106,7 @@ export default function PetIdData({
         </Grid>
       </Grid>
       <Topics message={'Contact'} />
-      <Grid container spacing={1}>
+      <Grid container spacing={1} sx={{mt:1}}>
         <Grid item sm={4} xs={12} style={{ paddingTop: 0 }}>
           {renderItem('contactTitle', 'Title')}
         </Grid>
@@ -114,13 +114,16 @@ export default function PetIdData({
           {renderItem('name', 'Name')}
         </Grid>
         <Grid item sm={4} xs={12} style={{ paddingTop: 0 }}>
-          {renderItem('cell', 'Cell number')}
+          {renderItem('phone', 'Cell number')}
         </Grid>
         <Grid item sm={4} xs={12} style={{ paddingTop: 0 }}>
           {renderItem('fax', 'Fax')}
         </Grid>
         <Grid item sm={4} xs={12} style={{ paddingTop: 0 }}>
           {renderItem('email', 'Email')}
+        </Grid>
+        <Grid item sm={4} xs={6} style={{ paddingTop: 0 }}>
+          {renderItem('website', 'Website')}
         </Grid>
       </Grid>
       <Grid container spacing={1}>
@@ -149,16 +152,13 @@ export default function PetIdData({
                 <Grid item sm={4} xs={6} style={{ paddingTop: 0 }}>
                   {renderItem('country', 'Country')}
                 </Grid>
-                <Grid item sm={4} xs={6} style={{ paddingTop: 0 }}>
-                  {renderItem('web', 'Website')}
-                </Grid>
               </Grid>
             )}
           </Paper>
         </Grid>
       </Grid>
       <Grid container spacing={1}>
-        <Grid item xs={12}>
+        <Grid item xs={12} sx={{p:1}}>
           <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
             <Expander
               expand={expander}
@@ -169,13 +169,15 @@ export default function PetIdData({
             {expander === 'other' && (
               <Grid container spacing={1}>
                 <Grid item xs={12} style={{ paddingTop: 0 }}>
-                  <MultipleField item={{key:'otherDetails', label:'Detail'}}/>
+                  <MultipleField
+                    item={{ key: 'otherDetails', label: 'Detail' }}
+                  />
                 </Grid>
               </Grid>
             )}
           </Paper>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sx={{p:1}}>
           <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
             <Expander
               expand={expander}
@@ -186,7 +188,9 @@ export default function PetIdData({
             {expander === 'urls' && (
               <Grid container spacing={1}>
                 <Grid item xs={12} style={{ paddingTop: 0 }}>
-                  <MultipleField item={{key:'urls', label:'Links', type:'url'}}/>
+                  <MultipleField
+                    item={{ key: 'urls', label: 'Links', type: 'url' }}
+                  />
                 </Grid>
               </Grid>
             )}
