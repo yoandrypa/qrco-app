@@ -1,4 +1,4 @@
-import {MouseEvent, Suspense, useCallback, useEffect, useState} from "react";
+import {MouseEvent, Suspense, useCallback, useEffect, useRef, useState} from "react";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
@@ -44,7 +44,7 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
   const [prev, setPrev] = useState<string>(!onlyQr ? 'preview' : 'qr');
   const [copied, setCopied] = useState<boolean>(false);
   const [updating, setUpdating] = useState<boolean>(false);
-  const [forceHide, setForceHide] = useState<boolean>(false);
+  const forceHide = useRef<boolean>(false);
 
   const handleToggle = (_: MouseEvent<HTMLElement>, newSel: string | null) => {
     if (newSel !== null) {
@@ -63,7 +63,7 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
     if (!updating && step === 0) {
       setUpdating(true);
     } else if (step === 1 && !isDynamic) {
-      setForceHide(true);
+      forceHide.current = true;
       repaint(qrOptions?.data || '');
     }
   }, [URL, qrOptions?.data]);
@@ -75,7 +75,7 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
           setUpdating(false);
         }, 100);
       } else {
-        setForceHide(false);
+        forceHide.current = false;
         setUpdating(false);
       }
     }
@@ -155,7 +155,7 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
               </Suspense>
             ) : null}
           </RenderCellPhoneShape>
-        ) : (!updating && !forceHide ? <RenderPreview width={270} qrDesign={qrOptions} override={!qrOptions ? URL : undefined} /> : (
+        ) : (!updating && !forceHide.current ? <RenderPreview width={270} qrDesign={qrOptions} override={!qrOptions ? URL : undefined} /> : (
           <Box sx={{width: '100%', textAlign: 'center', pd: 3}}>
             <Typography>{'Preparing QR preview'}</Typography>
             <Typography sx={{color: theme => theme.palette.text.disabled}}>{'Please wait...'}</Typography>
