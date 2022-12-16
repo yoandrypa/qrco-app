@@ -16,7 +16,8 @@ export interface DonationsProps {
     donationUnitAmount?: number,
     donationPriceId?: string,
     donationProductId?: string,
-    urlOptionLabel?: string
+    urlOptionLabel?: string,
+    email?: string
   },
   setData: Function,
   setIsWrong: Function
