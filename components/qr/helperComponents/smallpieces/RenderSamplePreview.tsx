@@ -1,4 +1,4 @@
-import {MouseEvent, Suspense, useEffect, useState} from "react";
+import {MouseEvent, Suspense, useCallback, useEffect, useState} from "react";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
@@ -22,6 +22,7 @@ import RenderCellPhoneShape from "../RenderCellPhoneShape";
 
 import dynamic from "next/dynamic";
 import PleaseWait from "../../../PleaseWait";
+import {debounce} from "@mui/material";
 
 const RenderIframe = dynamic(() => import('../../../RenderIframe'), {suspense: true});
 
@@ -43,6 +44,7 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
   const [prev, setPrev] = useState<string>(!onlyQr ? 'preview' : 'qr');
   const [copied, setCopied] = useState<boolean>(false);
   const [updating, setUpdating] = useState<boolean>(false);
+  const [forceHide, setForceHide] = useState<boolean>(false);
 
   const handleToggle = (_: MouseEvent<HTMLElement>, newSel: string | null) => {
     if (newSel !== null) {
@@ -53,17 +55,29 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
   const URL = selected && (REDEFINE_URL.includes(selected) && isDynamic) ? getProperSampleUrl(selected) :
     `${process.env.REACT_MICROSITES_ROUTE}/${selected ? `sample/${cleanSelectionForMicrositeURL(selected)}` : code}`;
 
+  const repaint = useCallback(debounce((value: string) => {
+    setUpdating(true);
+  }, 500), []);
+
   useEffect(() => {
-    if (!updating) {
+    if (!updating && step === 0) {
       setUpdating(true);
+    } else if (step === 1 && !isDynamic) {
+      setForceHide(true);
+      repaint(qrOptions?.data || '');
     }
-  }, [URL, qrOptions]);
+  }, [URL, qrOptions?.data]);
 
   useEffect(() => {
     if (updating) {
-      setTimeout(() => {
+      if (step === 0) {
+        setTimeout(() => {
+          setUpdating(false);
+        }, 100);
+      } else {
+        setForceHide(false);
         setUpdating(false);
-      }, 100);
+      }
     }
   }, [updating]);
 
@@ -141,7 +155,7 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
               </Suspense>
             ) : null}
           </RenderCellPhoneShape>
-        ) : (!updating ? <RenderPreview width={270} qrDesign={qrOptions} override={!qrOptions ? URL : undefined} /> : (
+        ) : (!updating && !forceHide ? <RenderPreview width={270} qrDesign={qrOptions} override={!qrOptions ? URL : undefined} /> : (
           <Box sx={{width: '100%', textAlign: 'center', pd: 3}}>
             <Typography>{'Preparing QR preview'}</Typography>
             <Typography sx={{color: theme => theme.palette.text.disabled}}>{'Please wait...'}</Typography>
