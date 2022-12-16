@@ -8,7 +8,10 @@ import RenderIcon from "../../helperComponents/smallpieces/RenderIcon";
 import {DataType, SocialNetworksType, SocialsType} from "../../types/types";
 import {PHONE} from "../../constants";
 import SectionSelector from "../../helperComponents/SectionSelector";
-import RenderTitleDesc from "./RenderTitleDesc";
+
+import dynamic from "next/dynamic";
+
+const RenderTitleDesc = dynamic(() => import("./RenderTitleDesc"));
 
 interface RenderSocialsProps {
   data: DataType;
