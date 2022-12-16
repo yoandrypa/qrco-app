@@ -13,7 +13,7 @@ import dynamic from "next/dynamic";
 
 import Context from "../../context/Context";
 import RenderQRCommons from "../renderers/RenderQRCommons";
-import {DEFAULT_COLORS, IS_DEV_ENV, NO_MICROSITE} from "../constants";
+import {DEFAULT_COLORS, NO_MICROSITE} from "../constants";
 import {download} from "../../../handlers/storage";
 import {DataType} from "../types/types";
 import {previewQRGenerator} from "../../../helpers/qr/auxFunctions";
@@ -224,7 +224,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
               </Box>
             ) : renderChildren()}
           </Box>
-          {IS_DEV_ENV && isWideForPreview && !NO_MICROSITE.includes(selected) && (
+          {isWideForPreview && !NO_MICROSITE.includes(selected) && (
             <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
                                  save={handleSave} style={{mt: '-13px', ml: '15px'}} saveDisabled={isWrong}
                                  qrOptions={optionsForPreview()} data={previewQRGenerator(data, selected)} step={1}
@@ -232,7 +232,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           )}
         </Box>
       ) : renderChildren()}
-      {IS_DEV_ENV && !openPreview && !isWideForPreview && !NO_MICROSITE.includes(selected) && ( // @ts-ignore
+      {!openPreview && !isWideForPreview && !NO_MICROSITE.includes(selected) && ( // @ts-ignore
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />
       )}
       {openPreview && ( // @ts-ignore

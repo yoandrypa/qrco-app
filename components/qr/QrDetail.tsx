@@ -15,17 +15,23 @@ import TodayIcon from "@mui/icons-material/Today";
 import EventIcon from "@mui/icons-material/Event";
 import { themeConfig } from "../../utils/theme";
 import Avatar from "@mui/material/Avatar";
+import {useTheme} from "@mui/system";
+
+const getSx = (theme: any) => ({
+  border: `solid 1px ${theme.palette.primary.main}`, borderRadius: '100%', width: '40px', height: '40px', my: 'auto', p: '5px'
+});
 
 const QrDetail = ({ qrData }: any) => {
   const qrLink = qrData.shortLinkId ? sanitize.link(qrData.shortLinkId) : null;
+  const theme = useTheme();
 
   return (
     <Grid container spacing={1} columnSpacing={1}>
       <Grid container xs={8} alignItems="center">
         <Grid item xs={1}>
-          <Avatar sx={{ bgcolor: themeConfig().palette.primary.main }}>
-            <AbcIcon fontSize="medium"/>
-          </Avatar>
+          {/*<Avatar sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
+            <AbcIcon fontSize="medium" color="primary" sx={getSx(theme)}/>
+          {/*</Avatar>*/}
         </Grid>
         <Grid item ml={3}>
           <Typography variant="caption">Name</Typography>
@@ -35,10 +41,10 @@ const QrDetail = ({ qrData }: any) => {
       {/*-----*/}
       <Grid container xs={8} alignItems="center" mt={0.5}>
         <Grid item xs={1}>
-          <Avatar
-            sx={{ bgcolor: themeConfig().palette.primary.main }}>
-            <FormatSizeIcon fontSize="small"/>
-          </Avatar>
+          {/*<Avatar*/}
+          {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
+            <FormatSizeIcon fontSize="small" color="primary" sx={getSx(theme)}/>
+          {/*</Avatar>*/}
         </Grid>
         <Grid item ml={3}>
           <Typography variant="caption">Type</Typography>
@@ -48,10 +54,10 @@ const QrDetail = ({ qrData }: any) => {
       {/*-----*/}
       <Grid container xs={8} alignItems="center" mt={0.5}>
         <Grid item xs={1}>
-          <Avatar
-            sx={{ bgcolor: themeConfig().palette.primary.main }}>
-            <ElectricBoltIcon/>
-          </Avatar>
+          {/*<Avatar*/}
+          {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
+            <ElectricBoltIcon color="primary" sx={getSx(theme)}/>
+          {/*</Avatar>*/}
         </Grid>
         <Grid item ml={3}>
           <Typography variant="caption">Mode</Typography>
@@ -61,10 +67,10 @@ const QrDetail = ({ qrData }: any) => {
       {/*-----*/}
       <Grid container xs={8} alignItems="center" mt={0.5}>
         <Grid item xs={1}>
-          <Avatar
-            sx={{ bgcolor: themeConfig().palette.primary.main }}>
-            <PublicIcon/>
-          </Avatar>
+          {/*<Avatar*/}
+          {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
+            <PublicIcon color="primary" sx={getSx(theme)}/>
+          {/*</Avatar>*/}
         </Grid>
         <Grid item alignItems="center" ml={3}>
           <Typography variant="caption">Link</Typography>
@@ -76,10 +82,10 @@ const QrDetail = ({ qrData }: any) => {
       {/*-----*/}
       <Grid container xs={8} alignItems="center" mt={0.5}>
         <Grid item xs={1}>
-          <Avatar
-            sx={{ bgcolor: themeConfig().palette.primary.main }}>
-            <PauseIcon/>
-          </Avatar>
+          {/*<Avatar*/}
+          {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
+            <PauseIcon color="primary" sx={getSx(theme)}/>
+          {/*</Avatar>*/}
         </Grid>
         <Grid item xs={3} alignItems="center" ml={3}>
           <Typography variant="caption">Paused?</Typography>
@@ -89,10 +95,10 @@ const QrDetail = ({ qrData }: any) => {
         {qrLink?.pausedById ?
           <>
             <Grid item xs={1}>
-              <Avatar
-                sx={{ bgcolor: themeConfig().palette.primary.main }}>
-                <PauseIcon/>
-              </Avatar>
+              {/*<Avatar*/}
+              {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
+                <PauseIcon color="primary" sx={getSx(theme)}/>
+              {/*</Avatar>*/}
             </Grid>
             <Grid item xs={3} ml={1} alignItems="center">
               <Typography variant="caption">Paused by</Typography>
@@ -105,10 +111,10 @@ const QrDetail = ({ qrData }: any) => {
       {/*-----*/}
       <Grid container xs={8} alignItems="center" mt={0.5}>
         <Grid item xs={1}>
-          <Avatar
-            sx={{ bgcolor: themeConfig().palette.primary.main }}>
-            <BlockIcon/>
-          </Avatar>
+          {/*<Avatar*/}
+          {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
+            <BlockIcon color="primary" sx={getSx(theme)}/>
+          {/*</Avatar>*/}
         </Grid>
         <Grid item xs={3} ml={3} alignItems="center">
           <Typography variant="caption">Banned?</Typography>
@@ -118,10 +124,10 @@ const QrDetail = ({ qrData }: any) => {
         {qrLink?.bannedById ?
           <>
             <Grid item xs={1}>
-              <Avatar
-                sx={{ bgcolor: themeConfig().palette.primary.main }}>
-                <BlockIcon/>
-              </Avatar>
+              {/*<Avatar*/}
+              {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
+                <BlockIcon color="primary" sx={getSx(theme)}/>
+              {/*</Avatar>*/}
             </Grid>
             <Grid item xs={3} ml={1} alignItems="center">
               <Typography variant="caption">Banned by</Typography>
@@ -134,10 +140,10 @@ const QrDetail = ({ qrData }: any) => {
       {/*-----*/}
       <Grid container xs={8} alignItems="center" mt={0.5}>
         <Grid item xs={1}>
-          <Avatar
-            sx={{ bgcolor: themeConfig().palette.primary.main }}>
-            <TodayIcon/>
-          </Avatar>
+          {/*<Avatar*/}
+          {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
+            <TodayIcon color="primary" sx={getSx(theme)}/>
+          {/*</Avatar>*/}
         </Grid>
         <Grid item ml={3} alignItems="center">
           <Typography variant="caption">Created at</Typography>
@@ -148,10 +154,10 @@ const QrDetail = ({ qrData }: any) => {
       {/*-----*/}
       <Grid container xs={8} alignItems="center" mt={0.5}>
         <Grid item xs={1}>
-          <Avatar
-            sx={{ bgcolor: themeConfig().palette.primary.main }}>
-            <EventIcon/>
-          </Avatar>
+          {/*<Avatar*/}
+          {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
+            <EventIcon color="primary" sx={getSx(theme)}/>
+          {/*</Avatar>*/}
         </Grid>
         <Grid item ml={3} alignItems="center">
           <Typography variant="caption">Last update</Typography>
