@@ -9,7 +9,6 @@ export const QR_PLAN_ROUTE = '/plans/buy/[plan]' as string;
 export const PARAM_QR_TEXT = 'qr_text' as string;
 
 export const NO_MICROSITE = ['facebook', 'twitter', 'whatsapp', 'paylink', 'fundme'];
-export const REDEFINE_URL = ['web'];
 export const ONLY_QR = ['fundme', 'paylink'];
 
 export const EMAIL = new RegExp('^\\w+(\\.\\w+)*(\\+\\w+(\\.\\w+)*)?@\\w+(\\.\\w+)+$', 'i');

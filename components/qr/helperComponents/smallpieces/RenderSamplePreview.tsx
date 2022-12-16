@@ -12,11 +12,11 @@ import Typography from "@mui/material/Typography";
 import LinkIcon from "@mui/icons-material/Link";
 import SaveIcon from "@mui/icons-material/Save";
 
-import {NO_MICROSITE, ONLY_QR, REDEFINE_URL} from "../../constants";
+import {NO_MICROSITE, ONLY_QR} from "../../constants";
 
 import RenderPreview from "../../renderers/RenderPreview";
 import Notifications from "../../../notifications/Notifications";
-import {cleanSelectionForMicrositeURL, getProperSampleUrl} from "../../../../helpers/qr/helpers";
+import {cleanSelectionForMicrositeURL} from "../../../../helpers/qr/helpers";
 import {DataType} from "../../types/types";
 import RenderCellPhoneShape from "../RenderCellPhoneShape";
 
@@ -40,6 +40,8 @@ interface SamplePrevProps {
 interface WithSelection extends SamplePrevProps { selected: string; code?: never; }
 interface WithSCode extends SamplePrevProps { selected?: never; code: string; }
 
+const clearUrl = (url: string): string => url.slice(url.indexOf('//') + 2);
+
 const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, save, code, isDrawed, saveDisabled, qrOptions}: WithSelection | WithSCode) => {
   const [prev, setPrev] = useState<string>(!onlyQr ? 'preview' : 'qr');
   const [copied, setCopied] = useState<boolean>(false);
@@ -52,8 +54,7 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
     }
   }
 
-  const URL = selected && (REDEFINE_URL.includes(selected) && isDynamic) ? getProperSampleUrl(selected) :
-    `${process.env.REACT_MICROSITES_ROUTE}/${selected ? `sample/${cleanSelectionForMicrositeURL(selected)}` : code}`;
+  const URL = isDynamic ? (selected ? cleanSelectionForMicrositeURL(selected, isDynamic) : (`${process.env.REACT_MICROSITES_ROUTE}/${code}`)) : selected;
 
   const repaint = useCallback(debounce(() => { // eslint-disable-line react-hooks/exhaustive-deps
     setUpdating(true);
@@ -82,8 +83,8 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
   }, [updating]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (selected && ONLY_QR.includes(selected) && prev !== 'qr') {
-      setPrev('qr');
+    if (selected) {
+      setPrev((!isDynamic || ONLY_QR.includes(selected)) ? 'qr' : 'preview');
     }
   }, [selected]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -107,7 +108,7 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               fontSize: '13px'
-            }}>{URL.slice(URL.indexOf('//') + 2)}</Typography>
+            }}>{clearUrl(URL || '')}</Typography>
           </Box>
           <Box sx={{display: 'flex'}}>
             <IconButton size="small" target="_blank" component="a" href={URL} sx={{height: '28px', width: '28px', mt: '9px'}}>
@@ -115,7 +116,7 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
             </IconButton>
             <IconButton size="small" sx={{height: '28px', width: '28px', mt: '9px'}} onClick={() => {
               try {
-                navigator.clipboard.writeText(URL);
+                navigator.clipboard.writeText(URL || '');
                 setCopied(true);
               } catch {
                 console.log('Copy failed');
@@ -151,12 +152,14 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
           <RenderCellPhoneShape width={270} height={550} offlineText="The selected card has no available sample">
             {code || (selected && !NO_MICROSITE.includes(selected)) ? (
               <Suspense fallback={<PleaseWait />}>
-                <RenderIframe selected={selected} width="256px" height="536px" src={!code ? URL : `${process.env.REACT_MICROSITES_ROUTE}/sample/empty`} data={data}/>
+                <RenderIframe src={!code ? cleanSelectionForMicrositeURL(selected || '', isDynamic, true) : `${process.env.REACT_MICROSITES_ROUTE}/sample/empty`}
+                              selected={selected} width="256px" height="536px"  data={data}/>
               </Suspense>
             ) : null}
           </RenderCellPhoneShape>
         ) : (!updating && !forceHide.current ? (
-          <RenderPreview width={270} qrDesign={qrOptions} override={!qrOptions ? URL : undefined} onlyPreview={step === 0 && !isDynamic} />
+          <RenderPreview override={!qrOptions ? cleanSelectionForMicrositeURL(selected || '', isDynamic, true) : undefined}
+                         onlyPreview={step === 0 && !isDynamic} width={270} qrDesign={qrOptions}  />
         ) : (
           <Box sx={{width: '100%', textAlign: 'center', pd: 3}}>
             <Typography>{'Preparing QR preview'}</Typography>
