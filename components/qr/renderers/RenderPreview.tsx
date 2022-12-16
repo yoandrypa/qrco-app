@@ -21,6 +21,7 @@ import {
 } from "../../../helpers/qr/helpers";
 import {initialBackground} from "../../../helpers/qr/data";
 import PrintIcon from "@mui/icons-material/Print";
+import parse from "html-react-parser";
 
 interface QRRenderProps {
   qrData: string;
@@ -108,7 +109,7 @@ const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign
       setTimeout(() => {
         setUpdating(false);
         generateQr();
-      }, 350);
+      }, 450);
     }
   }, [updating]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -164,7 +165,7 @@ const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign
           <DialogContent>
             <Box sx={{width: '300px'}}>
               <QRRender qrData={!externalDesign ? (current || '') : externalDesign.outerHTML} width={300}
-                        alt={`${name}preview`}/>
+                        alt={`${name}preview`} />
               {renderDownload()}
             </Box>
           </DialogContent>
@@ -173,13 +174,13 @@ const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign
       {Boolean(anchor) && (
         <RenderDownload
           frame={frame}
-          qrImageData={externalDesign || qrRef.current}
+          qrImageData={externalDesign || current || qrRef.current}
           anchor={anchor}
           setAnchor={setAnchor}/>
       )}
       {generatePdf && (
         <PDFGenDlg
-          data={externalDesign || qrRef.current}
+          data={externalDesign || current || qrRef.current}
           handleClose={() => setGeneratePdf(false)}
           isFramed={Boolean(frame?.type) && frame?.type !== '/frame/frame0.svg'}/>
       )}

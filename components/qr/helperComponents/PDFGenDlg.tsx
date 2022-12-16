@@ -57,7 +57,7 @@ const PDFGenDlg = ({ handleClose, data, isFramed }: PDFGenDlgProps) => {
   };
 
   const generatePdf = () => {
-    const dataURL = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(data.outerHTML)}`;
+    const dataURL = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(typeof data === 'string' ? data : data.outerHTML)}`;
     const canvas: HTMLCanvasElement = document.createElement('canvas');
     const img: HTMLImageElement = new Image();
     const canvasW: number = settings.size;
@@ -93,7 +93,7 @@ const PDFGenDlg = ({ handleClose, data, isFramed }: PDFGenDlgProps) => {
   }, [settings]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Dialog onClose={handleClose} open maxWidth="md">
+    <Dialog onClose={handleClose} open={true} maxWidth="md">
       <DialogContent dividers="paper">
         <Typography sx={{ fontWeight: 'bold' }}>PDF Settings</Typography>
         <Box sx={{ p: 1, width: { sm: '650px', xs: '100%' }, display: 'flex', flexDirection: { sm: 'row', xs: 'column' } }}>
