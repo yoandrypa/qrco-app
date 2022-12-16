@@ -352,3 +352,15 @@ export const getProperSampleUrl = (item: string): string => {
   if (item === 'web') { return 'https://a-qr.link/zDexu6'; }
   return item;
 }
+
+// @ts-ignore
+export const debounce = (func, delay, { leading } = {}) => { // @ts-ignore
+  let timerId; // @ts-ignore
+  return (...args) => { // @ts-ignore
+    if (!timerId && leading) {
+      func(...args);
+    } // @ts-ignore
+    clearTimeout(timerId);
+    timerId = setTimeout(() => func(...args), delay);
+  }
+}

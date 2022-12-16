@@ -18,6 +18,8 @@ import {download} from "../../../handlers/storage";
 import {DataType} from "../types/types";
 import {previewQRGenerator} from "../../../helpers/qr/auxFunctions";
 import {saveOrUpdate} from "../auxFunctions";
+import {handleDesignerString} from "../../../helpers/qr/helpers";
+import {initialData} from "../../../helpers/qr/data";
 
 const Notifications = dynamic(() => import('../../notifications/Notifications'));
 const RenderPreviewDrawer = dynamic(() => import('./smallpieces/RenderPreviewDrawer'));
@@ -161,7 +163,13 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     });
   };
 
-  const optionsForPreview = () => ({...options, background, frame, corners: cornersData, cornersDot: dotsData});
+  const optionsForPreview = useCallback(() => {
+    const opts = {...options, background, frame, corners: cornersData, cornersDot: dotsData};
+    if (!data.isDynamic) {
+      opts.data = handleDesignerString(selected, data || initialData);
+    }
+    return opts;
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
