@@ -13,9 +13,10 @@ import RenderTitleDesc from "./RenderTitleDesc";
 interface RenderSocialsProps {
   data: DataType;
   setData: Function;
+  showTitleAndDesc?: boolean;
 }
 
-const RenderSocials = ({data, setData}: RenderSocialsProps) => {
+const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) => {
   const selection = useRef<SocialsType | null>(null);
   const errorDetected = useRef(false);
 
@@ -111,9 +112,11 @@ const RenderSocials = ({data, setData}: RenderSocialsProps) => {
 
   return (
     <Grid container spacing={1}>
-      <Grid item xs={12}>
-        <RenderTitleDesc handleValues={handleValues} title={data.title} description={data.about} />
-      </Grid>
+      {showTitleAndDesc && (
+        <Grid item xs={12}>
+          <RenderTitleDesc handleValues={handleValues} title={data.title} description={data.about} />
+        </Grid>
+      )}
       <Grid item xs={12}>
         <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: 'fit-content', margin: '0 auto'}}>
           <SectionSelector

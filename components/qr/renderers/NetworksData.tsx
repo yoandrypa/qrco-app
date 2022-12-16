@@ -23,7 +23,7 @@ const NetworksData = ({data, setData, setIsWrong}: NetWorksProps) => {
   return (
     <Common msg="Your social networks. Users can reach you using the social networks.">
       <Box sx={{ mt: 2 }}>
-        <RenderSocials data={data} setData={setData} />
+        <RenderSocials data={data} setData={setData} showTitleAndDesc />
       </Box>
     </Common>
   );
