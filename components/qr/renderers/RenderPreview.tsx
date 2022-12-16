@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
-import {useRef, useState, useEffect} from "react";
+import {useEffect, useRef, useState} from "react";
 import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
 import Box from "@mui/material/Box";
@@ -17,11 +17,11 @@ import {
   getBackgroundObject,
   getCornersAndDotsObject,
   getFrameObject,
-  getOptionsObject, handleInitialData
+  getOptionsObject,
+  handleInitialData
 } from "../../../helpers/qr/helpers";
 import {initialBackground} from "../../../helpers/qr/data";
 import PrintIcon from "@mui/icons-material/Print";
-import parse from "html-react-parser";
 
 interface QRRenderProps {
   qrData: string;
