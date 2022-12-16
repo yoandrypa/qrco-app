@@ -162,8 +162,8 @@ const delta = (rgbA: number[], rgbB: number[]): number => {
   return i < 0 ? 0 : Math.sqrt(i);
 }
 
-export const downloadAsSVGOrVerify = (qrImageData: { outerHTML: string; }, verify: Function | undefined, contrast: { color1?: string; color2: string } | undefined): void => {
-  const svgData = qrImageData.outerHTML.replaceAll(' href', ' xlink:href');
+export const downloadAsSVGOrVerify = (qrImageData: string | { outerHTML: string; }, verify: Function | undefined, contrast: { color1?: string; color2: string } | undefined): void => {
+  const svgData = (typeof qrImageData === 'string' ? qrImageData : qrImageData.outerHTML).replaceAll(' href', ' xlink:href');
   const data = new Blob([svgData], { type: 'image/svg+xml' });
   if (verify) { // @ts-ignore
     if (contrast && delta(getRGB(contrast.color1), getRGB(contrast.color2)) <= 45) {
@@ -182,8 +182,8 @@ export const downloadAsSVGOrVerify = (qrImageData: { outerHTML: string; }, verif
   }
 };
 
-export const downloadAsPNG = async (svgData: { outerHTML: string | number | boolean; }, frame: FramesType | { type: string; }, verify: Function | undefined, contrast: any | undefined): Promise<void> => {
-  const base64doc = window.btoa(decodeURIComponent(encodeURIComponent(svgData.outerHTML)));
+export const downloadAsPNG = async (svgData: string | { outerHTML: string | number | boolean; }, frame: FramesType | { type: string; }, verify: Function | undefined, contrast: any | undefined): Promise<void> => {
+  const base64doc = window.btoa(decodeURIComponent(encodeURIComponent(typeof svgData === 'string' ? svgData : svgData.outerHTML)));
   const imageToHandle = document.createElement('img');
   imageToHandle.src = 'data:image/svg+xml;base64,' + base64doc;
   const canvas = document.createElement('canvas');

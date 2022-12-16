@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
-import {useRef, useState, useEffect} from "react";
+import {useEffect, useRef, useState} from "react";
 import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
 import Box from "@mui/material/Box";
@@ -17,7 +17,8 @@ import {
   getBackgroundObject,
   getCornersAndDotsObject,
   getFrameObject,
-  getOptionsObject, handleInitialData
+  getOptionsObject,
+  handleInitialData
 } from "../../../helpers/qr/helpers";
 import {initialBackground} from "../../../helpers/qr/data";
 import PrintIcon from "@mui/icons-material/Print";
@@ -108,7 +109,7 @@ const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign
       setTimeout(() => {
         setUpdating(false);
         generateQr();
-      }, 350);
+      }, 450);
     }
   }, [updating]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -164,7 +165,7 @@ const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign
           <DialogContent>
             <Box sx={{width: '300px'}}>
               <QRRender qrData={!externalDesign ? (current || '') : externalDesign.outerHTML} width={300}
-                        alt={`${name}preview`}/>
+                        alt={`${name}preview`} />
               {renderDownload()}
             </Box>
           </DialogContent>
@@ -173,13 +174,13 @@ const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign
       {Boolean(anchor) && (
         <RenderDownload
           frame={frame}
-          qrImageData={externalDesign || qrRef.current}
+          qrImageData={externalDesign || current || qrRef.current}
           anchor={anchor}
           setAnchor={setAnchor}/>
       )}
       {generatePdf && (
         <PDFGenDlg
-          data={externalDesign || qrRef.current}
+          data={externalDesign || current || qrRef.current}
           handleClose={() => setGeneratePdf(false)}
           isFramed={Boolean(frame?.type) && frame?.type !== '/frame/frame0.svg'}/>
       )}
