@@ -218,6 +218,7 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
   }
 
   if (selected === "donation") {
+    data["email"] = userInfo.attributes.email;
     let priceData: EbanuxDonationPriceData;
     priceData = {
       name: `Donate ${data["title"]}` || "Donation",
