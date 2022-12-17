@@ -52,6 +52,7 @@ const RenderDownload = ({ anchor, qrImageData, frame, setAnchor, contrast }: Ren
         <Typography sx={{ width: '100%', textAlign: 'center' }}>Download as</Typography>
         <Box sx={{ display: 'flex' }}>
           <Button
+            id="buttonPNG"
             variant="outlined"
             sx={{ width: '100%'}}
             onClick={() => {
@@ -60,6 +61,7 @@ const RenderDownload = ({ anchor, qrImageData, frame, setAnchor, contrast }: Ren
               setAnchor(null);
             }}>PNG</Button>
           <Button
+            id="buttonSVG"
             variant="outlined"
             sx={{ ml: '5px', width: '100%' }}
             onClick={() => {
