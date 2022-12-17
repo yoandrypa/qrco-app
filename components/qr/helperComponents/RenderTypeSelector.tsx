@@ -78,7 +78,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
   };
 
   const renderTypeSelector = (item: string, description: string, enabled: boolean) => (
-    <Grid item lg={isWideForThreeColumns ? (!selected ? 3 : 4) : 6} md={!selected ? 4 : (isWideForThreeColumns ? 4 : 6)} sm={6} xs={12}>
+    <Grid  id={`card${item}`} item lg={isWideForThreeColumns ? (!selected ? 3 : 4) : 6} md={!selected ? 4 : (isWideForThreeColumns ? 4 : 6)} sm={6} xs={12}>
       <TypeSelector
         icon={item}
         isDynamic={isDynamic}

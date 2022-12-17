@@ -7,14 +7,14 @@ describe('vCard QR code', () => {
   })
 
   it('Complete Content',() =>{
-    cy.get('#\\:r3\\:').should('be.empty').type('MSc');
-    cy.get('#\\:r4\\:').should('be.empty').type('Jessica');
-    cy.get('#\\:r5\\:').should('be.empty').type('Yanes');
-    cy.get('#\\:r6\\:').type('5358624975');
+    cy.get('label').contains('Prefix').parent().find('input').type('MSc');
+    cy.get('label').contains('First name').parent().find('input').type('Jessica');
+    cy.get('label').contains('Last name').parent().find('input').type('Yanes');
+    cy.get('label').contains('Cell number').parent().find('input').type('5358624975');
     cy.get('.css-1vsvf3g').click();
-    cy.get('#\\:rc\\:').type('Test address');
-    cy.get('#\\:rd\\:').type('Test city');
-    cy.get('#\\:rh\\:').type('email@gmail.com');
+    cy.get('label').contains('Address').parent().find('input').type('Test address');
+    cy.get('label').contains('City').parent().find('input').type('Test city');
+    cy.get('label').contains('Email').parent().find('input').type('email@gmail.com');
     cy.get('#buttonNext').click();
     cy.url().should('include', '/qr/design')
   })
