@@ -129,7 +129,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
         getFiles(data.foregndImg[0].Key, 'foregndImg');
       }
     }
-  }, [data.mode]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data?.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if ((backImg !== undefined && !data.foregndImg) || (foreImg !== undefined && !data.backgndImg) || (foreImg !== undefined && backImg !== undefined)) {
@@ -165,7 +165,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
 
   const optionsForPreview = useCallback(() => {
     const opts = {...options, background, frame, corners: cornersData, cornersDot: dotsData};
-    if (!data.isDynamic) {
+    if (!data?.isDynamic) {
       opts.data = handleDesignerString(selected, data || initialData);
     }
     return opts;

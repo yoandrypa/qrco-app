@@ -86,7 +86,7 @@ export type SocialProps = {
   isDynamic?: boolean;
 };
 
-export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram';
+export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram' | 'title' | 'about';
 export type SocialNetworksType = { network: SocialsType, value?: string };
 
 export type DataType = {
@@ -188,7 +188,7 @@ export type DataType = {
   contactTitle?: string;
   otherDetails?:HeadAndItemsType
   urls?:HeadAndItemsType
-  
+
 };
 export type validTypes = 'text' | 'email' | 'phone' | 'web' | 'number'| 'date' | 'fax'|'url' | 'string';
 export type HeadAndItemsType = {

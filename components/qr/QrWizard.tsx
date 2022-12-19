@@ -75,7 +75,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   const handleNext = async () => {
     setLoading(true); // @ts-ignore
     if (step === 0) {
-      if (data.isDynamic && !isLogged) {
+      if (data?.isDynamic && !isLogged) {
         router.push({ pathname: "/", query: { path: QR_CONTENT_ROUTE, login: true, selected } }, "/").then(() => setLoading(false));
       } else {
         setStep(1);
@@ -94,7 +94,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   };
 
   useEffect(() => {
-    if (step === 1 && isLogged && data.isDynamic && !Boolean(options.id) && options.mode === undefined) {
+    if (step === 1 && isLogged && data?.isDynamic && !Boolean(options.id) && options.mode === undefined) {
       const genShortLinkAndId = async () => {
         const id = getUuid();
         const shortCode = await generateId(); // @ts-ignore
@@ -125,9 +125,9 @@ const QrWizard = ({ children }: QrWizardProps) => {
         <RenderBackButton
           loading={loading}
           step={step}
-          isDynamic={data.isDynamic || false}
+          isDynamic={data?.isDynamic || false}
           handleBack={handleBack}
-          mode={data.mode}
+          mode={data?.mode}
           selected={selected} />
         <Stepper activeStep={step} sx={{ width: "100%", my: 0 }}>
           {steps.map((label: string) => <Step key={label}>
@@ -141,7 +141,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           step={step}
           isWrong={isWrong}
           selected={selected}
-          qrName={data.qrName} />
+          qrName={data?.qrName} />
       </Box>
       <Box sx={{ position: 'absolute', top: '32px' }} ref={btnRef} />
       <Box sx={{ minHeight: 'calc(100vh - 205}px)' }}>
@@ -161,13 +161,13 @@ const QrWizard = ({ children }: QrWizardProps) => {
         <RenderFloatingButtons
           loading={loading}
           step={step}
-          isDynamic={data.isDynamic || false}
+          isDynamic={data?.isDynamic || false}
           isLogged={isLogged}
-          qrName={data.qrName}
+          qrName={data?.qrName}
           isWrong={isWrong}
           handleBack={handleBack}
           handleNext={handleNext}
-          mode={data.mode}
+          mode={data?.mode}
           size={size}
           selected={selected} />
       )}

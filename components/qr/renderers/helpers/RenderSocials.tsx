@@ -26,13 +26,18 @@ const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) =>
   const handleValues = (item: SocialsType) => (event: ChangeEvent<HTMLInputElement>) => {
     setData((prev: DataType) => {
       const tempo = {...prev};
+      // data.about aims to the description for reusing the same predefined type
+
+      if (['title', 'about'].includes(item)) { // @ts-ignore
+        tempo[item] = event.target.value;
+      }
       if (tempo.socials) {
         const network = tempo.socials.find((x: SocialNetworksType) => x.network === item);
         if (network) {
           network.value = event.target.value;
-          return tempo;
         }
       }
+      return tempo;
     });
   };
 
