@@ -15,6 +15,7 @@ interface RenderNextProps {
 
 const RenderNextButton = ({handleNext, isLogged, loading, step, selected, qrName, isWrong}: RenderNextProps) => (
   <StepperButtons
+    id="buttonNext"
     onClick={handleNext}
     endIcon={step >= 2 ? (isLogged ? <SaveIcon/> : <DoneIcon/>) : <ChevronRightIcon/>}
     disabled={loading || (isWrong && step > 0) || !selected || (step === 1 && isLogged && !Boolean(qrName?.trim()?.length))}

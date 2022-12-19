@@ -134,15 +134,15 @@ const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign
   const renderDownload = () => (
     <Box sx={{display: 'flex', width: '100%'}}>
       <Button sx={{mt: '10px', width: handleDone ? '100%' : '60%', mr: handleDone ? '5px' : '10px'}} variant="outlined"
-              onClick={handleDownload} startIcon={<DownloadIcon/>}>
+             id="buttonDow" onClick={handleDownload} startIcon={<DownloadIcon/>}>
         {'Download'}
       </Button>
       <Button sx={{mt: '10px', width: handleDone ? '160px' : '40%'}} variant="outlined"
-              onClick={() => setGeneratePdf(true)} startIcon={<PrintIcon/>}>
+              id="buttonPrint"   onClick={() => setGeneratePdf(true)} startIcon={<PrintIcon/>}>
         {'Print'}
       </Button>
       {handleDone !== undefined && (
-        <Button sx={{ml: '5px', mt: '10px', width: '150px'}} variant="outlined" onClick={handleDone} startIcon={<DoneIcon/>}>
+        <Button sx={{ml: '5px', mt: '10px', width: '150px'}} variant="outlined" id="buttonD" onClick={handleDone} startIcon={<DoneIcon/>}>
           {'Done'}
         </Button>
       )}
