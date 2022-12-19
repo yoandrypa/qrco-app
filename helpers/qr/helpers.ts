@@ -384,3 +384,7 @@ export const debounce = (func, delay, { leading } = {}) => { // @ts-ignore
     timerId = setTimeout(() => func(...args), delay);
   }
 }
+
+export const getSx = (theme: any) => ({
+  border: `solid 1px ${theme.palette.primary.main}`, borderRadius: '100%', width: '40px', height: '40px', my: 'auto', p: '5px', color: theme.palette.primary.main
+});
