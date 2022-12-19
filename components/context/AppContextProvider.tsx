@@ -76,7 +76,7 @@ const AppContextProvider = (props: ContextProps) => {
     }
 
     setData(newData);
-  }, [data?.isDynamic, data.mode]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data?.isDynamic, data?.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (doneInitialRender.current && options.mode === undefined) {
@@ -162,7 +162,7 @@ const AppContextProvider = (props: ContextProps) => {
     } else {
       return (
         <AppWrapper userInfo={userInfo} handleLogout={logout} clearData={clearData} setLoading={setLoading}
-                    mode={data.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} step={step}
+                    mode={data?.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} step={step}
                     setIsTrialMode={setIsTrialMode}>
           {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>

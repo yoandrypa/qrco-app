@@ -179,7 +179,7 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
                               />
                             </TableCell>
                             <TableCell sx={{p: 0, borderBottom: 'none'}} align="right">
-                              {index === 0 ? (
+                              {index + 1 === linksAmount ? (
                                 <Tooltip title={'Add a link'}>
                                   <IconButton onClick={add}><AddBoxIcon color="primary"/></IconButton>
                                 </Tooltip>
