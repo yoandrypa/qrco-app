@@ -6,7 +6,7 @@ import Context from "../context/Context";
 import { useRouter } from "next/router";
 import QrList from "./QrList";
 
-export default function QrHome({ qrData, userInformation }: any) {
+export default function QrHome ({ user }: any) {
   const router = useRouter();
 
   // @ts-ignore
@@ -20,25 +20,21 @@ export default function QrHome({ qrData, userInformation }: any) {
       if (router.query.selected) { // @ts-ignore
         route.query = { selected: router.query.selected };
       }
-      router.push(route, "/", { shallow: false })
-        .then(() => {
-          setLoading(false);
-        });
+      router.push(route, "/", { shallow: false }).then(() => {
+        setLoading(false);
+      });
     }
-    if (!userInfo) {
+    /*if (!userInfo) {
       setUserInfo(userInformation);
-    }
+    }*/
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Box>
       <Grid container spacing={2}>
-        {qrData &&
-          <Grid item xs={12}>
-            {/*@ts-ignore*/}
-            <QrList qrs={qrData} />
-          </Grid>
-        }
+        <Grid item xs={12}>
+          <QrList user={user}/>
+        </Grid>
       </Grid>
     </Box>
   );

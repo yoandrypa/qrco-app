@@ -75,21 +75,27 @@ const QrWizard = ({ children }: QrWizardProps) => {
   const handleNext = async () => {
     setLoading(true); // @ts-ignore
     if (step === 0) {
-      if (data?.isDynamic && !isLogged) {
-        router.push({ pathname: "/", query: { path: QR_CONTENT_ROUTE, login: true, selected } }, "/").then(() => setLoading(false));
+      if (data.isDynamic && !isLogged) {
+        router.push({
+          pathname: QR_CONTENT_ROUTE,
+          query: { selected },
+        }).then(() => setLoading(false));
       } else {
         setStep(1);
-        router.push(QR_CONTENT_ROUTE, undefined, { shallow: true }).then(() => setLoading(false));
+        router.push(QR_CONTENT_ROUTE, undefined, { shallow: true }).
+          then(() => setLoading(false));
       }
     } else if (step === 2 && isLogged) {
-      await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setIsError,
+      await saveOrUpdate(data, userInfo, options, frame, background,
+        cornersData, dotsData, selected, setLoading, setIsError,
         undefined, router, lastStep, dataInfo.current.length, updatingHandler);
     } else if (step === 2 && !isLogged) {
       lastStep(false);
     } else {
       const currentStep = step;
       setStep(currentStep + 1);
-      router.push(currentStep === 0 ? QR_CONTENT_ROUTE : QR_DESIGN_ROUTE, undefined, { shallow: true }).then(() => setLoading(false));
+      router.push(currentStep === 0 ? QR_CONTENT_ROUTE : QR_DESIGN_ROUTE,
+        undefined, { shallow: true }).then(() => setLoading(false));
     }
   };
 

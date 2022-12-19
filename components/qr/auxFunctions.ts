@@ -162,7 +162,7 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
   if (updatingHandler && ["pdf", "audio", "gallery", "video"].includes(selected)) { //Process assets before saving de QR Data
     updatingHandler("Uploading assets");
     try { // @ts-ignore
-      data["files"] = await StorageHandler.upload(data["files"], `${userInfo.attributes.sub}/${selected}s`);
+      data["files"] = await StorageHandler.upload(data["files"], `${userInfo.cognito_user_id}/${selected}s`);
       updatingHandler(null, true);
     } catch {
       updatingHandler(null, false);
@@ -173,7 +173,7 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
     if (!Array.isArray(data.backgndImg)) {
       prevUpdatingHandler("Uploading background image");
       try { // @ts-ignore
-        data.backgndImg = await StorageHandler.upload([data.backgndImg], `${userInfo.attributes.sub}/${selected}s/design`);
+        data.backgndImg = await StorageHandler.upload([data.backgndImg], `${userInfo.cognito_user_id}/${selected}s/design`);
         prevUpdatingHandler(null, true);
       } catch {
         prevUpdatingHandler(null, false);
@@ -197,7 +197,7 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
     if (!Array.isArray(data.foregndImg)) {
       prevUpdatingHandler("Uploading main image");
       try { // @ts-ignore
-        data.foregndImg = await StorageHandler.upload([data.foregndImg], `${userInfo.attributes.sub}/${selected}s/design`);
+        data.foregndImg = await StorageHandler.upload([data.foregndImg], `${userInfo.cognito_user_id}/${selected}s/design`);
         prevUpdatingHandler(null, true);
       } catch {
         prevUpdatingHandler(null, false);
@@ -241,7 +241,7 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
         const temp = (process.env.REACT_NODE_ENV !== 'production') ?
           userInfo.signInUserSession.idToken.jwtToken :
           userInfo.signInUserSession.accessToken.jwtToken;
-        const price = await EbanuxHandler.createEbanuxDonationPrice(userInfo.attributes.sub,
+        const price = await EbanuxHandler.createEbanuxDonationPrice(userInfo.cognito_user_id,
           temp,
           priceData);
         data["donationPriceId"] = price.result.price.id;
@@ -263,10 +263,10 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
     const qrDesignId = getUuid();
     const qrId = options.id || getUuid(); // @ts-ignore
     qrData.qrOptionsId = qrDesignId;
-    qrData.userId = userInfo.attributes.sub;
+    qrData.userId = userInfo.cognito_user_id;
 
     if (data.isDynamic) { // @ts-ignore
-      qrData.shortLinkId = { userId: userInfo.attributes.sub, createdAt: Date.now() };
+      qrData.shortLinkId = { userId: userInfo.cognito_user_id, createdAt: Date.now() };
       shortLink = {
         target: generateShortLink(`qr/${qrId}`),
         address: options.shortCode || await generateId(), // @ts-ignore
@@ -295,7 +295,7 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
       const objToEdit = generateObjectToEdit(qrData, data, qrDesign);
 
       if (!objToEdit.userId) {
-        objToEdit.userId = userInfo.attributes.sub;
+        objToEdit.userId = userInfo.cognito_user_id;
       }
 
       await QrHandler.edit(objToEdit);

@@ -14,15 +14,15 @@ import awsExports from "../../libs/aws/aws-exports";
 import { QR_TYPE_ROUTE } from "../../components/qr/constants";
 import React from "react";
 
-Amplify.configure(awsExports);
-
-export default function Index({ linksData, domainsData }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Index ({
+  linksData,
+  domainsData,
+  user,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  console.log(user);
   //@ts-ignore
   return (
-    <Authenticator components={components}>
-      {({ user }) => (<LinkHome linksData={linksData} domainsData={domainsData} userInformation={user} />
-      )}
-    </Authenticator>
+    <LinkHome linksData={linksData} domainsData={domainsData}/>
   );
 };
 
@@ -51,8 +51,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     return {
       props: {
         linksData: JSON.stringify({}),
-        domainsData: JSON.stringify([])
-      }
+        domainsData: JSON.stringify([]),
+      },
     };
   }
 
@@ -69,7 +69,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   return {
     props: {
       linksData: JSON.stringify(links),
-      domainsData: JSON.stringify(domains)
-    }
+      domainsData: JSON.stringify(domains),
+    },
   };
 };
