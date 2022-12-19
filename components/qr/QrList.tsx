@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -19,12 +19,15 @@ import RenderPreview from "./renderers/RenderPreview";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import {humanDate} from "../helpers/generalFunctions";
 import {handleDesignerString, handleInitialData, qrNameDisplayer} from "../../helpers/qr/helpers";
-
+// @ts-ignore
+import session from "@ebanux/ebanux-utils/sessionStorage";
+import * as QrHandler from "../../handlers/qrs";
 import RenderQrListOptions from "./helperComponents/smallpieces/RenderQrListOptions";
 
-const QrList = ({ qrs, title }: any) => {
+const QrList = ({ title }: any) => {
+  const [qrs, setQRs] = useState({ items: [] });
   // @ts-ignore
-  const { setOptions, setStep } = useContext(Context);
+  const { setOptions, setStep, setLoading } = useContext(Context);
   const router = useRouter();
 
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
@@ -52,6 +55,19 @@ const QrList = ({ qrs, title }: any) => {
       setOptions(handleInitialData("Ebanux"));
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setLoading(true);
+    const currentAccount = session.currentAccount;
+    if (currentAccount) {
+      QrHandler.list({ userId: currentAccount.cognito_user_id }).then(qrs => {
+          // @ts-ignore
+          setQRs(qrs);
+          setLoading(false);
+        },
+      );
+    }
+  }, []);
 
   return (
     <>

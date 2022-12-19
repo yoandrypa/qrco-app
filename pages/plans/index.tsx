@@ -1,17 +1,19 @@
-import React from 'react'
-import { useState, useEffect, useContext } from 'react'
-import PlanCard from '../../components/plans/plancard'
-import Grid from '@mui/material/Grid'
-import Typography from '@mui/material/Typography'
-import Tab from '@mui/material/Tab'
-import Tabs from '@mui/material/Tabs'
-import Box from '@mui/material/Box'
-import { useRouter } from 'next/router';
-import Context from '../../components/context/Context'
-import Snackbar from '@mui/material/Snackbar'
-import Alert from '@mui/material/Alert'
-import BillingPortal from '../../components/billing/BillingPortal'
-import { get } from '../../handlers/users'
+import React from "react";
+import { useState, useEffect, useContext } from "react";
+import PlanCard from "../../components/plans/plancard";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import Box from "@mui/material/Box";
+import { useRouter } from "next/router";
+import Context from "../../components/context/Context";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import BillingPortal from "../../components/billing/BillingPortal";
+import { get } from "../../handlers/users";
+// @ts-ignore
+import session from "@ebanux/ebanux-utils/sessionStorage";
 
 type Props = {
   logged: boolean,
@@ -25,34 +27,30 @@ type Props = {
 }
 
 const Plans = (props: Props) => {
-  const [user, setUser] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null)
-  // @ts-ignore
-  const { userInfo } = useContext(Context)
-
-
+  //const [user, setUser] = useState<any>(null);
+  const user = session.currentAccount;
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    //@ts-ignore
-    (userInfo != null && userInfo != undefined) && setUser(userInfo)
-    if (props.logged === true) {
-      //@ts-ignore
-      if (props.profile?.createdAt != null && !props.profile?.customerId) {
+    if (session.isAuthenticated) {
+      get(user.cognito_user_id).then(profile => {
         //@ts-ignore
-      }
-      console.log(props.profile)
-      if (props.profile?.subscriptionData != null && props.profile?.customerId != null) {
-        <BillingPortal customerId={props.profile?.customerId} />
-      }
+        if (profile?.createdAt != null && !profile?.customerId) {
+          //@ts-ignore
+        }
+        console.log(profile);
+        if (profile?.subscriptionData != null &&
+          profile?.customerId != null) {
+          <BillingPortal customerId={profile?.customerId}/>;
+        }
 
-      //TODO add logic for customer portal here
+        //TODO add logic for customer portal here
+      });
     }
-  }, [userInfo, props.logged, props.profile]);
-
-
+  }, [user]);
 
   const [activeTab, setActiveTab] = useState(0);
-  const router = useRouter()
+  const router = useRouter();
 
   const basic = {
     title: "Basic Account",
@@ -63,19 +61,19 @@ const Plans = (props: Props) => {
     highlighted: false,
     priceAmount: "$9.00",
     features: [
-      '5 dynamic QR codes',
-      'Up to 5 microsites (mobile-friendly landing pages)',
-      'Unlimited static QR codes',
-      'Unlimited scans',
-      'QR codes design customization and edition',
-      'Dynamic QR codes content edition',
-      'Microsites appearance customization and edition'
+      "5 dynamic QR codes",
+      "Up to 5 microsites (mobile-friendly landing pages)",
+      "Unlimited static QR codes",
+      "Unlimited scans",
+      "QR codes design customization and edition",
+      "Dynamic QR codes content edition",
+      "Microsites appearance customization and edition",
     ],
 
-  }
+  };
   const basicAnnual = {
     title: "Basic Account",
-    description: 'A good choice to get started and save some cash.',
+    description: "A good choice to get started and save some cash.",
     buttonText: "SUBSCRIBE",
     plan_type: "basicAnnual",
     legend: "Save two months",
@@ -85,13 +83,13 @@ const Plans = (props: Props) => {
       "5 Dynamic QR codes",
       "Up to 5 microsites (mobile-friendly landing pages)",
       "Unlimited static QR codes",
-      'Unlimited scans',
-      'QR codes design customization and edition',
-      'Dynamic QR codes content edition',
-      'Microsites appearance customization and edition'
+      "Unlimited scans",
+      "QR codes design customization and edition",
+      "Dynamic QR codes content edition",
+      "Microsites appearance customization and edition",
     ],
 
-  }
+  };
 
   const business = {
     title: "Business Account",
@@ -102,35 +100,35 @@ const Plans = (props: Props) => {
     highlighted: true,
     priceAmount: "$15.00",
     features: [
-      '100 dynamic QR codes',
-      'Up to 100 microsites (mobile-friendly landing pages)',
-      'Unlimited static QR codes',
-      'Unlimited scans',
-      'QR codes design customization and edition',
-      'Dynamic QR codes content edition',
-      'Microsites appearance customization and edition'
+      "100 dynamic QR codes",
+      "Up to 100 microsites (mobile-friendly landing pages)",
+      "Unlimited static QR codes",
+      "Unlimited scans",
+      "QR codes design customization and edition",
+      "Dynamic QR codes content edition",
+      "Microsites appearance customization and edition",
     ],
-  }
+  };
   const businessAnnual = {
     title: "Business Account",
-    description: 'Receive a fair discount with our annual plan.',
+    description: "Receive a fair discount with our annual plan.",
     buttonText: "SUBSCRIBE",
     plan_type: "businessAnnual",
-    legend: 'Save three months',
+    legend: "Save three months",
     highlighted: true,
     priceAmount: "$135.OO",
     features: [
-      '100 dynamic QR codes',
-      'Up to 100 microsites (mobile-friendly landing pages)',
-      'Unlimited static QR codes',
-      'Unlimited scans',
-      'QR codes design customization and edition',
-      'Dynamic QR codes content edition',
-      'Microsites appearance customization and edition'
+      "100 dynamic QR codes",
+      "Up to 100 microsites (mobile-friendly landing pages)",
+      "Unlimited static QR codes",
+      "Unlimited scans",
+      "QR codes design customization and edition",
+      "Dynamic QR codes content edition",
+      "Microsites appearance customization and edition",
 
     ],
 
-  }
+  };
 
   const premium = {
     title: "Premium Account",
@@ -141,114 +139,132 @@ const Plans = (props: Props) => {
     highlighted: true,
     priceAmount: "$45.00",
     features: [
-      'Unlimited dynamic QR codes',
-      'Unlimited microsites (mobile-friendly landing pages)',
-      'Unlimited static QR codes',
-      'Unlimited scans',
-      'QR codes design customization and edition',
-      'Dynamic QR codes content edition',
-      'Microsites appearance customization and edition'
+      "Unlimited dynamic QR codes",
+      "Unlimited microsites (mobile-friendly landing pages)",
+      "Unlimited static QR codes",
+      "Unlimited scans",
+      "QR codes design customization and edition",
+      "Dynamic QR codes content edition",
+      "Microsites appearance customization and edition",
     ],
-  }
+  };
   const premiumAnnual = {
     title: "Premium Account",
-    description: 'Receive a great discount and get completely covered.',
+    description: "Receive a great discount and get completely covered.",
     buttonText: "SUBSCRIBE",
     plan_type: "premiumAnnual",
-    legend: 'Save four months',
+    legend: "Save four months",
     highlighted: true,
     priceAmount: "$360.00",
     features: [
-      'Unlimited dynamic QR codes',
-      'Unlimited microsites (mobile-friendly landing pages)',
-      'Unlimited static QR codes',
-      'Unlimited scans',
-      'QR codes design customization and edition',
-      'Dynamic QR codes content edition',
-      'Microsites appearance customization and edition'
+      "Unlimited dynamic QR codes",
+      "Unlimited microsites (mobile-friendly landing pages)",
+      "Unlimited static QR codes",
+      "Unlimited scans",
+      "QR codes design customization and edition",
+      "Dynamic QR codes content edition",
+      "Microsites appearance customization and edition",
     ],
-  }
+  };
 
   const handleClick = async (plan: string) => {
     if (!user) {
-      router.push('/?login=true')
+      router.push("/plans/buy/" + plan);
       return;
     } else {
       try {
+        //const user = session.currentAccount;
         const payload = {
-          id: user.attributes.sub,
-          email: user.attributes.email,
-          plan_type: plan
-        }
+          id: user.cognito_user_id,
+          email: user.email,
+          plan_type: plan,
+        };
         const options = {
-          method: 'post',
+          method: "post",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         };
         const response = await fetch(`/api/create-customer`, options);
-        const data = await handleFetchResponse(response)
+        const data = await handleFetchResponse(response);
         if (data instanceof Error) throw data;
         //@ts-ignore
         window.location.href = data.result?.url;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Something went wrong. We are working on it.'
-        setError(errorMessage)
+        const errorMessage = error instanceof Error
+          ? error.message
+          : "Something went wrong. We are working on it.";
+        setError(errorMessage);
       }
     }
-  }
+  };
 
   const handleTabChange = (event: React.SyntheticEvent, value: number) => {
-    setActiveTab(value)
-  }
+    setActiveTab(value);
+  };
 
   return (
     <>
       <Snackbar open={!!error} autoHideDuration={6000}>
-        <Alert onClose={() => setError(null)} variant="filled" severity="error" sx={{ width: '100%' }}>
+        <Alert onClose={() => setError(null)} variant="filled" severity="error"
+               sx={{ width: "100%" }}>
           {error}
         </Alert>
       </Snackbar>
-      <Typography variant='h6' color='blue' textAlign={'center'} marginBottom={3} marginTop={2}>PRICING PLANS</Typography>
-      <Typography variant='h4' textAlign={'center'} marginBottom={3}>Save money with our annual plans</Typography>
-      <Box sx={{ alignContent: 'center', display: 'flex', spacing: 3, justifyContent: 'center' }}>
+      <Typography variant="h6" color="blue" textAlign={"center"}
+                  marginBottom={3} marginTop={2}>PRICING PLANS</Typography>
+      <Typography variant="h4" textAlign={"center"} marginBottom={3}>Save money
+        with our annual plans</Typography>
+      <Box sx={{
+        alignContent: "center",
+        display: "flex",
+        spacing: 3,
+        justifyContent: "center",
+      }}>
         <Tabs value={activeTab} onChange={handleTabChange}>
-          <Tab label='Monthly Plan' />
-          <Tab label='Annual Plan' />
+          <Tab label="Monthly Plan"/>
+          <Tab label="Annual Plan"/>
         </Tabs>
       </Box>
-      <Grid container marginTop={2} alignContent='center' display='flex' spacing={1} justifyContent={'center'}>
-        <PlanCalculator />
+      <Grid container marginTop={2} alignContent="center" display="flex"
+            spacing={1} justifyContent={"center"}>
+        <PlanCalculator/>
       </Grid>
-      <Grid container marginTop={6} alignContent='center' display='flex' spacing={1} justifyContent={'center'}>
+      <Grid container marginTop={6} alignContent="center" display="flex"
+            spacing={1} justifyContent={"center"}>
         <Grid item xs={12} sm={6} md={4} lg={4}>
           <PlanCard data={activeTab == 0 ? basic : basicAnnual}
-            isCurrentPlan={false}
-            clickAction={handleClick} />
+                    isCurrentPlan={false}
+                    clickAction={handleClick}/>
         </Grid>
         <Grid item xs={12} sm={6} md={4} lg={4}>
           <PlanCard data={activeTab == 0 ? business : businessAnnual}
-            isCurrentPlan={false}
-            clickAction={handleClick} />
+                    isCurrentPlan={false}
+                    clickAction={handleClick}/>
         </Grid>
         <Grid item xs={12} sm={4} md={4} lg={4}>
           <PlanCard data={activeTab == 0 ? premium : premiumAnnual}
-            isCurrentPlan={false}
-            clickAction={handleClick} />
+                    isCurrentPlan={false}
+                    clickAction={handleClick}/>
         </Grid>
       </Grid>
     </>
-  )
-}
+  );
+};
 
 // You should use getServerSideProps when:
 // - Only if you need to pre-render a page whose data must be fetched at request time
-import { GetServerSideProps } from 'next'
-import { handleFetchResponse } from '../../handlers/helpers'
-import PlanCalculator from '../../components/plans/PlanCalculator'
+//import { GetServerSideProps } from "next";
+import { handleFetchResponse } from "../../handlers/helpers";
+import PlanCalculator from "../../components/plans/PlanCalculator";
+import { QR_PLAN_ROUTE } from "../../components/qr/constants";
 
-export const getServerSideProps: GetServerSideProps = async ({ query, req, res }) => {
+/*export const getServerSideProps: GetServerSideProps = async ({
+  query,
+  req,
+  res,
+}) => {
 
   const getUserInfo = async (): Promise<CognitoUserData | null> => {
     try {
@@ -272,21 +288,21 @@ export const getServerSideProps: GetServerSideProps = async ({ query, req, res }
   if (!userInfo?.userData) {
     return {
       props: {
-        logged: false
-      }
-    }
+        logged: false,
+      },
+    };
   } else {
     //@ts-ignore
-    const userData = JSON.parse(userInfo.userData as string)
+    const userData = JSON.parse(userInfo.userData as string);
     const userId = userData.UserAttributes[0].Value;
-    const data: object = await get(userId)
+    const data: object = await get(userId);
     return {
       props: {
         logged: true,
-        profile: JSON.parse(JSON.stringify(data))
-      }
-    }
+        profile: JSON.parse(JSON.stringify(data)),
+      },
+    };
   }
-}
+};*/
 
-export default Plans
+export default Plans;

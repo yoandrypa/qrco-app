@@ -84,31 +84,12 @@ const QrDetails = ({visitData, qrData}: any) => {
         <TabPanel value={value} index={1}>
           <VisitDetailsSections visitData={visitData}/>
         </TabPanel>
-        {/*<SpeedDial*/}
-        {/*  ariaLabel="SpeedDial openIcon example"*/}
-        {/*  sx={{position: "fixed", bottom: 16, right: 16}}*/}
-        {/*  icon={<SpeedDialIcon onClick={() => {*/}
-        {/*    setLoading(true);*/}
-        {/*    router.replace(*/}
-        {/*      "/qr/" + (new Date(qrData.createdAt)).getTime() + "/details").then(() => setLoading(false));*/}
-        {/*  }} openIcon={<RefreshIcon/>}/>}*/}
-        {/*>*/}
-        {/*  {actions.map((action) => (*/}
-        {/*    <SpeedDialAction*/}
-        {/*      key={action.name}*/}
-        {/*      icon={action.icon}*/}
-        {/*      tooltipTitle={action.name}*/}
-        {/*      tooltipOpen*/}
-        {/*      onClick={action.action}*/}
-        {/*    />*/}
-        {/*  ))}*/}
-        {/*</SpeedDial>*/}
       </Box>
       <RenderSamplePreview
         isDynamic={qrData.isDynamic || false}
         code={qrData.qrOptionsId?.data ? qrData.qrOptionsId.data.slice(
           qrData.qrOptionsId.data.lastIndexOf("/") + 1) : qrData.qrType}
-        isDrawed={true} style={{mt: "-15px"}}
+        isDrawed={true} style={{mt: "28px"}}
         data={previewQRGenerator(qrData, qrData.qrType)}
         qrOptions={qrData.qrOptionsId}
         onlyQr={qrData.qrType === "web" || !qrData.isDynamic} step={1}/>

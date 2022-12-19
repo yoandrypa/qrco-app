@@ -8,6 +8,9 @@ const UserSchema = new dynamoose.Schema({
     type: String,
     default: getUuid()
   },
+  email: {
+    type: String,
+  },
   banned: {
     type: Boolean,
     required: true,

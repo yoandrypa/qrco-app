@@ -8,16 +8,16 @@ module.exports = {
     config.resolve.fallback = { fs: false };
     config.experiments = {
       topLevelAwait: true, // Fix top-level-await experiment enable
-      layers: true // Fix layers experiment enable
+      layers: true, // Fix layers experiment enable
     };
     return config;
   },
   images: {
-    domains: ["dev-qrco.s3.amazonaws.com"]
+    domains: ["dev-qrco.s3.amazonaws.com"],
   },
   env: {
     REACT_APP_COOKIES_DOMAIN: process.env.REACT_APP_COOKIES_DOMAIN,
-    REACT_AWS_COGNITO_CLIENT_ID: process.env.REACT_AWS_COGNITO_CLIENT_ID,
+    REACT_APP_AWS_COGNITO_CLIENT_ID: process.env.REACT_APP_AWS_COGNITO_CLIENT_ID,//REACT_AWS_COGNITO_CLIENT_ID,
     REACT_AWS_COGNITO_DOMAIN: process.env.REACT_AWS_COGNITO_DOMAIN,
     REACT_AWS_COGNITO_LOGOUT_REDIRECT_URI: process.env.REACT_AWS_COGNITO_LOGOUT_REDIRECT_URI,
     REACT_AWS_COGNITO_POOL_ID: process.env.REACT_AWS_COGNITO_POOL_ID,
@@ -29,7 +29,7 @@ module.exports = {
     REACT_AWS_SECRET_ACCESS_KEY: process.env.REACT_AWS_SECRET_ACCESS_KEY,
     AWS_SECRET_ACCESS_KEY: process.env.REACT_AWS_SECRET_ACCESS_KEY,
     REACT_APP_CUSTOM_DOMAIN_USE_HTTPS: process.env.REACT_APP_CUSTOM_DOMAIN_USE_HTTPS,
-    REACT_APP_DEFAULT_DOMAIN: process.env.REACT_APP_DEFAULT_DOMAIN,
+    REACT_APP_SERVER_BASE_URL: process.env.REACT_APP_SERVER_BASE_URL,//REACT_APP_DEFAULT_DOMAIN,
     REACT_APP_PORT: process.env.REACT_APP_PORT,
     REACT_APP_SITE_NAME: process.env.REACT_APP_SITE_NAME,
     REACT_APP_LINK_LENGTH: process.env.REACT_APP_LINK_LENGTH,
@@ -40,6 +40,14 @@ module.exports = {
     REACT_NODE_ENV: process.env.REACT_NODE_ENV,
     REACT_STRIPE_WEBHOOK_SECRET: process.env.REACT_STRIPE_WEBHOOK_SECRET,
     REACT_STRIPE_SECRET_KEY: process.env.REACT_STRIPE_SECRET_KEY,
-    REACT_MICROSITES_ROUTE: process.env.REACT_MICROSITES_ROUTE || 'http://localhost:3001'
-  }
+    REACT_MICROSITES_ROUTE: process.env.REACT_MICROSITES_ROUTE ||
+      "http://localhost:3001",
+
+
+    REACT_APP_OAUTH_TOKEN_URL: process.env.REACT_APP_OAUTH_TOKEN_URL,
+    REACT_APP_OAUTH_URL: process.env.REACT_APP_OAUTH_URL,
+    REACT_APP_OAUTH_REDIRECT_URI: process.env.REACT_APP_OAUTH_REDIRECT_URI,
+    REACT_APP_CURRENT_USER_SERVICE_PATH: process.env.REACT_APP_CURRENT_USER_SERVICE_PATH,
+    REACT_APP_OAUTH_LOGOUT_URL: process.env.REACT_APP_OAUTH_LOGOUT_URL
+  },
 };

@@ -1,13 +1,36 @@
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 
 import { Amplify, Auth } from "aws-amplify";
 import Context from "./Context";
-import { initialData, initialBackground, initialFrame } from "../../helpers/qr/data";
-import { BackgroundType, CornersAndDotsType, DataType, FramesType, OptionsType } from "../qr/types/types";
-import { PARAM_QR_TEXT, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE, QR_TYPE_ROUTE } from "../qr/constants";
+import {
+  initialData,
+  initialBackground,
+  initialFrame,
+} from "../../helpers/qr/data";
+import {
+  BackgroundType,
+  CornersAndDotsType,
+  DataType,
+  FramesType,
+  OptionsType,
+} from "../qr/types/types";
+import {
+  PARAM_QR_TEXT,
+  QR_CONTENT_ROUTE,
+  QR_DESIGN_ROUTE,
+  QR_DETAILS_ROUTE,
+  QR_TYPE_ROUTE,
+} from "../qr/constants";
 import AppWrapper from "../AppWrapper";
 import awsExports from "../../libs/aws/aws-exports";
 import {
@@ -15,14 +38,17 @@ import {
   getBackgroundObject,
   getCornersAndDotsObject,
   getFrameObject,
-  handleInitialData
+  handleInitialData,
 } from "../../helpers/qr/helpers";
 
-const Loading = dynamic(() => import('../Loading'));
-const PleaseWait = dynamic(() => import('../PleaseWait'));
-const Generator = dynamic(() => import('../qr/Generator'));
+const Loading = dynamic(() => import("../Loading"));
+const PleaseWait = dynamic(() => import("../PleaseWait"));
+const Generator = dynamic(() => import("../qr/Generator"));
 
-Amplify.configure(awsExports);
+// @ts-ignore
+import session from "@ebanux/ebanux-utils/sessionStorage";
+// @ts-ignore
+import cookies from "@ebanux/ebanux-utils/cookiesStorage";
 
 interface ContextProps {
   children: ReactNode;
@@ -31,10 +57,12 @@ interface ContextProps {
 const AppContextProvider = (props: ContextProps) => {
   const { children } = props;
 
-  const [options, setOptions] = useState<OptionsType>(handleInitialData("Ebanux"));
+  const [options, setOptions] = useState<OptionsType>(
+    handleInitialData("Ebanux"));
   const [cornersData, setCornersData] = useState<CornersAndDotsType>(null);
   const [dotsData, setDotsData] = useState<CornersAndDotsType>(null);
-  const [background, setBackground] = useState<BackgroundType>(initialBackground);
+  const [background, setBackground] = useState<BackgroundType>(
+    initialBackground);
   const [frame, setFrame] = useState<FramesType>(initialFrame);
   const [data, setData] = useState<DataType>(initialData);
   const [isTrialMode, setIsTrialMode] = useState<boolean>(false);
@@ -55,28 +83,29 @@ const AppContextProvider = (props: ContextProps) => {
 
   const isUserInfo = useMemo(() => userInfo !== null, [userInfo]);
 
-  const clearData = useCallback((keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean) => {
-    if (!keepType || doNot || takeAwaySelection) {
-      setSelected(null);
-    }
-    setBackground(initialBackground);
-    setFrame(initialFrame);
-    setDotsData(null);
-    setCornersData(null);
-    setIsWrong(false);
-    setLoading(false);
-    setStep(0);
-    setOptions(handleInitialData("Ebanux"));
+  const clearData = useCallback(
+    (keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean) => {
+      if (!keepType || doNot || takeAwaySelection) {
+        setSelected(null);
+      }
+      setBackground(initialBackground);
+      setFrame(initialFrame);
+      setDotsData(null);
+      setCornersData(null);
+      setIsWrong(false);
+      setLoading(false);
+      setStep(0);
+      setOptions(handleInitialData("Ebanux"));
 
-    let newData: DataType;
-    if (!keepType || data.isDynamic) {
-      newData = initialData;
-    } else {
-      newData = {};
-    }
+      let newData: DataType;
+      if (!keepType || data.isDynamic) {
+        newData = initialData;
+      } else {
+        newData = {};
+      }
 
-    setData(newData);
-  }, [data?.isDynamic, data?.mode]); // eslint-disable-line react-hooks/exhaustive-deps
+      setData(newData);
+    }, [data?.isDynamic, data.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (doneInitialRender.current && options.mode === undefined) {
@@ -104,7 +133,7 @@ const AppContextProvider = (props: ContextProps) => {
   useEffect(() => {
     const verify = async () => {
       try {
-        const userData = await Auth.currentAuthenticatedUser();
+        const userData = session.currentAccount;//await Auth.currentAuthenticatedUser();
         setUserInfo(userData);
       } catch {
         setUserInfo(null);
@@ -128,7 +157,7 @@ const AppContextProvider = (props: ContextProps) => {
     }
   }, [options.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const logout = useCallback(async () => {
+  /*const logout = useCallback(async () => {
     setLoading(true);
     try {
       await Auth.signOut();
@@ -139,14 +168,33 @@ const AppContextProvider = (props: ContextProps) => {
       setLoading(false);
       console.log("error signing out: ", error);
     }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps*/
+
+  const logout = useCallback(async () => {
+    let params = {
+      logout_uri: session.appBaseUrl + "/qr/type",
+      client_id: session.appClientId
+    };
+    let queryString = Object.keys(params).map((key) => {
+      return encodeURIComponent(key) + "=" + encodeURIComponent(params[key]);
+    }).join("&");
+    const oauthLogOutUrl = process.env.REACT_APP_OAUTH_LOGOUT_URL || "";
+    session.del('credentials');
+    session.del('account');
+    cookies.del('account');
+    window.location.href = "".concat(oauthLogOutUrl, "?", queryString);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (router.pathname.startsWith("/qr") && ![QR_TYPE_ROUTE, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE].includes(router.pathname)) {
+  if (router.pathname.startsWith("/qr") && ![
+    QR_TYPE_ROUTE,
+    QR_CONTENT_ROUTE,
+    QR_DESIGN_ROUTE,
+    QR_DETAILS_ROUTE].includes(router.pathname)) {
     return <>{children}</>;
   }
 
   if (verifying) {
-    return <PleaseWait />;
+    return <PleaseWait/>;
   }
 
   const renderContent = () => {
@@ -155,23 +203,25 @@ const AppContextProvider = (props: ContextProps) => {
       if (qrText !== undefined && qrText.length) {
         return (
           <AppWrapper>
-            <Generator forceOverride={qrText} />
+            <Generator forceOverride={qrText}/>
           </AppWrapper>
         );
       }
     } else {
       return (
-        <AppWrapper userInfo={userInfo} handleLogout={logout} clearData={clearData} setLoading={setLoading}
-                    mode={data?.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} step={step}
+        <AppWrapper userInfo={userInfo} handleLogout={logout}
+                    clearData={clearData} setLoading={setLoading}
+                    mode={data.mode} setRedirecting={setRedirecting}
+                    isTrialMode={isTrialMode} step={step}
                     setIsTrialMode={setIsTrialMode}>
-          {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
+          {!redirecting ? children : <PleaseWait redirecting hidePleaseWait/>}
         </AppWrapper>
       );
     }
   };
 
   return (<>
-      {loading && <Loading />}
+      {loading && <Loading/>}
       <Context.Provider value={{
         cornersData, setCornersData,
         dotsData, setDotsData,
@@ -183,7 +233,7 @@ const AppContextProvider = (props: ContextProps) => {
         userInfo, setUserInfo,
         step, setStep, clearData,
         loading, setLoading, setRedirecting,
-        isWrong, setIsWrong
+        isWrong, setIsWrong,
       }}>
         {renderContent()}
       </Context.Provider>
