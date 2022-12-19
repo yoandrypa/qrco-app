@@ -1,4 +1,4 @@
-import {useCallback, useContext, useState} from "react";
+import {MouseEvent, useCallback, useContext, useEffect, useState} from "react";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -8,14 +8,18 @@ import PauseCircleOutlineIcon from "@mui/icons-material/PauseCircleOutline";
 import DeleteOutlineRounded from "@mui/icons-material/DeleteOutlineRounded";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import Stack from "@mui/material/Stack";
-import Context from "../../../context/Context";
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
+import Context from "../../../context/Context";
 import {pauseQRLink, remove} from "../../../../handlers/qrs";
 import {IS_DEV_ENV, QR_CONTENT_ROUTE} from "../../constants";
 
 import {useRouter} from "next/router";
-import Link from "next/link";
 import dynamic from "next/dynamic";
+import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const RenderConfirmDlg = dynamic(() => import("../../../renderers/RenderConfirmDlg"));
 
@@ -26,13 +30,11 @@ interface RenderQrOptsProps {
 export default function RenderQrListOptions({qr}: RenderQrOptsProps) {
   const router = useRouter();
   // @ts-ignore
-  const {isLoading, setLoading, setOptions} = useContext(Context);
+  const {loading, setLoading, setOptions} = useContext(Context);
   const [confirm, setConfirm] = useState<{ createdAt: number; userId: string; } | null>(null);
+  const [anchor, setAnchor] = useState<null | HTMLElement>(null);
 
-
-  const handleDashboard = async () => {
-    await router.push(IS_DEV_ENV ? "https://dev-app.ebanux.com/checkouts" : "https://app.ebanux.com/checkouts");
-  };
+  const isWide = useMediaQuery("(min-width:750px)", { noSsr: true });
 
   const handleEdit = useCallback((qr: QrDataType) => {
     setLoading(true);
@@ -54,46 +56,78 @@ export default function RenderQrListOptions({qr}: RenderQrOptsProps) {
     }
   };
 
+  const handleOpenMenu = (event: MouseEvent<HTMLElement>) => {
+    setAnchor(event.currentTarget);
+  };
+
+  useEffect(() => {
+    if ((loading || confirm) && anchor) {
+      setAnchor(null);
+    }
+  }, [loading, confirm]);
+
   return (
     <>
       <Stack direction="row" justifyContent="flex-end" alignItems="center">
-        <Tooltip title="Details">
-          <IconButton color="primary" disabled={isLoading} onClick={() => {
-            setLoading(true);
-            router.push("/qr/" + (new Date(qr.createdAt)).getTime() + "/details").then(() => setLoading(false));
-          }}>
-            <InfoOutlinedIcon/>
+        {isWide && (
+          <>
+            <Tooltip title="Edit">
+              <IconButton color="primary" disabled={loading} onClick={() => handleEdit(qr)}>
+                <EditOutlined/>
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton color="error" disabled={loading} onClick={() => setConfirm({userId: qr.userId, createdAt: qr.createdAt})}>
+                <DeleteOutlineRounded/>
+              </IconButton>
+            </Tooltip>
+          </>)}
+        <Tooltip title="More options">
+          <IconButton aria-label="more" id="menuButton" aria-controls={anchor !== null ? 'menuButton' : undefined}
+                      aria-expanded={anchor !== null ? 'true' : undefined} aria-haspopup="true" onClick={handleOpenMenu}>
+            <MoreVertIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Edit">
-          <IconButton color="primary" disabled={isLoading} onClick={() => handleEdit(qr)}>
-            <EditOutlined/>
-          </IconButton>
-        </Tooltip>
-        {qr.shortLinkId ? (
-          <Tooltip title={qr.shortLinkId.paused ? "Activate" : "Pause"}>
-            <IconButton color="primary" disabled={isLoading} onClick={() => handlePauseQrLink(qr.shortLinkId)}>
-              {qr.shortLinkId.paused ? <PlayCircleOutlineIcon/> : <PauseCircleOutlineIcon/>}
-            </IconButton>
-          </Tooltip>) : null
-        }
-        <Tooltip title="Delete">
-          <IconButton color="error" disabled={isLoading} onClick={() => setConfirm({userId: qr.userId, createdAt: qr.createdAt})}>
-            <DeleteOutlineRounded/>
-          </IconButton>
-        </Tooltip>
-        {(qr.qrType === "donation" && !!qr.donationProductId) && (
-          <Link
-            href={process.env.REACT_NODE_ENV === "develop" ? "https://dev-app.ebanux.com/checkouts" : "https://app.ebanux.com/checkouts"}
-            target='_blank'>
-            <a target="_blank" rel="noopener noreferrer">
-              <Tooltip title="Go to Dashboard">
-                <IconButton color="info" disabled={isLoading} onClick={handleDashboard}>
-                  <DashboardIcon/>
-                </IconButton>
-              </Tooltip>
-            </a>
-          </Link>
+        {anchor && (
+          <Menu
+            id="menuButton"
+            MenuListProps={{ 'aria-labelledby': 'menuButton' }}
+            anchorEl={anchor}
+            open onClose={() => setAnchor(null)}
+          >
+            {!isWide && (
+              <MenuItem key="editMenuItem" onClick={() => handleEdit(qr)}>
+                <EditOutlined color="primary"/>
+                <Typography sx={{ml: '5px'}}>{'Edit'}</Typography>
+              </MenuItem>
+            )}
+            {!isWide && (
+              <MenuItem key="deleteMenuItem" onClick={() => setConfirm({userId: qr.userId, createdAt: qr.createdAt})}>
+                <DeleteOutlineRounded color="error"/>
+                <Typography sx={{ml: '5px'}}>{'Delete'}</Typography>
+              </MenuItem>
+            )}
+            <MenuItem key="detailsMenuItem" onClick={() => {
+              setLoading(true);
+              router.push("/qr/" + (new Date(qr.createdAt)).getTime() + "/details").then(() => setLoading(false));
+            }}>
+                <InfoOutlinedIcon color="primary"/>
+              <Typography sx={{ml: '5px'}}>{'Details'}</Typography>
+            </MenuItem>
+            {qr.shortLinkId && (
+              <MenuItem key="pauseMenuItem" onClick={() => handlePauseQrLink(qr.shortLinkId)}>
+                {qr.shortLinkId.paused ? <PlayCircleOutlineIcon color="primary"/> : <PauseCircleOutlineIcon color="primary"/>}
+                <Typography sx={{ml: '5px'}}>{qr.shortLinkId.paused ? "Activate" : "Pause"}</Typography>
+              </MenuItem>
+            )}
+            {IS_DEV_ENV && qr.qrType === "donation" && !!qr.donationProductId && (
+              <MenuItem component="a" target="_blank" rel="noopener noreferrer" key="goToDashBoardMenuItem" onClick={() => setAnchor(null)}
+                        href={IS_DEV_ENV ? "https://dev-app.ebanux.com/checkouts" : "https://app.ebanux.com/checkouts"}>
+                <DashboardIcon color="info" />
+                <Typography sx={{ml: '5px'}}>Go to dashboard</Typography>
+              </MenuItem>
+            )}
+          </Menu>
         )}
       </Stack>
       {confirm !== null && (
