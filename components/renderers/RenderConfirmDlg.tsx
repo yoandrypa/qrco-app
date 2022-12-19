@@ -13,15 +13,19 @@ interface RenderConfirmProps {
   title?: string;
   yesMsg?: string;
   noMsg?: string;
+  dividers?: boolean;
+  confirmStyle?: object;
 }
 
-export default function RenderConfirmDlg({title, handleOk, handleCancel, message, yesMsg, noMsg, confirmationMsg}: RenderConfirmProps) {
+export default function RenderConfirmDlg(
+  {title, handleOk, handleCancel, message, yesMsg, noMsg, confirmationMsg, confirmStyle, dividers}: RenderConfirmProps
+) {
   return (
     <Dialog open={true}>
       <DialogTitle>{title || 'Confirm'}</DialogTitle>
-      <DialogContent>
+      <DialogContent dividers={dividers || false}>
         <Typography>{message}</Typography>
-        {confirmationMsg && <Typography>{confirmationMsg}</Typography>}
+        {confirmationMsg && <Typography sx={confirmStyle}>{confirmationMsg}</Typography>}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleOk} variant="outlined">{yesMsg || 'Ok'}</Button>

@@ -1,12 +1,11 @@
 import {MouseEvent, useLayoutEffect, useState} from "react";
 import style from "./CountDown.module.css";
 import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
 import pluralize from "pluralize";
 import Link from "next/link";
 import IconButton from '@mui/material/IconButton';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import { keyframes } from "@mui/system";
+import {keyframes} from "@mui/system";
 import Popover from "@mui/material/Popover";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
@@ -126,13 +125,11 @@ const CountDown = (props: Props) => {
               {" to go to the pricing page."}
             </Typography>
           ) : (
-            <Stack direction="row" spacing={1}>
-              <Typography>
-                {"You are in trial mode. Please subscribe to a plan "}
-                <span style={{ color: "blue" }}><Link href="/plans">here</Link></span>
-                {". Your free trial ends in:"}
-              </Typography>
-              <div className={".MuiAlert-standardWarning"}>
+            <Typography sx={{ display: 'inline' }}>
+              {"You are in trial mode. Please subscribe to a plan "}
+              <span style={{ color: "blue" }}><Link href="/plans">here</Link></span>
+              {". Your free trial ends in:"}
+              <Box className={".MuiAlert-standardWarning"} sx={{display: 'inline-block', ml: '5px'}}>
                 <div className={style.container}>
                   {days > 0 && <div className={style.container_segment}>
                     <div className={style.segment}>
@@ -191,8 +188,8 @@ const CountDown = (props: Props) => {
                     </div>
                   </div>}
                 </div>
-              </div>
-            </Stack>
+              </Box>
+            </Typography>
           )}
         </Box>
       </Popover>)}

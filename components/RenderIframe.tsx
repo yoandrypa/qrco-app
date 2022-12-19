@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import {DataType} from "./qr/types/types";
 import {convertBase64} from "../helpers/qr/helpers";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface IframeProps {
   src: string;
@@ -15,6 +16,7 @@ interface IframeProps {
 
 const style = {
   m: 0,
+  background: '#fff',
   position: 'absolute',
   top: '50%',
   left: '50%',
@@ -116,9 +118,7 @@ const RenderIframe = ({src, width, height, data, selected}: IframeProps) => {
         <Typography
           sx={{color: theme => theme.palette.text.disabled, mx: 'auto', mt: '10px', fontSize: 'small'}}>
           {"Please, contact support by clicking "}
-          <a target="_blank" href="mailto:info@ebanux.com"
-             rel="noopener noreferrer"
-             style={{color: "royalblue"}}>{"here"}</a>
+          <a target="_blank" href="mailto:info@ebanux.com" rel="noopener noreferrer" style={{color: "royalblue"}}>{"here"}</a>
           {"."}
         </Typography>
       </Box>
@@ -128,8 +128,8 @@ const RenderIframe = ({src, width, height, data, selected}: IframeProps) => {
   return (
     <>
       {isLoading && (<Box sx={style}>
-        <Typography>{'Loading...'}</Typography>
-        <Typography sx={{ color: theme => theme.palette.text.disabled}}>{'Please wait...'}</Typography>
+        <Typography sx={{ p: 2 }}>{'Loading...'}</Typography>
+        <CircularProgress color="primary" size={25}/>
       </Box>)}
       <iframe
         src={src}
