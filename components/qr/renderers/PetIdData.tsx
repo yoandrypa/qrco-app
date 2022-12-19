@@ -83,26 +83,26 @@ export default function PetIdData({
     <Common msg="Your Pet Information">
       <Topics message={'Presentation'} />
       <Grid container spacing={1} sx={{mt:1}}>
-        <Grid item sm={5} xs={12} style={{ paddingTop: 0 }}>
+        <Grid item sm={6} xs={12} style={{ paddingTop: 0 }}>
           {renderItem('petName', 'Name')}
         </Grid>
-        <Grid item sm={5} xs={12} style={{ paddingTop: 0 }}>
+        <Grid item sm={6} xs={12} style={{ paddingTop: 0 }}>
           {renderItem('petBreed', 'Breed')}
         </Grid>
-        <Grid item sm={5} xs={12} style={{ paddingTop: 0 }}>
+        <Grid item sm={6} xs={12} style={{ paddingTop: 0 }}>
           {renderItem('petGender', 'Gender')}
         </Grid>
-        <Grid item sm={5} xs={12} style={{ paddingTop: 0 }}>
+        <Grid item sm={6} xs={12} style={{ paddingTop: 0 }}>
           {renderItem('petYearOfBirth', 'Year of Birth')}
         </Grid>
       </Grid>
-      <Topics message={'Heading Text'} />
+      <Topics message={'Description Title'} />
       <Grid container spacing={1} sx={{mt:1}}>
         <Grid item sm={6} xs={12} style={{ paddingTop: 0 }}>
-          {renderItem('headingText', 'Heading')}
+          {renderItem('title', 'Title')}
         </Grid>
         <Grid item sm={6} xs={12} style={{ paddingTop: 0 }}>
-          {renderItem('headingTextText', 'Text')}
+          {renderItem('titleText', 'Description')}
         </Grid>
       </Grid>
       <Topics message={'Contact'} />
