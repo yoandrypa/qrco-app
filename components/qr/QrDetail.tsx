@@ -5,21 +5,16 @@ import PublicIcon from "@mui/icons-material/Public";
 import PauseIcon from "@mui/icons-material/Pause";
 import BlockIcon from "@mui/icons-material/Block";
 import Link from "next/link";
-import { humanDate } from "../helpers/generalFunctions";
-import { sanitize } from "../../utils";
-import { capitalize } from "@mui/material";
+import {humanDate} from "../helpers/generalFunctions";
+import {sanitize} from "../../utils";
+import {capitalize} from "@mui/material";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import AbcIcon from "@mui/icons-material/Abc";
 import FormatSizeIcon from "@mui/icons-material/FormatSize";
 import TodayIcon from "@mui/icons-material/Today";
 import EventIcon from "@mui/icons-material/Event";
-import { themeConfig } from "../../utils/theme";
-import Avatar from "@mui/material/Avatar";
 import {useTheme} from "@mui/system";
-
-const getSx = (theme: any) => ({
-  border: `solid 1px ${theme.palette.primary.main}`, borderRadius: '100%', width: '40px', height: '40px', my: 'auto', p: '5px'
-});
+import {getSx} from "../../helpers/qr/helpers";
 
 const QrDetail = ({ qrData }: any) => {
   const qrLink = qrData.shortLinkId ? sanitize.link(qrData.shortLinkId) : null;
@@ -30,7 +25,7 @@ const QrDetail = ({ qrData }: any) => {
       <Grid container xs={8} alignItems="center">
         <Grid item xs={1}>
           {/*<Avatar sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-            <AbcIcon fontSize="medium" color="primary" sx={getSx(theme)}/>
+            <AbcIcon fontSize="medium" sx={getSx(theme)}/>
           {/*</Avatar>*/}
         </Grid>
         <Grid item ml={3}>
@@ -43,7 +38,7 @@ const QrDetail = ({ qrData }: any) => {
         <Grid item xs={1}>
           {/*<Avatar*/}
           {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-            <FormatSizeIcon fontSize="small" color="primary" sx={getSx(theme)}/>
+            <FormatSizeIcon fontSize="small" sx={getSx(theme)}/>
           {/*</Avatar>*/}
         </Grid>
         <Grid item ml={3}>
@@ -56,7 +51,7 @@ const QrDetail = ({ qrData }: any) => {
         <Grid item xs={1}>
           {/*<Avatar*/}
           {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-            <ElectricBoltIcon color="primary" sx={getSx(theme)}/>
+            <ElectricBoltIcon sx={getSx(theme)}/>
           {/*</Avatar>*/}
         </Grid>
         <Grid item ml={3}>
@@ -69,7 +64,7 @@ const QrDetail = ({ qrData }: any) => {
         <Grid item xs={1}>
           {/*<Avatar*/}
           {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-            <PublicIcon color="primary" sx={getSx(theme)}/>
+            <PublicIcon sx={getSx(theme)}/>
           {/*</Avatar>*/}
         </Grid>
         <Grid item alignItems="center" ml={3}>
@@ -84,7 +79,7 @@ const QrDetail = ({ qrData }: any) => {
         <Grid item xs={1}>
           {/*<Avatar*/}
           {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-            <PauseIcon color="primary" sx={getSx(theme)}/>
+            <PauseIcon sx={getSx(theme)}/>
           {/*</Avatar>*/}
         </Grid>
         <Grid item xs={3} alignItems="center" ml={3}>
@@ -97,7 +92,7 @@ const QrDetail = ({ qrData }: any) => {
             <Grid item xs={1}>
               {/*<Avatar*/}
               {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-                <PauseIcon color="primary" sx={getSx(theme)}/>
+                <PauseIcon sx={getSx(theme)}/>
               {/*</Avatar>*/}
             </Grid>
             <Grid item xs={3} ml={1} alignItems="center">
@@ -113,7 +108,7 @@ const QrDetail = ({ qrData }: any) => {
         <Grid item xs={1}>
           {/*<Avatar*/}
           {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-            <BlockIcon color="primary" sx={getSx(theme)}/>
+            <BlockIcon sx={getSx(theme)}/>
           {/*</Avatar>*/}
         </Grid>
         <Grid item xs={3} ml={3} alignItems="center">
@@ -126,7 +121,7 @@ const QrDetail = ({ qrData }: any) => {
             <Grid item xs={1}>
               {/*<Avatar*/}
               {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-                <BlockIcon color="primary" sx={getSx(theme)}/>
+                <BlockIcon sx={getSx(theme)}/>
               {/*</Avatar>*/}
             </Grid>
             <Grid item xs={3} ml={1} alignItems="center">
@@ -142,7 +137,7 @@ const QrDetail = ({ qrData }: any) => {
         <Grid item xs={1}>
           {/*<Avatar*/}
           {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-            <TodayIcon color="primary" sx={getSx(theme)}/>
+            <TodayIcon sx={getSx(theme)}/>
           {/*</Avatar>*/}
         </Grid>
         <Grid item ml={3} alignItems="center">
@@ -156,7 +151,7 @@ const QrDetail = ({ qrData }: any) => {
         <Grid item xs={1}>
           {/*<Avatar*/}
           {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-            <EventIcon color="primary" sx={getSx(theme)}/>
+            <EventIcon sx={getSx(theme)}/>
           {/*</Avatar>*/}
         </Grid>
         <Grid item ml={3} alignItems="center">

@@ -16,14 +16,14 @@ import dynamic from "next/dynamic";
 import {IS_DEV_ENV, ONLY_QR} from "../constants";
 import RenderProDesc from "./smallpieces/RenderProDesc";
 import RenderFreeDesc from "./smallpieces/RenderFreeDesc";
-import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
 import {MyBadge} from "./smallpieces/StyledComponents";
 import {areEquals} from "../../helpers/generalFunctions";
 import initialOptions, {initialData} from "../../../helpers/qr/data";
 
-const RenderLoseDataConfirm = dynamic(() => import("./smallpieces/RenderLoseDataConfirm"));
+const RenderLoseDataConfirm = dynamic(() => import('./smallpieces/RenderLoseDataConfirm'));
 const RenderPreviewDrawer = dynamic(() => import('./smallpieces/RenderPreviewDrawer'));
 const RenderPreviewButton = dynamic(() => import('./smallpieces/RenderPreviewButton'));
+const RenderSamplePreview = dynamic(() => import('./smallpieces/RenderSamplePreview'));
 
 interface RenderTypeSelectorProps {
   selected?: string | null;
@@ -78,8 +78,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
   };
 
   const renderTypeSelector = (item: string, description: string, enabled: boolean) => (
-    <Grid item lg={IS_DEV_ENV && selected ? (isWideForThreeColumns ? 4 : 6) : 3}
-          md={!IS_DEV_ENV || !selected ? 4 : (isWideForThreeColumns ? 4 : 6)} sm={6} xs={12}>
+    <Grid item lg={isWideForThreeColumns ? (!selected ? 3 : 4) : 6} md={!selected ? 4 : (isWideForThreeColumns ? 4 : 6)} sm={6} xs={12}>
       <TypeSelector
         icon={item}
         isDynamic={isDynamic}
@@ -152,11 +151,11 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
           {renderTypeSelector("video", "Share video files", true)}
         </>) : null}
       </Grid>
-      {IS_DEV_ENV && isWideForPreview && selected && (
+      {isWideForPreview && selected && (
         <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '18px', width: '370px'}} step={0}
                              isDynamic={data.isDynamic || false} onlyQr={ONLY_QR.includes(selected) || !data.isDynamic} />
       )}
-      {IS_DEV_ENV && !openPreview && !isWideForPreview && selected && ( // @ts-ignore
+      {!openPreview && !isWideForPreview && selected && ( // @ts-ignore
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Sample"/>
       )}
       {openPreview && ( // @ts-ignore

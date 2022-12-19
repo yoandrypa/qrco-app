@@ -1,14 +1,11 @@
 import Box from "@mui/material/Box";
 import VisitDetailsSections from "../visit/VisitDetailsSections";
-import React, {useCallback, useContext} from "react";
+import React from "react";
 import QrDetail from "./QrDetail";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import DescriptionIcon from "@mui/icons-material/Description";
 import QueryStatsIcon from "@mui/icons-material/QueryStats";
-import {useRouter} from "next/router";
-import Context from "../context/Context";
-import {QR_CONTENT_ROUTE} from "./constants";
 import RenderSamplePreview from "./helperComponents/smallpieces/RenderSamplePreview";
 import {previewQRGenerator} from "../../helpers/qr/auxFunctions";
 
@@ -41,20 +38,20 @@ const TabPanel = (props: TabPanelProps) => {
 const QrDetails = ({visitData, qrData}: any) => {
   const [value, setValue] = React.useState(0);
 
-  const router = useRouter();
+  // const router = useRouter();
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
   // @ts-ignore
-  const {setLoading, setOptions} = useContext(Context);
+  // const {setLoading, setOptions} = useContext(Context);
 
-  const handleEdit = useCallback((qr: QrDataType) => {
-    setLoading(true);
-    setOptions({...qr.qrOptionsId, ...qr, mode: "edit"});
-    router.push(QR_CONTENT_ROUTE, undefined, {shallow: true}).then(() => setLoading(false));
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // const handleEdit = useCallback((qr: QrDataType) => {
+  //   setLoading(true);
+  //   setOptions({...qr.qrOptionsId, ...qr, mode: "edit"});
+  //   router.push(QR_CONTENT_ROUTE, undefined, {shallow: true}).then(() => setLoading(false));
+  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // const actions = [
   //   {icon: <EditIcon/>, name: "Edit", action: () => handleEdit(qrData)},

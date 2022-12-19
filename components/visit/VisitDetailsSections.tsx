@@ -3,17 +3,18 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
 import LaptopIcon from "@mui/icons-material/Laptop";
 import MapIcon from "@mui/icons-material/Map";
 import VisitTechnologyDetails from "./VisitTechnologyDetails";
 import VisitLocationDetails from "./VisitLocationDetails";
-import { themeConfig } from "../../utils/theme";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
+import {getSx} from "../../helpers/qr/helpers";
+import {useTheme} from "@mui/system";
 
 const VisitDetailsSections = ({ visitData }: any) => {
+  const theme = useTheme();
+
   return (
     <List sx={ { width: "100%", bgcolor: "background.paper" } }>
       <ListItem>
@@ -25,9 +26,9 @@ const VisitDetailsSections = ({ visitData }: any) => {
       </ListItem>
       <ListItem>
         <ListItemAvatar>
-          <Avatar sx={ { bgcolor: themeConfig().palette.primary.main } }>
-            <LaptopIcon />
-          </Avatar>
+          {/*<Avatar sx={ { bgcolor: themeConfig().palette.primary.main } }>*/}
+            <LaptopIcon sx={getSx(theme)} />
+          {/*</Avatar>*/}
         </ListItemAvatar>
         <ListItemText
           primary="Technology"
@@ -38,9 +39,9 @@ const VisitDetailsSections = ({ visitData }: any) => {
       </ListItem>
       <ListItem>
         <ListItemAvatar>
-          <Avatar sx={ { bgcolor: themeConfig().palette.primary.main } }>
-            <MapIcon />
-          </Avatar>
+          {/*<Avatar sx={ { bgcolor: themeConfig().palette.primary.main } }>*/}
+            <MapIcon sx={getSx(theme)}/>
+          {/*</Avatar>*/}
         </ListItemAvatar>
         <ListItemText
           primary="Locations"
