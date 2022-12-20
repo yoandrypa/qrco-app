@@ -109,16 +109,13 @@ const AppContextProvider = (props: ContextProps) => {
   }, [isUserInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const verify = async () => {
-      try {
-        const userData = session.currentAccount;//await Auth.currentAuthenticatedUser();
-        setUserInfo(userData);
-      } catch {
-        setUserInfo(null);
-        setVerifying(false);
-      }
-    };
-    verify();
+    try {
+      const userData = session.currentAccount; //await Auth.currentAuthenticatedUser();
+      setUserInfo(userData);
+    } catch {
+      setUserInfo(null);
+      setVerifying(false);
+    }
     doneInitialRender.current = true;
   }, []);
 
@@ -133,19 +130,6 @@ const AppContextProvider = (props: ContextProps) => {
       setSelected(options.qrType);
     }
   }, [options.mode]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  /*const logout = useCallback(async () => {
-    setLoading(true);
-    try {
-      await Auth.signOut();
-      setUserInfo(null);
-      clearData(false); // includes setLoading as false
-      await router.replace("/");
-    } catch (error) {
-      setLoading(false);
-      console.log("error signing out: ", error);
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps*/
 
   const logout = useCallback(async () => {
     let params = {
@@ -170,10 +154,6 @@ const AppContextProvider = (props: ContextProps) => {
     return <>{children}</>;
   }
 
-  if (verifying) {
-    return <PleaseWait/>;
-  }
-
   const renderContent = () => {
     if (router.pathname === "/" && router.query[PARAM_QR_TEXT] !== undefined) {
       const qrText = router.query[PARAM_QR_TEXT] as string;
@@ -194,19 +174,25 @@ const AppContextProvider = (props: ContextProps) => {
     }
   };
 
-  return (<>
-      {loading && <Loading/>}
-      <Context.Provider value={{
-        cornersData, setCornersData, dotsData, setDotsData,
-        frame, setFrame, background, setBackground,
-        options, setOptions, selected, setSelected,
-        data, setData, isTrialMode, userInfo, setUserInfo,
-        clearData, loading, setLoading, setRedirecting,
-        isWrong, setIsWrong, doNotClear
-      }}>
-        {renderContent()}
-      </Context.Provider>
-    </>
+  if (verifying) {
+    return <PleaseWait/>;
+  }
+
+  if (loading) {
+    return <Loading/>;
+  }
+
+  return (
+    <Context.Provider value={{
+      cornersData, setCornersData, dotsData, setDotsData,
+      frame, setFrame, background, setBackground,
+      options, setOptions, selected, setSelected,
+      data, setData, isTrialMode, userInfo,
+      clearData, loading, setLoading, setRedirecting,
+      isWrong, setIsWrong, doNotClear
+    }}>
+      {renderContent()}
+    </Context.Provider>
   );
 };
 
