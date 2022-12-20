@@ -69,7 +69,7 @@ export default function RenderQrListOptions({qr}: RenderQrOptsProps) {
     if (isWide && anchor) {
       setAnchor(null);
     }
-  }, [isWide]);
+  }, [isWide]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if ((loading || confirm) && anchor) {
