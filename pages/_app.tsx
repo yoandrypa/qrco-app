@@ -1,44 +1,24 @@
-import type { AppProps } from "next/app";
-import { useState } from "react";
-import { StyledEngineProvider } from "@mui/material/styles";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-
+import type {AppProps} from "next/app";
+import {useState} from "react";
+import {createTheme, StyledEngineProvider, ThemeProvider} from "@mui/material/styles";
 import Head from "next/head";
 
-import { IntlProvider } from "react-intl";
-import { themeConfig } from "../utils/theme";
-
-import "@aws-amplify/ui-react/styles.css";
-import "../styles/globals.css";
-import { useRouter } from "next/router";
+import {themeConfig} from "../utils/theme";
 
 import AppContextProvider from "../components/context/AppContextProvider";
-import { MAIN_CONFIG } from "../consts";
-import { PRIVATE_ROUTES } from "../components/qr/constants";
+import {MAIN_CONFIG} from "../consts";
 
-// @ts-ignore
-import { Authenticator } from "@ebanux/ebanux-utils/auth";
-import "@ebanux/ebanux-utils/styles/spinner.css";
-import { setCookie } from "cookies-next";
+import "../styles/globals.css";
 
-const isAPrivateRoute = (path: string) => {
-  return PRIVATE_ROUTES.some((route) => {
-    return path.match(route);
-  });
-};
+import MainHandler from "../components/MainHandler";
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
-  const router = useRouter();
-  const [mainConfig, setMainConfig] = useState(MAIN_CONFIG);
-  const [messages, setMessages] = useState(undefined);
-  const { locale, theme } = mainConfig;
+const MyApp = ({ Component, pageProps, router }: AppProps) => {
+  const [mainConfig] = useState(MAIN_CONFIG);
+
+  const { theme } = mainConfig;
   // @ts-ignore
   const mainTheme = createTheme(themeConfig(theme));
 
-  if (router.pathname !== "/auth_callback") {
-    setCookie("final_callback_path",
-      { pathname: router.pathname, query: router.query });
-  }
   return (
     <>
       <Head>
@@ -48,16 +28,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={mainTheme}>
           <AppContextProvider>
-            <IntlProvider locale={locale} messages={messages}>
-              {isAPrivateRoute(router.pathname)
-                ? <Authenticator>
-                  {({ user }: any) => (
-                    <Component {...pageProps} user={user}/>
-                  )}
-                </Authenticator>
-                : <Component {...pageProps} />
-              }
-            </IntlProvider>
+            <MainHandler Component={Component} pageProps={pageProps} router={router} />
           </AppContextProvider>
         </ThemeProvider>
       </StyledEngineProvider>
