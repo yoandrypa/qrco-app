@@ -24,6 +24,8 @@ import session from "@ebanux/ebanux-utils/sessionStorage";
 import * as QrHandler from "../../handlers/qrs";
 import RenderQrListOptions from "./helperComponents/smallpieces/RenderQrListOptions";
 
+const dateHandler = (date: string): string => `${date.startsWith('Yesterday') || date.startsWith('Today') ? ':' : ' at:'} ${date}`;
+
 const QrList = ({ title }: any) => {
   const [qrs, setQRs] = useState({ items: [] });
   // @ts-ignore
@@ -99,7 +101,7 @@ const QrList = ({ title }: any) => {
                             <Typography variant="h6" sx={{fontWeight: "bold", mb: "-2px"}}>{qr.qrName}</Typography>
                             {isWide ? (
                               <Typography variant="caption" sx={{ color: "gray" }}>
-                                {`Created at: ${humanDate(new Date(qr.createdAt).getTime())}`}
+                                {`Created${dateHandler(humanDate(new Date(qr.createdAt).getTime()))}`}
                               </Typography>
                             ) : (
                               <Typography variant="caption" sx={{ color: "gray" }}>{/*@ts-ignore*/}
@@ -132,12 +134,12 @@ const QrList = ({ title }: any) => {
                           {renderStaticDynamic(qr.isDynamic)}
                           {qrLink.address ? (
                             <Typography variant="caption" sx={{ color: "gray" }}>{/*@ts-ignore*/}
-                              <Public fontSize="inherit" />
+                              <Public fontSize="inherit" sx={{ mr: '5px'}} />
                               <Link href={qrLink.link}>{qrLink.link.split("//")[1]}</Link>
                             </Typography>) : <div />}
                           <Typography variant="caption" sx={{ color: "gray" }}>
-                            <Edit fontSize="inherit" />
-                            {`Updated at: ${humanDate(new Date(qr.updatedAt).getTime())}`}
+                            <Edit fontSize="inherit" sx={{ mr: '5px'}} />
+                            {`Updated${dateHandler(humanDate(new Date(qr.updatedAt).getTime()))}`}
                           </Typography>
                         </Stack>
                       </Box>
