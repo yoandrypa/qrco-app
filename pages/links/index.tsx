@@ -1,4 +1,3 @@
-import components from "../../libs/aws/components";
 import * as UserHandler from "../../handlers/users";
 import * as LinkHandler from "../../handlers/links";
 import * as DomainHandler from "../../handlers/domains";
@@ -6,23 +5,16 @@ import * as DomainHandler from "../../handlers/domains";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
 import LinkHome from "../../components/link/LinkHome";
-
-import { Amplify } from "aws-amplify";
-import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
-import awsExports from "../../libs/aws/aws-exports";
-import { QR_TYPE_ROUTE } from "../../components/qr/constants";
 import React from "react";
 
-Amplify.configure(awsExports);
-
-export default function Index({ linksData, domainsData }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Index ({
+  linksData,
+  domainsData
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   //@ts-ignore
   return (
-    <Authenticator components={components}>
-      {({ user }) => (<LinkHome linksData={linksData} domainsData={domainsData} userInformation={user} />
-      )}
-    </Authenticator>
+    <LinkHome linksData={linksData} domainsData={domainsData}/>
   );
 };
 
@@ -51,8 +43,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     return {
       props: {
         linksData: JSON.stringify({}),
-        domainsData: JSON.stringify([])
-      }
+        domainsData: JSON.stringify([]),
+      },
     };
   }
 
@@ -69,7 +61,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   return {
     props: {
       linksData: JSON.stringify(links),
-      domainsData: JSON.stringify(domains)
-    }
+      domainsData: JSON.stringify(domains),
+    },
   };
 };

@@ -9,13 +9,14 @@ import { useRouter } from "next/router";
 interface NewQrButtonProps {
   pathname?: string | undefined;
   handleNavigation?: Function | undefined;
+  light?: boolean;
 }
 
 interface ContextProps {
   setLoading: (loading: boolean) => void;
 }
 
-export default function RenderNewQrButton({ pathname, handleNavigation }: NewQrButtonProps) {
+export default function RenderNewQrButton({ light, pathname, handleNavigation }: NewQrButtonProps) {
   const router = useRouter();
   // @ts-ignore
   const { setLoading }: ContextProps = useContext(Context);
@@ -37,6 +38,7 @@ export default function RenderNewQrButton({ pathname, handleNavigation }: NewQrB
       startIcon={pathname === undefined || pathname === '/' ? <QrCodeIcon /> : <FirstPageIcon />}
       sx={{ height: '28px', my: 'auto' }}
       variant="outlined"
+      color={!light ? 'primary' : 'info'}
       onClick={navigation}>
       {pathname === undefined || pathname === '/' ? 'Create QR Link' : 'My QR Links'}
     </Button>

@@ -1,87 +1,51 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import components from "../../../libs/aws/components";
-import { Amplify } from "aws-amplify";
-import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
-import awsExports from "../../../libs/aws/aws-exports";
 import QrDetails from "../../../components/qr/QrDetails";
 import * as VisitHandler from "../../../handlers/visit";
 import * as QrHandler from "../../../handlers/qrs";
-import * as UserHandler from "../../../handlers/users";
-import { useRouter } from "next/router";
-import PleaseWait from "../../../components/PleaseWait";
-import QrGen from "../type";
+import { useContext, useEffect, useState } from "react";
+import Context from "../../../components/context/Context";
 
-Amplify.configure(awsExports);
-
-export default function Details({ visitData, qrData }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  return (
-    <Authenticator components={ components }>
-      <QrDetails visitData={ visitData ? JSON.parse(visitData) : visitData } qrData={ JSON.parse(qrData) } />
-    </Authenticator>
-  );
+const getQr = async (userId: string, createdAt: number) => {
+  return await (await QrHandler.get({
+    userId, createdAt,
+  })).populate({ properties: ["shortLinkId", "qrOptionsId"] });
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params, req }) => {
-  const getUserInfo = async () => {
-    try {
-      let userInfo = {};
-      for (const [ key, value ] of Object.entries(req.cookies)) {
-        // @ts-ignore
-        userInfo[key.split(".").pop()] = value;
-      }
-      // @ts-ignore
-      if (!userInfo.userData) {
-        return null;
-      }
-      return userInfo;
-    } catch {
-      return null;
+const getVisits = async (userId: string, createdAt: number) => {
+  return await VisitHandler.findByShortLink({ userId, createdAt });
+};
+
+export default function Details ({ id }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const [data, setData] = useState({ qrData: {}, visitData: {} });
+  // @ts-ignore
+  const { setLoading, userInfo } = useContext(Context);
+  let createdAt = JSON.parse(id);
+
+  useEffect(() => {
+    if (createdAt) {
+      setLoading(true);
+      getQr(userInfo.cognito_user_id, createdAt).then(qrData => {
+        let visitData; // @ts-ignore
+        if (qrData.shortLinkId?.visitCount > 0) { // @ts-ignore
+          createdAt = (new Date(qrData.shortLinkId.createdAt)).getTime(); // eslint-disable-line react-hooks/exhaustive-deps
+          visitData = getVisits(userInfo.cognito_user_id, createdAt);
+        } // @ts-ignore
+        setData({ qrData, visitData });
+      });
     }
-  };
+  }, []);
 
-  const userInfo = await getUserInfo();
+  return <QrDetails visitData={data.visitData} qrData={data.qrData}/>;
+};
 
-  // @ts-ignore
-  if (!userInfo?.userData) {
-    return {
-      props: {
-        visitData: "noUser"
-      }
-    };
-  }
-
-  // @ts-ignore
-  const userData = JSON.parse(userInfo.userData as string);
-  const userId = userData.UserAttributes[0].Value;
-  let user = await UserHandler.get(userId);
-  if (!user) {
-    user = await UserHandler.create({ id: userId });
-  }
-
-  let createdAt = JSON.parse(params?.id as string);
-  const qrData = (await (await QrHandler.get({
-    userId: user.id,
-    createdAt
-  })).populate({ properties: [ "shortLinkId", "qrOptionsId" ] }));
-
-  if (!qrData) {
-    return {
-      notFound: true
-    };
-  }
-  let visitData = null;
-  // @ts-ignore
-  if (qrData.shortLinkId?.visitCount > 0) {
-    // @ts-ignore
-    createdAt = (new Date(qrData.shortLinkId.createdAt)).getTime();
-    visitData = (await VisitHandler.findByShortLink({ userId: user.id, createdAt }));
-  }
-
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  req,
+}) => {
   return {
     props: {
-      visitData: visitData ? JSON.stringify(visitData) : visitData,
-      qrData: JSON.stringify(qrData)
-    }
+      id: params?.id,
+    },
   };
 };

@@ -6,11 +6,11 @@ import {useRouter} from "next/router";
 import {handleVerifier} from "../../handlers/helpers";
 
 export default function QrDesigner() { // @ts-ignore
-  const {step, setStep, selected, data, userInfo, setLoading} = useContext(Context);
+  const {selected, data, userInfo, setLoading} = useContext(Context);
   const router = useRouter();
 
   useEffect(() => {
-    handleVerifier(router, data?.isDynamic || false, Boolean(userInfo), selected, setLoading, setStep, step, 2);
+    handleVerifier(router, data?.isDynamic || false, Boolean(userInfo), selected, setLoading);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

@@ -1,23 +1,21 @@
-import type { AppProps } from "next/app";
-import { useState } from "react";
-import { StyledEngineProvider } from "@mui/material/styles";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import type {AppProps} from "next/app";
+import {useState} from "react";
+import {createTheme, StyledEngineProvider, ThemeProvider} from "@mui/material/styles";
+import Head from "next/head";
 
-import Head from 'next/head';
-
-import { IntlProvider } from "react-intl";
-import { themeConfig } from "../utils/theme";
-
-import "@aws-amplify/ui-react/styles.css";
-import "../styles/globals.css";
+import {themeConfig} from "../utils/theme";
 
 import AppContextProvider from "../components/context/AppContextProvider";
-import { MAIN_CONFIG } from "../consts";
+import {MAIN_CONFIG} from "../consts";
 
-export default function MyApp({ Component, pageProps }: AppProps) {
-  const [mainConfig, setMainConfig] = useState(MAIN_CONFIG);
-  const [messages, setMessages] = useState(undefined);
-  const { locale, theme } = mainConfig;
+import "../styles/globals.css";
+
+import MainHandler from "../components/MainHandler";
+
+const MyApp = ({ Component, pageProps, router }: AppProps) => {
+  const [mainConfig] = useState(MAIN_CONFIG);
+
+  const { theme } = mainConfig;
   // @ts-ignore
   const mainTheme = createTheme(themeConfig(theme));
 
@@ -25,17 +23,17 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>The QR Link | Dynamic QR code</title>
-        <link rel="icon" href="/ebanuxQr.svg" />
+        <link rel="icon" href="/ebanuxQr.svg"/>
       </Head>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={mainTheme}>
           <AppContextProvider>
-            <IntlProvider locale={locale} messages={messages}>
-              <Component {...pageProps} />
-            </IntlProvider>
+            <MainHandler Component={Component} pageProps={pageProps} router={router} />
           </AppContextProvider>
         </ThemeProvider>
       </StyledEngineProvider>
     </>
   );
-}
+};
+
+export default MyApp;

@@ -34,7 +34,7 @@ export default function RenderQrListOptions({qr}: RenderQrOptsProps) {
   const [confirm, setConfirm] = useState<{ createdAt: number; userId: string; } | null>(null);
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
 
-  const isWide = useMediaQuery("(min-width:750px)", { noSsr: true });
+  const isWide = useMediaQuery("(min-width:900px)", { noSsr: true });
 
   const handleEdit = useCallback((qr: QrDataType) => {
     setLoading(true);
@@ -60,11 +60,22 @@ export default function RenderQrListOptions({qr}: RenderQrOptsProps) {
     setAnchor(event.currentTarget);
   };
 
+  const handleDetails = () => {
+    setLoading(true);
+    router.push("/qr/" + (new Date(qr.createdAt)).getTime() + "/details").then(() => setLoading(false));
+  }
+
+  useEffect(() => {
+    if (isWide && anchor) {
+      setAnchor(null);
+    }
+  }, [isWide]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if ((loading || confirm) && anchor) {
       setAnchor(null);
     }
-  }, [loading, confirm]);
+  }, [loading, confirm]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -74,6 +85,11 @@ export default function RenderQrListOptions({qr}: RenderQrOptsProps) {
             <Tooltip title="Edit">
               <IconButton color="primary" disabled={loading} onClick={() => handleEdit(qr)}>
                 <EditOutlined/>
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Details">
+              <IconButton color="primary" disabled={loading} onClick={() => handleDetails()}>
+                <InfoOutlinedIcon/>
               </IconButton>
             </Tooltip>
             <Tooltip title="Delete">
@@ -102,18 +118,11 @@ export default function RenderQrListOptions({qr}: RenderQrOptsProps) {
               </MenuItem>
             )}
             {!isWide && (
-              <MenuItem key="deleteMenuItem" onClick={() => setConfirm({userId: qr.userId, createdAt: qr.createdAt})}>
-                <DeleteOutlineRounded color="error"/>
-                <Typography sx={{ml: '5px'}}>{'Delete'}</Typography>
+              <MenuItem key="detailsMenuItem" onClick={() => handleDetails()}>
+                  <InfoOutlinedIcon color="primary"/>
+                <Typography sx={{ml: '5px'}}>{'Details'}</Typography>
               </MenuItem>
             )}
-            <MenuItem key="detailsMenuItem" onClick={() => {
-              setLoading(true);
-              router.push("/qr/" + (new Date(qr.createdAt)).getTime() + "/details").then(() => setLoading(false));
-            }}>
-                <InfoOutlinedIcon color="primary"/>
-              <Typography sx={{ml: '5px'}}>{'Details'}</Typography>
-            </MenuItem>
             {qr.shortLinkId && (
               <MenuItem key="pauseMenuItem" onClick={() => handlePauseQrLink(qr.shortLinkId)}>
                 {qr.shortLinkId.paused ? <PlayCircleOutlineIcon color="primary"/> : <PauseCircleOutlineIcon color="primary"/>}
@@ -125,6 +134,12 @@ export default function RenderQrListOptions({qr}: RenderQrOptsProps) {
                         href={IS_DEV_ENV ? "https://dev-app.ebanux.com/checkouts" : "https://app.ebanux.com/checkouts"}>
                 <DashboardIcon color="info" />
                 <Typography sx={{ml: '5px'}}>Go to dashboard</Typography>
+              </MenuItem>
+            )}
+            {!isWide && (
+              <MenuItem key="deleteMenuItem" onClick={() => setConfirm({userId: qr.userId, createdAt: qr.createdAt})}>
+                <DeleteOutlineRounded color="error"/>
+                <Typography sx={{ml: '5px'}}>{'Delete'}</Typography>
               </MenuItem>
             )}
           </Menu>
