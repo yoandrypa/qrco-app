@@ -47,8 +47,7 @@ export const handleFetchResponse = async (fetchResponse: Response): Promise<any 
 }
 
 export const handleVerifier = (router: any, isDynamic: boolean, userLogged: boolean, selected: string | null,
-                               setLoading: (loading: boolean) => {}, setStep: (step: number) => {}, step: number,
-                               target: number) => {
+                               setLoading: (loading: boolean) => {}) => {
   if ((isDynamic && !userLogged) || !selected) {
     const path = {pathname: '/'};
 
@@ -60,7 +59,5 @@ export const handleVerifier = (router: any, isDynamic: boolean, userLogged: bool
       .then(() => {
         setLoading(false);
       });
-  } else if (step !== target && selected) {
-    setStep(target);
   }
 };

@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { handleFetchResponse } from "../../handlers/helpers";
 import Loading from "../Loading";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
-import * as UserHandler from "../../handlers/users";
+// @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
+import * as UserHandler from "../../handlers/users";
+
 
 type Props = {
   plan: string,

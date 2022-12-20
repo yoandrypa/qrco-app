@@ -1,54 +1,27 @@
-import {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import {ReactNode, useCallback, useEffect, useMemo, useRef, useState,} from "react";
 
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import dynamic from "next/dynamic";
-
-import { Amplify, Auth } from "aws-amplify";
 import Context from "./Context";
-import {
-  initialData,
-  initialBackground,
-  initialFrame,
-} from "../../helpers/qr/data";
-import {
-  BackgroundType,
-  CornersAndDotsType,
-  DataType,
-  FramesType,
-  OptionsType,
-} from "../qr/types/types";
-import {
-  PARAM_QR_TEXT,
-  QR_CONTENT_ROUTE,
-  QR_DESIGN_ROUTE,
-  QR_DETAILS_ROUTE,
-  QR_TYPE_ROUTE,
-} from "../qr/constants";
+import {initialBackground, initialData, initialFrame,} from "../../helpers/qr/data";
+import {BackgroundType, CornersAndDotsType, DataType, FramesType, OptionsType,} from "../qr/types/types";
+import {PARAM_QR_TEXT, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE, QR_TYPE_ROUTE,} from "../qr/constants";
 import AppWrapper from "../AppWrapper";
-import awsExports from "../../libs/aws/aws-exports";
 import {
   dataCleaner,
   getBackgroundObject,
   getCornersAndDotsObject,
   getFrameObject,
-  handleInitialData,
+  handleInitialData
 } from "../../helpers/qr/helpers";
-
-const Loading = dynamic(() => import("../Loading"));
-const PleaseWait = dynamic(() => import("../PleaseWait"));
-const Generator = dynamic(() => import("../qr/Generator"));
-
 // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
 // @ts-ignore
 import cookies from "@ebanux/ebanux-utils/cookiesStorage";
+
+const Loading = dynamic(() => import("../Loading"));
+const PleaseWait = dynamic(() => import("../PleaseWait"));
+const Generator = dynamic(() => import("../qr/Generator"));
 
 interface ContextProps {
   children: ReactNode;
@@ -57,18 +30,15 @@ interface ContextProps {
 const AppContextProvider = (props: ContextProps) => {
   const { children } = props;
 
-  const [options, setOptions] = useState<OptionsType>(
-    handleInitialData("Ebanux"));
+  const [options, setOptions] = useState<OptionsType>(handleInitialData("Ebanux"));
   const [cornersData, setCornersData] = useState<CornersAndDotsType>(null);
   const [dotsData, setDotsData] = useState<CornersAndDotsType>(null);
-  const [background, setBackground] = useState<BackgroundType>(
-    initialBackground);
+  const [background, setBackground] = useState<BackgroundType>(initialBackground);
   const [frame, setFrame] = useState<FramesType>(initialFrame);
   const [data, setData] = useState<DataType>(initialData);
   const [isTrialMode, setIsTrialMode] = useState<boolean>(false);
 
   const [selected, setSelected] = useState<string | null>(null);
-  const [step, setStep] = useState<number>(0);
 
   const [userInfo, setUserInfo] = useState(null);
   const [verifying, setVerifying] = useState<boolean>(true);
@@ -78,10 +48,15 @@ const AppContextProvider = (props: ContextProps) => {
   const [isWrong, setIsWrong] = useState<boolean>(false);
 
   const doneInitialRender = useRef<boolean>(false);
+  const forbidClear = useRef<boolean>(false);
 
   const router = useRouter();
 
   const isUserInfo = useMemo(() => userInfo !== null, [userInfo]);
+
+  const doNotClear = useCallback(() => {
+    forbidClear.current = true;
+  }, []);
 
   const clearData = useCallback(
     (keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean) => {
@@ -94,7 +69,6 @@ const AppContextProvider = (props: ContextProps) => {
       setCornersData(null);
       setIsWrong(false);
       setLoading(false);
-      setStep(0);
       setOptions(handleInitialData("Ebanux"));
 
       let newData: DataType;
@@ -109,7 +83,11 @@ const AppContextProvider = (props: ContextProps) => {
 
   useEffect(() => {
     if (doneInitialRender.current && options.mode === undefined) {
-      clearData(true);
+      if (!forbidClear.current) {
+        clearData(true);
+      } else {
+        forbidClear.current = false;
+      }
     }
   }, [selected]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -153,7 +131,6 @@ const AppContextProvider = (props: ContextProps) => {
       setData(dataCleaner(options));
       setOptions(dataCleaner(options, true)); // @ts-ignore
       setSelected(options.qrType);
-      setStep(options?.isDynamic ? 1 : 2);
     }
   }, [options.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -175,7 +152,7 @@ const AppContextProvider = (props: ContextProps) => {
       logout_uri: session.appBaseUrl + "/qr/type",
       client_id: session.appClientId
     };
-    let queryString = Object.keys(params).map((key) => {
+    let queryString = Object.keys(params).map((key) => { // @ts-ignore
       return encodeURIComponent(key) + "=" + encodeURIComponent(params[key]);
     }).join("&");
     const oauthLogOutUrl = process.env.REACT_APP_OAUTH_LOGOUT_URL || "";
@@ -209,11 +186,8 @@ const AppContextProvider = (props: ContextProps) => {
       }
     } else {
       return (
-        <AppWrapper userInfo={userInfo} handleLogout={logout}
-                    clearData={clearData} setLoading={setLoading}
-                    mode={data.mode} setRedirecting={setRedirecting}
-                    isTrialMode={isTrialMode} step={step}
-                    setIsTrialMode={setIsTrialMode}>
+        <AppWrapper setIsTrialMode={setIsTrialMode} handleLogout={logout} clearData={clearData} setLoading={setLoading}
+                    mode={data.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} userInfo={userInfo}>
           {!redirecting ? children : <PleaseWait redirecting hidePleaseWait/>}
         </AppWrapper>
       );
@@ -223,17 +197,12 @@ const AppContextProvider = (props: ContextProps) => {
   return (<>
       {loading && <Loading/>}
       <Context.Provider value={{
-        cornersData, setCornersData,
-        dotsData, setDotsData,
-        frame, setFrame,
-        background, setBackground,
-        options, setOptions,
-        selected, setSelected,
-        data, setData, isTrialMode,
-        userInfo, setUserInfo,
-        step, setStep, clearData,
-        loading, setLoading, setRedirecting,
-        isWrong, setIsWrong,
+        cornersData, setCornersData, dotsData, setDotsData,
+        frame, setFrame, background, setBackground,
+        options, setOptions, selected, setSelected,
+        data, setData, isTrialMode, userInfo, setUserInfo,
+        clearData, loading, setLoading, setRedirecting,
+        isWrong, setIsWrong, doNotClear
       }}>
         {renderContent()}
       </Context.Provider>

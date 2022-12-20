@@ -67,7 +67,7 @@ const QrList = ({ title }: any) => {
         },
       );
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
