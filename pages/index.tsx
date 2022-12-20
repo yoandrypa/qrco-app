@@ -12,29 +12,13 @@ import session from "@ebanux/ebanux-utils/sessionStorage";
 import QrList from "../components/qr/QrList";
 import PleaseWait from "../components/PleaseWait";
 
-export default function Index ({ user }: InferGetStaticPropsType<typeof getStaticProps>) {
+export default function Index ({ user }: any) {
   const router = useRouter(); // @ts-ignore
   const { clearData, setLoading } = useContext(Context);
 
   useEffect(() => {
     clearData();
-
-    if (router.query.login) {
-      setLoading(true);
-      const { path } = router.query;
-      const route = { pathname: path !== undefined ? `${path}` : "/" };
-      if (router.query.selected) { // @ts-ignore
-        route.query = { selected: router.query.selected };
-      }
-      router.push(route, "/", { shallow: false }).then(() => {
-        setLoading(false);
-      });
-    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  if (router.isFallback) {
-    return <PleaseWait/>;
-  }
 
   if (!session.isAuthenticated) {
     return <QrGen/>;
@@ -43,18 +27,4 @@ export default function Index ({ user }: InferGetStaticPropsType<typeof getStati
   return (
     <QrList user={user}/>
   );
-};
-
-export const getStaticProps: GetStaticProps = async () => {
-  const qrs = await QrHandler.list({ userId: "some" });
-
-  // return only the list data
-  return {
-    props: {
-      qrData: JSON.parse(
-        // @ts-ignore
-        JSON.stringify(qrs),
-      ),
-    },
-  };
 };

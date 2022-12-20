@@ -1,24 +1,47 @@
-import {ReactNode, useCallback, useEffect, useMemo, useRef, useState,} from "react";
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import Context from "./Context";
-import {initialBackground, initialData, initialFrame,} from "../../helpers/qr/data";
-import {BackgroundType, CornersAndDotsType, DataType, FramesType, OptionsType,} from "../qr/types/types";
-import {PARAM_QR_TEXT, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE, QR_TYPE_ROUTE,} from "../qr/constants";
+import {
+  initialBackground,
+  initialData,
+  initialFrame,
+} from "../../helpers/qr/data";
+import {
+  BackgroundType,
+  CornersAndDotsType,
+  DataType,
+  FramesType,
+  OptionsType,
+} from "../qr/types/types";
+import {
+  PARAM_QR_TEXT,
+  QR_CONTENT_ROUTE,
+  QR_DESIGN_ROUTE,
+  QR_DETAILS_ROUTE,
+  QR_TYPE_ROUTE,
+} from "../qr/constants";
 import AppWrapper from "../AppWrapper";
 import {
   dataCleaner,
   getBackgroundObject,
   getCornersAndDotsObject,
   getFrameObject,
-  handleInitialData
+  handleInitialData,
 } from "../../helpers/qr/helpers";
 // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
 // @ts-ignore
 import cookies from "@ebanux/ebanux-utils/cookiesStorage";
-import {create, get} from "../../handlers/users";
+import { create, get } from "../../handlers/users";
 
 const Loading = dynamic(() => import("../Loading"));
 const PleaseWait = dynamic(() => import("../PleaseWait"));
@@ -31,10 +54,12 @@ interface ContextProps {
 const AppContextProvider = (props: ContextProps) => {
   const { children } = props;
 
-  const [options, setOptions] = useState<OptionsType>(handleInitialData("Ebanux"));
+  const [options, setOptions] = useState<OptionsType>(
+    handleInitialData("Ebanux"));
   const [cornersData, setCornersData] = useState<CornersAndDotsType>(null);
   const [dotsData, setDotsData] = useState<CornersAndDotsType>(null);
-  const [background, setBackground] = useState<BackgroundType>(initialBackground);
+  const [background, setBackground] = useState<BackgroundType>(
+    initialBackground);
   const [frame, setFrame] = useState<FramesType>(initialFrame);
   const [data, setData] = useState<DataType>(initialData);
   const [isTrialMode, setIsTrialMode] = useState<boolean>(false);
@@ -126,12 +151,12 @@ const AppContextProvider = (props: ContextProps) => {
       try {
         const user = await get(id);
         if (!user) {
-          await create({id});
+          await create({ id });
         }
       } catch {
-        console.log('Error accessing user.');
+        console.log("Error accessing user.");
       }
-    }
+    };
 
     try {
       const userData = session.currentAccount;
@@ -149,16 +174,16 @@ const AppContextProvider = (props: ContextProps) => {
 
   const logout = useCallback(async () => {
     let params = {
-      logout_uri: session.appBaseUrl + "/qr/type",
-      client_id: session.appClientId
+      logout_uri: session.appBaseUrl,
+      client_id: session.appClientId,
     };
     let queryString = Object.keys(params).map((key) => { // @ts-ignore
       return encodeURIComponent(key) + "=" + encodeURIComponent(params[key]);
     }).join("&");
     const oauthLogOutUrl = process.env.REACT_APP_OAUTH_LOGOUT_URL || "";
-    session.del('credentials');
-    session.del('account');
-    cookies.del('account');
+    session.del("credentials");
+    session.del("account");
+    cookies.del("account");
     window.location.href = "".concat(oauthLogOutUrl, "?", queryString);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -182,8 +207,10 @@ const AppContextProvider = (props: ContextProps) => {
       }
     } else {
       return (
-        <AppWrapper setIsTrialMode={setIsTrialMode} handleLogout={logout} clearData={clearData} setLoading={setLoading}
-                    mode={data.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} userInfo={userInfo}>
+        <AppWrapper setIsTrialMode={setIsTrialMode} handleLogout={logout}
+                    clearData={clearData} setLoading={setLoading}
+                    mode={data.mode} setRedirecting={setRedirecting}
+                    isTrialMode={isTrialMode} userInfo={userInfo}>
           {!redirecting ? children : <PleaseWait redirecting hidePleaseWait/>}
         </AppWrapper>
       );
@@ -205,7 +232,7 @@ const AppContextProvider = (props: ContextProps) => {
       options, setOptions, selected, setSelected,
       data, setData, isTrialMode, userInfo,
       clearData, loading, setLoading, setRedirecting,
-      isWrong, setIsWrong, doNotClear
+      isWrong, setIsWrong, doNotClear,
     }}>
       {renderContent()}
     </Context.Provider>
