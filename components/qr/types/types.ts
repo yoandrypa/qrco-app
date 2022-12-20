@@ -127,8 +127,10 @@ export type DataType = {
   contact?: string;
   about?: string;
   title?: string;
+  titleText?: string;
   subtitle?: string;
   web?: string;
+  website?: string;
   url?: string;
   via?: string;
   hashtags?: string;

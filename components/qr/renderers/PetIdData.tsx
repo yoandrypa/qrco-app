@@ -4,7 +4,7 @@ import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
 
 import Common from '../helperComponents/Common';
-import { EMAIL, PHONE, ZIP } from '../constants';
+import { EMAIL, PHONE, YEAR, ZIP } from '../constants';
 
 import RenderSocials from './helpers/RenderSocials';
 import Expander from './helpers/Expander';
@@ -14,6 +14,7 @@ import RenderTextFields from './helpers/RenderTextFields';
 import Topics from './helpers/Topics';
 import socialsAreValid from './validator';
 import MultipleField from '../helperComponents/MultipleField';
+import RenderSelectField from './helpers/RenderSelectField';
 
 interface PetIdDataProps {
   data: DataType;
@@ -35,8 +36,31 @@ export default function PetIdData({
   const [expander, setExpander] = useState<string | null>(null);
 
   const isDynamic = useMemo(() => Boolean(data?.isDynamic), []) as boolean; // eslint-disable-line react-hooks/exhaustive-deps
+  const genders = [
+    {
+      value:'male',
+      label:'Male'
+    },
+    {
+      value:'female',
+      label:'Female'
+    },
+    {
+      value:'other',
+      label:'Other'
+    }
+    ];
+  const renderSelectItem = (item: string, label: string, options: {value: string, label: string}[], whatSave?:'label'|'value' ) => {
+    let isError = false as boolean;
+    // @ts-ignore
+    const value = data?.[item] || ('' as string);
 
-  const renderItem = (item: string, label: string) => {
+    return (<RenderSelectField item={item} label={label} isError={isError} value={value} handleValues={handleValues} options={options} whatSave={whatSave} /> )
+  }
+
+
+
+  const renderItem = (item: string, label: string, placeholder?:string) => {
     let isError = false as boolean;
     // @ts-ignore
     const value = data?.[item] || ('' as string);
@@ -52,7 +76,10 @@ export default function PetIdData({
         isError = true;
       } else if (item === 'email' && !EMAIL.test(value)) {
         isError = true;
+      }else if (item === 'petYearOfBirth' && !YEAR.test(value)) {
+        isError = true;
       }
+
     }
 
     return (
@@ -63,18 +90,55 @@ export default function PetIdData({
         value={value}
         handleValues={handleValues}
         required={item === 'petName'}
+        placeholder={placeholder}
       />
     );
   };
-  const checkData = () => {};
+  const checkData = () => {
+    let band = false;
+    if (!data?.petName?.trim().length) 
+      band = true;
+    
+    if(data?.petYearOfBirth && !YEAR.test(data?.petYearOfBirth))
+      band = true;
+    
+    if(data?.phone && !PHONE.test(data?.phone))
+      band = true;
+    
+    if(data?.fax && !PHONE.test(data?.fax))
+      band = true;
+    
+    if(data?.website && !isValidUrl(data?.website))
+      band = true;
+    
+    if(data?.email && !EMAIL.test(data?.email))
+      band = true;
+    
+    if(data?.zip && !ZIP.test(data?.zip))
+      band = true;
+    
+    if( data?.urls && data.urls.items?.length > 0)
+      data.urls.items.forEach((url: any) => {
+        if (!isValidUrl(url.value) || !url.value.trim().length) {
+          band = true;
+        }
+      });
+    if( data?.otherDetails && data.otherDetails.items?.length > 0)
+      data.otherDetails.items.forEach((detail: any) => {
+        if (!detail.value.trim().length) {
+          band = true;
+        }
+      });
+    return band;
+  };
   useEffect(() => {
     let errors = false;
-    if (!data.petName?.trim().length) {
+    if (checkData()) {
       errors = true;
     } else if (isDynamic) {
       errors = !socialsAreValid(data);
     }
-    checkData();
+    
 
     setIsWrong(errors);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -90,10 +154,10 @@ export default function PetIdData({
           {renderItem('petBreed', 'Breed')}
         </Grid>
         <Grid item sm={6} xs={12} style={{ paddingTop: 0 }}>
-          {renderItem('petGender', 'Gender')}
+          {renderSelectItem('petGender','Gender', genders, 'label')}
         </Grid>
         <Grid item sm={6} xs={12} style={{ paddingTop: 0 }}>
-          {renderItem('petYearOfBirth', 'Year of Birth')}
+          {renderItem('petYearOfBirth', 'Year of Birth', 'YYYY')}
         </Grid>
       </Grid>
       <Topics message={'Description Title'} />
@@ -168,9 +232,9 @@ export default function PetIdData({
             />
             {expander === 'other' && (
               <Grid container spacing={1}>
-                <Grid item xs={12} style={{ paddingTop: 0 }}>
+                <Grid item xs={12} sx={{ mt:1 }}>
                   <MultipleField
-                    item={{ key: 'otherDetails', label: 'Detail' }}
+                    item={{ key: 'otherDetails', label: 'Detail', requireValue: true }}
                   />
                 </Grid>
               </Grid>
@@ -187,9 +251,9 @@ export default function PetIdData({
             />
             {expander === 'urls' && (
               <Grid container spacing={1}>
-                <Grid item xs={12} style={{ paddingTop: 0 }}>
+                <Grid item xs={12} sx={{ mt: 1 }}>
                   <MultipleField
-                    item={{ key: 'urls', label: 'Links', type: 'url' }}
+                    item={{ key: 'urls', label: 'URL', type: 'url', requireLabel: true, requireValue: true }}
                   />
                 </Grid>
               </Grid>
@@ -197,7 +261,7 @@ export default function PetIdData({
           </Paper>
         </Grid>
         {isDynamic && (
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{p:1}}>
             <Divider sx={{ my: 1 }} />
             <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
               <Expander
