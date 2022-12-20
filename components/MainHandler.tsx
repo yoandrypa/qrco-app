@@ -19,7 +19,7 @@ export default function MainHandler({ Component, pageProps }: AppProps) {
     if (router.pathname !== "/auth_callback") {
       setCookie("final_callback_path", { pathname: router.pathname, query: router.query });
     }
-  }, [router.pathname]);
+  }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isAPrivateRoute(router.pathname, data.isDynamic || false)) {
     return (
