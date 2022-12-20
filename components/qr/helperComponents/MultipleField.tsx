@@ -1,6 +1,7 @@
 import { AddBox, Delete, DragIndicator } from '@mui/icons-material';
 import {
   IconButton,
+  InputAdornment,
   Table,
   TableBody,
   TableCell,
@@ -8,7 +9,8 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Tooltip
+  Tooltip,
+  Typography
 } from '@mui/material';
 import { useContext } from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
@@ -20,6 +22,8 @@ interface RenderType {
   key: 'otherDetails' | 'urls';
   label: string;
   type?: validTypes;
+  requireLabel?: boolean;
+  requireValue?: boolean;
 }
 interface MultipleFieldDataProps {
   item: RenderType;
@@ -103,14 +107,14 @@ export default function MultipleField({ item }: MultipleFieldDataProps) {
   const heading = data?.[item.key]?.heading || ('' as string);
   return (
     <>
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragEnd={onDragEnd} >
         <Droppable droppableId="droppable">
           {(provided: any) => (
             <TableContainer sx={{ mt: '-8px' }}>
               <Table size="small">
                 <TableHead sx={{ p: 0, width: '100%' }}>
                   <TableRow sx={{ p: 0, width: '100%' }}>
-                    <TableCell sx={{ p: 0, pr: 1, width: '90%' }}>
+                    <TableCell sx={{ p: 0, pr: 1, width: '90%', borderBottom: 'none' }}>
                       <TextField
                         label={'Headline'}
                         size="small"
@@ -129,7 +133,7 @@ export default function MultipleField({ item }: MultipleFieldDataProps) {
                         }}
                       />
                     </TableCell>
-                    <TableCell sx={{ p: 0, width: '10%' }}>
+                    <TableCell sx={{ p: 0, width: '10%', pt:1, borderBottom: 'none' }}>
                       {
                         // @ts-ignore
                         !data?.[item.key]?.items ||
@@ -190,12 +194,22 @@ export default function MultipleField({ item }: MultipleFieldDataProps) {
                                 borderBottom: 'none'
                               }}>
                               <TextField
-                                label={`${item.label} Label ${index + 1}`}
+                                label={`Label here`}
                                 size="small"
                                 fullWidth
                                 margin="dense"
                                 value={i.label || ''}
                                 placeholder={'Label'}
+                                required={item.requireLabel}
+                                InputProps={{
+                                  endAdornment: (
+                                    item.requireLabel &&!i.value.trim().length ? (
+                                      <InputAdornment position="end">
+                                        <Typography color="error">{'REQUIRED'}</Typography>
+                                      </InputAdornment>
+                                    ) : null
+                                  )
+                                }}
                                 onChange={e => {
                                   //@ts-ignore
                                   const newItems = [
@@ -223,13 +237,23 @@ export default function MultipleField({ item }: MultipleFieldDataProps) {
                                 borderBottom: 'none'
                               }}>
                               <TextField
-                                label={`${item.label} Text ${index + 1}`}
+                                label={`${item.label} here`}
                                 size="small"
                                 fullWidth
                                 margin="dense"
                                 value={i.value || ''}
                                 placeholder={'Text'}
                                 error={i.value? validate(i.value || '', item.type? item.type : 'text') : false}
+                                required={item.requireValue}
+                                InputProps={{
+                                  endAdornment: (
+                                    item.requireValue &&!i.value.trim().length ? (
+                                      <InputAdornment position="end">
+                                        <Typography color="error">{'REQUIRED'}</Typography>
+                                      </InputAdornment>
+                                    ) : null
+                                  )
+                                }}
                                 onChange={e => {
                                   //@ts-ignore
                                   const newItems = [
