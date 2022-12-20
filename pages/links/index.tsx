@@ -1,4 +1,3 @@
-import components from "../../libs/aws/components";
 import * as UserHandler from "../../handlers/users";
 import * as LinkHandler from "../../handlers/links";
 import * as DomainHandler from "../../handlers/domains";
@@ -6,20 +5,13 @@ import * as DomainHandler from "../../handlers/domains";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
 import LinkHome from "../../components/link/LinkHome";
-
-import { Amplify } from "aws-amplify";
-import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
-import awsExports from "../../libs/aws/aws-exports";
-import { QR_TYPE_ROUTE } from "../../components/qr/constants";
 import React from "react";
 
 export default function Index ({
   linksData,
-  domainsData,
-  user,
+  domainsData
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log(user);
   //@ts-ignore
   return (
     <LinkHome linksData={linksData} domainsData={domainsData}/>
