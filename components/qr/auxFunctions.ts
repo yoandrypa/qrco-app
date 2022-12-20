@@ -326,7 +326,7 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
 
 export const readableFileSize = (size: number): string => {
   const e = (Math.log(size) / Math.log(1e3)) | 0;
-  return +(size / Math.pow(1e3, e)).toFixed(2) + ' ' + ('kMGTPEZY'[e - 1] || '') + 'B';
+  return `${+(size / Math.pow(1e3, e)).toFixed(2)} ${('kMGTPEZY'[e - 1] || '')}B`;
 }
 
 export const getStep = (route: string): number => [QR_TYPE_ROUTE, '/'].includes(route) ? 0 : route === QR_CONTENT_ROUTE ? 1 : 2;
