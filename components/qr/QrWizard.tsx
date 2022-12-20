@@ -27,8 +27,8 @@ interface QrWizardProps {
 const QrWizard = ({ children }: QrWizardProps) => {
   const [isError, setIsError] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
-  const [forceDownload, setForceDownload] = useState<any>(undefined);
   const [size, setSize] = useState<number>(0);
+  const [forceDownload, setForceDownload] = useState<{item: HTMLElement} | undefined>(undefined);
   const [, setUnusedState] = useState();
 
   // @ts-ignore
@@ -67,7 +67,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   const lastStep = (goToList: boolean) => {
     const item = document.getElementById('qrCodeReferenceId');
     if (item) {
-      setForceDownload({ item });
+      setForceDownload({item});
     } else {
       clearData();
       router.push(goToList ? "/" : QR_TYPE_ROUTE, undefined, { shallow: true }).then(() => setLoading(false));
@@ -75,7 +75,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   }
   const handleNext = async () => {
     setLoading(true); // @ts-ignore
-    if (router.pathname === QR_TYPE_ROUTE) {
+    if ([QR_TYPE_ROUTE, '/'].includes(router.pathname)) {
       if (data.isDynamic && !isLogged) {
         router.push({
           pathname: QR_CONTENT_ROUTE,
@@ -153,7 +153,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
       {dataInfo.current.length ? <ProcessHandler process={dataInfo.current} handleCommand={
         (isError?: boolean) => {
           dataInfo.current = [];
-          if (!isError) {
+          if (!isError) { // @ts-ignore
             setForceDownload({ item: document.getElementById('qrCodeReferenceId') });
           } else {
             forceUpdate();
@@ -177,7 +177,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
       {forceDownload !== undefined && (
         <RenderPreview
           avoidDuplicate
-          externalDesign={forceDownload.item}
+          externalDesign={forceDownload?.item}
           externalFrame={frame}
           handleDone={async () => {
             setForceDownload(undefined);

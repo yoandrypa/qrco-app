@@ -210,8 +210,7 @@ const AppContextProvider = (props: ContextProps) => {
         <AppWrapper setIsTrialMode={setIsTrialMode} handleLogout={logout} clearData={clearData} setLoading={setLoading}
                     mode={data.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} userInfo={userInfo}>
           {loading && <Loading />}
-          {redirecting && <PleaseWait redirecting hidePleaseWait />}
-          {!redirecting && !loading && children}
+          {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>
       );
     }
