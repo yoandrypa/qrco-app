@@ -64,7 +64,7 @@ export default function RenderQrListOptions({qr}: RenderQrOptsProps) {
     if ((loading || confirm) && anchor) {
       setAnchor(null);
     }
-  }, [loading, confirm]);
+  }, [loading, confirm]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

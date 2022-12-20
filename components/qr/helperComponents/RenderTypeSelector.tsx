@@ -78,7 +78,9 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
   };
 
   const renderTypeSelector = (item: string, description: string, enabled: boolean) => (
-    <Grid  id={`card${item}`} item lg={isWideForThreeColumns ? (!selected ? 3 : 4) : 6} md={!selected ? 4 : (isWideForThreeColumns ? 4 : 6)} sm={6} xs={12}>
+    <Grid id={`card${item}`} item
+          lg={!selected ? 3 : isWideForThreeColumns ? 4 : 6}
+          md={!selected ? 4 : (isWideForThreeColumns ? 4 : 6)} sm={6} xs={12}>
       <TypeSelector
         icon={item}
         isDynamic={isDynamic}
@@ -141,7 +143,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
             {renderTypeSelector("petId", "Share your pet's information", true)}
             {IS_DEV_ENV && renderTypeSelector("fundme", "Start your own charity or fundraising campaign", true)}
             {IS_DEV_ENV && renderTypeSelector("paylink", "Receive payments worldwide", true)}
-            
+
           </>)
         }
         {isDynamic ? (<>

@@ -58,7 +58,6 @@ function ElevationScroll ({ children, window }: Props) {
 
 interface AppWrapperProps {
   mode?: string;
-  step?: number;
   children: ReactNode;
   userInfo?: any;
   handleLogout?: () => void;
@@ -79,7 +78,6 @@ export default function AppWrapper (props: AppWrapperProps) {
     setIsTrialMode,
     mode,
     isTrialMode,
-    step,
     setRedirecting,
   } = props;
 

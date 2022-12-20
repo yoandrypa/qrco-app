@@ -26,12 +26,11 @@ export default function Details ({ id }: InferGetServerSidePropsType<typeof getS
     if (createdAt) {
       setLoading(true);
       getQr(userInfo.cognito_user_id, createdAt).then(qrData => {
-        let visitData;
-        if (qrData.shortLinkId?.visitCount > 0) {
-          // @ts-ignore
-          createdAt = (new Date(qrData.shortLinkId.createdAt)).getTime();
+        let visitData; // @ts-ignore
+        if (qrData.shortLinkId?.visitCount > 0) { // @ts-ignore
+          createdAt = (new Date(qrData.shortLinkId.createdAt)).getTime(); // eslint-disable-line react-hooks/exhaustive-deps
           visitData = getVisits(userInfo.cognito_user_id, createdAt);
-        }
+        } // @ts-ignore
         setData({ qrData, visitData });
       });
     }

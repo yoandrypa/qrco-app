@@ -7,19 +7,18 @@ import { handleVerifier } from "../../handlers/helpers";
 
 export default function QrContent () {
   // @ts-ignore
-  const { setStep, setSelected, data, userInfo, setLoading } = useContext(
-    Context);
+  const { doNotClear, setSelected, data, userInfo, setLoading } = useContext(Context);
   // @ts-ignore
-  let { step, selected } = useContext(Context);
+  let { selected } = useContext(Context);
   const router = useRouter();
 
   useEffect(() => {
     if (!selected) {
-      selected = router.query.selected;
+      doNotClear();
+      selected = router.query.selected; // eslint-disable-line react-hooks/exhaustive-deps
       setSelected(selected);
     }
-    handleVerifier(router, data?.isDynamic || false, Boolean(userInfo),
-      selected, setLoading, setStep, step || 0, 1);
+    handleVerifier(router, data?.isDynamic || false, Boolean(userInfo), selected, setLoading);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
