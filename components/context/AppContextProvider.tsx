@@ -207,22 +207,18 @@ const AppContextProvider = (props: ContextProps) => {
       }
     } else {
       return (
-        <AppWrapper setIsTrialMode={setIsTrialMode} handleLogout={logout}
-                    clearData={clearData} setLoading={setLoading}
-                    mode={data.mode} setRedirecting={setRedirecting}
-                    isTrialMode={isTrialMode} userInfo={userInfo}>
-          {!redirecting ? children : <PleaseWait redirecting hidePleaseWait/>}
+        <AppWrapper setIsTrialMode={setIsTrialMode} handleLogout={logout} clearData={clearData} setLoading={setLoading}
+                    mode={data.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} userInfo={userInfo}>
+          {loading && <Loading />}
+          {redirecting && <PleaseWait redirecting hidePleaseWait />}
+          {!redirecting && !loading && children}
         </AppWrapper>
       );
     }
   };
 
   if (verifying) {
-    return <PleaseWait/>;
-  }
-
-  if (loading) {
-    return <Loading/>;
+    return <PleaseWait />
   }
 
   return (
