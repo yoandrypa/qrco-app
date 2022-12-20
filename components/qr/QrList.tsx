@@ -53,13 +53,13 @@ export default function QrList({ title }: any) {
     }
     setLoading(true);
     if (userInfo) {
-      list({ userId: userInfo.cognito_user_id }).then(qrs => {
-          // @ts-ignore
-          setQRs(qrs);
-          setLoading(false);
+      list({ userId: userInfo.cognito_user_id }).then(qrs => { // @ts-ignore
+        setQRs(qrs);
+        setLoading(false);
+        if (waiting) {
           setWaiting(false);
-        },
-      );
+        }
+      });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

@@ -23,6 +23,7 @@ export const ONLY_QR = ["fundme", "paylink"];
 export const EMAIL = new RegExp("^\\w+(\\.\\w+)*(\\+\\w+(\\.\\w+)*)?@\\w+(\\.\\w+)+$", "i");
 export const PHONE = new RegExp("^(\\+\\d{1,3}\\s?)?((\\(\\d{1,3}\\))|\\d{1,3})(\\s|\\-)?(\\d+((\\s|\\-)\\d+)*)$");
 export const ZIP = new RegExp("^\\d{5}(-\\d{4})?$");
+export const YEAR = new RegExp('^\\d{4}$');
 
 export const EBANUX_PLATFORM_FEE = 0.04;
 
