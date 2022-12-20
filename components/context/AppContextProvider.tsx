@@ -18,6 +18,7 @@ import {
 import session from "@ebanux/ebanux-utils/sessionStorage";
 // @ts-ignore
 import cookies from "@ebanux/ebanux-utils/cookiesStorage";
+import {create, get} from "../../handlers/users";
 
 const Loading = dynamic(() => import("../Loading"));
 const PleaseWait = dynamic(() => import("../PleaseWait"));
@@ -109,17 +110,6 @@ const AppContextProvider = (props: ContextProps) => {
   }, [isUserInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    try {
-      const userData = session.currentAccount; //await Auth.currentAuthenticatedUser();
-      setUserInfo(userData);
-    } catch {
-      setUserInfo(null);
-      setVerifying(false);
-    }
-    doneInitialRender.current = true;
-  }, []);
-
-  useEffect(() => {
     if (options.mode === "edit") {
       setCornersData(getCornersAndDotsObject(options, "corners"));
       setDotsData(getCornersAndDotsObject(options, "cornersDot"));
@@ -130,6 +120,32 @@ const AppContextProvider = (props: ContextProps) => {
       setSelected(options.qrType);
     }
   }, [options.mode]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const userCreation = async (id: string) => {
+      try {
+        const user = await get(id);
+        if (!user) {
+          await create({id});
+        }
+      } catch {
+        console.log('Error accessing user.');
+      }
+    }
+
+    try {
+      const userData = session.currentAccount;
+      setUserInfo(userData);
+
+      if (userData) {
+        userCreation(userData.cognito_user_id);
+      }
+    } catch {
+      setUserInfo(null);
+      setVerifying(false);
+    }
+    doneInitialRender.current = true;
+  }, []);
 
   const logout = useCallback(async () => {
     let params = {
