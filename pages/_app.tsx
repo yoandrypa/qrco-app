@@ -24,6 +24,9 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
       <Head>
         <title>The QR Link | Dynamic QR code</title>
         <link rel="icon" href="/ebanuxQr.svg"/>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
       </Head>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={mainTheme}>
