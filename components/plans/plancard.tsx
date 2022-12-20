@@ -4,8 +4,6 @@ import Grid from '@mui/material/Grid'
 import Done from '@mui/icons-material/Done'
 import Paper from '@mui/material/Paper'
 import LoadingButton from '@mui/lab/LoadingButton'
-import { useIntl } from 'react-intl'
-
 
 interface CardOptions {
   title: string,
@@ -18,7 +16,6 @@ interface CardOptions {
   highlighted?: boolean
 }
 
-
 type PlanCardProps = {
   data: CardOptions,
   clickAction: (planType: string) => void,
@@ -27,7 +24,6 @@ type PlanCardProps = {
 
 const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
   const [innerLoading, setInnerLoading] = useState(false)
-  const intl = useIntl()
 
   return (
     <Paper sx={{ borderRadius: 2.5, maxWidth: 340 }}>
@@ -53,7 +49,7 @@ const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
             setInnerLoading(false)
           }}
           variant={data.highlighted ? 'contained' : 'outlined'} >
-          {isCurrentPlan ? intl.formatMessage({ id: "review" }) : data.buttonText || 'Buy now'}
+          {isCurrentPlan ? 'Review': data.buttonText || 'Buy now'}
         </LoadingButton>
       </Grid>
       {data.features?.map((feature, index) => {

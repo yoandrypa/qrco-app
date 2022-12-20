@@ -8,7 +8,9 @@ import {setCookie} from "cookies-next";
 import {useContext} from "react";
 import Context from "./context/Context";
 
-const isAPrivateRoute = (path: string, isDynamic: boolean) => PRIVATE_ROUTES.some((route: string) => path.match(route));
+const isAPrivateRoute = (path: string, isDynamic: boolean) => {
+  return PRIVATE_ROUTES.some((route: string) => path.match(route))
+};
 
 export default function MainHandler({ Component, pageProps }: AppProps) {
   const router = useRouter();
