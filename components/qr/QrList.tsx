@@ -17,8 +17,7 @@ import RenderNewQrButton from "../renderers/RenderNewQrButton";
 import RenderPreview from "./renderers/RenderPreview";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import {humanDate} from "../helpers/generalFunctions";
-import {handleDesignerString, handleInitialData, qrNameDisplayer} from "../../helpers/qr/helpers"; // @ts-ignore
-import session from "@ebanux/ebanux-utils/sessionStorage";
+import {handleDesignerString, handleInitialData, qrNameDisplayer} from "../../helpers/qr/helpers";
 import {list}from "../../handlers/qrs";
 import RenderQrListOptions from "./helperComponents/smallpieces/RenderQrListOptions";
 
