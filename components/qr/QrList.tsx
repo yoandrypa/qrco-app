@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -10,26 +10,31 @@ import Edit from "@mui/icons-material/Edit";
 import SyncIcon from "@mui/icons-material/Sync";
 import SyncDisabledIcon from "@mui/icons-material/SyncDisabled";
 import Public from "@mui/icons-material/Public";
-import {sanitize} from "../../utils";
+import { sanitize } from "../../utils";
 import Link from "next/link";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import Context from "../context/Context";
 import RenderNewQrButton from "../renderers/RenderNewQrButton";
 import RenderPreview from "./renderers/RenderPreview";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import {humanDate} from "../helpers/generalFunctions";
-import {handleDesignerString, handleInitialData, qrNameDisplayer} from "../../helpers/qr/helpers";
+import { humanDate } from "../helpers/generalFunctions";
+import {
+  handleDesignerString,
+  handleInitialData,
+  qrNameDisplayer,
+} from "../../helpers/qr/helpers";
 // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import * as QrHandler from "../../handlers/qrs";
-import RenderQrListOptions from "./helperComponents/smallpieces/RenderQrListOptions";
+import RenderQrListOptions
+  from "./helperComponents/smallpieces/RenderQrListOptions";
 
 const dateHandler = (date: string): string => `${date.startsWith('Yesterday') || date.startsWith('Today') ? ':' : ' at:'} ${date}`;
 
 const QrList = ({ title }: any) => {
   const [qrs, setQRs] = useState({ items: [] });
   // @ts-ignore
-  const { setOptions, setStep, setLoading } = useContext(Context);
+  const { setOptions, setStep, setLoading, userInfo } = useContext(Context);
   const router = useRouter();
 
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
@@ -60,9 +65,8 @@ const QrList = ({ title }: any) => {
 
   useEffect(() => {
     setLoading(true);
-    const currentAccount = session.currentAccount;
-    if (currentAccount) {
-      QrHandler.list({ userId: currentAccount.cognito_user_id }).then(qrs => {
+    if (userInfo) {
+      QrHandler.list({ userId: userInfo.cognito_user_id }).then(qrs => {
           // @ts-ignore
           setQRs(qrs);
           setLoading(false);
