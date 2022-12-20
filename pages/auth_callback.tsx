@@ -8,8 +8,8 @@ const Auth_Callback = () => {
   const { setLoading } = useContext(Context);
   setLoading(true);
   const router = useRouter();
-  const route = JSON.parse(getCookie("final_callback_path")) ||
-    { pathname: "/", query: {} };
+  // @ts-ignore
+  const route = JSON.parse(getCookie("final_callback_path")) || { pathname: "/", query: {} };
   router.push(route, route.pathname).then(() => {
     //deleteCookie("final_callback_path");
     setLoading(false);

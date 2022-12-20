@@ -14,9 +14,11 @@ import * as EbanuxHandler from "../../handlers/ebanux";
 import { getUuid } from "../../helpers/qr/helpers";
 import { generateId, generateShortLink } from "../../utils";
 import * as QrHandler from "../../handlers/qrs";
+import {QR_CONTENT_ROUTE, QR_TYPE_ROUTE} from "./constants";
 
 interface UserInfoProps {
   attributes: { sub: string, email: string },
+  cognito_user_id: string,
   signInUserSession: {
     accessToken: {
       jwtToken: string
@@ -326,3 +328,5 @@ export const readableFileSize = (size: number): string => {
   const e = (Math.log(size) / Math.log(1e3)) | 0;
   return +(size / Math.pow(1e3, e)).toFixed(2) + ' ' + ('kMGTPEZY'[e - 1] || '') + 'B';
 }
+
+export const getStep = (route: string): number => [QR_TYPE_ROUTE, '/'].includes(route) ? 0 : route === QR_CONTENT_ROUTE ? 1 : 2;
