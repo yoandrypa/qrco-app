@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect, useCallback} from "react";
+import React, {useCallback, useContext, useEffect, useState} from "react";
 import InfoIcon from '@mui/icons-material/Info';
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -9,9 +9,9 @@ import Edit from "@mui/icons-material/Edit";
 import SyncIcon from "@mui/icons-material/Sync";
 import SyncDisabledIcon from "@mui/icons-material/SyncDisabled";
 import Public from "@mui/icons-material/Public";
-import { sanitize } from "../../utils";
+import {sanitize} from "../../utils";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import Context from "../context/Context";
 import RenderPreview from "./renderers/RenderPreview";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -43,7 +43,7 @@ export default function QrList({ title }: any) {
     </Typography>
   );
 
-  const loadItems = () => {
+  const loadItems = useCallback(() => {
     if (userInfo) {
       list({ userId: userInfo.cognito_user_id }).then(qrs => { // @ts-ignore
         setQRs(qrs);
@@ -53,7 +53,7 @@ export default function QrList({ title }: any) {
         }
       });
     }
-  }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderQr = (qrOptions: any, value: string, qr: any) => {
     const options = { ...qrOptions };
@@ -106,7 +106,7 @@ export default function QrList({ title }: any) {
               qr.qrOptionsId.background.file = null;
             }
             return (
-              <Paper sx={{width: "100%", overflow: "hidden"}} elevation={3} key={qr.createdAt}>
+              <Paper sx={{width: "100%", overflow: "hidden", '&:hover': {boxShadow: '0 0 3px 2px #849abb'}}} elevation={3} key={qr.createdAt}>
                 <Stack spacing={2} direction="row" justifyContent="space-between" sx={{minHeight: '85px'}}>
                   <Box sx={{display: "flex", justifyContent: "space-between", minWidth: '200px'}}>
                     <Box sx={{display: "flex"}}>
