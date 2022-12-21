@@ -154,14 +154,14 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
         </>) : null}
       </Grid>
       {isWideForPreview && selected && (
-        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '18px', width: '370px'}} step={0}
+        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '56px', width: '370px'}} step={0}
                              isDynamic={data.isDynamic || false} onlyQr={ONLY_QR.includes(selected) || !data.isDynamic} />
       )}
       {!openPreview && !isWideForPreview && selected && ( // @ts-ignore
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Sample"/>
       )}
       {openPreview && ( // @ts-ignore
-        <RenderPreviewDrawer setOpenPreview={setOpenPreview} border={35} height={!data.isDynamic ? 500 : 675} > {/* @ts-ignore */}
+        <RenderPreviewDrawer setOpenPreview={setOpenPreview} border={35} height={!data.isDynamic ? 425 : 700} > {/* @ts-ignore */}
           <RenderSamplePreview onlyQr={[...ONLY_QR, 'web'].includes(selected) || !data.isDynamic} selected={selected}
                                isDrawed style={{mt: '-15px'}} step={0} isDynamic={data.isDynamic || false} />
         </RenderPreviewDrawer>

@@ -22,7 +22,7 @@ export default function RenderCellPhoneShape({width, height, offlineText, childr
       background,
       border: `1px solid ${border}`,
       borderRadius: '25px',
-      boxShadow: '0px 7px 10px #808080'
+      boxShadow: '0px 3px 5px #808080'
     }}>
       <Box sx={{ position: 'absolute', width: '3px', height: '25px', top: '100px', left: '-3px', background: '#9e9e9e' }}/>
       <Box sx={{ position: 'absolute', width: '3px', height: '25px', top: '150px', left: '-3px', background: '#9e9e9e' }}/>

@@ -164,8 +164,7 @@ const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign
         <Dialog onClose={handlePreView} open={true} onKeyDown={getJson}>
           <DialogContent>
             <Box sx={{width: '300px'}}>
-              <QRRender qrData={!externalDesign ? (current || '') : externalDesign.outerHTML} width={300}
-                        alt={`${name}preview`} />
+              <QRRender qrData={!externalDesign ? (current || '') : externalDesign.outerHTML} width={300} alt={`${name}preview`} />
               {renderDownload()}
             </Box>
           </DialogContent>

@@ -2,7 +2,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import Button from "@mui/material/Button";
 
 interface RenderPreviewButtonProps {
-  setOpenPreview: (open: boolean) => {};
+  setOpenPreview: (open: boolean) => void;
   message: string;
 }
 
