@@ -339,17 +339,17 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
               </AccordionDetails>
             </Accordion>
           </Box>
-          {isWideForPreview && (<Box sx={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: {sm: '430px', xs: '100%'}}}>
+          <Box sx={{display: isWideForPreview ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'space-between', width: {sm: '430px', xs: '100%'}}}>
             {updating ? <Typography sx={{ position: 'absolute', ml: 1, mt: 1, color: theme => theme.palette.text.disabled}}>{'Generating QR...'}</Typography> : null}
             {renderQrGenerator()}
-          </Box>)}
+          </Box>
         </Box>
       </Box>
       {!isWideForPreview && !openPreview && ( // @ts-ignore
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />
       )}
       {openPreview && ( // @ts-ignore
-        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={470} border={10}>
+        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={450} border={10} autoHeight>
           <Box sx={{mx: '10px'}}>{renderQrGenerator()}</Box>
         </RenderPreviewDrawer>
       )}

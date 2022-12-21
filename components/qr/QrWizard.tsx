@@ -97,6 +97,15 @@ const QrWizard = ({ children }: QrWizardProps) => {
   };
 
   useEffect(() => {
+    const observer = new IntersectionObserver((payload: IntersectionObserverEntry[]) => {
+      setVisible(payload[0].isIntersecting || false);
+    }, {root: document.querySelector('#scrollArea'), rootMargin: '0px', threshold: [0.3]});
+
+    observer.observe(btnRef.current);
+    setSize(sizeRef.current.offsetWidth);
+    const getWidth = () => { setSize(sizeRef.current.offsetWidth); }
+    window.addEventListener("resize", getWidth);
+
     if (router.pathname === QR_CONTENT_ROUTE && isLogged && data?.isDynamic && !Boolean(options.id) && options.mode === undefined) {
       const genShortLinkAndId = async () => {
         const id = getUuid();
@@ -105,22 +114,9 @@ const QrWizard = ({ children }: QrWizardProps) => {
       }
       genShortLinkAndId();
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    const observer = new IntersectionObserver((payload: IntersectionObserverEntry[]) => {
-      setVisible(payload[0].isIntersecting || false);
-    }, {
-      root: document.querySelector('#scrollArea'),
-      rootMargin: '0px',
-      threshold: [0.3]
-    });
-    observer.observe(btnRef.current);
-    setSize(sizeRef.current.offsetWidth);
-    const getWidth = () => { setSize(sizeRef.current.offsetWidth); }
-    window.addEventListener("resize", getWidth);
     return () => window.removeEventListener("resize", getWidth);
-  }, [loading]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -182,12 +178,12 @@ const QrWizard = ({ children }: QrWizardProps) => {
           handleDone={async () => {
             setForceDownload(undefined);
             setRedirecting(true);
-            router.push("/", undefined, { shallow: true }).then(() => { setLoading(false); setRedirecting(false); })
+            router.push("/", undefined, { shallow: true }).then(() => {
+              setLoading(false); setRedirecting(false);
+            })
           }} />
       )}
-      {isError && (
-        <Notifications autoHideDuration={3500} message="Error accessing data!" onClose={() => setIsError(false)} />
-      )}
+      {isError && <Notifications autoHideDuration={3500} message="Error accessing data!" onClose={() => setIsError(false)} showProgress />}
     </>
   );
 };
