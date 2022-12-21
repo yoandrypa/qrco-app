@@ -7,11 +7,12 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import ClearIcon from '@mui/icons-material/Clear';
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
 // @ts-ignore
 import { SketchPicker } from 'react-color';
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 
 const hex = /^#?([0-9A-Fa-f]{3}){1,2}$/;
 
@@ -144,11 +145,14 @@ const ColorSelector = ({ color, handleData, label, property, allowClear }: Color
           id="reasonPopover"
           open
           anchorEl={anchor}
-          onClose={() => { setAnchor(null); }}
+          onClose={() => setAnchor(null)}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           transformOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
           <SketchPicker color={color} onChangeComplete={handleColor} disableAlpha presetColors={[]}/>
+          <Button endIcon={<HighlightOffIcon />} sx={{ my: 1, height: '25px', width: '100%' }} onClick={() => setAnchor(null)}>
+            {'Close'}
+          </Button>
         </Popover>
       )}
     </>

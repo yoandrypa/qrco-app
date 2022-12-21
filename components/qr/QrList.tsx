@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from "react";
+import React, {useState, useContext, useEffect, useCallback} from "react";
 import InfoIcon from '@mui/icons-material/Info';
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -13,19 +13,24 @@ import { sanitize } from "../../utils";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Context from "../context/Context";
-import RenderNewQrButton from "../renderers/RenderNewQrButton";
 import RenderPreview from "./renderers/RenderPreview";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import {humanDate} from "../helpers/generalFunctions";
 import {handleDesignerString, handleInitialData, qrNameDisplayer} from "../../helpers/qr/helpers";
-import {list}from "../../handlers/qrs";
+import {list, pauseQRLink, remove} from "../../handlers/qrs";
 import RenderQrListOptions from "./helperComponents/smallpieces/RenderQrListOptions";
+import dynamic from "next/dynamic";
+import {QR_CONTENT_ROUTE} from "./constants";
+
+const RenderConfirmDlg = dynamic(() => import("../renderers/RenderConfirmDlg"));
+const RenderNewQrButton = dynamic(() => import("../renderers/RenderNewQrButton"));
 
 const dateHandler = (date: string): string => `${date.startsWith('Yesterday') || date.startsWith('Today') ? ':' : ' at:'} ${date}`;
 
 export default function QrList({ title }: any) {
   const [waiting, setWaiting] = useState<boolean>(true);
-  const [qrs, setQRs] = useState({ items: [] }); // @ts-ignore
+  const [confirm, setConfirm] = useState<{createdAt: number; userId: string;} | null>(null);
+  const [qrs, setQRs] = useState({items: []}); // @ts-ignore
   const { setOptions, setLoading, userInfo } = useContext(Context);
   const router = useRouter();
 
@@ -38,20 +43,7 @@ export default function QrList({ title }: any) {
     </Typography>
   );
 
-  const renderQr = (qrOptions: any, value: string, qr: any) => {
-    const options = { ...qrOptions };
-    if (!options.image?.trim().length) {
-      options.image = null;
-    }
-    options.data = value;
-    return <RenderPreview qrDesign={options} qr={qr} onlyPreview/>;
-  };
-
-  useEffect(() => {
-    if (!router.query.selected) {
-      setOptions(handleInitialData("Ebanux"));
-    }
-    setLoading(true);
+  const loadItems = () => {
     if (userInfo) {
       list({ userId: userInfo.cognito_user_id }).then(qrs => { // @ts-ignore
         setQRs(qrs);
@@ -61,6 +53,43 @@ export default function QrList({ title }: any) {
         }
       });
     }
+  }
+
+  const renderQr = (qrOptions: any, value: string, qr: any) => {
+    const options = { ...qrOptions };
+    if (!options.image?.trim().length) {
+      options.image = null;
+    }
+    options.data = value;
+    return <RenderPreview qrDesign={options} qr={qr} onlyPreview/>;
+  };
+
+  const handleEdit = useCallback((qr: QrDataType) => {
+    setLoading(true);
+    setOptions({...qr.qrOptionsId, ...qr, mode: "edit"});
+    router.push(QR_CONTENT_ROUTE, undefined, {shallow: true}).then(() => setLoading(false));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handlePauseQrLink = useCallback((shortLinkId: LinkType) => {
+    setLoading(true);
+    pauseQRLink(shortLinkId).then(() => loadItems());
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleDelete = async () => {
+    setLoading(true); // @ts-ignore
+    const deleted = await remove(confirm);
+    if (deleted) {
+      setConfirm(null);
+      loadItems();
+    }
+  };
+
+  useEffect(() => {
+    if (!router.query.selected) {
+      setOptions(handleInitialData("Ebanux"));
+    }
+    setLoading(true);
+    loadItems();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -104,7 +133,7 @@ export default function QrList({ title }: any) {
                     </Box>
                   </Box>
                   {!isWide && <Box sx={{display: 'grid', textAlign: 'center', mr: '7px'}}>
-                    <RenderQrListOptions qr={qr}/>
+                    <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink} setConfirm={setConfirm}/>
                     {renderStaticDynamic(qr.isDynamic, true)}
                     <Typography variant="caption" style={{color: "gray"}}>
                       {`${qrLink.visitCount || 0} visits`}
@@ -139,7 +168,7 @@ export default function QrList({ title }: any) {
                           </Typography>
                         </Stack>
                       ) : <div/>}
-                      <RenderQrListOptions qr={qr}/>
+                      <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink} setConfirm={setConfirm}/>
                     </Box>
                   )}
                 </Stack>
@@ -164,6 +193,16 @@ export default function QrList({ title }: any) {
             <RenderNewQrButton light />
           </Box>
         </Box>
+      )}
+      {confirm !== null && (
+        <RenderConfirmDlg
+          handleCancel={() => setConfirm(null)}
+          handleOk={handleDelete}
+          title="Delete confirmation"
+          message="Are you sure you want to delete the selected QR?"
+          confirmationMsg="This action can not be undone."
+          confirmStyle={{color: 'orange', fontSize: 'small'}}
+        />
       )}
     </Stack>
   );

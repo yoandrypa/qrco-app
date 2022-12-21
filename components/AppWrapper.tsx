@@ -108,6 +108,8 @@ export default function AppWrapper (props: AppWrapperProps) {
     const isInListView = router.pathname === "/";
     const isEdit = !isInListView && mode === "edit";
 
+    setAnchorElNav(null);
+
     if (setRedirecting && !isInListView) { setRedirecting(true); }
     if (clearData !== undefined) { clearData(false, isEdit || !isInListView); }
     handleLoading();
