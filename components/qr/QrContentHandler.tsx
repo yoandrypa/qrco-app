@@ -150,7 +150,7 @@ const QrContentHandler = () => { // @ts-ignore
             <RenderIcon icon={selected} enabled adjust />
           </Box>
           <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{qrNameDisplayer(selected || '', data?.isDynamic || false)}</Typography>
-          <Typography sx={{ display: 'inline' }}>: Enter the content</Typography>
+          <Typography sx={{ display: {xs: 'none', sm: 'inline'} }}>: Enter the content</Typography>
           <NotifyDynamic isDynamic={data?.isDynamic || false} />
           <Box sx={{ textAlign: 'left', width: '100%' }}>
             {renderSel()}

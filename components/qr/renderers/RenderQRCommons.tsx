@@ -95,11 +95,10 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
       <Box sx={{p: 1, mt: 1}}>
         <Paper sx={{p: 1, mb: '10px'}} elevation={2}>
           <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Main colors'}</Typography>
-          {COLORS.map(x => {
-            const selected = (!data?.primary && !data?.secondary && x.p === DEFAULT_COLORS.p && x.s === DEFAULT_COLORS.s) ||
-              (x.p === data?.primary && x.s === data?.secondary);
-            return <RenderColorPreset handleValue={handleValue} colors={x} selected={selected} key={x.p}/>
-          })}
+          {COLORS.map(x => (<RenderColorPreset handleValue={handleValue} colors={x} key={x.p} selected={
+              (!data?.primary && !data?.secondary && x.p === DEFAULT_COLORS.p && x.s === DEFAULT_COLORS.s) ||
+              (x.p === data?.primary && x.s === data?.secondary)} />
+          ))}
           <Box sx={{width: '100%', display: 'flex', flexDirection: {sm: 'row', xs: 'column'}}}>
             <Box sx={{minWidth: '120px', width: '100%', mr: {sm: '4px', xs: 0}}}>
               <ColorSelector label="Primary color" color={data?.primary || DEFAULT_COLORS.p} handleData={handleValue} property="primary"/>
@@ -126,8 +125,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
                   startIcon={<WallpaperIcon sx={{ color: theme => backError ? theme.palette.error.dark : undefined }}/>}
                   variant="outlined"
                   color="primary"
-                  onClick={handleSelectFile('backgndImg')}
-                >
+                  onClick={handleSelectFile('backgndImg')}>
                   {`Banner image${backgndImg && !loading ? ' / Loaded' : ''}`}
                 </Button>
               </Tooltip>
@@ -142,8 +140,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
                     variant="outlined"
                     disabled={loading}
                     onClick={handleSelectFile('foregndImg')}
-                    color="primary"
-                  >
+                    color="primary">
                     {`Main image${backgndImg && !loading ? ' / Loaded' : ''}`}
                   </Button>
                 </Tooltip>
@@ -152,7 +149,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
             )}
           </Box>
         </Paper>
-        {IS_DEV_ENV && (<Paper sx={{p: 1}} elevation={2}>
+        {IS_DEV_ENV && (<Paper sx={{p: 1, mb: '10px'}} elevation={2}>
           <Typography sx={{fontWeight: 'bold'}}>{'Background'}</Typography>
           <RadioGroup
             aria-labelledby="backgroundType" name="backgroundType" value={data?.backgroundType || 'single'}
@@ -171,6 +168,9 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
               handleData={handleValue}/>
           )}
         </Paper>)}
+        {IS_DEV_ENV && (<Paper sx={{p: 1}} elevation={2}>
+          <Typography sx={{fontWeight: 'bold'}}>{'Fonts'}</Typography>
+        </Paper>)}
       </Box>
       {selectFile !== null && (
         <RenderImagePicker
@@ -178,8 +178,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
           title={selectFile === 'foregndImg' ? 'main' : 'banner'}
           kind={selectFile}
           handleAcept={handleAccept}
-          wasError={(selectFile === 'foregndImg' && foreError) || (selectFile === 'backgndImg' && backError)}
-        />
+          wasError={(selectFile === 'foregndImg' && foreError) || (selectFile === 'backgndImg' && backError)}/>
       )}
       {preview !== null && ( // @ts-ignore
         <RenderImgPreview handleClose={() => setPreview(null)} file={preview === 'backgndImg' ? backgndImg : foregndImg} />

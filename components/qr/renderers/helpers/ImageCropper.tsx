@@ -12,6 +12,7 @@ import Slider from "@mui/material/Slider";
 import CropIcon from '@mui/icons-material/Crop';
 import PhotoSizeSelectLargeIcon from '@mui/icons-material/PhotoSizeSelectLarge';
 import {getUuid} from "../../../../helpers/qr/helpers";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface ImageCropperProps {
   handleClose: () => void;
@@ -23,6 +24,8 @@ interface ImageCropperProps {
 export default function ImageCropper({handleAccept, handleClose, file, kind}: ImageCropperProps) {
   const [drag, setDrag] = useState<boolean>(false);
   const [zoom, setZoom] = useState<{max: number, min: number, selected: number}>({max: 100, min: 50, selected: 100});
+
+  const isWide = useMediaQuery("(min-width:400px)", { noSsr: true });
 
   const canvasDimensions = useRef<{width: number, height: number}>(kind === 'backgndImg' ? {width: 460, height: 200} : {width: 200, height: 200});
   const dimensions = useRef<{width: number, height: number}>({width: 0, height: 0});
@@ -177,12 +180,16 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
           </Box>
           <Box sx={{ width: '100%', textAlign: 'center' }}>
             <canvas
-              width={canvasDimensions.current.width}
+              width={isWide || kind !== 'backgndImg' ? canvasDimensions.current.width : 250}
               height={canvasDimensions.current.height}
               onMouseDown={() => setDrag(true)}
+              onTouchStart={() => setDrag(true)}
               onMouseUp={release}
               onMouseOut={release}
+              onTouchEnd={release}
+              onTouchCancel={release}
               onMouseMove={updateCanvas}
+              onTouchMove={updateCanvas}
               style={{ border: 'solid 1px rgba(0, 0, 0, 0.5)', cursor: drag ? 'grabbing' : 'grab' }}
               ref={canvasRef} />
           </Box>
