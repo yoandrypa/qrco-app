@@ -17,7 +17,7 @@ const Auth_Callback = () => {
       deleteCookie("final_callback_path");
       setLoading(false);
     });
-  }, []);
+  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
   return <div />;
 };
