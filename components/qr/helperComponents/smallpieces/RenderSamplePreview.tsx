@@ -11,6 +11,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import Typography from "@mui/material/Typography";
 import LinkIcon from "@mui/icons-material/Link";
 import SaveIcon from "@mui/icons-material/Save";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import {NO_MICROSITE, ONLY_QR} from "../../constants";
 
@@ -23,6 +24,8 @@ import RenderCellPhoneShape from "../RenderCellPhoneShape";
 import dynamic from "next/dynamic";
 import PleaseWait from "../../../PleaseWait";
 import {debounce} from "@mui/material";
+import Divider from "@mui/material/Divider";
+import Popover from "@mui/material/Popover";
 
 const RenderIframe = dynamic(() => import('../../../RenderIframe'), {suspense: true});
 
@@ -45,6 +48,7 @@ const clearUrl = (url: string): string => url.slice(url.indexOf('//') + 2);
 const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, save, code, isDrawed, saveDisabled, qrOptions}: WithSelection | WithSCode) => {
   const [prev, setPrev] = useState<string>(!onlyQr ? 'preview' : 'qr');
   const [copied, setCopied] = useState<boolean>(false);
+  const [open, setOpen] = useState<HTMLButtonElement | null>(null);
   const [updating, setUpdating] = useState<boolean>(false);
   const forceHide = useRef<boolean>(false);
 
@@ -89,8 +93,20 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
   }, [selected]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Box sx={style}>
-      {!onlyQr ? (
+    <Box sx={{
+      ...style,
+      border: !isDrawed ? 'solid 1px rgba(0,0,0,0.1)' : 'unset',
+      borderRadius: !isDrawed ? '5px' : 0,
+      height: 'fit-content',
+      pb: '5px',
+      pr: '15px'
+    }}>
+      <Box sx={{
+        width: '100%',
+        ml: '10px',
+        mt: !isDrawed ? '-5px' : 0,
+        mb: !isDrawed ? '13px' : 0
+      }}>
         <Box sx={{
           height: '30px',
           display: 'flex',
@@ -99,53 +115,60 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
           width: !isDrawed ? '100%' : 'calc(100% - 10px)'
         }}>
           <Box sx={{display: 'flex'}}>
-            <LinkIcon sx={{color: theme => theme.palette.primary.dark, mt: '12px', mr: '-7px'}}/>
+            {!onlyQr && <LinkIcon sx={{color: theme => theme.palette.primary.dark, mt: '12px', mr: '-7px'}}/>}
             <Typography sx={{
               mt: '14px',
-              ml: '10px',
+              ml: !onlyQr ? '10px' : 0,
               whiteSpace: 'nowrap',
-              maxWidth: '222px',
+              width: !onlyQr ? '177px' : '230px',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               fontSize: '13px'
-            }}>{clearUrl(URL || '')}</Typography>
-          </Box>
-          <Box sx={{display: 'flex'}}>
-            <IconButton size="small" target="_blank" component="a" href={URL} sx={{height: '28px', width: '28px', mt: '9px'}}>
-              <OpenInNewIcon fontSize="small"/>
-            </IconButton>
-            <IconButton size="small" sx={{height: '28px', width: '28px', mt: '9px'}} onClick={() => {
-              try {
-                navigator.clipboard.writeText(URL || '');
-                setCopied(true);
-              } catch {
-                console.log('Copy failed');
-              }
-            }}>
-              <ContentCopyIcon fontSize="small"/>
-            </IconButton>
+            }}>{!onlyQr ? clearUrl(URL || '') : URL || qrOptions?.data }</Typography>
+            {!onlyQr ? (
+              <>
+                <IconButton size="small" target="_blank" component="a" href={URL} sx={{height: '28px', width: '28px', mt: '9px'}}>
+                  <OpenInNewIcon fontSize="small"/>
+                </IconButton>
+                <IconButton size="small" sx={{height: '28px', width: '28px', mt: '9px'}} onClick={() => {
+                  try {
+                    navigator.clipboard.writeText(URL || '');
+                    setCopied(true);
+                  } catch {
+                    console.log('Copy failed');
+                  }
+                }}>
+                  <ContentCopyIcon fontSize="small"/>
+                </IconButton>
+              </>
+            ) : (
+              <IconButton size="small" sx={{height: '28px', width: '28px', mt: '9px'}} onClick={
+                (e: MouseEvent<HTMLButtonElement>) => setOpen(e.currentTarget)}>
+                <VisibilityIcon fontSize="small" />
+              </IconButton>
+            )}
           </Box>
         </Box>
-      ) : <Box sx={{mt: step === 0 ? '38px' : '20px'}}/>}
-      <Box sx={{
-        display: 'flex', justifyContent: 'space-between', my: '8px', ml: !isDrawed ? 0 : '10px',
-        width: !isDrawed ? '100%' : 'calc(100% - 20px)'
-      }}>
-        <ToggleButtonGroup value={prev} exclusive onChange={handleToggle} sx={{width: '100%'}}>
-          <ToggleButton value="preview" sx={{height: '23px', width: '50%'}} disabled={onlyQr}>
-            <WebIcon fontSize="small" sx={{mr: '5px'}}/>
-            <Typography>{'Page'}</Typography>
-          </ToggleButton>
-          <ToggleButton value="qr" sx={{height: '23px', width: '50%'}}>
-            <QrCodeIcon fontSize="small" sx={{mr: '5px'}}/>
-            <Typography>{'QR'}</Typography>
-          </ToggleButton>
-        </ToggleButtonGroup>
-        {save && (
-          <Button variant="contained" onClick={save} sx={{height: '24px', ml: '5px'}} disabled={saveDisabled}>
-            <SaveIcon fontSize="small" sx={{mb: '1px'}} />
-          </Button>
-        )}
+        <Divider sx={{ my: 2, mr: '13px' }}/>
+        <Box sx={{
+          display: 'flex', justifyContent: 'space-between', my: '8px', ml: !isDrawed ? 0 : '10px',
+          width: !isDrawed ? '100%' : 'calc(100% - 20px)'
+        }}>
+          <ToggleButtonGroup value={prev} exclusive onChange={handleToggle} sx={{width: '100%'}}>
+            <ToggleButton value="preview" sx={{height: '23px', width: '40px'}} disabled={onlyQr}>
+              <WebIcon fontSize="small"/>
+            </ToggleButton>
+            <ToggleButton value="qr" sx={{height: '23px', width: '40px'}}>
+              <QrCodeIcon fontSize="small" />
+            </ToggleButton>
+          </ToggleButtonGroup>
+          {!onlyQr && save && (
+            <Button variant="contained" onClick={save} sx={{height: '24px', ml: '5px'}} disabled={saveDisabled}>
+              <SaveIcon fontSize="small" sx={{mb: '1px'}} />
+              <Typography>{'Save'}</Typography>
+            </Button>
+          )}
+        </Box>
       </Box>
       <Box sx={{width: '270px', p: 1, pt: 0, ml: isDrawed ? '5px' : 0}}>
         {prev === 'preview' ? (
@@ -153,7 +176,7 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
             {code || (selected && !NO_MICROSITE.includes(selected)) ? (
               <Suspense fallback={<PleaseWait />}>
                 <RenderIframe src={!code ? cleanSelectionForMicrositeURL(selected || '', isDynamic, true) : `${process.env.REACT_MICROSITES_ROUTE}/sample/empty`}
-                              selected={selected} width="256px" height="536px"  data={data}/>
+                              selected={selected} width="256px" height="536px" data={data}/>
               </Suspense>
             ) : null}
           </RenderCellPhoneShape>
@@ -175,6 +198,19 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
           horizontal="center"
           severity="success"
           onClose={() => setCopied(false)}/>
+      )}
+      {open && (
+        <Popover
+          open
+          anchorEl={open}
+          onClose={() => setOpen(null)}
+          anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+          transformOrigin={{vertical: 'top', horizontal: 'center'}}
+        >
+          <Typography whiteSpace="pre" sx={{ p: 1 }}>
+            {qrOptions?.data}
+          </Typography>
+        </Popover>
       )}
     </Box>
   );

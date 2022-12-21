@@ -167,6 +167,9 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     const opts = {...options, background, frame, corners: cornersData, cornersDot: dotsData};
     if (!data?.isDynamic) {
       opts.data = handleDesignerString(selected, data || initialData);
+      if (!opts.data.length) {
+        opts.data = selected === 'web' ? 'https://www.example.com' : 'Example';
+      }
     }
     return opts;
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -224,19 +227,17 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
               </Box>
             ) : renderChildren()}
           </Box>
-          {isWideForPreview && !NO_MICROSITE.includes(selected) && (
+          {isWideForPreview && (
             <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
-                                 save={handleSave} style={{mt: '-13px', ml: '15px'}} saveDisabled={isWrong}
+                                 save={handleSave} style={{mt: 1, ml: '15px'}} saveDisabled={isWrong}
                                  qrOptions={optionsForPreview()} data={previewQRGenerator(data, selected)} step={1}
                                  onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false} />
           )}
         </Box>
       ) : renderChildren()}
-      {!openPreview && !isWideForPreview && !NO_MICROSITE.includes(selected) && ( // @ts-ignore
-        <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />
-      )}
+      {!openPreview && !isWideForPreview  && <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />}
       {openPreview && ( // @ts-ignore
-        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={selected === 'web' || !data.isDynamic ? 400 : 675} border={35}>
+        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={selected === 'web' || !data.isDynamic ? 400 : 700} border={35}>
           <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
                                save={handleSave} isDrawed saveDisabled={isWrong} style={{mt: '-15px'}} step={1}
                                data={previewQRGenerator(data, selected)} qrOptions={optionsForPreview()}
