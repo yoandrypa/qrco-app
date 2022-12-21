@@ -173,6 +173,7 @@ const AppContextProvider = (props: ContextProps) => {
   }, []);
 
   const logout = useCallback(async () => {
+    setLoading(true);
     let params = {
       logout_uri: session.appBaseUrl,
       client_id: session.appClientId,
