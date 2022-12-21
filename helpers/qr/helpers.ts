@@ -273,10 +273,10 @@ export const getOptionsObject = (qrDesign: any) => {
     cornersDotOptions: qrDesign.cornersDotOptions
   };
 
-  if (object.cornersDotOptions.type === '') {
+  if (object.cornersDotOptions?.type === '') {
     object.cornersDotOptions.type = null;
   }
-  if (object.cornersSquareOptions.type === '') {
+  if (object.cornersSquareOptions?.type === '') {
     object.cornersSquareOptions.type = null;
   }
   return object;
