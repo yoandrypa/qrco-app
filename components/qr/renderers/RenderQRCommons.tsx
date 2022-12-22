@@ -27,6 +27,7 @@ const RenderImagePicker = dynamic(() =>  import('./helpers/RenderImagePicker'));
 const RenderImgPreview = dynamic(() => import('./helpers/RenderImgPreview'));
 const RenderForeImgTypePicker = dynamic(() => import ('./helpers/RenderForeImgTypePicker'));
 const ImageCropper = dynamic(() => import('./helpers/ImageCropper'));
+const RenderFontsHandler = dynamic(() => import("../helperComponents/smallpieces/RenderFontsHandler"));
 
 interface QRCommonsProps {
   omitPrimaryImg?: boolean;
@@ -176,7 +177,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
         </Paper>)}
         <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="fonts" title="Fonts"/>
-          {expander === 'fonts' && <></>}
+          {expander === 'fonts' && <RenderFontsHandler data={data} handleValue={handleValue} />}
         </Paper>
         <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="buttons" title="Buttons"/>

@@ -63,7 +63,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       } else if (prop === 'foregndImg' && foreImg !== undefined) {
         setForeImg(undefined); // @ts-ignore
         setData((prev: DataType) => ({...prev, foregndImg: payload, prevForeImg: prev.foregndImg[0].Key}));
-      } else if (payload.clear) {
+      } else if (payload.clear || (prop === "globalFont" && payload === "Default" && data[prop] === payload)) {
         setData((prev: any) => {
           const tempo = {...prev};
           delete tempo[prop];

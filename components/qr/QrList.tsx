@@ -111,8 +111,8 @@ export default function QrList({ title }: any) {
                 <Stack spacing={2} direction="row" justifyContent="space-between" sx={{minHeight: '85px'}}>
                   <Box sx={{display: "flex", justifyContent: "space-between", minWidth: '35%'}}>
                     <Box sx={{display: "flex"}}>
-                      <Box sx={{width: "70px", mx: 1}}>
-                        <Box sx={{mt: 1}}>{renderQr(qr)}</Box>
+                      <Box sx={{width: "70px", mx: 1, mt: 1}}>
+                        {renderQr(qr)}
                       </Box>
                       <Stack direction="column" sx={{my: "auto"}}>
                         <Typography variant="subtitle2" sx={{ color: "orange", mb: "-7px" }}>
@@ -140,7 +140,7 @@ export default function QrList({ title }: any) {
                   </Box>)}
                   {isWide && (
                     <Box sx={{display: "flex", width: '220px'}}>
-                      <Divider orientation="vertical" flexItem sx={{mx: 2}}/>
+                      <Divider orientation="vertical" flexItem sx={{mr: 2}}/>
                       <Stack direction="column" spacing={0.8} justifyContent="flex-start" alignItems="flex-start" sx={{ml: {xs: 2, sm: 0}, my: 'auto'}}>
                         {renderStaticDynamic(qr.isDynamic)}
                         {qrLink.address ? (

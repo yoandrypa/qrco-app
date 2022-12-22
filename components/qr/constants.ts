@@ -1,4 +1,4 @@
-import { ColorTypes } from "./types/types";
+import {ColorTypes, FontTypes} from "./types/types";
 
 export const QR_TYPE_ROUTE = "/qr/type" as string;
 export const QR_CONTENT_ROUTE = "/qr/content" as string;
@@ -80,3 +80,16 @@ export const COLORS = [
   { p: "#0cd8f0", s: "#d8da07" },
 ] as ColorTypes[];
 
+export const FONTS = [
+  {type: '"Roboto","Helvetica","Arial",sans-serif', name: 'Default'},
+  {type: 'arial, sans-serif', name: 'Arial'},
+  {type: 'arial black, sans-serif', name: 'Arial Black'},
+  {type: 'verdana, sans-serif', name: 'Verdana'},
+  {type: 'trebuchet ms, sans-serif', name: 'Trebuchet'},
+  {type: 'impact, sans-serif', name: 'Impact'},
+  {type: 'gill sans, sans-serif', name: 'Gill Sans'},
+  {type: 'times new roman, serif', name: 'Times New Roman'},
+  {type: 'georgia, serif', name: 'Georgia'},
+  {type: 'courier, monospace', name: 'Courier'},
+  {type: 'monaco, monospace', name: 'Monaco'},
+  {type: 'comic sans ms, cursive', name: 'Comic Sans'}] as FontTypes[];

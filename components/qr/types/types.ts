@@ -172,6 +172,7 @@ export type DataType = {
   backgroundColorRight?: string;
   backgroundDirection?: string;
   backgroundImage?: File | string;
+  globalFont?: string;
   primary?: string;
   secondary?: string;
   isDynamic?: boolean;
@@ -210,13 +211,15 @@ export type EbanuxDonationPriceData = {
 }
 
 export type CardDataProps = {
-  data: DataType;
-  setData: Function;
+  data: DataType; setData: Function;
 };
 
 export type ColorTypes = {
-  p: string;
-  s: string;
+  p: string; s: string;
+};
+
+export type FontTypes = {
+  type: string; name: string;
 };
 
 export type EditType = {
