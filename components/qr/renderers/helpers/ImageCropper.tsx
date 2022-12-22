@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
@@ -32,15 +32,41 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const image = useRef<HTMLImageElement>();
   const pos = useRef<{x: number, y: number}>({x: 0, y: 0});
+  const initialTouch = useRef<{x: number, y: number}>({x: 0, y: 0});
 
   const initial = useRef<boolean>(true);
+
+  const get = (axis: string, event?: any): number => {
+    let result = 0;
+    if (event && event.touches) {
+      const touches = event.touches[0];
+      if (axis === 'x') {
+        const x = touches.clientX;
+        if (initialTouch.current.x > x) {
+          result = -1;
+        } else if (initialTouch.current.x < x) {
+          result = 1;
+        }
+        initialTouch.current.x = x;
+      } else {
+        const y = touches.clientY;
+        if (initialTouch.current.y > y) {
+          result = -1;
+        } else if (initialTouch.current.y < y) {
+          result = 1;
+        }
+        initialTouch.current.y = y;
+      }
+    }
+    return result;
+  }
 
   const updateCanvas = (event?: any) => {
     if (drag || event === undefined) {
       const canvas = canvasRef.current;
 
-      const movX = event?.movementX || 0;
-      const movY = event?.movementY || 0;
+      const movX = event?.movementX || get('x', event);
+      const movY = event?.movementY || get('y', event);
 
       const posX = pos.current.x + movX;
       const posY = pos.current.y + movY;
@@ -60,6 +86,12 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
     }
   };
 
+  const touchStart = (event: any) => {
+    const posic = event.touches[0];
+    initialTouch.current = {x: posic.clientX, y: posic.clientY};
+    setDrag(true)
+  };
+
   const beforeSend = () => {
     const { type, name } = file;
     const canvas = canvasRef.current;
@@ -77,6 +109,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
 
   const release = () => {
     if (drag) {
+      initialTouch.current = {x: 0, y: 0};
       setDrag(false);
     }
   }
@@ -183,7 +216,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
               width={isWide || kind !== 'backgndImg' ? canvasDimensions.current.width : 250}
               height={canvasDimensions.current.height}
               onMouseDown={() => setDrag(true)}
-              onTouchStart={() => setDrag(true)}
+              onTouchStart={touchStart}
               onMouseUp={release}
               onMouseOut={release}
               onTouchEnd={release}
