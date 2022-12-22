@@ -6,9 +6,10 @@ export const previewQRGenerator = (data: DataType, selected: string) => {
   ['qrName', 'isDynamic', 'backgroundColor', 'backgroundType', 'backgroundDirection', 'backgroundColorRight',
   'primary', 'secondary', 'backgndImg', 'foregndImg', 'foregndImgType'].forEach(x => {  // @ts-ignore
     if (data[x]) { sum += 1; }
-  })
+  });
 
   if (data.files !== undefined && data.files.length === 0) { sum += 1; }
+  if (data.socials !== undefined && data.socials.length === 0) { sum += 1; }
   if (selected === 'link' && data.links) { sum += 1; }
 
   const obj = {...data, qrType: selected};
