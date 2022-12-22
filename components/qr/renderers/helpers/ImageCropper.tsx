@@ -94,7 +94,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
 
   const beforeSend = () => {
     const { type, name } = file;
-    let canvas = null;
+    let canvas;
     if (isWide || kind !== 'backgndImg') {
       canvas = canvasRef.current;
     } else {
@@ -132,7 +132,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
     if (!initial.current) {
       updateCanvas();
     }
-  }, [isWide]);
+  }, [isWide]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!initial.current) {
