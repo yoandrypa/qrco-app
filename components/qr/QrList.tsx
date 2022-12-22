@@ -21,6 +21,7 @@ import {list, pauseQRLink, remove} from "../../handlers/qrs";
 import RenderQrListOptions from "./helperComponents/smallpieces/RenderQrListOptions";
 import dynamic from "next/dynamic";
 import {QR_CONTENT_ROUTE} from "./constants";
+import pluralize from "pluralize";
 
 const RenderConfirmDlg = dynamic(() => import("../renderers/RenderConfirmDlg"));
 const RenderNewQrButton = dynamic(() => import("../renderers/RenderNewQrButton"));
@@ -34,7 +35,7 @@ export default function QrList({ title }: any) {
   const { setOptions, setLoading, userInfo } = useContext(Context);
   const router = useRouter();
 
-  const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
+  const isWide = useMediaQuery("(min-width:665px)", { noSsr: true });
 
   const renderStaticDynamic = (is: boolean, avoidIcon?: boolean) => (
     <Typography variant="caption" style={{ color: "gray" }}>
@@ -55,12 +56,12 @@ export default function QrList({ title }: any) {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const renderQr = (qrOptions: any, value: string, qr: any) => {
-    const options = { ...qrOptions };
+  const renderQr = (qr: any) => {
+    const options = { ...qr.qrOptionsId };
     if (!options.image?.trim().length) {
       options.image = null;
     }
-    options.data = value;
+    options.data = !qr.isDynamic ? handleDesignerString(qr.qrType, qr) : qr.qrOptionsId.data;
     return <RenderPreview qrDesign={options} qr={qr} onlyPreview/>;
   };
 
@@ -108,12 +109,10 @@ export default function QrList({ title }: any) {
             return (
               <Paper sx={{width: "100%", overflow: "hidden", '&:hover': {boxShadow: '0 0 3px 2px #849abb'}}} elevation={3} key={qr.createdAt}>
                 <Stack spacing={2} direction="row" justifyContent="space-between" sx={{minHeight: '85px'}}>
-                  <Box sx={{display: "flex", justifyContent: "space-between", minWidth: '200px'}}>
+                  <Box sx={{display: "flex", justifyContent: "space-between", minWidth: '35%'}}>
                     <Box sx={{display: "flex"}}>
                       <Box sx={{width: "70px", mx: 1}}>
-                        <Box sx={{mt: 1}}>
-                          {renderQr(qr.qrOptionsId, !qr.isDynamic ? handleDesignerString(qr.qrType, qr) : qr.qrOptionsId.data, qr)}
-                        </Box>
+                        <Box sx={{mt: 1}}>{renderQr(qr)}</Box>
                       </Box>
                       <Stack direction="column" sx={{my: "auto"}}>
                         <Typography variant="subtitle2" sx={{ color: "orange", mb: "-7px" }}>
@@ -132,13 +131,13 @@ export default function QrList({ title }: any) {
                       </Stack>
                     </Box>
                   </Box>
-                  {!isWide && <Box sx={{display: 'grid', textAlign: 'center', mr: '7px'}}>
-                    <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink} setConfirm={setConfirm}/>
-                    {renderStaticDynamic(qr.isDynamic, true)}
-                    <Typography variant="caption" style={{color: "gray"}}>
-                      {`${qrLink.visitCount || 0} visits`}
-                    </Typography>
-                  </Box>}
+                  {!isWide && (<Box sx={{display: 'grid', textAlign: 'right'}}>
+                    <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink} setConfirm={setConfirm} />
+                    <Box sx={{display: 'grid', mr: '10px'}}>
+                      {renderStaticDynamic(qr.isDynamic, true)}
+                      <Typography variant="caption" style={{color: "gray"}}>{pluralize('visit', qrLink.visitCount || 0, true)}</Typography>
+                    </Box>
+                  </Box>)}
                   {isWide && (
                     <Box sx={{display: "flex", width: '220px'}}>
                       <Divider orientation="vertical" flexItem sx={{mx: 2}}/>
@@ -164,11 +163,11 @@ export default function QrList({ title }: any) {
                             {qrLink.visitCount || 0}
                           </Typography>
                           <Typography variant="caption" sx={{color: "gray"}}>
-                            {'Visits'}
+                            {pluralize('Visit', qrLink.visitCount || 0)}
                           </Typography>
                         </Stack>
                       ) : <div/>}
-                      <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink} setConfirm={setConfirm}/>
+                      <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink} setConfirm={setConfirm} />
                     </Box>
                   )}
                 </Stack>
