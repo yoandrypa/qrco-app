@@ -140,7 +140,7 @@ export default function QrList({ title }: any) {
                   </Box>)}
                   {isWide && (
                     <Box sx={{display: "flex", width: '220px'}}>
-                      <Divider orientation="vertical" flexItem sx={{mx: 2}}/>
+                      <Divider orientation="vertical" flexItem sx={{mr: 2}}/>
                       <Stack direction="column" spacing={0.8} justifyContent="flex-start" alignItems="flex-start" sx={{ml: {xs: 2, sm: 0}, my: 'auto'}}>
                         {renderStaticDynamic(qr.isDynamic)}
                         {qrLink.address ? (

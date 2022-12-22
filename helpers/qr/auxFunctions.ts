@@ -4,7 +4,7 @@ export const previewQRGenerator = (data: DataType, selected: string) => {
   let sum = 0;
 
   ['qrName', 'isDynamic', 'backgroundColor', 'backgroundType', 'backgroundDirection', 'backgroundColorRight',
-  'primary', 'secondary', 'backgndImg', 'foregndImg', 'foregndImgType'].forEach(x => {  // @ts-ignore
+  'primary', 'secondary', 'backgndImg', 'foregndImg', 'foregndImgType', 'globalFont'].forEach(x => {  // @ts-ignore
     if (data[x]) { sum += 1; }
   });
 
