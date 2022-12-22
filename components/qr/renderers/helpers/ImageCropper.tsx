@@ -94,7 +94,20 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
 
   const beforeSend = () => {
     const { type, name } = file;
-    const canvas = canvasRef.current;
+    let canvas = null;
+    if (isWide || kind !== 'backgndImg') {
+      canvas = canvasRef.current;
+    } else {
+      canvas = document.createElement('canvas');
+      canvas.setAttribute('width', '460px');
+      canvas.setAttribute('height', '200px');
+      const context = canvas.getContext('2d', { alpha: false, desynchronized: true });
+      if (context) {
+        context.imageSmoothingEnabled = true; // @ts-ignore
+        context.drawImage(image.current, pos.current.x, pos.current.y,
+          Math.ceil(dimensions.current.width * zoom.selected / 100), Math.ceil(dimensions.current.height * zoom.selected / 100));
+      }
+    }
     if (canvas) {
       canvas.toBlob(blob => { // @ts-ignore
         const newFile = new File([blob], `${getUuid()}${name.slice(name.indexOf('.'))}`, {type});
@@ -250,7 +263,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
       </DialogContent>
       <DialogActions sx={{p: 2}}>
         <Button startIcon={<CropIcon />} variant="outlined" onClick={beforeSend}>{'Done'}</Button>
-        <Button variant="outlined" onClick={handleClose}>Close</Button>
+        <Button variant="outlined" onClick={handleClose}>{'Close'}</Button>
       </DialogActions>
     </Dialog>
   );
