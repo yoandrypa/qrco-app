@@ -21,12 +21,10 @@ export default function RenderFontsHandler({data, handleValue}: RenderFontsHandl
   const renderFontType = (font: FontTypes) => {
     return ( // @ts-ignore
       <SectionSelector selected={(!data.globalFont && font.name === 'Default') || data.globalFont === font.name}
-                       handleSelect={before} property={font.name} h={'70px'} w={'190px'} separate>
+                       handleSelect={before} property={font.name} h={'50px'} w={'190px'} separate>
         <Box sx={{width: '100%', textAlign: 'left'}}>
-          <Typography sx={{fontFamily: font.type, fontWeight: 'bold', mt: '5px', color: grey[800]}}>{font.name}</Typography>
-          <Divider/>
+          <Typography sx={{fontFamily: font.type, fontWeight: 'bold', color: grey[800]}}>{font.name}</Typography>
           <Typography sx={{fontFamily: font.type, textTransform: 'none', mb: '-5px', color: grey[700]}}>{'AaBbCc...Zz, 123'}</Typography>
-          <Typography sx={{fontFamily: font.type, textTransform: 'none', color: grey[700]}} variant="caption">{'AaBbCc...Zz, 123'}</Typography>
         </Box>
       </SectionSelector>
     );

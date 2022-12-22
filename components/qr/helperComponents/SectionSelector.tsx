@@ -99,7 +99,7 @@ const SectionSelector = ({w, h, mw, label, handleSelect, icon, selected, isUploa
                 boxShadow: !selected ? '0 0 2px 2px #849abb' : '0 0 2px 2px #286ED6'
               }
             }}
-            variant={selected ? 'outlined' : 'text'}
+            variant={!children && selected ? 'outlined' : 'text'}
             onClick={beforeHandle}
           >
             {!children ? (<>
