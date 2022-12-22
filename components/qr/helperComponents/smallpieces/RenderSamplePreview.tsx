@@ -163,7 +163,7 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
             </ToggleButton>
           </ToggleButtonGroup>
           {!onlyQr && save && (
-            <Button variant="contained" onClick={save} sx={{height: '24px', ml: '5px'}} disabled={saveDisabled}>
+            <Button variant="outlined" onClick={save} sx={{height: '24px', ml: '5px'}} disabled={saveDisabled}>
               <SaveIcon fontSize="small" sx={{mb: '1px'}} />
               <Typography>{'Save'}</Typography>
             </Button>

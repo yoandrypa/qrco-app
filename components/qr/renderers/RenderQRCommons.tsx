@@ -1,4 +1,4 @@
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, useCallback, useState} from "react";
 import Box from "@mui/material/Box";
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from "@mui/material/Button";
@@ -21,6 +21,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import RenderGradientSelector from "./helpers/RenderGradientSelector";
+import Expander from "./helpers/Expander";
 
 const RenderImagePicker = dynamic(() =>  import('./helpers/RenderImagePicker'));
 const RenderImgPreview = dynamic(() => import('./helpers/RenderImgPreview'));
@@ -43,8 +44,13 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
   const [selectFile, setSelectFile] = useState<string | null>(null);
   const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [expander, setExpander] = useState<string | null>(null);
 
   const isWideEnough = useMediaQuery("(min-width:1083px)", { noSsr: true });
+
+  const handleExpander = useCallback((item: string): void => {
+    setExpander(item === expander ? null : item);
+  }, [expander]);
 
   const handleSelectFile = (kind: string) => () => {
     setSelectFile(kind);
@@ -154,7 +160,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
           <RadioGroup
             aria-labelledby="backgroundType" name="backgroundType" value={data?.backgroundType || 'single'}
             onChange={handleSelectBackground} row sx={{mb: '-12px'}}>
-            <FormControlLabel value="single" control={<Radio/>} label="Single color"/>
+            <FormControlLabel value="single" control={<Radio/>} label="Color solid"/>
             <FormControlLabel value="gradient" control={<Radio/>} label="Gradient"/>
           </RadioGroup>
           {(data?.backgroundType === undefined || data.backgroundType === 'single') && (
@@ -168,9 +174,18 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
               handleData={handleValue}/>
           )}
         </Paper>)}
-        {IS_DEV_ENV && (<Paper sx={{p: 1}} elevation={2}>
-          <Typography sx={{fontWeight: 'bold'}}>{'Fonts'}</Typography>
-        </Paper>)}
+        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+          <Expander expand={expander} setExpand={handleExpander} item="fonts" title="Fonts"/>
+          {expander === 'fonts' && <></>}
+        </Paper>
+        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+          <Expander expand={expander} setExpand={handleExpander} item="buttons" title="Buttons"/>
+          {expander === 'buttons' && <></>}
+        </Paper>
+        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+          <Expander expand={expander} setExpand={handleExpander} item="layout" title="Layout"/>
+          {expander === 'layout' && <></>}
+        </Paper>
       </Box>
       {selectFile !== null && (
         <RenderImagePicker

@@ -94,6 +94,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
 
   const beforeSend = () => {
     const { type, name } = file;
+
     let canvas;
     if (isWide || kind !== 'backgndImg') {
       canvas = canvasRef.current;
@@ -103,9 +104,10 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
       canvas.setAttribute('height', '200px');
       const context = canvas.getContext('2d', { alpha: false, desynchronized: true });
       if (context) {
+        const dimWidth = Math.ceil(dimensions.current.width * zoom.selected / 100);
         context.imageSmoothingEnabled = true; // @ts-ignore
-        context.drawImage(image.current, pos.current.x, pos.current.y,
-          Math.ceil(dimensions.current.width * zoom.selected / 100), Math.ceil(dimensions.current.height * zoom.selected / 100));
+        context.drawImage(image.current, dimWidth === 460 ? 0 : pos.current.x, pos.current.y, dimWidth,
+          Math.ceil(dimensions.current.height * zoom.selected / 100));
       }
     }
     if (canvas) {
