@@ -154,7 +154,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
         </>) : null}
       </Grid>
       {isWideForPreview && selected && (
-        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '56px', width: '370px'}} step={0}
+        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '56px', width: '370px', position: 'sticky', top: '120px'}} step={0}
                              isDynamic={data.isDynamic || false} onlyQr={ONLY_QR.includes(selected) || !data.isDynamic} />
       )}
       {!openPreview && !isWideForPreview && selected && ( // @ts-ignore
