@@ -186,7 +186,6 @@ const PDFGenDlg = ({ handleClose, data, isFramed }: PDFGenDlgProps) => {
             </Paper>
           </Box>
           <Paper elevation={2} sx={{ p: 1, mt: {md: 0, sm: 1, xs: 1} }}>
-            <Typography>Preview</Typography>
             {pdfDocument ? (
               <PDFViewer width="100%" height="100%" showToolbar={false}>
                 {pdfDocument}
