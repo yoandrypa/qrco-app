@@ -191,6 +191,7 @@ export type DataType = {
   otherDetails?:HeadAndItemsType;
   urls?:HeadAndItemsType;
   fields?:any[];
+  description?:string;
 
 };
 export type validTypes = 'text' | 'email' | 'phone' | 'web' | 'number'| 'date' | 'fax'|'url' | 'string';
