@@ -7,6 +7,10 @@ import Common from '../helperComponents/Common'
 import Alert from '@mui/material/Alert';
 import { isValidUrl } from "../../../utils";
 import CoffeeIcon from '@mui/icons-material/Coffee';
+
+//@ts-ignore
+import session from "@ebanux/ebanux-utils/sessionStorage";
+
 export interface DonationsProps {
   data: {
     title?: string,
@@ -34,16 +38,16 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
   const [coffeePrice, setCoffeePrice] = useState<number>(1)
   const [inputButtonValue, setInputButtonValue] = React.useState('');
 
+
   useEffect(() => {
     const temp = { ...data }
     if (coffeePrice < 1) {
       setCoffeePrice(1)
       temp["donationUnitAmount"] = 1
-      temp["donationUnitAmount"] = coffeePrice
     } else if (coffeePrice > 100) {
       setCoffeePrice(100)
       temp["donationUnitAmount"] = 100
-      temp["donationUnitAmount"] = 100
+
     } else {
       temp["donationUnitAmount"] = coffeePrice
     }
