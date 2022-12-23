@@ -14,7 +14,10 @@ import * as EbanuxHandler from "../../handlers/ebanux";
 import { getUuid } from "../../helpers/qr/helpers";
 import { generateId, generateShortLink } from "../../utils";
 import * as QrHandler from "../../handlers/qrs";
-import {QR_CONTENT_ROUTE, QR_TYPE_ROUTE} from "./constants";
+import { QR_CONTENT_ROUTE, QR_TYPE_ROUTE } from "./constants";
+
+//@ts-ignore
+import session from "@ebanux/ebanux-utils/sessionStorage";
 
 interface UserInfoProps {
   attributes: { sub: string, email: string },
@@ -27,6 +30,14 @@ interface UserInfoProps {
       jwtToken: string
     }
   }
+}
+
+interface currentAccount {
+  account: {
+    id: string;
+    email: string;
+  }
+
 }
 
 export interface StepsProps {
@@ -220,7 +231,7 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
   }
 
   if (selected === "donation") {
-    data["email"] = userInfo.attributes.email;
+    data["email"] = session.currentAccount.account.email;
     let priceData: EbanuxDonationPriceData;
     priceData = {
       name: `Donate ${data["title"]}` || "Donation",
@@ -229,7 +240,12 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
     };
     if (data["donationPriceId"]) {
       try {
-        prevUpdatingHandler("Updating donation payment data");
+        prevUpdatingHandler("Updating donation microsite");
+        const updatedPrice = await EbanuxHandler.updateEbanuxDonationPrice(
+          userInfo.cognito_user_id,
+          data["donationPriceId"],
+          priceData);
+        console.log("updated price", updatedPrice)
         prevUpdatingHandler(null, true);
       } catch (error) {
         setIsError(true);
@@ -240,13 +256,12 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
 
       try {
         prevUpdatingHandler("Creating Donation microsite");
-        const temp = (process.env.REACT_NODE_ENV !== 'production') ?
-          userInfo.signInUserSession.idToken.jwtToken :
-          userInfo.signInUserSession.accessToken.jwtToken;
         const price = await EbanuxHandler.createEbanuxDonationPrice(userInfo.cognito_user_id,
-          temp,
           priceData);
+        console.log("the price is")
+        //@ts-ignore
         data["donationPriceId"] = price.result.price.id;
+        //@ts-ignore
         data["donationProductId"] = price.result.product.id;
         prevUpdatingHandler(null, true)
       } catch (error) {
