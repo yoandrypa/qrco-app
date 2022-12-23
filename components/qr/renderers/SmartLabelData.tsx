@@ -43,19 +43,13 @@ export default function SmartLabelData({
   const [galleries, setGalleries] = useState<number>(0);
   const MAX_NUM_GALLERIES = 5;
 
-  const remove = useCallback(
-    (index: number) => () => {
+  const remove = (index: number) => {
       setData((prev: DataType) => {
         const tempo = { ...prev };
-        tempo.fields?.splice(index, 1);
-        if (tempo.fields?.length === 1 && data?.position === 'middle') {
-          delete data.position; // under by default
-        }
+        tempo.fields = tempo.fields?.filter((_, i) => i !== index);
         return tempo;
       });
-    },
-    []
-  ); // eslint-disable-line react-hooks/exhaustive-deps
+    }
 
   const onDragEnd = (result: any) => {
     if (!result?.destination) {
@@ -84,17 +78,17 @@ export default function SmartLabelData({
     []
   ); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleAddTextField = useCallback(() => {
+  const handleAddTextField = () => {
     setData((prev: DataType) => {
       const tempo = { ...prev };
       if (!tempo.fields) {
         tempo.fields = [];
       }
       tempo.fields?.push({ type: 'text', title: '', text: '' });
-      console.log(tempo); //! TODO remove
       return tempo;
     });
-  }, []);
+    setExpander(data.fields? (data.fields.length - 1).toString()  :  '0');
+  };
   const updateFields = (files: File[], index: number) => {
     setData((prev: DataType) => {
       const tempo = { ...prev };
@@ -123,7 +117,7 @@ export default function SmartLabelData({
     });
   };
 
-  const handleAddMediaField = useCallback(() => {
+  const handleAddMediaField = () => {
     setData((prev: DataType) => {
       const tempo = { ...prev };
       if (!tempo.fields) {
@@ -132,7 +126,8 @@ export default function SmartLabelData({
       tempo.fields?.push({ type: 'media', files: [] });
       return tempo;
     });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    setExpander(data.fields? (data.fields.length - 1).toString()  :  '0');
+  }
 
   const renderItem = (item: string, label: string, required?:boolean, placeholder?:string) => {
     let isError = false as boolean;
@@ -315,6 +310,8 @@ export default function SmartLabelData({
                                       ? 'Title + Description field'
                                       : 'Media field'
                                   }
+                                  deleteButton
+                                  handleDelete={() => remove(index)}
                                 />
                                 {expander === index.toString() && (
                                   <>{renderFields(x, index)}</>

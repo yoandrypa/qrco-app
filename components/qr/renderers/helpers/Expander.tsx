@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
 import IconButton from '@mui/material/IconButton';
+import { Delete } from "@mui/icons-material";
 
 interface ExpanderProps {
   expand: string | null;
@@ -12,9 +13,11 @@ interface ExpanderProps {
   title: string;
   bold?: boolean;
   required?: boolean;
+  deleteButton?: boolean;
+  handleDelete?: () => void;
 }
 
-const Expander = ({expand, setExpand, item, title, bold, required}: ExpanderProps) => {
+const Expander = ({expand, setExpand, item, title, bold, required, deleteButton, handleDelete}: ExpanderProps) => {
   const handleExpand = () => {
     if (expand === item) {
       setExpand(null);
@@ -31,17 +34,25 @@ const Expander = ({expand, setExpand, item, title, bold, required}: ExpanderProp
         justifyContent: 'space-between',
         cursor: 'pointer'
       }}
-      onClick={handleExpand}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }} onClick={handleExpand}>
         <Typography sx={{fontWeight: bold ? 'bold' : 'normal'}}>{title}</Typography>
         {required && !expand && <Typography sx={{ mt: '3px'}} color="error">{'REQUIRED'}</Typography>}
       </Box>
-      <Tooltip title={expand === item ? "Collapse" : "Expand"}>
-        <IconButton size="small">
-          {expand === item ? <ExpandLessIcon fontSize="small"/> : <ExpandMoreIcon fontSize="small"/>}
-        </IconButton>
-      </Tooltip>
+      <Box sx={{display:'flex'}}>
+        {deleteButton&&
+          <Tooltip title="Delete">
+            <IconButton size="small" onClick={handleDelete}>
+              <Delete fontSize="small" color="error"/>
+            </IconButton>
+          </Tooltip>
+        }
+        <Tooltip title={expand === item ? "Collapse" : "Expand"}>
+          <IconButton size="small" onClick={handleExpand}>
+            {expand === item ? <ExpandLessIcon fontSize="small"/> : <ExpandMoreIcon fontSize="small"/>}
+          </IconButton>
+        </Tooltip>
+      </Box>
     </Box>
   );
 }
