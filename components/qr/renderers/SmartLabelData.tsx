@@ -261,13 +261,14 @@ export default function SmartLabelData({
         </Grid>
         <Grid item xs={12}>
           {renderItem('description', 'Description',)}
-        </Grid>
-        <Topics message="Categories" top="3px" />
+        </Grid>       
+      </Grid>
+      <Topics message="Categories" top="3px" />
+      <Grid container>
         <Grid item xs={12} md={6}>
           <RenderChipFields values={data.categories?data.categories:[] } handleValues={handleCategories} options={categoryOptions}/>
         </Grid>
       </Grid>
-
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
           {(provided: any) => (
