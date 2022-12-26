@@ -192,6 +192,7 @@ export type DataType = {
   urls?:HeadAndItemsType;
   fields?:any[];
   description?:string;
+  categories: string[];
 
 };
 export type validTypes = 'text' | 'email' | 'phone' | 'web' | 'number'| 'date' | 'fax'|'url' | 'string';

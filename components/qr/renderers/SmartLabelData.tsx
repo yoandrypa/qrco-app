@@ -19,6 +19,7 @@ import Expander from './helpers/Expander';
 import socialsAreValid from './validator';
 import { Button, Typography } from '@mui/material';
 import FileUpload from 'react-material-file-upload';
+import RenderChipFields from './helpers/RenderChipFields';
 
 interface SmartLabelDataProps {
   data: DataType;
@@ -33,6 +34,17 @@ const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
   ...draggableStyle
 });
 
+const categoryOptions = [
+  'Art',
+  'Dishes',
+  'Glasses',
+  'Jewelry',
+  'Packaging',
+  'Shoes',
+  'Toys',
+  'Clothing'
+];
+
 export default function SmartLabelData({
   data,
   setData,
@@ -42,6 +54,15 @@ export default function SmartLabelData({
   const [expander, setExpander] = useState<string | null>(null);
   const [galleries, setGalleries] = useState<number>(0);
   const MAX_NUM_GALLERIES = 5;
+
+  const handleCategories = (payload: string[]) => {
+    console.log({ payload});
+    setData((prev: DataType) => {
+      const tempo = { ...prev };
+      tempo.categories = payload;
+      return tempo;
+    });
+  }
 
   const remove = (index: number) => {
       setData((prev: DataType) => {
@@ -241,8 +262,9 @@ export default function SmartLabelData({
         <Grid item xs={12}>
           {renderItem('description', 'Description',)}
         </Grid>
-        <Grid item xs={12}>
-          {/* <RenderChipFields/> */}
+        <Topics message="Categories" top="3px" />
+        <Grid item xs={12} md={6}>
+          <RenderChipFields values={data.categories?data.categories:[] } handleValues={handleCategories} options={categoryOptions}/>
         </Grid>
       </Grid>
 
