@@ -1,7 +1,7 @@
 import {ReactNode, useCallback, useContext, useEffect, useRef, useState} from "react";
 import Typography from "@mui/material/Typography";
 import InputAdornment from "@mui/material/InputAdornment";
-import ArticleIcon from '@mui/icons-material/Article';
+import ArticleIcon from '@mui/icons-material/ArticleOutlined';
 import DesignServicesIcon from '@mui/icons-material/DesignServices';
 import TextField from "@mui/material/TextField";
 import Tabs from "@mui/material/Tabs";
@@ -63,7 +63,10 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       } else if (prop === 'foregndImg' && foreImg !== undefined) {
         setForeImg(undefined); // @ts-ignore
         setData((prev: DataType) => ({...prev, foregndImg: payload, prevForeImg: prev.foregndImg[0].Key}));
-      } else if (payload.clear || (prop === "globalFont" && payload === "Default" && data[prop] === payload)) {
+      } else if (payload.clear || (((prop === "globalFont" && payload === "Default") ||
+          (['buttonsFont', 'titlesFont', 'messagesFont', 'titlesFontSize', 'messagesFontSize', 'buttonsFontSize',
+              'subtitlesFontSize', 'subtitlesFont'].includes(prop) && (['none', 'default'].includes(payload))
+          )) && data[prop] === payload)) {
         setData((prev: any) => {
           const tempo = {...prev};
           delete tempo[prop];
