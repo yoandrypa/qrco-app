@@ -31,13 +31,13 @@ export default function RenderFontsHandler({data, handleValue}: RenderFontsHandl
 
   const before = useCallback((property: string) => (payload: string): void => {
     handleValue(property)(payload);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleExpander = useCallback((item: string | null) => {
     if (item) {
       setExpander(item);
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderFontType = useCallback((font: FontTypes) => {
     return ( // @ts-ignore
@@ -54,7 +54,7 @@ export default function RenderFontsHandler({data, handleValue}: RenderFontsHandl
         </Box>
       </SectionSelector>
     );
-  }, [data?.globalFont]);
+  }, [data?.globalFont]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

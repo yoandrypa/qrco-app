@@ -76,7 +76,7 @@ const RenderFontStyles = ({handleValue, property, value}: RenderFontStylesProps)
       }
       handleValue(property)(response);
     }
-  }, [color, formats]);
+  }, [color, formats]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setColor(value?.includes('#') ? value?.slice(value?.indexOf('#')) : '#000000');
@@ -95,7 +95,7 @@ const RenderFontStyles = ({handleValue, property, value}: RenderFontStylesProps)
     }
     setFormats(newFormats);
     doneInitialRender.current = true;
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderCheck = (is?: boolean) => {
     return is ? <CheckIcon sx={{mr: '10px'}} /> : <div style={{ width: '34px' }} />
