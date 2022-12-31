@@ -73,7 +73,10 @@ export default function RenderButtonsHandler({data, handleValue}: ButtonsHandler
             <ColorSelector label="" color={data?.buttonBackColor || data?.primary || DEFAULT_COLORS.p}
                            handleData={handleValue} property="buttonBackColor"/>
           )}
-          {['two', 'gradient'].includes(data?.buttonBack || '') && (
+          {data?.buttonBack === 'two' && (
+            <RenderTwoColors handleValue={handleValue} data={data} isWideEnough={isWideEnough} />
+          )}
+          {data?.buttonBack === 'gradient' && (
             <RenderTwoColors handleValue={handleValue} data={data} isWideEnough={isWideEnough} />
           )}
         </Paper>
