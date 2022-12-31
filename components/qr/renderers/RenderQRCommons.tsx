@@ -1,4 +1,4 @@
-import {ChangeEvent, useCallback, useState} from "react";
+import {ChangeEvent, useCallback, useContext, useState} from "react";
 import Box from "@mui/material/Box";
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from "@mui/material/Button";
@@ -9,6 +9,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 import Tooltip from "@mui/material/Tooltip";
 import CircularProgress from "@mui/material/CircularProgress";
+import Paper from "@mui/material/Paper";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import dynamic from "next/dynamic";
@@ -16,18 +20,16 @@ import {DataType} from "../types/types";
 import {COLORS, DEFAULT_COLORS, IS_DEV_ENV} from "../constants";
 import RenderColorPreset from "./helpers/RenderColorPreset";
 import ColorSelector from "../helperComponents/ColorSelector";
-import Paper from "@mui/material/Paper";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
 import RenderGradientSelector from "./helpers/RenderGradientSelector";
 import Expander from "./helpers/Expander";
+import Context from "../../context/Context";
 
-const RenderImagePicker = dynamic(() =>  import('./helpers/RenderImagePicker'));
+const RenderButtonsHandler = dynamic(() => import('../helperComponents/smallpieces/RenderButtonsHandler'));
+const RenderImagePicker = dynamic(() => import('./helpers/RenderImagePicker'));
 const RenderImgPreview = dynamic(() => import('./helpers/RenderImgPreview'));
 const RenderForeImgTypePicker = dynamic(() => import ('./helpers/RenderForeImgTypePicker'));
 const ImageCropper = dynamic(() => import('./helpers/ImageCropper'));
-const RenderFontsHandler = dynamic(() => import("../helperComponents/smallpieces/RenderFontsHandler"));
+const RenderFontsHandler = dynamic(() => import('../helperComponents/smallpieces/RenderFontsHandler'));
 
 interface QRCommonsProps {
   omitPrimaryImg?: boolean;
@@ -46,6 +48,9 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
   const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [expander, setExpander] = useState<string | null>(null);
+
+  // @ts-ignore
+  const {selected}: {selected: string} = useContext(Context);
 
   const isWideEnough = useMediaQuery("(min-width:1083px)", { noSsr: true });
 
@@ -176,15 +181,15 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
           )}
         </Paper>)}
         <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="fonts" title="Fonts"/>
-          {expander === 'fonts' && <RenderFontsHandler data={data} handleValue={handleValue} />}
+          <Expander expand={expander} setExpand={handleExpander} item="fonts" title="Fonts" bold/>
+          {expander === 'fonts' && <RenderFontsHandler data={data} handleValue={handleValue} selected={selected} />}
         </Paper>
+        {!['social', 'petId'].includes(selected) && (<Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+          <Expander expand={expander} setExpand={handleExpander} item="buttons" title="Buttons" bold/>
+          {expander === 'buttons' && <RenderButtonsHandler handleValue={handleValue} data={data}/>}
+        </Paper>)}
         <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="buttons" title="Buttons"/>
-          {expander === 'buttons' && <></>}
-        </Paper>
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="layout" title="Layout"/>
+          <Expander expand={expander} setExpand={handleExpander} item="layout" title="Layout" bold/>
           {expander === 'layout' && <></>}
         </Paper>
       </Box>

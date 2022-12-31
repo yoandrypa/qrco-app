@@ -175,6 +175,9 @@ export type DataType = {
   globalFont?: string;
   globalFontColor?: string;
   buttonsFont?: string;
+  buttonShape?: string;
+  buttonBack?: string;
+  buttonBackColor?: string;
   titlesFont?: string;
   subtitlesFont?: string;
   messagesFont?: string;

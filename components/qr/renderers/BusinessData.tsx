@@ -116,7 +116,7 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
       <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography sx={{ my: 'auto' }}>{'Action button'}</Typography>
-          <Button sx={{ mb: '5px' }} variant="contained" color={data.urlOptionLabel === undefined ? 'primary' : 'error'} onClick={handleOptionButton}>
+          <Button sx={{ mb: '5px' }} variant="outlined" color={data.urlOptionLabel === undefined ? 'primary' : 'error'} onClick={handleOptionButton}>
             {data.urlOptionLabel === undefined ? 'Add action button' : 'Remove action button'}
           </Button>
         </Box>

@@ -66,10 +66,14 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       } else if (payload.clear || (((prop === "globalFont" && payload === "Default") ||
           (['buttonsFont', 'titlesFont', 'messagesFont', 'titlesFontSize', 'messagesFontSize', 'buttonsFontSize',
               'subtitlesFontSize', 'subtitlesFont'].includes(prop) && (['none', 'default'].includes(payload))
-          )) && data[prop] === payload)) {
+          )) && data[prop] === payload) || (prop === 'buttonShape' && payload === '1') ||
+        (prop === 'buttonBack' && payload === 'default')) {
         setData((prev: any) => {
           const tempo = {...prev};
           delete tempo[prop];
+          if (prop === 'buttonBack' && payload === 'default' && tempo.buttonBackColor !== undefined) {
+            delete tempo.buttonBackColor;
+          }
           return tempo;
         })
       } else if (prop === 'backgroundType') {
@@ -81,6 +85,10 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           tempo.backgroundType = payload.target.value;
           return tempo;
         });
+      } else if (prop === 'buttonBack') {
+        setData((prev: any) => ({ ...prev, [prop]: payload.target?.value !== undefined ? payload.target.value : payload,
+          buttonBackColor: payload === 'solid' ? DEFAULT_COLORS.p : 'unset'
+        }));
       } else {
         setData((prev: any) => ({ ...prev, [prop]: payload.target?.value !== undefined ? payload.target.value : payload }));
       }

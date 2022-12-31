@@ -1,4 +1,4 @@
-import {useCallback, useContext, useState} from "react";
+import {useCallback, useState} from "react";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -12,19 +12,21 @@ import RenderFontsSelector from "./RenderFontsSelector";
 import RenderFontsSizeSelector from "./RenderFontsSizeSelector";
 import RenderFontStyles from "./RenderFontStyles";
 import ColorSelector from "../ColorSelector";
-import Context from "../../../context/Context";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Expander from "../../renderers/helpers/Expander";
+
+import dynamic from "next/dynamic";
+
+const RenderButtonsFontsHandler = dynamic(() => import("./RenderButtonsFontsHandler"));
 
 interface RenderFontsHandlerProps {
   data?: DataType;
   handleValue: Function;
+  selected: string;
 }
 
-export default function RenderFontsHandler({data, handleValue}: RenderFontsHandlerProps) {
+export default function RenderFontsHandler({data, handleValue, selected}: RenderFontsHandlerProps) {
   const [expander, setExpander] = useState<string>('global');
-  // @ts-ignore
-  const {selected} = useContext(Context);
 
   const isWide = useMediaQuery("(min-width:1010px)", { noSsr: true });
   const isWideEnough = useMediaQuery("(min-width:483px)", { noSsr: true });
@@ -34,9 +36,7 @@ export default function RenderFontsHandler({data, handleValue}: RenderFontsHandl
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleExpander = useCallback((item: string | null) => {
-    if (item) {
-      setExpander(item);
-    }
+    setExpander((prev: string) => (!item ? (prev === 'global' ? 'custom' : 'global') : item));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderFontType = useCallback((font: FontTypes) => {
@@ -62,7 +62,7 @@ export default function RenderFontsHandler({data, handleValue}: RenderFontsHandl
         <Expander expand={expander} setExpand={handleExpander} item="global" title="Global microsite's font" />
         {expander === 'global' && (<>
           {FONTS.map(x => renderFontType(x))}
-          <Typography sx={{fontWeight: 'bold', mb: '-10px'}}>{'Global font color'}</Typography>
+          <Typography sx={{mb: '-10px'}}>{'Global font color'}</Typography>
           <Box sx={{ width: 'calc(100% - 10px)'}}>
             <ColorSelector label="" color={data?.globalFontColor || '#000000'} allowClear handleData={handleValue} property="globalFontColor"/>
           </Box>
@@ -71,7 +71,7 @@ export default function RenderFontsHandler({data, handleValue}: RenderFontsHandl
       <Paper elevation={2} sx={{p: 1, mt: 1}}>
         <Expander expand={expander} setExpand={handleExpander} item="custom" title="Custom fonts" />
         {expander === 'custom' && (<>
-        <Paper elevation={2} sx={{p: 1, width: '100%', mb: 2, mt: 3}}>
+        <Paper elevation={2} sx={{p: 1, width: '100%', mb: 2}}>
           <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Titles'}</Typography>
           <Grid container spacing={2}>
             <Grid item xs={isWide ? 4 : 12}>
@@ -115,17 +115,7 @@ export default function RenderFontsHandler({data, handleValue}: RenderFontsHandl
           </Paper>)}
           {!['social'].includes(selected) && (<Paper elevation={2} sx={{p: 1, width: '100%'}}>
             <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Buttons'}</Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={isWide ? 4 : 12}>
-                <RenderFontsSelector handleSelect={handleValue} property="buttonsFont" value={data?.buttonsFont || "none"} label="Font"/>
-              </Grid>
-              <Grid item xs={isWide ? 4 : isWideEnough ? 6 : 12}>
-                <RenderFontsSizeSelector handleSelect={handleValue} property="buttonsFontSize" value={data?.buttonsFontSize || "default"} label="Size"/>
-              </Grid>
-              <Grid item xs={isWide ? 4 : isWideEnough ? 6 : 12}>
-                <RenderFontStyles value={data?.buttonsFontStyle} property="buttonsFontStyle" handleValue={handleValue}/>
-              </Grid>
-            </Grid>
+            <RenderButtonsFontsHandler handleValue={handleValue} data={data} />
           </Paper>)}
         </>)}
       </Paper>

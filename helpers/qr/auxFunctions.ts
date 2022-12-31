@@ -6,7 +6,8 @@ export const previewQRGenerator = (data: DataType, selected: string) => {
   const items = ['qrName', 'isDynamic', 'backgroundColor', 'backgroundType', 'backgroundDirection', 'backgroundColorRight',
   'primary', 'secondary', 'backgndImg', 'foregndImg', 'foregndImgType', 'globalFont', 'buttonsFont',  'titlesFont',
   'messagesFont', 'titlesFontSize', 'messagesFontSize', 'buttonsFontSize', 'subtitlesFontSize', 'subtitlesFont',
-  'titlesFontStyle', 'subtitlesFontStyle', 'messagesFontStyle', 'buttonsFontStyle', 'globalFontColor'];
+  'titlesFontStyle', 'subtitlesFontStyle', 'messagesFontStyle', 'buttonsFontStyle', 'globalFontColor', 'buttonShape',
+  'buttonBack', 'buttonBackColor'];
 
   Object.keys(data).forEach(x => {  // @ts-ignore
     if (items.some((item: string) => x === item)) { sum += 1; }
