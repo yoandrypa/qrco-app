@@ -1,4 +1,4 @@
-import {memo, MouseEvent, useEffect, useRef, useState} from "react";
+import {memo, MouseEvent, ReactNode, useEffect, useRef, useState} from "react";
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
 import FormatUnderlinedIcon from '@mui/icons-material/FormatUnderlined';
@@ -98,8 +98,15 @@ const RenderFontStyles = ({handleValue, property, value}: RenderFontStylesProps)
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderCheck = (is?: boolean) => {
-    return is ? <CheckIcon sx={{mr: '10px'}} /> : <div style={{ width: '34px' }} />
+    return is ? <CheckIcon color="primary" sx={{mr: '10px'}} /> : <div style={{ width: '34px' }} />
   }
+
+  const renderItem = (text: string, icon: ReactNode) => (
+    <>
+      {icon}
+      <Typography sx={{ml: '5px'}}>{text}</Typography>
+    </>
+  );
 
   return (
     <>
@@ -130,47 +137,39 @@ const RenderFontStyles = ({handleValue, property, value}: RenderFontStylesProps)
       >
         <MenuItem key="defaultColor" onClick={setCol('#000000')}>
           {renderCheck(color === '#000000')}
-          <ClearIcon />
-          <Typography>Default color</Typography>
+          {renderItem('Default color', <ClearIcon />)}
         </MenuItem>
         {property==='buttonsFontStyle' && (
           <MenuItem key="mainColors" onClick={setCol('#-1')}>
             {renderCheck(color === '#-1')}
-            <InvertColorsIcon />
-            <Typography>Use main colors</Typography>
+            {renderItem('Use main colors', <InvertColorsIcon />)}
           </MenuItem>
         )}
         <Divider />
         <MenuItem key="white" onClick={setCol('#ffffff')}>
           {renderCheck(color === '#ffffff')}
-          <SquareOutlinedIcon color="primary" />
-          <Typography>White</Typography>
+          {renderItem('White', <SquareOutlinedIcon color="primary" />)}
         </MenuItem>
         <MenuItem key="blue" onClick={setCol('#1a237e')}>
           {renderCheck(color === '#1a237e')}
-          <SquareIcon sx={{color: '#1a237e'}}/>
-          <Typography>Blue</Typography>
+          {renderItem('Blue', <SquareIcon sx={{color: '#1a237e'}}/>)}
         </MenuItem>
         <MenuItem key="green" onClick={setCol('#33691e')}>
           {renderCheck(color === '#33691e')}
-          <SquareIcon sx={{color: '#33691e'}}/>
-          <Typography>Green</Typography>
+          {renderItem('Green', <SquareIcon sx={{color: '#33691e'}}/>)}
         </MenuItem>
         <MenuItem key="orange" onClick={setCol('#f57f17')}>
           {renderCheck(color === '#f57f17')}
-          <SquareIcon sx={{color: '#f57f17'}} />
-          <Typography>Orange</Typography>
+          {renderItem('Orange', <SquareIcon sx={{color: '#f57f17'}} />)}
         </MenuItem>
         <MenuItem key="other" onClick={setCol('#b71c1c')}>
           {renderCheck(color === '#b71c1c')}
-          <SquareIcon sx={{color: '#b71c1c'}} />
-          <Typography>Red</Typography>
+          {renderItem('Red', <SquareIcon sx={{color: '#b71c1c'}} />)}
         </MenuItem>
         <Divider />
         <MenuItem key="chooseColor" onClick={handleOther}>
           {renderCheck(!['#-1', '#000000', '#ffffff','#1a237e', '#33691e', '#f57f17', '#b71c1c'].includes(color))}
-          <ColorLensIcon color="primary" />
-          <Typography>Other...</Typography>
+          {renderItem('Other...', <ColorLensIcon color="primary" />)}
         </MenuItem>
       </Menu>
       )}

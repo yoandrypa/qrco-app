@@ -85,7 +85,7 @@ export default function RenderButtonsHandler({data, handleValue}: ButtonsHandler
           )}
         </Box>
         {data?.buttonBack === 'two' && <RenderTwoColors handleValue={handleValue} data={data}/>}
-        {data?.buttonBack === 'gradient' && <RenderTwoColors handleValue={handleValue} data={data}/>}
+        {data?.buttonBack === 'gradient' && <RenderTwoColors handleValue={handleValue} data={data} isGradient/>}
       </Paper>
     </Box>
   );

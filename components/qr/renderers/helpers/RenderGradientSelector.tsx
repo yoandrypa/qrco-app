@@ -5,21 +5,18 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Popover from "@mui/material/Popover";
 import InputAdornment from "@mui/material/InputAdornment";
-import SouthEastIcon from "@mui/icons-material/SouthEast";
-import SouthWestIcon from "@mui/icons-material/SouthWest";
-import SouthIcon from "@mui/icons-material/South";
-import EastIcon from "@mui/icons-material/East";
-import IconButton from "@mui/material/IconButton";
-import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import {styled} from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 // @ts-ignore
 import {SketchPicker} from "react-color";
 import {COLORS} from "../../constants";
 import RenderColorPreset from "./RenderColorPreset";
-import useMediaQuery from "@mui/material/useMediaQuery";
+
+import dynamic from "next/dynamic";
+
+const RenderDirectionSelector = dynamic(() => import("../../helperComponents/smallpieces/RenderDirectionSelector"));
 
 interface ColorSelProps {
   colorLeft?: string;
@@ -27,17 +24,6 @@ interface ColorSelProps {
   direction?: string;
   handleData: Function;
 }
-
-interface IconProps {
-  selected: boolean;
-}
-
-const IconBtn = styled(IconButton)(({selected}: IconProps) => ({
-  width: '32px', height: '32px', borderRadius: '50%',
-  border: 'solid 1px #c4c4c4',
-  boxShadow: selected ? '0 0 3px 2px #286ED6' : 'none',
-  '&:hover': {boxShadow: !selected ? '0 0 2px 2px #849abb' : '0 0 2px 2px #286ED6'}
-}));
 
 const RenderGradientSelector = ({ direction, colorLeft, handleData, colorRight }: ColorSelProps) => {
   const [anchor, setAnchor] = useState<HTMLDivElement | null>(null);
@@ -124,20 +110,7 @@ const RenderGradientSelector = ({ direction, colorLeft, handleData, colorRight }
         />
       </Grid>
       <Grid sm={widePrev && isWideForPreview ? 4 : 12} xs={12} item sx={{my: 'auto'}}>
-        <Stack direction="row" spacing={2} sx={{mt: widePrev && isWideForPreview ? 0 : '-8px'}}>
-          <IconBtn selected={direction === undefined || direction === '180deg'} onClick={handleDirection('180deg')}>
-            <SouthIcon />
-          </IconBtn>
-          <IconBtn selected={direction === '90deg'} onClick={handleDirection('90deg')}>
-            <EastIcon />
-          </IconBtn>
-          <IconBtn selected={direction === '135deg'} onClick={handleDirection('135deg')}>
-            <SouthEastIcon />
-          </IconBtn>
-          <IconBtn selected={direction === '225deg'} onClick={handleDirection('225deg')}>
-            <SouthWestIcon />
-          </IconBtn>
-        </Stack>
+        <RenderDirectionSelector handleDirection={handleDirection} direction={direction} isWide={widePrev && isWideForPreview} />
       </Grid>
       {anchor && (
         <Popover

@@ -23,7 +23,7 @@ export default function RenderBorders({data, handleValue}: RenderBordersProps) {
     const value = +(event.target?.value || 0);
     if (prop === 'topL') { setTopL(value); }
     else if (prop === 'topR') { setTopR(value); }
-    else if (prop === 'topL') { setBelowL(value); }
+    else if (prop === 'belowL') { setBelowL(value); }
     else { setBelowR(value); }
   }
 
@@ -58,10 +58,9 @@ export default function RenderBorders({data, handleValue}: RenderBordersProps) {
   }
 
   useEffect(() => {
-    if (doneFirst.current && topL && topR && belowL && belowR) {
+    if (doneFirst.current) {
       handleValue('buttonBorders')(`${topL}px ${topR}px ${belowL}px ${belowR}px`);
-    }
-    if (!doneFirst.current) {
+    } else {
       doneFirst.current = true;
     }
   }, [topL, topR, belowL, belowR]);  // eslint-disable-line react-hooks/exhaustive-deps
