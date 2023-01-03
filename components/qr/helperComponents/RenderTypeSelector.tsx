@@ -19,11 +19,11 @@ import RenderFreeDesc from "./smallpieces/RenderFreeDesc";
 import {MyBadge} from "./smallpieces/StyledComponents";
 import {areEquals} from "../../helpers/generalFunctions";
 import initialOptions, {initialData} from "../../../helpers/qr/data";
+import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
 
 const RenderLoseDataConfirm = dynamic(() => import('./smallpieces/RenderLoseDataConfirm'));
 const RenderPreviewDrawer = dynamic(() => import('./smallpieces/RenderPreviewDrawer'));
 const RenderPreviewButton = dynamic(() => import('./smallpieces/RenderPreviewButton'));
-const RenderSamplePreview = dynamic(() => import('./smallpieces/RenderSamplePreview'));
 
 interface RenderTypeSelectorProps {
   selected?: string | null;

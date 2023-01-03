@@ -17,7 +17,7 @@ import {NO_MICROSITE, ONLY_QR} from "../../constants";
 
 import RenderPreview from "../../renderers/RenderPreview";
 import Notifications from "../../../notifications/Notifications";
-import {cleanSelectionForMicrositeURL} from "../../../../helpers/qr/helpers";
+import {cleanSelectionForMicrositeURL, qrNameDisplayer} from "../../../../helpers/qr/helpers";
 import {DataType} from "../../types/types";
 import RenderCellPhoneShape from "../RenderCellPhoneShape";
 
@@ -26,6 +26,7 @@ import PleaseWait from "../../../PleaseWait";
 import {debounce} from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Popover from "@mui/material/Popover";
+import RenderIcon from "./RenderIcon";
 
 const RenderIframe = dynamic(() => import('../../../RenderIframe'), {suspense: true});
 
@@ -58,7 +59,7 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
     }
   }
 
-  const URL = isDynamic ? (selected ? cleanSelectionForMicrositeURL(selected, isDynamic) : (`${process.env.REACT_MICROSITES_ROUTE}/${code}`)) : selected;
+  const URL = isDynamic ? (selected ? cleanSelectionForMicrositeURL(selected, isDynamic) : (`${process.env.REACT_MICROSITES_ROUTE}/${code}`)) : qrNameDisplayer(selected || '', false);
 
   const repaint = useCallback(debounce(() => { // eslint-disable-line react-hooks/exhaustive-deps
     setUpdating(true);
@@ -115,7 +116,11 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
           width: !isDrawed ? '100%' : 'calc(100% - 10px)'
         }}>
           <Box sx={{display: 'flex'}}>
-            {!onlyQr && <LinkIcon sx={{color: theme => theme.palette.primary.dark, mt: '12px', mr: '-7px'}}/>}
+            {!onlyQr ? <LinkIcon sx={{color: theme => theme.palette.primary.dark, mt: '12px', mr: '-7px'}}/> : (
+              <Box sx={{mt: '12px', mr: '5px'}}>
+                <RenderIcon icon={selected || ''} enabled />
+              </Box>
+            )}
             <Typography sx={{
               mt: '14px',
               ml: !onlyQr ? '10px' : 0,
@@ -208,7 +213,7 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
           transformOrigin={{vertical: 'top', horizontal: 'center'}}
         >
           <Typography whiteSpace="pre" sx={{ p: 1 }}>
-            {qrOptions?.data}
+            {qrOptions?.data || URL}
           </Typography>
         </Popover>
       )}

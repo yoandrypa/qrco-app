@@ -30,9 +30,10 @@ interface ColorSelProps {
   property: string;
   handleData: Function;
   allowClear?: boolean;
+  sx?: object;
 }
 
-const ColorSelector = ({ color, handleData, label, property, allowClear }: ColorSelProps) => {
+const ColorSelector = ({ color, handleData, label, property, allowClear, sx }: ColorSelProps) => {
   const [anchor, setAnchor] = useState(null);
   const [value, setValue] = useState(color || '#000000');
 
@@ -87,7 +88,7 @@ const ColorSelector = ({ color, handleData, label, property, allowClear }: Color
 
   return (
     <>
-      <Box sx={{ display: 'flex' }}>
+      <Box sx={{ display: 'flex', ...sx }}>
         <TextField
           size="small"
           fullWidth
