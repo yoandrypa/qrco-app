@@ -1,4 +1,4 @@
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, useCallback, useContext, useState} from "react";
 import Box from "@mui/material/Box";
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from "@mui/material/Button";
@@ -9,6 +9,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 import Tooltip from "@mui/material/Tooltip";
 import CircularProgress from "@mui/material/CircularProgress";
+import Paper from "@mui/material/Paper";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import dynamic from "next/dynamic";
@@ -16,16 +20,16 @@ import {DataType} from "../types/types";
 import {COLORS, DEFAULT_COLORS, IS_DEV_ENV} from "../constants";
 import RenderColorPreset from "./helpers/RenderColorPreset";
 import ColorSelector from "../helperComponents/ColorSelector";
-import Paper from "@mui/material/Paper";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
 import RenderGradientSelector from "./helpers/RenderGradientSelector";
+import Expander from "./helpers/Expander";
+import Context from "../../context/Context";
 
-const RenderImagePicker = dynamic(() =>  import('./helpers/RenderImagePicker'));
+const RenderButtonsHandler = dynamic(() => import('../helperComponents/smallpieces/RenderButtonsHandler'));
+const RenderImagePicker = dynamic(() => import('./helpers/RenderImagePicker'));
 const RenderImgPreview = dynamic(() => import('./helpers/RenderImgPreview'));
 const RenderForeImgTypePicker = dynamic(() => import ('./helpers/RenderForeImgTypePicker'));
 const ImageCropper = dynamic(() => import('./helpers/ImageCropper'));
+const RenderFontsHandler = dynamic(() => import('../helperComponents/smallpieces/RenderFontsHandler'));
 
 interface QRCommonsProps {
   omitPrimaryImg?: boolean;
@@ -43,8 +47,16 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
   const [selectFile, setSelectFile] = useState<string | null>(null);
   const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [expander, setExpander] = useState<string | null>(null);
+
+  // @ts-ignore
+  const {selected}: {selected: string} = useContext(Context);
 
   const isWideEnough = useMediaQuery("(min-width:1083px)", { noSsr: true });
+
+  const handleExpander = useCallback((item: string): void => {
+    setExpander(item === expander ? null : item);
+  }, [expander]);
 
   const handleSelectFile = (kind: string) => () => {
     setSelectFile(kind);
@@ -95,11 +107,10 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
       <Box sx={{p: 1, mt: 1}}>
         <Paper sx={{p: 1, mb: '10px'}} elevation={2}>
           <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Main colors'}</Typography>
-          {COLORS.map(x => {
-            const selected = (!data?.primary && !data?.secondary && x.p === DEFAULT_COLORS.p && x.s === DEFAULT_COLORS.s) ||
-              (x.p === data?.primary && x.s === data?.secondary);
-            return <RenderColorPreset handleValue={handleValue} colors={x} selected={selected} key={x.p}/>
-          })}
+          {COLORS.map(x => (<RenderColorPreset handleValue={handleValue} colors={x} key={x.p} selected={
+              (!data?.primary && !data?.secondary && x.p === DEFAULT_COLORS.p && x.s === DEFAULT_COLORS.s) ||
+              (x.p === data?.primary && x.s === data?.secondary)} />
+          ))}
           <Box sx={{width: '100%', display: 'flex', flexDirection: {sm: 'row', xs: 'column'}}}>
             <Box sx={{minWidth: '120px', width: '100%', mr: {sm: '4px', xs: 0}}}>
               <ColorSelector label="Primary color" color={data?.primary || DEFAULT_COLORS.p} handleData={handleValue} property="primary"/>
@@ -126,8 +137,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
                   startIcon={<WallpaperIcon sx={{ color: theme => backError ? theme.palette.error.dark : undefined }}/>}
                   variant="outlined"
                   color="primary"
-                  onClick={handleSelectFile('backgndImg')}
-                >
+                  onClick={handleSelectFile('backgndImg')}>
                   {`Banner image${backgndImg && !loading ? ' / Loaded' : ''}`}
                 </Button>
               </Tooltip>
@@ -142,8 +152,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
                     variant="outlined"
                     disabled={loading}
                     onClick={handleSelectFile('foregndImg')}
-                    color="primary"
-                  >
+                    color="primary">
                     {`Main image${backgndImg && !loading ? ' / Loaded' : ''}`}
                   </Button>
                 </Tooltip>
@@ -152,12 +161,12 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
             )}
           </Box>
         </Paper>
-        {IS_DEV_ENV && (<Paper sx={{p: 1}} elevation={2}>
+        {IS_DEV_ENV && (<Paper sx={{p: 1, mb: '10px'}} elevation={2}>
           <Typography sx={{fontWeight: 'bold'}}>{'Background'}</Typography>
           <RadioGroup
             aria-labelledby="backgroundType" name="backgroundType" value={data?.backgroundType || 'single'}
             onChange={handleSelectBackground} row sx={{mb: '-12px'}}>
-            <FormControlLabel value="single" control={<Radio/>} label="Single color"/>
+            <FormControlLabel value="single" control={<Radio/>} label="Color solid"/>
             <FormControlLabel value="gradient" control={<Radio/>} label="Gradient"/>
           </RadioGroup>
           {(data?.backgroundType === undefined || data.backgroundType === 'single') && (
@@ -171,6 +180,18 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
               handleData={handleValue}/>
           )}
         </Paper>)}
+        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+          <Expander expand={expander} setExpand={handleExpander} item="fonts" title="Fonts" bold/>
+          {expander === 'fonts' && <RenderFontsHandler data={data} handleValue={handleValue} selected={selected} />}
+        </Paper>
+        {!['social', 'petId'].includes(selected) && (<Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+          <Expander expand={expander} setExpand={handleExpander} item="buttons" title="Buttons" bold/>
+          {expander === 'buttons' && <RenderButtonsHandler handleValue={handleValue} data={data}/>}
+        </Paper>)}
+        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+          <Expander expand={expander} setExpand={handleExpander} item="layout" title="Layout" bold/>
+          {expander === 'layout' && <></>}
+        </Paper>
       </Box>
       {selectFile !== null && (
         <RenderImagePicker
@@ -178,8 +199,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
           title={selectFile === 'foregndImg' ? 'main' : 'banner'}
           kind={selectFile}
           handleAcept={handleAccept}
-          wasError={(selectFile === 'foregndImg' && foreError) || (selectFile === 'backgndImg' && backError)}
-        />
+          wasError={(selectFile === 'foregndImg' && foreError) || (selectFile === 'backgndImg' && backError)}/>
       )}
       {preview !== null && ( // @ts-ignore
         <RenderImgPreview handleClose={() => setPreview(null)} file={preview === 'backgndImg' ? backgndImg : foregndImg} />

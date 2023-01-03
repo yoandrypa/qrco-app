@@ -10,7 +10,7 @@ import dynamic from "next/dynamic";
 
 import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
 import DonationsData, { DonationsProps } from './renderers/DonationsData';
-import {qrNameDisplayer} from "../../helpers/qr/helpers";
+import { qrNameDisplayer } from "../../helpers/qr/helpers";
 
 const SingleData = dynamic(() => import('./renderers/SingleData'));
 const WhatsAppData = dynamic(() => import('./renderers/WhatsAppData'));
@@ -122,7 +122,7 @@ const QrContentHandler = () => { // @ts-ignore
         return <AssetData type={selected} data={data} setData={handlePayload} handleValues={handleValues} />;
       }
       case 'donation': {
-        return <DonationsData data={data} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong} />
+        return <DonationsData data={data} handleValues={handleValues} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong} />
       }
       case 'paylink': {
         return <SendMeMoneyData data={data} setData={handlePayload} handleValues={handleValues} setIsWrong={setIsWrong} />
@@ -133,7 +133,7 @@ const QrContentHandler = () => { // @ts-ignore
       case 'fundme': {
         return <FundMe data={data} setData={setData} handleValues={handleValues} />
       }
-      case 'petId':{
+      case 'petId': {
         return <PetIdData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
       }
       case 'smartLabel': {
@@ -154,7 +154,7 @@ const QrContentHandler = () => { // @ts-ignore
             <RenderIcon icon={selected} enabled adjust />
           </Box>
           <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{qrNameDisplayer(selected || '', data?.isDynamic || false)}</Typography>
-          <Typography sx={{ display: 'inline' }}>: Enter the content</Typography>
+          <Typography sx={{ display: { xs: 'none', sm: 'inline' } }}>: Enter the content</Typography>
           <NotifyDynamic isDynamic={data?.isDynamic || false} />
           <Box sx={{ textAlign: 'left', width: '100%' }}>
             {renderSel()}

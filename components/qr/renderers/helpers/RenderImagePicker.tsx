@@ -51,7 +51,7 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
             </Typography>
           </Box>
         )}
-        <Paper sx={{ width: 270, height: 'auto' }}>
+        <Paper sx={{ width: '100%', height: 'auto' }}>
           <FileUpload
             value={[]}
             // @ts-ignore
@@ -59,7 +59,7 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
             multiple={false}
             maxFiles={1}
             accept={ALLOWED_FILE_EXTENSIONS.gallery}
-            title="Select an image or drag and drop it here"
+            title="Select an image by hitting 'Upload' button or drag and drop it here"
           />
         </Paper>
       </DialogContent>

@@ -44,7 +44,7 @@ interface Props {
 
 const height = "95px";
 
-function ElevationScroll ({ children, window }: Props) {
+function ElevationScroll({ children, window }: Props) {
   const trigger = useScrollTrigger({
     disableHysteresis: true,
     threshold: 0,
@@ -65,7 +65,7 @@ interface AppWrapperProps {
   isTrialMode?: boolean;
 }
 
-export default function AppWrapper (props: AppWrapperProps) {
+export default function AppWrapper(props: AppWrapperProps) {
   const {
     children, userInfo, handleLogout, clearData, setLoading, setIsTrialMode, mode, isTrialMode, setRedirecting
   } = props;
@@ -108,6 +108,8 @@ export default function AppWrapper (props: AppWrapperProps) {
     const isInListView = router.pathname === "/";
     const isEdit = !isInListView && mode === "edit";
 
+    setAnchorElNav(null);
+
     if (setRedirecting && !isInListView) { setRedirecting(true); }
     if (clearData !== undefined) { clearData(false, isEdit || !isInListView); }
     handleLoading();
@@ -118,9 +120,9 @@ export default function AppWrapper (props: AppWrapperProps) {
 
     router.push(navigationOptions, isInListView ? QR_TYPE_ROUTE : "/",
       { shallow: true }).then(() => {
-      handleLoading(false);
-      if (setRedirecting) { setRedirecting(false); }
-    });
+        handleLoading(false);
+        if (setRedirecting) { setRedirecting(false); }
+      });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -144,20 +146,20 @@ export default function AppWrapper (props: AppWrapperProps) {
 
   return (
     <>
-      <CssBaseline/>
+      <CssBaseline />
       {handleLogout !== undefined && !router.query.login && (<ElevationScroll>
         <AppBar component="nav" sx={{ background: "#fff", height }}>
           <Container sx={{ my: "auto" }}>
-            <Toolbar sx={{"&.MuiToolbar-root": { px: 0 }, display: "flex", justifyContent: "space-between", color: theme => theme.palette.text.primary }}>
+            <Toolbar sx={{ "&.MuiToolbar-root": { px: 0 }, display: "flex", justifyContent: "space-between", color: theme => theme.palette.text.primary }}>
               <Link href={{ pathname: !userInfo ? QR_TYPE_ROUTE : "/" }}>
                 <Box sx={{ display: "flex", cursor: "pointer" }}>
-                  <Box component="img" alt="EBANUX" src="/ebanuxQr.svg" sx={{width: "40px", display: isWide ? "block" : "none"}}/>
+                  <Box component="img" alt="EBANUX" src="/ebanuxQr.svg" sx={{ width: "40px", display: isWide ? "block" : "none" }} />
                   <Typography sx={{
                     my: "auto",
                     ml: "5px",
                     fontSize: "28.8px",
                     fontWeight: "bold",
-                  }}>{"The QR Link"}</Typography>
+                  }}>{"QRLink"}</Typography>
                 </Box>
               </Link>
               <Box sx={{ display: "flex" }}>
@@ -165,7 +167,7 @@ export default function AppWrapper (props: AppWrapperProps) {
                   {isWide ? (<>
                     {!userInfo ? (
                       <Button
-                        startIcon={<LoginIcon/>}
+                        startIcon={<LoginIcon />}
                         onClick={handleLogin}
                         variant="contained"
                         sx={{ height: "28px", mr: "5px", my: "auto" }}>
@@ -173,9 +175,9 @@ export default function AppWrapper (props: AppWrapperProps) {
                       </Button>
                     ) : (
                       <Box sx={{ display: "flex" }}>
-                        <RenderNewQrButton pathname={router.pathname} handleNavigation={handleNavigation}/>
+                        <RenderNewQrButton pathname={router.pathname} handleNavigation={handleNavigation} />
                         <Button
-                          startIcon={<LogoutIcon/>}
+                          startIcon={<LogoutIcon />}
                           onClick={beforeLogout}
                           variant="contained"
                           sx={{ height: "28px", ml: "10px", my: "auto" }}>
@@ -192,7 +194,7 @@ export default function AppWrapper (props: AppWrapperProps) {
                       onClick={handleOpenNavMenu}
                       color="inherit"
                     >
-                      <MenuIcon/>
+                      <MenuIcon />
                     </IconButton>
                     <Menu
                       id="menu-appbar"
@@ -206,27 +208,27 @@ export default function AppWrapper (props: AppWrapperProps) {
                     >
                       {!userInfo && (
                         <MenuItem key="loginMenuItem" onClick={handleLogin}>
-                          <LoginIcon/>
+                          <LoginIcon />
                           <Typography textAlign="center">{"Login"}</Typography>
                         </MenuItem>
                       )}
                       {userInfo && (
                         <MenuItem key="navigateMenuItem" onClick={handleNavigation}>
-                          {router.pathname === "/" ? <QrCodeIcon/> : <FirstPageIcon/>}
+                          {router.pathname === "/" ? <QrCodeIcon /> : <FirstPageIcon />}
                           <Typography textAlign="center">{router.pathname === "/" ? "Create QR Link" : "My QR Links"}</Typography>
                         </MenuItem>
                       )}
-                      {userInfo && <Divider/>}
+                      {userInfo && <Divider />}
                       {userInfo && (
                         <MenuItem key="logoutMenuItem" onClick={beforeLogout}>
-                          <LogoutIcon/>
+                          <LogoutIcon />
                           <Typography textAlign="center">{"Logout"}</Typography>
                         </MenuItem>
                       )}
                     </Menu>
                   </>)}
                 </>)}
-                {isTrialMode && startTrialDate && <CountDown startDate={startTrialDate}/>}
+                {isTrialMode && startTrialDate && <CountDown startDate={startTrialDate} />}
               </Box>
             </Toolbar>
             {/*{isTrialMode && startTrialDate && <CountDown startDate={startTrialDate} />}*/}
@@ -234,7 +236,7 @@ export default function AppWrapper (props: AppWrapperProps) {
         </AppBar>
       </ElevationScroll>)}
       <Container sx={{ width: "100%" }}>
-        <Box sx={{ height }}/> {/* Aims to fill the header's gap */}
+        <Box sx={{ height }} /> {/* Aims to fill the header's gap */}
         <Box sx={{ mx: "auto", minHeight: `calc(100vh - ${router.pathname === '/' ? 140 : 135}px)` }}>
           {children}
         </Box>
@@ -248,7 +250,7 @@ export default function AppWrapper (props: AppWrapperProps) {
               <Typography sx={{ my: "auto", display: { sm: "block", xs: "none" } }}>
                 {"Powered by"}
               </Typography>
-              <Box component="img" alt="EBANUX" src="/ebanux.svg" sx={{ width: "95px", mt: "-2px", ml: "7px" }}/>
+              <Box component="img" alt="EBANUX" src="/ebanux.svg" sx={{ width: "95px", mt: "-2px", ml: "7px" }} />
             </Box>
             {userInfo && (
               <Typography sx={{
@@ -258,7 +260,7 @@ export default function AppWrapper (props: AppWrapperProps) {
                 display: "inline-flex",
               }}>
                 {userInfo.email.replace(/@.*$/, "")}
-                <AccountBoxIcon sx={{ mt: "-1px" }}/>
+                <AccountBoxIcon sx={{ mt: "-1px" }} />
               </Typography>
             )}
           </Box>)}

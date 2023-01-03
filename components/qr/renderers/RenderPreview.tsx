@@ -22,15 +22,11 @@ import {
 } from "../../../helpers/qr/helpers";
 import {initialBackground} from "../../../helpers/qr/data";
 import PrintIcon from "@mui/icons-material/Print";
-
-interface QRRenderProps {
-  qrData: string;
-  width: number;
-  alt: string;
-}
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 // noinspection JSDeprecatedSymbols
-const QRRender = ({qrData, width, alt}: QRRenderProps) => <img src={`data:image/svg+xml;base64,${btoa(qrData)}`} alt={alt} width={width}/>;
+const QRRender = ({qrData, width, alt}: {qrData: string; width: number | string; alt: string;}) =>
+  <img src={`data:image/svg+xml;base64,${btoa(qrData)}`} alt={alt} width={width}/>;
 
 interface PreviewProps {
   handleDone?: () => void;
@@ -40,11 +36,12 @@ interface PreviewProps {
   qr?: any;
   avoidDuplicate?: boolean;
   onlyPreview?: boolean;
-  width?: number;
+  width?: number | string;
   override?: string;
+  externalClose?: () => void;
 }
 
-const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign, handleDone, override, width, avoidDuplicate, ...qrProps}: PreviewProps) => {
+const RenderPreview = ({externalClose, onlyPreview, qrDesign, qr, externalFrame, externalDesign, handleDone, override, width, avoidDuplicate, ...qrProps}: PreviewProps) => {
   const [preview, setPreview] = useState<boolean>(false);
   const [qrData, setQrData] = useState<any>(null);
   const [current, setCurrent] = useState<string | null>(externalDesign || null);
@@ -54,6 +51,8 @@ const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign
 
   const qrRef = useRef();
   const done = useRef(false);
+
+  const isWide = useMediaQuery("(min-width:400px)", { noSsr: true });
 
   const handlePreView = (): void => {
     if (onlyPreview) {
@@ -83,11 +82,17 @@ const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign
       cornersData={cornersData}
       dotsData={dotsData}
       overrideValue={undefined}
-    />
-
-    // @ts-ignore
+    /> // @ts-ignore
     setQrData(render);
   };
+
+  const handleCloseEvent = () => {
+    if (!externalClose) {
+      handlePreView();
+    } else {
+      externalClose();
+    }
+  }
 
   useEffect(() => {
     if (qrData) { // @ts-ignore
@@ -131,18 +136,19 @@ const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign
     }
   }
 
-  const renderDownload = () => (
-    <Box sx={{display: 'flex', width: '100%'}}>
-      <Button sx={{mt: '10px', width: handleDone ? '100%' : '60%', mr: handleDone ? '5px' : '10px'}} variant="outlined"
-             id="buttonDow" onClick={handleDownload} startIcon={<DownloadIcon/>}>
+  const renderButtons = () => (
+    <Box sx={{display: 'flex', flexDirection: isWide ? 'row' : 'column', width: '100%'}}>
+      <Button sx={{mt: '10px', width: handleDone || !isWide ? '100%' : '60%', mr: handleDone ? '5px' : '10px'}}
+              variant="outlined" id="buttonDow" onClick={handleDownload} startIcon={<DownloadIcon/>}>
         {'Download'}
       </Button>
-      <Button sx={{mt: '10px', width: handleDone ? '160px' : '40%'}} variant="outlined"
+      <Button sx={{mt: '10px', width: isWide ? (handleDone ? '160px' : '40%') : '100%'}} variant="outlined"
               id="buttonPrint"   onClick={() => setGeneratePdf(true)} startIcon={<PrintIcon/>}>
         {'Print'}
       </Button>
       {handleDone !== undefined && (
-        <Button sx={{ml: '5px', mt: '10px', width: '150px'}} variant="outlined" id="buttonD" onClick={handleDone} startIcon={<DoneIcon/>}>
+        <Button sx={{ml: isWide ? '5px' : 0, mt: '10px', width: isWide ? '150px' : '100%'}} variant="outlined"
+                id="buttonD" onClick={handleDone} startIcon={<DoneIcon/>}>
           {'Done'}
         </Button>
       )}
@@ -152,20 +158,20 @@ const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign
   return (
     <>
       <Box sx={{display: 'none'}}>{qrData}</Box>
-      {!avoidDuplicate && (<Box onClick={handlePreView} sx={{cursor: !override ? 'pointer' : 'normal'}}>
+      {!avoidDuplicate && !externalClose && (<Box onClick={handlePreView} sx={{cursor: !override ? 'pointer' : 'normal'}}>
         {current && !updating ? (
           <>
             <QRRender qrData={current || ''} width={width || 70} alt={name} {...qrProps}/>
-            {!onlyPreview && <Box sx={{ pl: '18px' }}>{renderDownload()}</Box>}
+            {!onlyPreview && <Box sx={{ pl: '18px' }}>{renderButtons()}</Box>}
           </>
         ) : <CircularProgress color="primary" sx={{ml: '10px', my: 'auto'}}/>}
       </Box>)}
-      {(preview || externalDesign !== undefined) && (
-        <Dialog onClose={handlePreView} open={true} onKeyDown={getJson}>
+      {(externalClose || preview || externalDesign !== undefined) && (
+        <Dialog onClose={handleCloseEvent} open={true} onKeyDown={getJson}>
           <DialogContent>
-            <Box sx={{width: '300px'}}>
-              <QRRender qrData={!externalDesign ? (current || '') : externalDesign.outerHTML} width={300} alt={`${name}preview`} />
-              {renderDownload()}
+            <Box sx={{width: {xs: '100%', sm: '350px'}}}>
+              <QRRender qrData={!externalDesign ? (current || '') : externalDesign.outerHTML} width="100%" alt={`${name}preview`} />
+              {renderButtons()}
             </Box>
           </DialogContent>
         </Dialog>
@@ -178,9 +184,7 @@ const RenderPreview = ({onlyPreview, qrDesign, qr, externalFrame, externalDesign
           setAnchor={setAnchor}/>
       )}
       {generatePdf && (
-        <PDFGenDlg
-          data={externalDesign || current || qrRef.current}
-          handleClose={() => setGeneratePdf(false)}
+        <PDFGenDlg data={externalDesign || current || qrRef.current} handleClose={() => setGeneratePdf(false)}
           isFramed={Boolean(frame?.type) && frame?.type !== '/frame/frame0.svg'}/>
       )}
     </>

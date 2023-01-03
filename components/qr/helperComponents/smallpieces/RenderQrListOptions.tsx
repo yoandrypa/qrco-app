@@ -1,4 +1,4 @@
-import {MouseEvent, useCallback, useContext, useEffect, useState} from "react";
+import {MouseEvent, useContext, useEffect, useState} from "react";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -11,50 +11,32 @@ import Stack from "@mui/material/Stack";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-
-import Context from "../../../context/Context";
-import {pauseQRLink, remove} from "../../../../handlers/qrs";
-import {IS_DEV_ENV, QR_CONTENT_ROUTE} from "../../constants";
-
-import {useRouter} from "next/router";
-import dynamic from "next/dynamic";
+import QrCodeIcon from '@mui/icons-material/QrCode';
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-const RenderConfirmDlg = dynamic(() => import("../../../renderers/RenderConfirmDlg"));
+import Context from "../../../context/Context";
+import {IS_DEV_ENV} from "../../constants";
+
+import {useRouter} from "next/router";
+import RenderPreview from "../../renderers/RenderPreview";
+import {handleDesignerString} from "../../../../helpers/qr/helpers";
 
 interface RenderQrOptsProps {
   qr: any;
+  handleEdit: (edit: QrDataType) => void;
+  setConfirm: (conf: { createdAt: number; userId: string; }) => void;
+  handlePauseQrLink: (id: LinkType) => void;
 }
 
-export default function RenderQrListOptions({qr}: RenderQrOptsProps) {
+export default function RenderQrListOptions({qr, handleEdit, setConfirm, handlePauseQrLink}: RenderQrOptsProps) {
   const router = useRouter();
   // @ts-ignore
-  const {loading, setLoading, setOptions} = useContext(Context);
-  const [confirm, setConfirm] = useState<{ createdAt: number; userId: string; } | null>(null);
+  const {loading, setLoading} = useContext(Context);
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
+  const [preview, setPreview] = useState<any>(null);
 
   const isWide = useMediaQuery("(min-width:900px)", { noSsr: true });
-
-  const handleEdit = useCallback((qr: QrDataType) => {
-    setLoading(true);
-    setOptions({...qr.qrOptionsId, ...qr, mode: "edit"});
-    router.push(QR_CONTENT_ROUTE, undefined, {shallow: true}).then(() => setLoading(false));
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handlePauseQrLink = useCallback((shortLinkId: LinkType) => {
-    setLoading(true);
-    pauseQRLink(shortLinkId).then(() => router.replace("/").then(() => setLoading(false)));
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleDelete = async () => {
-    setLoading(true); // @ts-ignore
-    const deleted = await remove(confirm);
-    if (deleted) {
-      setConfirm(null);
-      router.replace("/").then(() => setLoading(false));
-    }
-  };
 
   const handleOpenMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchor(event.currentTarget);
@@ -65,6 +47,15 @@ export default function RenderQrListOptions({qr}: RenderQrOptsProps) {
     router.push("/qr/" + (new Date(qr.createdAt)).getTime() + "/details").then(() => setLoading(false));
   }
 
+  const handlePreview = () => {
+    const options = { ...qr.qrOptionsId };
+    if (!options.image?.trim().length) {
+      options.image = null;
+    }
+    options.data = !qr.isDynamic ? handleDesignerString(qr.qrType, qr) : qr.qrOptionsId.data;
+    setPreview(options);
+  }
+
   useEffect(() => {
     if (isWide && anchor) {
       setAnchor(null);
@@ -72,24 +63,24 @@ export default function RenderQrListOptions({qr}: RenderQrOptsProps) {
   }, [isWide]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if ((loading || confirm) && anchor) {
+    if ((loading || confirm || preview) && anchor) {
       setAnchor(null);
     }
-  }, [loading, confirm]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [loading, confirm, preview]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
       <Stack direction="row" justifyContent="flex-end" alignItems="center">
         {isWide && (
           <>
-            <Tooltip title="Edit">
-              <IconButton color="primary" disabled={loading} onClick={() => handleEdit(qr)}>
-                <EditOutlined/>
-              </IconButton>
-            </Tooltip>
             <Tooltip title="Details">
               <IconButton color="primary" disabled={loading} onClick={() => handleDetails()}>
                 <InfoOutlinedIcon/>
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Edit">
+              <IconButton color="primary" disabled={loading} onClick={() => handleEdit(qr)}>
+                <EditOutlined/>
               </IconButton>
             </Tooltip>
             <Tooltip title="Delete">
@@ -119,7 +110,7 @@ export default function RenderQrListOptions({qr}: RenderQrOptsProps) {
             )}
             {!isWide && (
               <MenuItem key="detailsMenuItem" onClick={() => handleDetails()}>
-                  <InfoOutlinedIcon color="primary"/>
+                <InfoOutlinedIcon color="primary"/>
                 <Typography sx={{ml: '5px'}}>{'Details'}</Typography>
               </MenuItem>
             )}
@@ -129,6 +120,10 @@ export default function RenderQrListOptions({qr}: RenderQrOptsProps) {
                 <Typography sx={{ml: '5px'}}>{qr.shortLinkId.paused ? "Activate" : "Pause"}</Typography>
               </MenuItem>
             )}
+            <MenuItem key="previewMenuItem" onClick={handlePreview}>
+              <QrCodeIcon color="primary"/>
+              <Typography sx={{ml: '5px'}}>{'Preview'}</Typography>
+            </MenuItem>
             {IS_DEV_ENV && qr.qrType === "donation" && !!qr.donationProductId && (
               <MenuItem component="a" target="_blank" rel="noopener noreferrer" key="goToDashBoardMenuItem" onClick={() => setAnchor(null)}
                         href={IS_DEV_ENV ? "https://dev-app.ebanux.com/checkouts" : "https://app.ebanux.com/checkouts"}>
@@ -145,16 +140,7 @@ export default function RenderQrListOptions({qr}: RenderQrOptsProps) {
           </Menu>
         )}
       </Stack>
-      {confirm !== null && (
-        <RenderConfirmDlg
-          handleCancel={() => setConfirm(null)}
-          handleOk={handleDelete}
-          title="Delete confirmation"
-          message="Are you sure you want to delete the selected QR?"
-          confirmationMsg="This action can not be undone."
-          confirmStyle={{color: 'orange', fontSize: 'small'}}
-        />
-      )}
+      {preview && <RenderPreview qrDesign={preview} externalClose={() => setPreview(null)} />}
     </>
   );
 }

@@ -3,12 +3,18 @@ import {DataType} from "../../components/qr/types/types";
 export const previewQRGenerator = (data: DataType, selected: string) => {
   let sum = 0;
 
-  ['qrName', 'isDynamic', 'backgroundColor', 'backgroundType', 'backgroundDirection', 'backgroundColorRight',
-  'primary', 'secondary', 'backgndImg', 'foregndImg', 'foregndImgType'].forEach(x => {  // @ts-ignore
-    if (data[x]) { sum += 1; }
-  })
+  const items = ['qrName', 'isDynamic', 'backgroundColor', 'backgroundType', 'backgroundDirection', 'backgroundColorRight',
+  'primary', 'secondary', 'backgndImg', 'foregndImg', 'foregndImgType', 'globalFont', 'buttonsFont',  'titlesFont',
+  'messagesFont', 'titlesFontSize', 'messagesFontSize', 'buttonsFontSize', 'subtitlesFontSize', 'subtitlesFont',
+  'titlesFontStyle', 'subtitlesFontStyle', 'messagesFontStyle', 'buttonsFontStyle', 'globalFontColor', 'buttonShape',
+  'buttonBack', 'buttonBackColor'];
+
+  Object.keys(data).forEach(x => {  // @ts-ignore
+    if (items.some((item: string) => x === item)) { sum += 1; }
+  });
 
   if (data.files !== undefined && data.files.length === 0) { sum += 1; }
+  if (data.socials !== undefined && data.socials.length === 0) { sum += 1; }
   if (selected === 'link' && data.links) { sum += 1; }
 
   const obj = {...data, qrType: selected};

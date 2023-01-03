@@ -13,7 +13,7 @@ const Auth_Callback = () => {
     // @ts-ignore
     const route = JSON.parse(getCookie("final_callback_path")) || '/';
 
-    router.push(route, route.pathname).then(() => {
+    router.push(route, route.pathname || '/').then(() => {
       deleteCookie("final_callback_path");
       setLoading(false);
     });

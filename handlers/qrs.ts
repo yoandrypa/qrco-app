@@ -1,8 +1,6 @@
 import * as Qr from "../queries/qr";
-import { CustomError } from "../utils";
-import * as Visit from "../queries/visit";
+import {CustomError} from "../utils";
 import * as Link from "../queries/link";
-import { LinkModel } from "../models/link";
 
 // @ts-ignore
 export const create = async (data) => {

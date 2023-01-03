@@ -19,11 +19,11 @@ import RenderFreeDesc from "./smallpieces/RenderFreeDesc";
 import {MyBadge} from "./smallpieces/StyledComponents";
 import {areEquals} from "../../helpers/generalFunctions";
 import initialOptions, {initialData} from "../../../helpers/qr/data";
+import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
 
 const RenderLoseDataConfirm = dynamic(() => import('./smallpieces/RenderLoseDataConfirm'));
 const RenderPreviewDrawer = dynamic(() => import('./smallpieces/RenderPreviewDrawer'));
 const RenderPreviewButton = dynamic(() => import('./smallpieces/RenderPreviewButton'));
-const RenderSamplePreview = dynamic(() => import('./smallpieces/RenderSamplePreview'));
 
 interface RenderTypeSelectorProps {
   selected?: string | null;
@@ -155,7 +155,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
         </>) : null}
       </Grid>
       {isWideForPreview && selected && (
-        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '56px', width: '370px'}} step={0}
+        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '56px', width: '370px', position: 'sticky', top: '120px'}} step={0}
                              isDynamic={data.isDynamic || false} onlyQr={ONLY_QR.includes(selected) || !data.isDynamic} />
       )}
       {!openPreview && !isWideForPreview && selected && ( // @ts-ignore

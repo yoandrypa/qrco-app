@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import {ReactNode, useRef, useState} from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -24,9 +24,10 @@ interface SectionSelectorProps {
   w?: string;
   h?: string;
   mw?: string;
+  children?: ReactNode;
 }
 
-const SectionSelector = ({w, h, mw, label, handleSelect, icon, selected, isUpload, isFrame, property, separate, maxSize, tooltip }: SectionSelectorProps) => {
+const SectionSelector = ({w, h, mw, label, handleSelect, icon, selected, isUpload, isFrame, property, separate, maxSize, tooltip, children}: SectionSelectorProps) => {
   const fileInput = useRef<any>();
   const [error, setError] = useState<boolean>(false);
 
@@ -98,14 +99,15 @@ const SectionSelector = ({w, h, mw, label, handleSelect, icon, selected, isUploa
                 boxShadow: !selected ? '0 0 2px 2px #849abb' : '0 0 2px 2px #286ED6'
               }
             }}
-            variant={selected ? 'outlined' : 'text'}
+            variant={!children && selected ? 'outlined' : 'text'}
             onClick={beforeHandle}
           >
-            {isUpload &&
-              <input ref={fileInput} accept="image/*" type="file" style={{display: 'none'}} onChange={onLoadFile}/>}
-            {renderIcon()}
+            {!children ? (<>
+              {isUpload && <input ref={fileInput} accept="image/*" type="file" style={{display: 'none'}} onChange={onLoadFile}/>}
+              {renderIcon()}
+            </>) : children}
           </Button>
-          <Typography sx={{
+          {!children && (<Typography sx={{
             width: '100%',
             textAlign: 'center',
             fontWeight: selected ? 'bold' : 'normal',
@@ -113,7 +115,7 @@ const SectionSelector = ({w, h, mw, label, handleSelect, icon, selected, isUploa
             fontVariantCaps: 'all-petite-caps'
           }}>
             {label}
-          </Typography>
+          </Typography>)}
         </Box>
       </Tooltip>
       {error && (

@@ -7,6 +7,12 @@ import Common from '../helperComponents/Common'
 import Alert from '@mui/material/Alert';
 import { isValidUrl } from "../../../utils";
 import CoffeeIcon from '@mui/icons-material/Coffee';
+import RenderProposalsTextFields from './helpers/RenderProposalsTextFields';
+import Box from '@mui/material/Box';
+
+//@ts-ignore
+import session from "@ebanux/ebanux-utils/sessionStorage";
+
 export interface DonationsProps {
   data: {
     title?: string,
@@ -20,7 +26,8 @@ export interface DonationsProps {
     email?: string
   },
   setData: Function,
-  setIsWrong: Function
+  setIsWrong: Function,
+  handleValues: Function
 }
 
 type Options = 'message' | 'title' | 'avatarImage' |
@@ -28,22 +35,22 @@ type Options = 'message' | 'title' | 'avatarImage' |
 
 const options = ['Donate', 'Contribute', 'Give'];
 
-const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
+const DonationsData = ({ data, setData, setIsWrong, handleValues }: DonationsProps) => {
 
   const [webError, setWebError] = useState<boolean>(false)
   const [coffeePrice, setCoffeePrice] = useState<number>(1)
   const [inputButtonValue, setInputButtonValue] = React.useState('');
+
 
   useEffect(() => {
     const temp = { ...data }
     if (coffeePrice < 1) {
       setCoffeePrice(1)
       temp["donationUnitAmount"] = 1
-      temp["donationUnitAmount"] = coffeePrice
     } else if (coffeePrice > 100) {
       setCoffeePrice(100)
       temp["donationUnitAmount"] = 100
-      temp["donationUnitAmount"] = 100
+
     } else {
       temp["donationUnitAmount"] = coffeePrice
     }
@@ -56,7 +63,7 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
     temp["urlOptionLabel"] = inputButtonValue
   }, [inputButtonValue, data])
 
-  const handleValues = (item: Options) => (event: ChangeEvent<HTMLInputElement>) => {
+  const handleValuesBefore = (item: Options) => (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const temp = { ...data };
     if (item === "web") {
@@ -97,18 +104,28 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
     <Common msg='Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.'>
       <Typography variant='h6' marginTop={2}>Customize your donation page</Typography>
       <Grid container spacing={2}>
-        <Grid item>
+        <Grid item xs={12} sm={6}>
           <TextField label='Your Name'
             fullWidth
             sx={{ marginTop: 2 }}
             placeholder='Paul Smith'
             value={data?.title || ''}
-            onChange={handleValues('title')}
+            onChange={handleValuesBefore('title')}
             size='small'
           />
         </Grid>
-        <Grid item >
-          <Autocomplete
+        <Grid item xs={12} sm={6}>
+          <Box sx={{ width: '100%', mt: 1 }}>
+            <RenderProposalsTextFields
+              options={['Donate', 'Give', 'Contribute']}
+              //@ts-ignore
+              value={data?.urlOptionLabel}
+              label='Button text'
+              // isError={isError}
+              handleValues={handleValues('urlOptionLabel')}
+            />
+          </Box>
+          {/* <Autocomplete
             value={data?.urlOptionLabel}
             onChange={(event: any, newValue: string | null) => {
               setInputButtonValue(newValue || '');
@@ -123,7 +140,7 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
             sx={{ marginTop: 2 }}
             size='small'
             renderInput={(params) => <TextField {...params} label="Button Text" sx={{ minWidth: 200 }} />}
-          />
+          /> */}
         </Grid>
       </Grid>
       <Typography marginTop={2}>Add a small text here</Typography>
@@ -134,7 +151,7 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
           fullWidth
           margin="dense"
           value={data?.message || ''}
-          onChange={handleValues('message')}
+          onChange={handleValuesBefore('message')}
           multiline
           placeholder='Would you like to buy me a coffee?'
           rows={5}
@@ -154,7 +171,7 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
             <TextField label='Website or social link'
               sx={{ marginTop: 2, width: 300 }}
               value={data?.web || ''}
-              onChange={handleValues('web')}
+              onChange={handleValuesBefore('web')}
               onBlur={handleWebInputBlur}
               error={webError}
               size='small'
@@ -179,7 +196,7 @@ const DonationsData = ({ data, setData, setIsWrong }: DonationsProps) => {
                   placeholder='10'
                   size='small'
                   value={coffeePrice}
-                  onChange={handleValues('donationUnitAmount')}
+                  onChange={handleValuesBefore('donationUnitAmount')}
                 />
               </Grid>
             </Grid>

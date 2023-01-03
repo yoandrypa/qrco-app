@@ -1,4 +1,4 @@
-import {ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
+import { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Context from "../context/Context";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -11,7 +11,7 @@ import { QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { getUuid } from "../../helpers/qr/helpers";
 import Notifications from "../notifications/Notifications";
 import ProcessHandler from "./renderers/ProcessHandler";
-import {getStep, saveOrUpdate, steps, StepsProps} from "./auxFunctions";
+import { getStep, saveOrUpdate, steps, StepsProps } from "./auxFunctions";
 import RenderNextButton from "./helperComponents/smallpieces/RenderNextButton";
 import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
 import RenderFloatingButtons from "./helperComponents/smallpieces/RenderFloatingButtons";
@@ -19,6 +19,7 @@ import RenderPreview from "./renderers/RenderPreview";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
+
 
 interface QrWizardProps {
   children: ReactNode;
@@ -28,7 +29,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   const [isError, setIsError] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [size, setSize] = useState<number>(0);
-  const [forceDownload, setForceDownload] = useState<{item: HTMLElement} | undefined>(undefined);
+  const [forceDownload, setForceDownload] = useState<{ item: HTMLElement } | undefined>(undefined);
   const [, setUnusedState] = useState();
 
   // @ts-ignore
@@ -67,7 +68,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   const lastStep = (goToList: boolean) => {
     const item = document.getElementById('qrCodeReferenceId');
     if (item) {
-      setForceDownload({item});
+      setForceDownload({ item });
     } else {
       clearData();
       router.push(goToList ? "/" : QR_TYPE_ROUTE, undefined, { shallow: true }).then(() => setLoading(false));
@@ -97,6 +98,15 @@ const QrWizard = ({ children }: QrWizardProps) => {
   };
 
   useEffect(() => {
+    const observer = new IntersectionObserver((payload: IntersectionObserverEntry[]) => {
+      setVisible(payload[0].isIntersecting || false);
+    }, { root: document.querySelector('#scrollArea'), rootMargin: '0px', threshold: [0.3] });
+
+    observer.observe(btnRef.current);
+    setSize(sizeRef.current.offsetWidth);
+    const getWidth = () => { setSize(sizeRef.current.offsetWidth); }
+    window.addEventListener("resize", getWidth);
+
     if (router.pathname === QR_CONTENT_ROUTE && isLogged && data?.isDynamic && !Boolean(options.id) && options.mode === undefined) {
       const genShortLinkAndId = async () => {
         const id = getUuid();
@@ -105,22 +115,9 @@ const QrWizard = ({ children }: QrWizardProps) => {
       }
       genShortLinkAndId();
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    const observer = new IntersectionObserver((payload: IntersectionObserverEntry[]) => {
-      setVisible(payload[0].isIntersecting || false);
-    }, {
-      root: document.querySelector('#scrollArea'),
-      rootMargin: '0px',
-      threshold: [0.3]
-    });
-    observer.observe(btnRef.current);
-    setSize(sizeRef.current.offsetWidth);
-    const getWidth = () => { setSize(sizeRef.current.offsetWidth); }
-    window.addEventListener("resize", getWidth);
     return () => window.removeEventListener("resize", getWidth);
-  }, [loading]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -182,12 +179,12 @@ const QrWizard = ({ children }: QrWizardProps) => {
           handleDone={async () => {
             setForceDownload(undefined);
             setRedirecting(true);
-            router.push("/", undefined, { shallow: true }).then(() => { setLoading(false); setRedirecting(false); })
+            router.push("/", undefined, { shallow: true }).then(() => {
+              setLoading(false); setRedirecting(false);
+            })
           }} />
       )}
-      {isError && (
-        <Notifications autoHideDuration={3500} message="Error accessing data!" onClose={() => setIsError(false)} />
-      )}
+      {isError && <Notifications autoHideDuration={3500} message="Error accessing data!" onClose={() => setIsError(false)} showProgress />}
     </>
   );
 };

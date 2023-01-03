@@ -8,19 +8,21 @@ interface RenderPreviewDrawerProps {
   setOpenPreview: (open: boolean) => {};
   children: ReactNode;
   height: number;
+  autoHeight?: boolean;
   minWidth?: string;
   title?: string;
   border?: number;
 }
 
-export default function RenderPreviewDrawer({setOpenPreview, children, height, minWidth, title, border}: RenderPreviewDrawerProps) {
+export default function RenderPreviewDrawer({autoHeight, setOpenPreview, children, height, minWidth, title, border}: RenderPreviewDrawerProps) {
   return (
     <Drawer
       anchor="right"
       open
       onClose={() => setOpenPreview(false)}
       sx={{'& .MuiPaper-root': {
-        height: `${height}px`,
+        height: !autoHeight ? `${height}px` : 'auto',
+        pb: !autoHeight ? 0 : '10px',
         borderRadius: `5px 0 0 ${border || 5}px`,
         top: `calc(50% - ${Math.ceil(height / 2)}px)`
       }
