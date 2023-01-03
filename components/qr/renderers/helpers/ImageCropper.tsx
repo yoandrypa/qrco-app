@@ -129,7 +129,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
     }
   }
 
-  const getWidth = useMemo(() => kind === 'backgndImg' ? (isWide ? 460 : 250) : 200, [isWide]);
+  const getWidth = useMemo(() => kind === 'backgndImg' ? (isWide ? 460 : 250) : 200, [isWide]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     mainDims.current.width = getWidth;
