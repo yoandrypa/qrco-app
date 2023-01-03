@@ -94,8 +94,7 @@ export default function LinkedLabelData({
       return tempo;
     });
   };
-  const handleChangeText = useCallback(
-    (item: string, index: number) =>
+  const handleChangeText = (item: string, index: number) =>
       (payload: ChangeEvent<HTMLInputElement> | string) => {
         setData((prev: DataType) => {
           const tempo = { ...prev };
@@ -103,9 +102,7 @@ export default function LinkedLabelData({
           tempo.fields[index][item] = payload.target?.value !== undefined ? payload.target.value : payload;
           return tempo;
         });
-      },
-    []
-  ); // eslint-disable-line react-hooks/exhaustive-deps
+      }
 
   const handleAddTextField = () => {
     setData((prev: DataType) => {
@@ -179,7 +176,7 @@ export default function LinkedLabelData({
       />
     );
   };
-  const renderFields = useCallback((item: any, index: number) => {
+  const renderFields = (item: any, index: number) => {
     switch (item.type) {
       case 'text':
         return (
@@ -233,7 +230,7 @@ export default function LinkedLabelData({
           </Grid>
         );
     }
-  }, []);
+  };
 
   useEffect(() => {
     let isWrong = false;

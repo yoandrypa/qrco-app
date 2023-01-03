@@ -26,7 +26,7 @@ const RenderChipFields = ({values, handleValues, label, item, required, isError,
         freeSolo
         renderTags={(value: readonly string[], getTagProps) =>
           value.map((option: string, index: number) => (
-            <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+            <Chip variant="outlined" label={option} {...getTagProps({ index })} key={`chip-${option}`}/>
           ))
         }
         renderInput={(params) => (
