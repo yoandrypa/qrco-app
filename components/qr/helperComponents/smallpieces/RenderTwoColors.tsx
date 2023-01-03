@@ -57,32 +57,30 @@ export default function RenderTwoColors({data, handleValue, isGradient}: RenderT
   }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <>
-      <Box sx={{display: 'flex', flexDirection: isWide ? 'row' : 'column'}}>
-        <ColorSelector
-          label=""
-          color={prim}
-          handleData={handleColors}
-          property="primColor"
-          sx={{mr: isWide ? '2px' : 0, width: isWide ? '50%' : '100%'}}
-        />
-        <ColorSelector
-          label=""
-          color={sec}
-          handleData={handleColors}
-          property="secColor"
-          sx={{
-            ml: isWide ? '3px' : 0,
-            width: isWide ? '50%' : '100%',
-            mt: isWide ? 0 : '-5px'
-          }}
-        />
-        {isGradient && (
-          <Box sx={{mt: isWide ? '20px' : '10px', ml: isWide ? 1 : 'auto', mr: isWide ? 'unset' : 'auto'}}>
-            <RenderDirectionSelector handleDirection={handleDirection} direction={direction} isWide={false} />
-          </Box>
-        )}
-      </Box>
-    </>
+    <Box sx={{display: 'flex', flexDirection: isWide ? 'row' : 'column'}}>
+      <ColorSelector
+        label=""
+        color={prim}
+        handleData={handleColors}
+        property="primColor"
+        sx={{mr: isWide ? '2px' : 0, width: isWide ? '50%' : '100%'}}
+      />
+      <ColorSelector
+        label=""
+        color={sec}
+        handleData={handleColors}
+        property="secColor"
+        sx={{
+          ml: isWide ? '3px' : 0,
+          width: isWide ? '50%' : '100%',
+          mt: isWide ? 0 : '-5px'
+        }}
+      />
+      {isGradient && (
+        <Box sx={{mt: isWide ? '20px' : '10px', ml: isWide ? 1 : 'auto', mr: isWide ? 'unset' : 'auto'}}>
+          <RenderDirectionSelector handleDirection={handleDirection} direction={direction} isWide={false} />
+        </Box>
+      )}
+    </Box>
   );
 }
