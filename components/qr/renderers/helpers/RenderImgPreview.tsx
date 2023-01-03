@@ -7,12 +7,13 @@ import Button from "@mui/material/Button";
 interface RenderImgPrevProps {
   handleClose: () => void;
   file: File | string;
+  kind?: string;
 }
 
-const RenderImgPreview = ({handleClose, file}: RenderImgPrevProps) => (
+const RenderImgPreview = ({handleClose, file, kind}: RenderImgPrevProps) => (
   <Dialog onClose={handleClose} open={true}>
     <DialogContent dividers>
-      <Box sx={{width: {xs: '100%', sm: '460px'}, overflow: 'auto'}}>
+      <Box sx={{width: kind !== 'foregndImg' ? {xs: '100%', sm: '460px'} : '100%', overflow: 'auto'}}>
         <Box component="img" alt="EBANUX" src={typeof file !== 'string' ? URL.createObjectURL(file) : file} />
       </Box>
     </DialogContent>
