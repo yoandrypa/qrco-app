@@ -89,6 +89,12 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
         setData((prev: any) => ({ ...prev, [prop]: payload.target?.value !== undefined ? payload.target.value : payload,
           buttonBackColor: payload === 'solid' ? DEFAULT_COLORS.p : 'unset'
         }));
+      } else if (prop === 'buttonShape') {
+        setData((prev: any) => {
+          const tempo = {...prev, [prop]: payload};
+          if (payload !== '3' && tempo.buttonBorders !== undefined) { delete tempo.buttonBorders; }
+          return tempo;
+        })
       } else {
         setData((prev: any) => ({ ...prev, [prop]: payload.target?.value !== undefined ? payload.target.value : payload }));
       }

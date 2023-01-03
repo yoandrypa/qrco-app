@@ -177,6 +177,7 @@ export type DataType = {
   buttonsFont?: string;
   buttonShape?: string;
   buttonBack?: string;
+  buttonBorders?: string;
   buttonBackColor?: string;
   titlesFont?: string;
   subtitlesFont?: string;

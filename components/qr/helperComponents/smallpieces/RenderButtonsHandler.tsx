@@ -15,6 +15,7 @@ import ColorSelector from "../ColorSelector";
 import {DEFAULT_COLORS} from "../../constants";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+const RenderBorders = dynamic(() => import("./RenderBorders"));
 const RenderTwoColors = dynamic(() => import("./RenderTwoColors"));
 
 interface ButtonsHandlerProps {
@@ -23,8 +24,8 @@ interface ButtonsHandlerProps {
 }
 
 export default function RenderButtonsHandler({data, handleValue}: ButtonsHandlerProps) {
-  const isWide = useMediaQuery("(min-width:900px)", { noSsr: true });
-  const isWideEnough = useMediaQuery("(min-width:815px)", { noSsr: true });
+  const isWide = useMediaQuery("(min-width:900px)", {noSsr: true});
+  const isWideEnough = useMediaQuery("(min-width:815px)", {noSsr: true});
 
   const renderShape = (item: number) => (
     <SectionSelector
@@ -35,7 +36,8 @@ export default function RenderButtonsHandler({data, handleValue}: ButtonsHandler
         height: '30px',
         border: theme => `solid 2px ${theme.palette.primary.dark}`,
         background: theme => theme.palette.primary.light,
-        borderRadius: item === 0 ? 'unset' : (item === 1 ? '10px' : '15px')}} />
+        borderRadius: item === 0 ? 'unset' : (item === 1 ? '10px' : (item === 2 ? '15px' : '25px 8px 12px 0'))
+      }}/>
     </SectionSelector>
   );
 
@@ -45,20 +47,26 @@ export default function RenderButtonsHandler({data, handleValue}: ButtonsHandler
 
   return (
     <Box sx={{mt: 1}}>
-      <RenderButtonsFontsHandler handleValue={handleValue} data={data} />
-      <Box sx={{display: 'flex', mt: 2}}>
-        <Paper elevation={2} sx={{mr: 2, p: 1}}>
+      <RenderButtonsFontsHandler handleValue={handleValue} data={data}/>
+      <Paper elevation={2} sx={{p: 1, my: 2, display: 'flex', flexDirection: isWide ? 'row' : 'column'}}>
+        <Box>
           <Typography>{'Shape'}</Typography>
-          {[...Array(3).keys()].map(x => renderShape(x))}
-        </Paper>
-        <Paper elevation={2} sx={{p : 1}}>
-          <Typography>{'Background'}</Typography>
-          <FormControl sx={{ m: 0, mt: 1, width: '100%' }} size="small">
+          {[...Array(4).keys()].map(x => renderShape(x))}
+        </Box>
+        {data?.buttonShape === `${3}` && (
+          <Box sx={{mt: isWide ? '17px' : '10px', ml: isWide ? '10px' : 0}}>
+            <RenderBorders handleValue={handleValue} data={data} />
+          </Box>
+        )}
+      </Paper>
+      <Paper elevation={2} sx={{p: 1}}>
+        <Typography>{'Background'}</Typography>
+        <Box sx={{display: 'flex', flexDirection: isWide && isWideEnough ? 'row' : 'column', width: '100%'}}>
+          <FormControl sx={{m: 0, mt: 1, width: '100%'}} size="small">
             <InputLabel id="buttonBackColor">Page size</InputLabel>
             <Select
               labelId="buttonBackColor"
               id="buttonBackColor"
-              sx={{width: isWide ? '428px' : '210px'}}
               value={data?.buttonBack || 'default'}
               label="Page size"
               onChange={handler}
@@ -70,17 +78,15 @@ export default function RenderButtonsHandler({data, handleValue}: ButtonsHandler
             </Select>
           </FormControl>
           {data?.buttonBack === 'solid' && (
-            <ColorSelector label="" color={data?.buttonBackColor || data?.primary || DEFAULT_COLORS.p}
-                           handleData={handleValue} property="buttonBackColor"/>
+            <Box sx={{width: isWide && isWideEnough ? '45%' : '100%', ml: isWide && isWideEnough ? '5px' : 0}}>
+              <ColorSelector label="" color={data?.buttonBackColor || data?.primary || DEFAULT_COLORS.p}
+                             handleData={handleValue} property="buttonBackColor"/>
+            </Box>
           )}
-          {data?.buttonBack === 'two' && (
-            <RenderTwoColors handleValue={handleValue} data={data} isWideEnough={isWideEnough} />
-          )}
-          {data?.buttonBack === 'gradient' && (
-            <RenderTwoColors handleValue={handleValue} data={data} isWideEnough={isWideEnough} />
-          )}
-        </Paper>
-    </Box>
+        </Box>
+        {data?.buttonBack === 'two' && <RenderTwoColors handleValue={handleValue} data={data}/>}
+        {data?.buttonBack === 'gradient' && <RenderTwoColors handleValue={handleValue} data={data}/>}
+      </Paper>
     </Box>
   );
 }
