@@ -55,6 +55,7 @@ import { grey } from "@mui/material/colors";
 import Coffee from '@mui/icons-material/Coffee';
 import CreditCard from '@mui/icons-material/CreditCard'
 import CurrencyBitcoinIcon from '@mui/icons-material/CurrencyBitcoin';
+import { QrCode } from '@mui/icons-material';
 
 type RenderIconProp = {
   icon: string;
@@ -124,6 +125,7 @@ export default function RenderIcon({ icon, color, enabled, adjust }: RenderIconP
       case 'fundme': { return <VolunteerActivism sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'paylink': { return <CreditCard sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'crypto': { return <CurrencyBitcoinIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
+      case 'linkedLabel': { return <QrCode sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       default: { return <TextSnippetOutlinedIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
     }
   };

@@ -31,6 +31,7 @@ const FundMe = dynamic(() => import('./renderers/FundMeData'));
 const LinksData = dynamic(() => import('./renderers/LinksData'));
 const PleaseWait = dynamic(() => import('../PleaseWait'));
 const RenderNoUserWarning = dynamic(() => import('./helperComponents/smallpieces/RenderNoUserWarning'));
+const LinkedLabelData = dynamic(() => import('./renderers/LinkedLabelData'));
 
 type QrContentHandlerProps = {
   data: DataType;
@@ -134,6 +135,9 @@ const QrContentHandler = () => { // @ts-ignore
       }
       case 'petId': {
         return <PetIdData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
+      }
+      case 'linkedLabel': {
+        return <LinkedLabelData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
       }
       default: {
         return <NetworksData data={data} setData={handlePayload} setIsWrong={setIsWrong} />

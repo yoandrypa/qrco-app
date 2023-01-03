@@ -205,8 +205,11 @@ export type DataType = {
   headingTextText?: string;
   headingTextHeading?: string;
   contactTitle?: string;
-  otherDetails?:HeadAndItemsType
-  urls?:HeadAndItemsType
+  otherDetails?:HeadAndItemsType;
+  urls?:HeadAndItemsType;
+  fields?:any[];
+  description?:string;
+  categories?: string[];
 
 };
 export type validTypes = 'text' | 'email' | 'phone' | 'web' | 'number'| 'date' | 'fax'|'url' | 'string';
