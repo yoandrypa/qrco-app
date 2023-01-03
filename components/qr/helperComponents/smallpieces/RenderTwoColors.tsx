@@ -9,15 +9,14 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 interface RenderTwoColorsProps {
   data?: DataType;
   handleValue: Function;
-  isWideEnough: boolean;
 }
 
-export default function RenderTwoColors({data, handleValue, isWideEnough}: RenderTwoColorsProps) {
+export default function RenderTwoColors({data, handleValue}: RenderTwoColorsProps) {
   const [prim, setPrim] = useState<string>(DEFAULT_COLORS.p);
   const [sec, setSec] = useState<string>(DEFAULT_COLORS.s);
   const doneFirst = useRef<boolean>(false);
 
-  const isWide = useMediaQuery("(min-width:930px)", { noSsr: true });
+  const isWide = useMediaQuery("(min-width:855px)", { noSsr: true });
 
   const handleColors = (prop: string) => (col: string) => {
     if (prop === 'primColor') {
@@ -51,13 +50,22 @@ export default function RenderTwoColors({data, handleValue, isWideEnough}: Rende
         color={prim}
         handleData={handleColors}
         property="primColor"
-        sx={{mr: isWide ? '2px' : 0, width: isWide ? '212px' : (isWideEnough ? '100%' : '210px')}} />
+        sx={{
+          mr: isWide ? '2px' : 0,
+          width: isWide ? '50%' : '100%'
+        }}
+      />
       <ColorSelector
         label=""
         color={sec}
         handleData={handleColors}
-        property="setColorr"
-        sx={{ml: isWide ? '3px' : 0, width: isWide ? '211px' : (isWideEnough ? '100%' : '210px')}} />
+        property="secColor"
+        sx={{
+          ml: isWide ? '3px' : 0,
+          width: isWide ? '50%' : '100%',
+          mt: isWide ? 0 : '-5px'
+        }}
+      />
     </Box>
   );
 }
