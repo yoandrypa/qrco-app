@@ -21,7 +21,7 @@ import { Button, Menu, MenuItem, Typography } from '@mui/material';
 import FileUpload from 'react-material-file-upload';
 import RenderChipFields from './helpers/RenderChipFields';
 
-interface SmartLabelDataProps {
+interface LinkedLabelDataProps {
   data: DataType;
   setData: Function;
   handleValues: Function;
@@ -45,12 +45,12 @@ const categoryOptions = [
   'Clothing'
 ];
 
-export default function SmartLabelData({
+export default function LinkedLabelData({
   data,
   setData,
   handleValues,
   setIsWrong
-}: SmartLabelDataProps) {
+}: LinkedLabelDataProps) {
   const [expander, setExpander] = useState<string | null>(null);
   const [galleries, setGalleries] = useState<number>(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
