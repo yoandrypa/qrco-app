@@ -202,7 +202,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
           wasError={(selectFile === 'foregndImg' && foreError) || (selectFile === 'backgndImg' && backError)}/>
       )}
       {preview !== null && ( // @ts-ignore
-        <RenderImgPreview handleClose={() => setPreview(null)} file={preview === 'backgndImg' ? backgndImg : foregndImg} />
+        <RenderImgPreview handleClose={() => setPreview(null)} file={preview === 'backgndImg' ? backgndImg : foregndImg} kind={preview} />
       )}
       {cropper !== null && (
         <ImageCropper handleClose={() => setCropper(null)} file={cropper.file} kind={cropper.kind} handleAccept={handleSave} />

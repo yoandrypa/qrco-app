@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Dialog from "@mui/material/Dialog";
@@ -11,8 +11,9 @@ import Stack from '@mui/material/Stack';
 import Slider from "@mui/material/Slider";
 import CropIcon from '@mui/icons-material/Crop';
 import PhotoSizeSelectLargeIcon from '@mui/icons-material/PhotoSizeSelectLarge';
-import {getUuid} from "../../../../helpers/qr/helpers";
 import useMediaQuery from "@mui/material/useMediaQuery";
+
+import {getUuid} from "../../../../helpers/qr/helpers";
 
 interface ImageCropperProps {
   handleClose: () => void;
@@ -33,7 +34,6 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
   const image = useRef<HTMLImageElement>();
   const pos = useRef<{x: number, y: number}>({x: 0, y: 0});
   const initialTouch = useRef<{x: number, y: number}>({x: 0, y: 0});
-
   const initial = useRef<boolean>(true);
 
   const get = (axis: string, event?: any): number => {
@@ -129,8 +129,10 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
     }
   }
 
+  const getWidth = useMemo(() => kind === 'backgndImg' ? (isWide ? 460 : 250) : 200, [isWide]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
-    mainDims.current.width = isWide || kind !== 'backgndImg' ? 460 : 250;
+    mainDims.current.width = getWidth;
     if (!initial.current) {
       updateCanvas();
     }
@@ -238,7 +240,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
           </Box>
           <Box sx={{ width: '100%', textAlign: 'center' }}>
             <canvas
-              width={isWide || kind !== 'backgndImg' ? mainDims.current.width : 250}
+              width={getWidth}
               height={mainDims.current.height}
               onMouseDown={() => setDrag(true)}
               onTouchStart={touchStart}
