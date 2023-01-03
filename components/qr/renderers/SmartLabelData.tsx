@@ -17,7 +17,7 @@ import RenderTextFields from './helpers/RenderTextFields';
 import { DataType, LinkType } from '../types/types';
 import Expander from './helpers/Expander';
 import socialsAreValid from './validator';
-import { Button, Typography } from '@mui/material';
+import { Button, Menu, MenuItem, Typography } from '@mui/material';
 import FileUpload from 'react-material-file-upload';
 import RenderChipFields from './helpers/RenderChipFields';
 
@@ -53,8 +53,16 @@ export default function SmartLabelData({
 }: SmartLabelDataProps) {
   const [expander, setExpander] = useState<string | null>(null);
   const [galleries, setGalleries] = useState<number>(0);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
   const MAX_NUM_GALLERIES = 5;
 
+  const handleClickAddField = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseAddField = () => {
+    setAnchorEl(null);
+  };
   const handleCategories = (payload: string[]) => {
     console.log({ payload});
     setData((prev: DataType) => {
@@ -268,6 +276,42 @@ export default function SmartLabelData({
         <Grid item xs={12} md={6}>
           <RenderChipFields values={data.categories?data.categories:[] } handleValues={handleCategories} options={categoryOptions}/>
         </Grid>
+        <Grid container item xs={12} md={6}
+        justifyContent="flex-end"
+        alignItems="center"
+        >
+          <Button
+            id="add-field"
+            aria-controls={open ? 'basic-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+            variant="outlined" 
+            onClick={handleClickAddField}
+            size="large"
+          >
+            Add field
+          </Button>
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleCloseAddField}
+            MenuListProps={{
+              'aria-labelledby': 'basic-button',
+            }}
+          >
+            <MenuItem onClick={()=>{
+              handleAddTextField();
+              handleCloseAddField();
+            }}>Add text field</MenuItem>
+            <MenuItem onClick={()=>{
+              handleAddMediaField();
+              handleCloseAddField();
+            }}
+            disabled={galleries >= MAX_NUM_GALLERIES}
+            >Add Media Field</MenuItem>
+          </Menu>
+        </Grid>
       </Grid>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
@@ -352,21 +396,6 @@ export default function SmartLabelData({
           )}
         </Droppable>
       </DragDropContext>
-      <Grid container spacing={2} sx={{ mt: 2 }}>
-        <Grid item xs={6}>
-          <Button variant="outlined" onClick={handleAddTextField}>
-            Add text field
-          </Button>
-        </Grid>
-        <Grid item xs={6}>
-          <Button
-            variant="outlined"
-            onClick={handleAddMediaField}
-            disabled={galleries >= MAX_NUM_GALLERIES}>
-            Add Media Field
-          </Button>
-        </Grid>
-      </Grid>
     </Common>
   );
 }
