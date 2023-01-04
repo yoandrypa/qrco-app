@@ -12,6 +12,8 @@ interface IframeProps {
   height: string;
   data?: DataType;
   selected?: string;
+  backImg?: File;
+  mainImg?: File;
 }
 
 const style = {
@@ -24,7 +26,7 @@ const style = {
   textAlign: 'center'
 };
 
-const RenderIframe = ({src, width, height, data, selected}: IframeProps) => {
+const RenderIframe = ({src, width, height, data, selected, backImg, mainImg}: IframeProps) => {
   const [whatToRender, setWhatToRender] = useState<string | null>(null);
   const [error, setError] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -34,13 +36,14 @@ const RenderIframe = ({src, width, height, data, selected}: IframeProps) => {
 
   useEffect(() => {
     if (data && isReady) {
+      const isInEdition = data.mode === 'edit';
       setTimeout(async () => {
         const previewData = {...data};
-        if (data.backgndImg) { // @ts-ignore
-          previewData.backgndImg = await convertBase64(data.backgndImg);
+        if ((!isInEdition && data.backgndImg) || backImg) { // @ts-ignore
+          previewData.backgndImg = !isInEdition ? await convertBase64( data.backgndImg) : backImg;
         }
-        if (data.foregndImg) { // @ts-ignore
-          previewData.foregndImg = await convertBase64(data.foregndImg);
+        if ((!isInEdition && data.foregndImg) || mainImg) { // @ts-ignore
+          previewData.foregndImg = !isInEdition ? await convertBase64(data.foregndImg) : mainImg;
         } // @ts-ignore
         if (data.files) {
           let files: string[] = []; // @ts-ignore
@@ -63,7 +66,7 @@ const RenderIframe = ({src, width, height, data, selected}: IframeProps) => {
         }
       }, 50);
     }
-  }, [data, isReady]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data, isReady, backImg, mainImg]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const handler = (event: any) => {

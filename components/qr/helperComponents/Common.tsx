@@ -248,7 +248,9 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
             <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
                                  save={handleSave} style={{mt: 1, ml: '15px', position: 'sticky', top: '120px'}} saveDisabled={isWrong}
                                  qrOptions={optionsForPreview()} data={previewQRGenerator(data, selected)} step={1}
-                                 onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false} />
+                                 onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
+                                 backImg={data.mode === 'edit' ? backImg : undefined}
+                                 mainImg={data.mode === 'edit' ? foreImg : undefined} />
           )}
         </Box>
       ) : renderChildren()}
@@ -258,7 +260,9 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
                                save={handleSave} isDrawed saveDisabled={isWrong} style={{mt: '-15px'}} step={1}
                                data={previewQRGenerator(data, selected)} qrOptions={optionsForPreview()}
-                               onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false} />
+                               onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
+                               backImg={data.mode === 'edit' ? backImg : undefined}
+                               mainImg={data.mode === 'edit' ? foreImg : undefined} />
         </RenderPreviewDrawer>
       )}
     </>
