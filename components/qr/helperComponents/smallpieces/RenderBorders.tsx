@@ -59,7 +59,7 @@ export default function RenderBorders({data, handleValue}: RenderBordersProps) {
 
   useEffect(() => {
     if (doneFirst.current) {
-      handleValue('buttonBorders')(`${topL}px ${topR}px ${belowL}px ${belowR}px`);
+      handleValue('buttonBorders')(`${topL}px ${topR}px ${belowR}px ${belowL}px`);
     } else {
       doneFirst.current = true;
     }
