@@ -191,7 +191,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
         </Paper>)}
         <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="layout" title="Layout" bold/>
-          {expander === 'layout' && <RenderLayoutHandler />}
+          {expander === 'layout' && <RenderLayoutHandler handleValue={handleValue} data={data}/>}
         </Paper>
       </Box>
       {selectFile !== null && (
