@@ -8,20 +8,27 @@ interface RenderLayoutProps {
 }
 
 export default function RenderLayoutHandler({data, handleValue}: RenderLayoutProps) {
+  const handle = (prop: string) => () => {
+    handleValue('layout')(prop);
+  }
+
   const renderLayout = (kind: string, noMore?: boolean) => {
     const isBorder = kind.includes('border');
     const selected = (!data?.layout && kind === 'default') || data?.layout === kind;
     return (
-      <Box sx={{
-        display: 'inline-block',
-        mr: !noMore ? 2 : 0,
-        width: '120px',
-        height: '200px',
-        background: blueGrey[50],
-        borderRadius: '8px',
-        border: `solid 1px ${blueGrey[400]}`,
-        boxShadow: selected ? '0 0 4px 3px #286ED6' : 'none',
-        '&:hover': {boxShadow: !selected ? '0 0 2px 2px #849abb' : '0 0 2px 2px #286ED6'}
+      <Box
+        onClick={handle(kind)}
+        sx={{
+          display: 'inline-block',
+          mr: !noMore ? 2 : 0,
+          cursor: 'pointer',
+          width: '120px',
+          height: '200px',
+          background: blueGrey[50],
+          borderRadius: '8px',
+          border: `solid 1px ${blueGrey[400]}`,
+          boxShadow: selected ? '0 0 4px 3px #286ED6' : 'none',
+          '&:hover': {boxShadow: !selected ? '0 0 2px 2px #849abb' : '0 0 2px 2px #286ED6'}
       }}>
         <Box sx={{
           width: `calc(100% - ${!isBorder ? 0 : '10px'})`,

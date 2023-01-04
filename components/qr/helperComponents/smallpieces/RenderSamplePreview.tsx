@@ -39,6 +39,8 @@ interface SamplePrevProps {
   onlyQr?: boolean;
   qrOptions?: any;
   isDynamic: boolean;
+  backImg?: File | string;
+  mainImg?: File | string;
   step: number;
 }
 interface WithSelection extends SamplePrevProps { selected: string; code?: never; }
@@ -46,7 +48,9 @@ interface WithSCode extends SamplePrevProps { selected?: never; code: string; }
 
 const clearUrl = (url: string): string => url.slice(url.indexOf('//') + 2);
 
-const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, save, code, isDrawed, saveDisabled, qrOptions}: WithSelection | WithSCode) => {
+const RenderSamplePreview = ({
+    step, isDynamic, onlyQr, data, selected, style, save, code, isDrawed, saveDisabled, qrOptions, backImg, mainImg
+  }: WithSelection | WithSCode) => {
   const [prev, setPrev] = useState<string>(!onlyQr ? 'preview' : 'qr');
   const [copied, setCopied] = useState<boolean>(false);
   const [open, setOpen] = useState<HTMLButtonElement | null>(null);
@@ -181,7 +185,7 @@ const RenderSamplePreview = ({step, isDynamic, onlyQr, data, selected, style, sa
             {code || (selected && !NO_MICROSITE.includes(selected)) ? (
               <Suspense fallback={<PleaseWait />}>
                 <RenderIframe src={!code ? cleanSelectionForMicrositeURL(selected || '', isDynamic, true) : `${process.env.REACT_MICROSITES_ROUTE}/sample/empty`}
-                              selected={selected} width="256px" height="536px" data={data}/>
+                              selected={selected} width="256px" height="536px" data={data} backImg={backImg} mainImg={mainImg}/>
               </Suspense>
             ) : null}
           </RenderCellPhoneShape>
