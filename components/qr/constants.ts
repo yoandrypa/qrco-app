@@ -1,18 +1,21 @@
-import {ColorTypes, FontTypes} from "./types/types";
+import { ColorTypes, FontTypes } from "./types/types";
 
 export const QR_TYPE_ROUTE = "/qr/type" as string;
 export const QR_CONTENT_ROUTE = "/qr/content" as string;
 export const QR_DESIGN_ROUTE = "/qr/design" as string;
 export const QR_DETAILS_ROUTE = "/qr/[id]/details" as string;
 export const QR_PLAN_ROUTE = "/plans/buy/[plan]" as string;
+export const PLANS_ACCOUNT_PORTAL = "/plans/account" as string;
 
 export const PRIVATE_ROUTES = [
   QR_CONTENT_ROUTE,
   QR_DESIGN_ROUTE,
   QR_DETAILS_ROUTE,
+  PLANS_ACCOUNT_PORTAL,
   "/plans/buy/*",
   "/links/*",
   "/auth_callback"
+
 ];
 
 export const PARAM_QR_TEXT = "qr_text" as string;
@@ -81,17 +84,17 @@ export const COLORS = [
 ] as ColorTypes[];
 
 export const FONTS = [
-  {type: 'unset', name: 'Default'},
-  {type: 'arial, sans-serif', name: 'Arial'},
-  {type: 'arial black, sans-serif', name: 'Arial Black'},
-  {type: 'verdana, sans-serif', name: 'Verdana'},
-  {type: 'trebuchet ms, sans-serif', name: 'Trebuchet'},
-  {type: 'impact, sans-serif', name: 'Impact'},
-  {type: 'gill sans, sans-serif', name: 'Gill Sans'},
-  {type: 'times new roman, serif', name: 'Times New Roman'},
-  {type: 'georgia, serif', name: 'Georgia'},
-  {type: 'courier, monospace', name: 'Courier'},
-  {type: 'monaco, monospace', name: 'Monaco'},
-  {type: 'comic sans ms, cursive', name: 'Comic Sans'}] as FontTypes[];
+  { type: 'unset', name: 'Default' },
+  { type: 'arial, sans-serif', name: 'Arial' },
+  { type: 'arial black, sans-serif', name: 'Arial Black' },
+  { type: 'verdana, sans-serif', name: 'Verdana' },
+  { type: 'trebuchet ms, sans-serif', name: 'Trebuchet' },
+  { type: 'impact, sans-serif', name: 'Impact' },
+  { type: 'gill sans, sans-serif', name: 'Gill Sans' },
+  { type: 'times new roman, serif', name: 'Times New Roman' },
+  { type: 'georgia, serif', name: 'Georgia' },
+  { type: 'courier, monospace', name: 'Courier' },
+  { type: 'monaco, monospace', name: 'Monaco' },
+  { type: 'comic sans ms, cursive', name: 'Comic Sans' }] as FontTypes[];
 
 export const FONT_SIZES = ["default", "small", "medium", "large"] as string[];
