@@ -1,29 +1,23 @@
 
 
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Paper from '@mui/material/Paper'
 import { useRouter } from "next/router";
 import Typography from "@mui/material/Typography"
 import Divider from "@mui/material/Divider"
 import BillingPortal from "../../components/billing/BillingPortal"
-import Context from '../../components/context/Context'
 import Grid from '@mui/material/Grid'
 import { get } from '../../handlers/users'
-import Box from '@mui/material/Box'
 import Loading from '../../components/Loading';
-
 
 // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
-
-
 const AccountPage = () => {
 
   const user = session.currentAccount;
   const router = useRouter();
   const id = router.query["session_id"];
   const [userCustomerId, setUserCustomerId] = useState(null);
-
 
   useEffect(() => {
     if (session.isAuthenticated) {
@@ -41,8 +35,6 @@ const AccountPage = () => {
       });
     }
   }, [router, user.cognito_user_id]);
-
-
   console.log(session);
 
   if (!userCustomerId) {
