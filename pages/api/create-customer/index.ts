@@ -66,8 +66,8 @@ async function createCheckoutSession(
           quantity: 1
         }
       ],
-      success_url: `https://${process.env.REACT_APP_DEFAULT_DOMAIN}/plans/account?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `https://${process.env.REACT_APP_DEFAULT_DOMAIN}/plans/`
+      success_url: `https://${process.env.REACT_APP_SERVER_BASE_URL}/plans/account?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `https://${process.env.REACT_APP_SERVER_BASE_URL}/plans/`
     })
     return session
   } catch (error) {
