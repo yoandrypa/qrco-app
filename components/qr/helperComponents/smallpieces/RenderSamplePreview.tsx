@@ -39,8 +39,8 @@ interface SamplePrevProps {
   onlyQr?: boolean;
   qrOptions?: any;
   isDynamic: boolean;
-  backImg?: File;
-  mainImg?: File;
+  backImg?: File | string;
+  mainImg?: File | string;
   step: number;
 }
 interface WithSelection extends SamplePrevProps { selected: string; code?: never; }

@@ -12,8 +12,8 @@ interface IframeProps {
   height: string;
   data?: DataType;
   selected?: string;
-  backImg?: File;
-  mainImg?: File;
+  backImg?: File | string;
+  mainImg?: File | string;
 }
 
 const style = {
