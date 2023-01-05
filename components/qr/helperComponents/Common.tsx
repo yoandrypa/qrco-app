@@ -65,7 +65,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
         setData((prev: DataType) => ({...prev, foregndImg: payload, prevForeImg: prev.foregndImg[0].Key}));
       } else if (payload.clear || (((prop === "globalFont" && payload === "Default") ||
           (['buttonsFont', 'titlesFont', 'messagesFont', 'titlesFontSize', 'messagesFontSize', 'buttonsFontSize',
-              'subtitlesFontSize', 'subtitlesFont'].includes(prop) && (['none', 'default'].includes(payload))
+              'subtitlesFontSize', 'subtitlesFont', 'layout'].includes(prop) && (['none', 'default'].includes(payload))
           )) && data[prop] === payload) || (prop === 'buttonShape' && payload === '1') ||
         (prop === 'buttonBack' && payload === 'default')) {
         setData((prev: any) => {
@@ -249,10 +249,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                                  save={handleSave} style={{mt: 1, ml: '15px', position: 'sticky', top: '120px'}} saveDisabled={isWrong}
                                  qrOptions={optionsForPreview()} data={previewQRGenerator(data, selected)} step={1}
                                  onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
-                                 backImg={data.mode === 'edit' ? backImg : undefined}
-                                 mainImg={data.mode === 'edit' ? foreImg : undefined} />
-          )}
-        </Box>
+                                 shareLink={options?.data} backImg={data.mode === 'edit' ? backImg : undefined}
+                                 mainImg={data.mode === 'edit' ? foreImg : undefined} /> )}</Box>
       ) : renderChildren()}
       {!openPreview && !isWideForPreview  && <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />}
       {openPreview && ( // @ts-ignore
@@ -261,7 +259,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                                save={handleSave} isDrawed saveDisabled={isWrong} style={{mt: '-15px'}} step={1}
                                data={previewQRGenerator(data, selected)} qrOptions={optionsForPreview()}
                                onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
-                               backImg={data.mode === 'edit' ? backImg : undefined}
+                               shareLink={options?.data} backImg={data.mode === 'edit' ? backImg : undefined}
                                mainImg={data.mode === 'edit' ? foreImg : undefined} />
         </RenderPreviewDrawer>
       )}

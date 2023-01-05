@@ -162,7 +162,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
             )}
           </Box>
         </Paper>
-        {IS_DEV_ENV && (<Paper sx={{p: 1, mb: '10px'}} elevation={2}>
+        <Paper sx={{p: 1, mb: '10px'}} elevation={2}>
           <Typography sx={{fontWeight: 'bold'}}>{'Background'}</Typography>
           <RadioGroup
             aria-labelledby="backgroundType" name="backgroundType" value={data?.backgroundType || 'single'}
@@ -180,7 +180,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
               direction={data?.backgroundDirection}
               handleData={handleValue}/>
           )}
-        </Paper>)}
+        </Paper>
         <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="fonts" title="Fonts" bold/>
           {expander === 'fonts' && <RenderFontsHandler data={data} handleValue={handleValue} selected={selected} />}
@@ -189,10 +189,10 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
           <Expander expand={expander} setExpand={handleExpander} item="buttons" title="Buttons" bold/>
           {expander === 'buttons' && <RenderButtonsHandler handleValue={handleValue} data={data}/>}
         </Paper>)}
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+        {IS_DEV_ENV && <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="layout" title="Layout" bold/>
-          {expander === 'layout' && <RenderLayoutHandler handleValue={handleValue} data={data}/>}
-        </Paper>
+          {expander === 'layout' && <RenderLayoutHandler handleValue={handleValue} data={data} omitPrimary={omitPrimaryImg}/>}
+        </Paper>}
       </Box>
       {selectFile !== null && (
         <RenderImagePicker
