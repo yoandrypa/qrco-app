@@ -235,26 +235,21 @@ export default function LinkedLabelData({
   useEffect(() => {
     let isWrong = false;
     if (
-      !data?.title?.trim().length ||
-      data?.links?.some(
-        (x: LinkType) =>
-          !x.label.trim().length || !x.link.trim().length || !isValidUrl(x.link)
-      ) ||
-      !socialsAreValid(data)
+      !data?.title?.trim().length
     ) {
       isWrong = true;
     }
     setIsWrong(isWrong);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    if (!data.links?.length) {
-      setData((prev: DataType) => ({
-        ...prev,
-        links: [{ label: '', link: '' }]
-      }));
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // useEffect(() => {
+  //   if (!data.links?.length) {
+  //     setData((prev: DataType) => ({
+  //       ...prev,
+  //       links: [{ label: '', link: '' }]
+  //     }));
+  //   }
+  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     // smart Label msg
@@ -265,7 +260,7 @@ export default function LinkedLabelData({
           {renderItem('title', 'Title', true)}
         </Grid>
         <Grid item xs={12}>
-          {renderItem('description', 'Description',)}
+          {renderItem('about', 'Description',)}
         </Grid>       
       </Grid>
       <Topics message="Categories" top="3px" />
