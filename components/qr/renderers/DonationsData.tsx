@@ -67,8 +67,14 @@ const DonationsData = ({ data, setData, setIsWrong, handleValues }: DonationsPro
     const { value } = event.target;
     const temp = { ...data };
     if (item === "web") {
-      setWebError(!isValidUrl(value))
-      setIsWrong(webError)
+      if (value.length > 0) {
+        setWebError(!isValidUrl(value))
+        setIsWrong(webError)
+      } else {
+        setIsWrong(false);
+        setWebError(false);
+      }
+
     }
     if (value.length) {
       if (item === 'donationUnitAmount') {
@@ -125,22 +131,6 @@ const DonationsData = ({ data, setData, setIsWrong, handleValues }: DonationsPro
               handleValues={handleValues('urlOptionLabel')}
             />
           </Box>
-          {/* <Autocomplete
-            value={data?.urlOptionLabel}
-            onChange={(event: any, newValue: string | null) => {
-              setInputButtonValue(newValue || '');
-            }}
-            inputValue={inputButtonValue}
-            onInputChange={(event, newInputButtonValue) => {
-              setInputButtonValue(newInputButtonValue);
-              setData({ ...data, urlOptionLabel: newInputButtonValue })
-            }}
-            id="donation-button-text"
-            options={options}
-            sx={{ marginTop: 2 }}
-            size='small'
-            renderInput={(params) => <TextField {...params} label="Button Text" sx={{ minWidth: 200 }} />}
-          /> */}
         </Grid>
       </Grid>
       <Typography marginTop={2}>Add a small text here</Typography>
@@ -166,10 +156,11 @@ const DonationsData = ({ data, setData, setIsWrong, handleValues }: DonationsPro
         </Alert>
       </Grid>
       <Grid container spacing={2} >
-        <Grid item>
+        <Grid item sm={8} xs={12}>
           <Tooltip title={webError ? 'If set, the URL must be valid' : ''}>
             <TextField label='Website or social link'
-              sx={{ marginTop: 2, width: 300 }}
+              fullWidth
+              sx={{ marginTop: 2 }}
               value={data?.web || ''}
               onChange={handleValuesBefore('web')}
               onBlur={handleWebInputBlur}
@@ -179,20 +170,21 @@ const DonationsData = ({ data, setData, setIsWrong, handleValues }: DonationsPro
           </Tooltip>
 
         </Grid>
-        <Grid item>
+        <Grid item sm={4} xs={12}>
           <Grid item sx={{ marginTop: 2 }}>
             <Grid container spacing={2}>
-              <Grid item>
-                <SvgIcon sx={{ marginTop: 1 }}>
+              <Grid item xs={2}>
+                <SvgIcon sx={{ marginTop: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <CoffeeIcon color='primary' />
                 </SvgIcon>
               </Grid>
-              <Grid item>
+              <Grid item xs={10}>
                 <TextField
                   inputProps={{ inputMode: 'numeric', step: "any", min: 1, max: 100, pattern: ' ^[-,0-9]+$' }}
                   type='number'
+                  fullWidth
                   label='Coffee Price'
-                  sx={{ width: 150, marginBottom: 2 }}
+                  sx={{ marginBottom: 2 }}
                   placeholder='10'
                   size='small'
                   value={coffeePrice}
