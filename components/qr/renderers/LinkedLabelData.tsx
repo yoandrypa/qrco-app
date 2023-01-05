@@ -94,15 +94,14 @@ export default function LinkedLabelData({
       return tempo;
     });
   };
-  const handleChangeText = (item: string, index: number) =>
-      (payload: ChangeEvent<HTMLInputElement> | string) => {
-        setData((prev: DataType) => {
-          const tempo = { ...prev };
-          // @ts-ignore
-          tempo.fields[index][item] = payload.target?.value !== undefined ? payload.target.value : payload;
-          return tempo;
-        });
-      }
+  const handleChangeText = (item: string, index: number, value: string) =>{
+    setData((prev: DataType) => {
+      const tempo = { ...prev };
+      // @ts-ignore
+      tempo.fields[index][item] = value;
+      return tempo;
+    });    
+  }
 
   const handleAddTextField = () => {
     setData((prev: DataType) => {
@@ -135,9 +134,9 @@ export default function LinkedLabelData({
       const oldFiles = tempo.fields[index].files || [];
       let newFiles = conjunctMethods.intersection(oldFiles, files, isSameFile);
       if (newFiles.length === 0) {
-        newFiles = [...oldFiles].concat(files);
+        newFiles = [...oldFiles, ...files];
       }
-      tempo.fields[index] = { ...tempo.fields[index], files: newFiles };
+      tempo.fields[index].files = newFiles;
       setGalleries(newFiles.length);
       return tempo;
     });
@@ -183,14 +182,18 @@ export default function LinkedLabelData({
           <Grid container key={index}>
             <Grid item xs={12}>
               <RenderTextFields
-                handleValues={handleChangeText('title', index)}
+                handleValues={(e: any) => {
+                  handleChangeText('title', index, e.target.value);
+                }}
                 label="Title"
                 value={item.title}
               />
             </Grid>
             <Grid item xs={12}>
               <RenderTextFields
-                handleValues={handleChangeText('text', index)}
+                handleValues={(e: any) => {
+                  handleChangeText('text', index, e.target.value);
+                }}
                 label="Description"
                 value={item.text}
                 multiline
@@ -266,7 +269,7 @@ export default function LinkedLabelData({
       <Topics message="Categories" top="3px" />
       <Grid container>
         <Grid item xs={12} md={6}>
-          <RenderChipFields values={data.categories?data.categories:[] } handleValues={handleCategories} options={categoryOptions}/>
+          <RenderChipFields values={data.categories?data.categories:[] } handleValues={handleCategories} />
         </Grid>
         <Grid container item xs={12} md={6}
         justifyContent="flex-end"
