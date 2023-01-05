@@ -14,6 +14,14 @@ const LinkSchema = new dynamoose.Schema({
     enum: [ "redirect_link", "qr_link", "download_link" ],
     default: "qr_link"
   },
+  claimable: {
+    type: Boolean,
+    default: false
+  },
+  preGenerated: {
+    type: Boolean,
+    default: false
+  },
   address: {
     type: String,
     required: true,

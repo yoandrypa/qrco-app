@@ -1,5 +1,5 @@
 import * as Qr from "../queries/qr";
-import {CustomError} from "../utils";
+import { CustomError } from "../utils";
 import * as Link from "../queries/link";
 
 // @ts-ignore
