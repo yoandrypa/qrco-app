@@ -10,7 +10,7 @@ interface Props {
   handleValue: Function;
 }
 
-export default function RenderButtonsFontsHandler({data, handleValue}: Props) {
+export default function RenderMainFontsHandler({data, handleValue}: Props) {
   const isWide = useMediaQuery("(min-width:1010px)", { noSsr: true });
   const isWideEnough = useMediaQuery("(min-width:483px)", { noSsr: true });
 

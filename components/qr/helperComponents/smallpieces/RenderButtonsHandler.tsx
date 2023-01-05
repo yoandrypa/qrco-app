@@ -8,7 +8,7 @@ import FormControl from "@mui/material/FormControl";
 
 import dynamic from "next/dynamic";
 
-import RenderButtonsFontsHandler from "./RenderButtonsFontsHandler";
+import RenderMainFontsHandler from "./RenderMainFontsHandler";
 import {DataType} from "../../types/types";
 import SectionSelector from "../SectionSelector";
 import ColorSelector from "../ColorSelector";
@@ -47,7 +47,7 @@ export default function RenderButtonsHandler({data, handleValue}: ButtonsHandler
 
   return (
     <Box sx={{mt: 1}}>
-      <RenderButtonsFontsHandler handleValue={handleValue} data={data}/>
+      <RenderMainFontsHandler handleValue={handleValue} data={data}/>
       <Paper elevation={2} sx={{p: 1, my: 2, display: 'flex', flexDirection: isWide ? 'row' : 'column'}}>
         <Box>
           <Typography>{'Shape'}</Typography>
@@ -63,16 +63,16 @@ export default function RenderButtonsHandler({data, handleValue}: ButtonsHandler
         <Typography>{'Background'}</Typography>
         <Box sx={{display: 'flex', flexDirection: isWide && isWideEnough ? 'row' : 'column', width: '100%'}}>
           <FormControl sx={{m: 0, mt: 1, width: '100%'}} size="small">
-            <InputLabel id="buttonBackColor">Page size</InputLabel>
+            <InputLabel id="buttonBackColor">Behaviour</InputLabel>
             <Select
               labelId="buttonBackColor"
               id="buttonBackColor"
               value={data?.buttonBack || 'default'}
-              label="Page size"
+              label="Behaviour"
               onChange={handler}
             >
               <MenuItem value="default">Use main colors as default behaviour</MenuItem>
-              <MenuItem value="solid">Solid color</MenuItem>
+              <MenuItem value="solid">Keep same color even on hover</MenuItem>
               <MenuItem value="two">Custom primary and secondary colors</MenuItem>
               <MenuItem value="gradient">Gradient custom primary and secondary colors</MenuItem>
             </Select>

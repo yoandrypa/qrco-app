@@ -11,6 +11,7 @@ interface IframeProps {
   width: string;
   height: string;
   data?: DataType;
+  shareLink?: string;
   selected?: string;
   backImg?: File | string;
   mainImg?: File | string;
@@ -26,7 +27,7 @@ const style = {
   textAlign: 'center'
 };
 
-const RenderIframe = ({src, width, height, data, selected, backImg, mainImg}: IframeProps) => {
+const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, shareLink}: IframeProps) => {
   const [whatToRender, setWhatToRender] = useState<string | null>(null);
   const [error, setError] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -38,7 +39,10 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg}: If
     if (data && isReady) {
       const isInEdition = data.mode === 'edit';
       setTimeout(async () => {
-        const previewData = {...data};
+        const previewData = {...data}; // @ts-ignore
+        if (shareLink && data.shortlinkurl === undefined) { // @ts-ignore
+          previewData.shortlinkurl = shareLink;
+        }
         if ((!isInEdition && data.backgndImg) || backImg) { // @ts-ignore
           previewData.backgndImg = !isInEdition ? await convertBase64( data.backgndImg) : backImg;
         }

@@ -17,7 +17,7 @@ import Expander from "../../renderers/helpers/Expander";
 
 import dynamic from "next/dynamic";
 
-const RenderButtonsFontsHandler = dynamic(() => import("./RenderButtonsFontsHandler"));
+const RenderButtonsFontsHandler = dynamic(() => import("./RenderMainFontsHandler"));
 
 interface RenderFontsHandlerProps {
   data?: DataType;
