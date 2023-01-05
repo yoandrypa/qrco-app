@@ -10,7 +10,7 @@ import { EMAIL, PHONE, ZIP } from "../components/qr/constants";
 export const generateShortLink = (id: string | undefined, customDomain?: string | null): string => {
   const protocol =
     process.env.REACT_APP_CUSTOM_DOMAIN_USE_HTTPS === "true" || customDomain ? "https://" : "http://";
-  const domain = process.env.REACT_APP_DEFAULT_DOMAIN;
+  const domain = process.env.REACT_APP_SERVER_BASE_URL;
   return `${protocol}${customDomain || domain}/${id}`;
 };
 
