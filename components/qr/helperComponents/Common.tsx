@@ -1,4 +1,4 @@
-import {ReactNode, useCallback, useContext, useEffect, useRef, useState} from "react";
+import {ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
 import Typography from "@mui/material/Typography";
 import InputAdornment from "@mui/material/InputAdornment";
 import ArticleIcon from '@mui/icons-material/ArticleOutlined';
@@ -191,6 +191,10 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     return opts;
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const omitProfileImg = useMemo(() => (
+    !['vcard+', 'link', 'business', 'social', 'donations', 'petId', 'linkedLabel'].includes(selected) || !data?.isDynamic
+  ), [selected, data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <>
       {error && (
@@ -233,7 +237,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                   <RenderQRCommons
                     isWideForPreview={isWideForPreview}
                     handleValue={handleValue}
-                    omitPrimaryImg={!['vcard+', 'link', 'business', 'social', 'donations', 'petId', 'linkedLabel'].includes(selected) || !data?.isDynamic}
+                    omitPrimaryImg={omitProfileImg}
                     backgndImg={data.mode === 'edit' ? (Array.isArray(data?.backgndImg) ? backImg || undefined : data?.backgndImg) : data?.backgndImg}
                     foregndImg={data.mode === 'edit' ? (Array.isArray(data?.foregndImg) ? foreImg || undefined : data?.foregndImg) : data?.foregndImg}
                     loading={loading}
@@ -247,20 +251,20 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           {isWideForPreview && (
             <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
                                  save={handleSave} style={{mt: 1, ml: '15px', position: 'sticky', top: '120px'}} saveDisabled={isWrong}
-                                 qrOptions={optionsForPreview()} data={previewQRGenerator(data, selected)} step={1}
+                                 qrOptions={optionsForPreview()} step={1} mainImg={data.mode === 'edit' ? foreImg : undefined}
+                                 data={previewQRGenerator(data, selected, omitProfileImg)}
                                  onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
-                                 shareLink={options?.data} backImg={data.mode === 'edit' ? backImg : undefined}
-                                 mainImg={data.mode === 'edit' ? foreImg : undefined} /> )}</Box>
+                                 shareLink={options?.data} backImg={data.mode === 'edit' ? backImg : undefined}/> )}</Box>
       ) : renderChildren()}
       {!openPreview && !isWideForPreview  && <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />}
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={selected === 'web' || !data.isDynamic ? 400 : 700} border={35}>
           <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
                                save={handleSave} isDrawed saveDisabled={isWrong} style={{mt: '-15px'}} step={1}
-                               data={previewQRGenerator(data, selected)} qrOptions={optionsForPreview()}
+                               data={previewQRGenerator(data, selected, omitProfileImg)}
                                onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
                                shareLink={options?.data} backImg={data.mode === 'edit' ? backImg : undefined}
-                               mainImg={data.mode === 'edit' ? foreImg : undefined} />
+                               mainImg={data.mode === 'edit' ? foreImg : undefined} qrOptions={optionsForPreview()} />
         </RenderPreviewDrawer>
       )}
     </>

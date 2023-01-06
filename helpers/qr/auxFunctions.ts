@@ -1,10 +1,11 @@
 import {DataType} from "../../components/qr/types/types";
+import {bannerImg, mainImg} from "./previewFiles";
 
-export const previewQRGenerator = (data: DataType, selected: string) => {
+export const previewQRGenerator = (data: DataType, selected: string, omit?: boolean) => {
   let sum = 0;
 
   const items = ['qrName', 'isDynamic', 'backgroundColor', 'backgroundType', 'backgroundDirection', 'backgroundColorRight',
-  'primary', 'secondary', 'backgndImg', 'foregndImg', 'foregndImgType', 'globalFont', 'buttonsFont',  'titlesFont',
+  'primary', 'secondary', 'backgndImg', 'foregndImg', 'foregndImgType', 'globalFont', 'buttonsFont', 'titlesFont',
   'messagesFont', 'titlesFontSize', 'messagesFontSize', 'buttonsFontSize', 'subtitlesFontSize', 'subtitlesFont',
   'titlesFontStyle', 'subtitlesFontStyle', 'messagesFontStyle', 'buttonsFontStyle', 'globalFontColor', 'buttonShape',
   'buttonBack', 'buttonBackColor', 'buttonBorders', 'layout'];
@@ -44,6 +45,14 @@ export const previewQRGenerator = (data: DataType, selected: string) => {
       if (obj.files !== undefined) { delete obj.files; }
       populate('isSample', true);
     };
+
+    if (!data.foregndImg && !omit) {
+      obj.foregndImg = mainImg;
+    }
+
+    if (!data.backgndImg) {
+      obj.backgndImg = bannerImg;
+    }
 
     if (selected === 'business') {
       populate('company', 'Sample Company Name');

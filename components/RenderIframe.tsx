@@ -44,10 +44,10 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
           previewData.shortlinkurl = shareLink;
         }
         if ((!isInEdition && data.backgndImg) || backImg) { // @ts-ignore
-          previewData.backgndImg = !isInEdition ? await convertBase64( data.backgndImg) : backImg;
+          previewData.backgndImg = !isInEdition ? (typeof data.backgndImg !== 'string' ? await convertBase64(data.backgndImg) : data.backgndImg) : backImg;
         }
         if ((!isInEdition && data.foregndImg) || mainImg) { // @ts-ignore
-          previewData.foregndImg = !isInEdition ? await convertBase64(data.foregndImg) : mainImg;
+          previewData.foregndImg = !isInEdition ? (typeof data.foregndImg !== 'string' ? await convertBase64(data.foregndImg) : data.foregndImg) : mainImg;
         } // @ts-ignore
         if (data.files) {
           let files: string[] = []; // @ts-ignore
@@ -69,7 +69,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
           let fields: any[] = []; // @ts-ignore
           if (!data.isSample) {
             for (let i = 0, l = data.fields.length; i < l; i += 1) {
-              if(data.fields[i].type != 'media'){ 
+              if(data.fields[i].type != 'media'){
                 fields.push(data.fields[i]);
                 continue;
               }
@@ -89,7 +89,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
           } // @ts-ignore
           previewData.fields = fields;
         }
-        
+
         if (iRef.current?.contentWindow) { // @ts-ignore
           iRef.current.contentWindow.postMessage(JSON.stringify({previewData}), process.env.REACT_MICROSITES_ROUTE);
         }

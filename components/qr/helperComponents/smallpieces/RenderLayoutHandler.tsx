@@ -92,7 +92,7 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
             mx: 'auto',
             transform: `translate(${!isLeft ? 0 : '-25px'}, ${!inverse ? -24 : -34}px)`,
             border: 'solid 2px #fff',
-            borderRadius: '50%'
+            borderRadius: !data?.foregndImgType || data.foregndImgType === 'circle' ? '50%' : (data.foregndImgType === 'smooth' ? '10px' : '3px')
           }}/>)}
         {kind.includes('sections') && (
           <Box sx={{ width: 'calc(100% - 20px)', mx: '5px',  marginTop: `${!inverse ? -18 : -28}px`, marginLeft: 'auto', marginRight: 'auto' }}>
