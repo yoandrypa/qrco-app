@@ -1,65 +1,30 @@
-import {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import {ReactNode, useCallback, useEffect, useMemo, useRef, useState} from "react";
 
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import dynamic from "next/dynamic";
+
 import Context from "./Context";
-import {
-  initialBackground,
-  initialData,
-  initialFrame,
-} from "../../helpers/qr/data";
-import {
-  BackgroundType,
-  CornersAndDotsType,
-  DataType,
-  FramesType,
-  OptionsType,
-} from "../qr/types/types";
-import {
-  PARAM_QR_TEXT,
-  QR_CONTENT_ROUTE,
-  QR_DESIGN_ROUTE,
-  QR_DETAILS_ROUTE,
-  QR_TYPE_ROUTE,
-} from "../qr/constants";
+import {initialBackground, initialData, initialFrame} from "../../helpers/qr/data";
+import {BackgroundType, CornersAndDotsType, DataType, FramesType, OptionsType} from "../qr/types/types";
+import {PARAM_QR_TEXT, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE, QR_TYPE_ROUTE} from "../qr/constants";
 import AppWrapper from "../AppWrapper";
-import {
-  dataCleaner,
-  getBackgroundObject,
-  getCornersAndDotsObject,
-  getFrameObject,
-  handleInitialData,
-} from "../../helpers/qr/helpers";
+import {dataCleaner, getBackgroundObject, getCornersAndDotsObject, getFrameObject, handleInitialData} from "../../helpers/qr/helpers";
+import { create, get } from "../../handlers/users";
+
 // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
 // @ts-ignore
 import cookies from "@ebanux/ebanux-utils/cookiesStorage";
-import { create, get } from "../../handlers/users";
 
 const Loading = dynamic(() => import("../Loading"));
 const PleaseWait = dynamic(() => import("../PleaseWait"));
 const Generator = dynamic(() => import("../qr/Generator"));
 
-interface ContextProps {
-  children: ReactNode;
-}
-
-const AppContextProvider = (props: ContextProps) => {
-  const { children } = props;
-
-  const [options, setOptions] = useState<OptionsType>(
-    handleInitialData("Ebanux"));
+const AppContextProvider = ({ children }: {children: ReactNode}) => {
+  const [options, setOptions] = useState<OptionsType>(handleInitialData("Ebanux"));
   const [cornersData, setCornersData] = useState<CornersAndDotsType>(null);
   const [dotsData, setDotsData] = useState<CornersAndDotsType>(null);
-  const [background, setBackground] = useState<BackgroundType>(
-    initialBackground);
+  const [background, setBackground] = useState<BackgroundType>(initialBackground);
   const [frame, setFrame] = useState<FramesType>(initialFrame);
   const [data, setData] = useState<DataType>(initialData);
   const [isTrialMode, setIsTrialMode] = useState<boolean>(false);
@@ -84,10 +49,14 @@ const AppContextProvider = (props: ContextProps) => {
     forbidClear.current = true;
   }, []);
 
+  const resetSelected = useCallback(() => {
+    setSelected(`vcard${data?.isDynamic ? '+' : ''}`);
+  }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const clearData = useCallback(
     (keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean) => {
       if (!keepType || doNot || takeAwaySelection) {
-        setSelected(null);
+        resetSelected();
       }
       setBackground(initialBackground);
       setFrame(initialFrame);
@@ -98,7 +67,7 @@ const AppContextProvider = (props: ContextProps) => {
       setOptions(handleInitialData("Ebanux"));
 
       let newData: DataType;
-      if (!keepType || data.isDynamic) {
+      if (!keepType || data?.isDynamic) {
         newData = initialData;
       } else {
         newData = {};
@@ -119,7 +88,7 @@ const AppContextProvider = (props: ContextProps) => {
 
   useEffect(() => {
     if (doneInitialRender.current && options?.mode !== "edit") {
-      setSelected(null);
+      resetSelected();
     }
   }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -174,18 +143,14 @@ const AppContextProvider = (props: ContextProps) => {
 
   const logout = useCallback(async () => {
     setLoading(true);
-    let params = {
-      logout_uri: session.appBaseUrl,
-      client_id: session.appClientId,
-    };
-    let queryString = Object.keys(params).map((key) => { // @ts-ignore
-      return encodeURIComponent(key) + "=" + encodeURIComponent(params[key]);
+    const params = { logout_uri: session.appBaseUrl, client_id: session.appClientId };
+    const queryString = Object.keys(params).map((key) => { // @ts-ignore
+      return `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`;
     }).join("&");
-    const oauthLogOutUrl = process.env.REACT_APP_OAUTH_LOGOUT_URL || "";
     session.del("credentials");
     session.del("account");
     cookies.del("account");
-    window.location.href = "".concat(oauthLogOutUrl, "?", queryString);
+    window.location.href = `${process.env.REACT_APP_OAUTH_LOGOUT_URL || ""}?${queryString}`;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (router.pathname.startsWith("/qr") && ![
@@ -223,12 +188,9 @@ const AppContextProvider = (props: ContextProps) => {
 
   return (
     <Context.Provider value={{
-      cornersData, setCornersData, dotsData, setDotsData,
-      frame, setFrame, background, setBackground,
-      options, setOptions, selected, setSelected,
-      data, setData, isTrialMode, userInfo,
-      clearData, loading, setLoading, setRedirecting,
-      isWrong, setIsWrong, doNotClear,
+      cornersData, setCornersData, dotsData, setDotsData, frame, setFrame, background, setBackground,
+      options, setOptions, selected, setSelected, data, setData, isTrialMode, userInfo,
+      clearData, loading, setLoading, setRedirecting, isWrong, setIsWrong, doNotClear
     }}>
       {renderContent()}
     </Context.Provider>
