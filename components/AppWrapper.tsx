@@ -152,15 +152,7 @@ export default function AppWrapper(props: AppWrapperProps) {
           <Container sx={{ my: "auto" }}>
             <Toolbar sx={{ "&.MuiToolbar-root": { px: 0 }, display: "flex", justifyContent: "space-between", color: theme => theme.palette.text.primary }}>
               <Link href={{ pathname: !userInfo ? QR_TYPE_ROUTE : "/" }}>
-                <Box sx={{ display: "flex", cursor: "pointer" }}>
-                  <Box component="img" alt="EBANUX" src="/ebanuxQr.svg" sx={{ width: "40px", display: isWide ? "block" : "none" }} />
-                  <Typography sx={{
-                    my: "auto",
-                    ml: "5px",
-                    fontSize: "28.8px",
-                    fontWeight: "bold",
-                  }}>{"QRLink"}</Typography>
-                </Box>
+                <Box component="img" alt="EBANUX" src="/logo.svg" sx={{ width: "160px", cursor: "pointer" }} />
               </Link>
               <Box sx={{ display: "flex" }}>
                 {router.query[PARAM_QR_TEXT] === undefined && (<>
