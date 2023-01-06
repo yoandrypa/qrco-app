@@ -8,37 +8,43 @@ interface RenderChipFieldsProps {
   isError?: boolean;
   values: string[];
   item?: string;
-  options: string[];
+  options?: string[];
+  freeSolo?: boolean;
 }
 
-const RenderChipFields = ({values, handleValues, label, item, required, isError, options}: RenderChipFieldsProps) => {
-    return (
-    <FormControl fullWidth error={isError} required={required} size='small' margin="dense">
-        <InputLabel id={`${item}-label`}>{label}</InputLabel>
-        <Autocomplete
-        value={values}
-        onChange={(event, newValue, reason) => {
-          handleValues(newValue);
-        }}
-        multiple
-        id="tags-filled"
-        options={options}
-        freeSolo
-        renderTags={(value: readonly string[], getTagProps) =>
-          value.map((option: string, index: number) => (
-            <Chip variant="outlined" label={option} {...getTagProps({ index })} key={`chip-${option}`}/>
-          ))
-        }
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            variant="filled"
-            label="Categories"
-            placeholder="Add Categories"
-          />
-        )}
-      />
-    </FormControl>
+const RenderChipFields = ({values, handleValues, label, item, required, isError, options,freeSolo}: RenderChipFieldsProps) => {
+  if(!options) options = [];
+  const newOptions = [...options];
+  if(freeSolo !== false)
+    newOptions.push("Add New");
+  return (
+  <FormControl fullWidth error={isError} required={required} size='small' margin="dense">
+      <InputLabel id={`${item}-label`}>{label}</InputLabel>
+      <Autocomplete
+      value={values}
+      onChange={(event, newValue, reason) => {
+        handleValues(newValue);
+      }}
+      multiple
+      id="tags-filled"
+      options={newOptions}
+      freeSolo= {freeSolo||true}
+      getOptionDisabled={(option) => option === "Add New"}
+      renderTags={(value: readonly string[], getTagProps) =>
+        value.map((option: string, index: number) => (
+          <Chip variant="outlined" label={option} {...getTagProps({ index })} key={`chip-${option}`}/>
+        ))
+      }
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          variant="filled"
+          label="Categories"
+          placeholder="Add Categories"
+        />
+      )}
+    />
+  </FormControl>
 );}
 
 export default RenderChipFields

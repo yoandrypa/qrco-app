@@ -65,6 +65,31 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
           } // @ts-ignore
           previewData.files = files;
         }
+        if(data.fields) { // convert images on media fields to base64
+          let fields: any[] = []; // @ts-ignore
+          if (!data.isSample) {
+            for (let i = 0, l = data.fields.length; i < l; i += 1) {
+              if(data.fields[i].type != 'media'){ 
+                fields.push(data.fields[i]);
+                continue;
+              }
+              const media = {type:"media", files:[]}
+              for( let j = 0, k = data.fields[i].files.length; j < k; j += 1) {
+                const file = data.fields[i].files[j] as File | string; // @ts-ignore
+                if (typeof file === 'string') { // @ts-ignore
+                  media.files.push(file);
+                } else { // @ts-ignore
+                  media.files.push(await convertBase64(file));
+                }
+              }
+              fields.push(media);
+            }
+          }  else { // @ts-ignore
+            fields = data.fields;
+          } // @ts-ignore
+          previewData.fields = fields;
+        }
+        
         if (iRef.current?.contentWindow) { // @ts-ignore
           iRef.current.contentWindow.postMessage(JSON.stringify({previewData}), process.env.REACT_MICROSITES_ROUTE);
         }
