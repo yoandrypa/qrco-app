@@ -20,6 +20,7 @@ import socialsAreValid from './validator';
 import { Button, Menu, MenuItem, Typography } from '@mui/material';
 import FileUpload from 'react-material-file-upload';
 import RenderChipFields from './helpers/RenderChipFields';
+import RenderContactForm from '../helperComponents/smallpieces/RenderContactForm';
 
 interface LinkedLabelDataProps {
   data: DataType;
@@ -57,6 +58,7 @@ export default function LinkedLabelData({
   const open = Boolean(anchorEl);
   const MAX_NUM_GALLERIES = 5;
 
+
   const handleClickAddField = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -64,7 +66,7 @@ export default function LinkedLabelData({
     setAnchorEl(null);
   };
   const handleCategories = (payload: string[]) => {
-    console.log({ payload});
+    console.log({ payload });
     setData((prev: DataType) => {
       const tempo = { ...prev };
       tempo.categories = payload;
@@ -73,12 +75,12 @@ export default function LinkedLabelData({
   }
 
   const remove = (index: number) => {
-      setData((prev: DataType) => {
-        const tempo = { ...prev };
-        tempo.fields = tempo.fields?.filter((_, i) => i !== index);
-        return tempo;
-      });
-    }
+    setData((prev: DataType) => {
+      const tempo = { ...prev };
+      tempo.fields = tempo.fields?.filter((_, i) => i !== index);
+      return tempo;
+    });
+  }
 
   const onDragEnd = (result: any) => {
     if (!result?.destination) {
@@ -94,13 +96,13 @@ export default function LinkedLabelData({
       return tempo;
     });
   };
-  const handleChangeText = (item: string, index: number, value: string) =>{
+  const handleChangeText = (item: string, index: number, value: string) => {
     setData((prev: DataType) => {
       const tempo = { ...prev };
       // @ts-ignore
       tempo.fields[index][item] = value;
       return tempo;
-    });    
+    });
   }
 
   const handleAddTextField = () => {
@@ -112,7 +114,7 @@ export default function LinkedLabelData({
       tempo.fields?.push({ type: 'text', title: '', text: '' });
       return tempo;
     });
-    setExpander(data.fields? (data.fields.length - 1).toString()  :  '0');
+    setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
   };
   const updateFields = (files: File[], index: number) => {
     setData((prev: DataType) => {
@@ -151,16 +153,28 @@ export default function LinkedLabelData({
       tempo.fields?.push({ type: 'media', files: [] });
       return tempo;
     });
-    setExpander(data.fields? (data.fields.length - 1).toString()  :  '0');
+    setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
   }
 
-  const renderItem = (item: string, label: string, required?:boolean, placeholder?:string) => {
+  const handleAddContactForm = () => {
+    setData((prev: DataType) => {
+      const tempo = { ...prev };
+      if (!tempo.fields) {
+        tempo.fields = [];
+      }
+      tempo.fields?.push({ type: 'contact', tittle: '', message: '', buttonText: '' });
+      return tempo;
+    });
+    setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
+  }
+
+  const renderItem = (item: string, label: string, required?: boolean, placeholder?: string) => {
     let isError = false as boolean;
     // @ts-ignore
     const value = data?.[item] || ('' as string);
 
     if (value.trim().length) {
-    const dl = value.trim().length;
+      const dl = value.trim().length;
     }
 
     return (
@@ -170,7 +184,7 @@ export default function LinkedLabelData({
         isError={isError}
         value={value}
         handleValues={handleValues}
-        required={item === 'petName'||required}
+        required={item === 'petName' || required}
         placeholder={placeholder}
       />
     );
@@ -206,10 +220,20 @@ export default function LinkedLabelData({
             </Grid>
           </Grid>
         );
+      case 'contact':
+        return (
+          <RenderContactForm
+            // email={item.email}
+            title={item.title}
+            buttonText={item.buttonText}
+            messagePlaceholder={item.message}
+            handleChange={handleChangeText}
+            index={index}
+          />
+        );
       case 'media':
-        let title = `Drag 'n' drop some files here, or click to select files. Selected ${
-          item['files']?.length || 0
-        } of ${5} allowed`;
+        let title = `Drag 'n' drop some files here, or click to select files. Selected ${item['files']?.length || 0
+          } of ${5} allowed`;
         return (
           <Grid item xs={12}>
             <FileUpload
@@ -234,6 +258,22 @@ export default function LinkedLabelData({
         );
     }
   };
+
+  const renderLabelTitle = (type: string) => {
+    let fieldtype;
+    switch (type) {
+      case 'text':
+        fieldtype = 'Title + Description field';
+        break;
+      case 'contact':
+        fieldtype = 'Contact Form';
+        break;
+      default:
+        fieldtype = 'Media field'
+        break;
+    }
+    return fieldtype;
+  }
 
   useEffect(() => {
     let isWrong = false;
@@ -264,23 +304,23 @@ export default function LinkedLabelData({
         </Grid>
         <Grid item xs={12}>
           {renderItem('about', 'Description',)}
-        </Grid>       
+        </Grid>
       </Grid>
       <Topics message="Categories" top="3px" />
       <Grid container>
         <Grid item xs={12} md={6}>
-          <RenderChipFields values={data.categories?data.categories:[] } handleValues={handleCategories} />
+          <RenderChipFields values={data.categories ? data.categories : []} handleValues={handleCategories} />
         </Grid>
         <Grid container item xs={12} md={6}
-        justifyContent="flex-end"
-        alignItems="center"
+          justifyContent="flex-end"
+          alignItems="center"
         >
           <Button
             id="add-field"
             aria-controls={open ? 'basic-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
-            variant="outlined" 
+            variant="outlined"
             onClick={handleClickAddField}
             size="large"
           >
@@ -295,16 +335,22 @@ export default function LinkedLabelData({
               'aria-labelledby': 'basic-button',
             }}
           >
-            <MenuItem onClick={()=>{
+            <MenuItem onClick={() => {
               handleAddTextField();
               handleCloseAddField();
             }}>Add text field</MenuItem>
-            <MenuItem onClick={()=>{
+            <MenuItem onClick={() => {
               handleAddMediaField();
               handleCloseAddField();
             }}
-            disabled={galleries >= MAX_NUM_GALLERIES}
+              disabled={galleries >= MAX_NUM_GALLERIES}
             >Add Media Field</MenuItem>
+            <MenuItem onClick={() => {
+              handleAddContactForm();
+              handleCloseAddField();
+            }}
+
+            >Add Contact Form Field</MenuItem>
           </Menu>
         </Grid>
       </Grid>
@@ -367,11 +413,7 @@ export default function LinkedLabelData({
                                     )
                                   }
                                   item={`item-${index}`}
-                                  title={
-                                    x.type === 'text'
-                                      ? 'Title + Description field'
-                                      : 'Media field'
-                                  }
+                                  title={renderLabelTitle(x.type)}
                                   deleteButton
                                   handleDelete={() => remove(index)}
                                 />
