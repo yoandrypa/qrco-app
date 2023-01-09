@@ -33,10 +33,10 @@ async function setUserSubscription(
   subscription: UserSubscription,
 ) {
 
-  const user = await findUserByCustomerId(customerId)
-  console.log('user from findUserByCustomerId', user)
-  console.error(`the id is ${user.id} customer ${user.customerId} in setUserSubscription`)
-  if (!user) {
+  const [users] = await findUserByCustomerId(customerId)
+  console.log('user from findUserByCustomerId', JSON.stringify(users));
+  console.error(`the id is ${users.id} customer ${users.customerId} in setUserSubscription`)
+  if (!users.id) {
     return Error(`Could not find user for customerId ${customerId}`);
   }
   try {
@@ -64,7 +64,7 @@ async function setUserSubscription(
         plan = 'free'
         break;
     }
-    await updateUserInDB({ id: user.id }, { subscriptionData: subscription, planType: plan })
+    await updateUserInDB({ id: users.id }, { subscriptionData: subscription, planType: plan })
   } catch (error) {
     console.log(`Error saving user subscription data`, error)
     return error
