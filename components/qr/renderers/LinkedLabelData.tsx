@@ -164,7 +164,7 @@ export default function LinkedLabelData({
       if (!tempo.fields) {
         tempo.fields = [];
       }
-      tempo.fields?.push({ type: 'contact', tittle: '', message: '', buttonText: '', email: currentAccount.email });
+      tempo.fields?.push({ type: 'contact', title: '', message: '', buttonText: '', email: currentAccount.email });
       return tempo;
     });
     setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
