@@ -34,8 +34,8 @@ async function setUserSubscription(
 ) {
 
   const user = await findUserByCustomerId(customerId)
-  console.log('user from findUserByCustomerId', user)
-  console.error(`the id is ${user.id} customer ${user.customerId} in setUserSubscription`)
+  console.log('user from findUserByCustomerId', JSON.stringify(user));
+  console.error(`the id is ${user[0].id} customer ${user[0].customerId} in setUserSubscription`)
   if (!user) {
     return Error(`Could not find user for customerId ${customerId}`);
   }
