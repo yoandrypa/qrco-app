@@ -1,11 +1,11 @@
-import {MouseEvent, useLayoutEffect, useState} from "react";
+import { MouseEvent, useLayoutEffect, useState } from "react";
 import style from "./CountDown.module.css";
 import Typography from "@mui/material/Typography";
 import pluralize from "pluralize";
 import Link from "next/link";
 import IconButton from '@mui/material/IconButton';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import {keyframes} from "@mui/system";
+import { keyframes } from "@mui/system";
 import Popover from "@mui/material/Popover";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
@@ -76,15 +76,15 @@ const CountDown = (props: Props) => {
         const currentDate = Number(new Date());
         const timeBetweenDates = Math.ceil((countToDate - currentDate) / 1000);
         if (timeBetweenDates <= 0) {
-          setTrialIsOver(true);
+          // setTrialIsOver(true);
           clearInterval(interval);
         } else {
           flipAllCards(timeBetweenDates);
           previousTimeBetweenDates = timeBetweenDates;
 
-          if (days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0) {
-            setTrialIsOver(true);
-          }
+          // if (days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0) {
+          //   setTrialIsOver(true);
+          // }
         }
 
       }, 1000);
@@ -95,8 +95,8 @@ const CountDown = (props: Props) => {
 
   return (
     <>
-      <Tooltip title={`${trialIsOver ? "Trial has ended" : "Trial mode"}. Click for details`}>
-        <IconButton sx={{ml: '5px'}} onClick={handleOpen}>
+      <Tooltip title={`${trialIsOver ? "Trial has ended" : "Free mode"}. Click for details`}>
+        <IconButton sx={{ ml: '5px' }} onClick={handleOpen}>
           <Box sx={{
             border: anchorEl ? 'unset' : theme => `solid 5px ${trialIsOver ? theme.palette.error.main : theme.palette.warning.main}`,
             width: '40px',
@@ -107,7 +107,7 @@ const CountDown = (props: Props) => {
             borderRadius: '100%',
             animation: anchorEl ? 'unset' : `${grow} 2s infinite ease`
           }} />
-          <NotificationsActiveIcon color={trialIsOver ? "error" : "warning"} sx={{animation: anchorEl ? 'unset' : `${ring} 2s infinite ease`, '&:hover': {animation: 'unset'}}} />
+          <NotificationsActiveIcon color={trialIsOver ? "error" : "warning"} sx={{ animation: anchorEl ? 'unset' : `${ring} 2s infinite ease`, '&:hover': { animation: 'unset' } }} />
         </IconButton>
       </Tooltip>
       {anchorEl && (<Popover
@@ -117,19 +117,19 @@ const CountDown = (props: Props) => {
         anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Box sx={{p: 2, background: theme => trialIsOver ? theme.palette.error.light : theme.palette.warning.light}}>
+        <Box sx={{ p: 2, background: theme => trialIsOver ? theme.palette.error.light : theme.palette.warning.light }}>
           {trialIsOver ? (
             <Typography>
-              {"Your 14 days of free trial has ended. Your QR codes are disabled now. Click "}
-                 <span style={{ color: "blue" }}><Link href="/plans">here</Link></span>
+              {"You're on a free account, Please Upgrade now to get access to more features. Click "}
+              <span style={{ color: "blue" }}><Link href="/plans">here</Link></span>
               {" to go to the pricing page."}
             </Typography>
           ) : (
             <Typography sx={{ display: 'inline' }}>
-              {"You are in trial mode. Please subscribe to a plan "}
+              {"You are in free mode. Please subscribe to a plan "}
               <span style={{ color: "blue" }}><Link href="/plans">here</Link></span>
               {". Your free trial ends in:"}
-              <Box className={".MuiAlert-standardWarning"} sx={{display: 'inline-block', ml: '5px'}}>
+              <Box className={".MuiAlert-standardWarning"} sx={{ display: 'inline-block', ml: '5px' }}>
                 <div className={style.container}>
                   {days > 0 && <div className={style.container_segment}>
                     <div className={style.segment}>
