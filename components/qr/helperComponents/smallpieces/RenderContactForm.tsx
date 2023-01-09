@@ -19,8 +19,6 @@ interface ContactFormProps {
 
 function RenderContactForm({ title, buttonText, messagePlaceholder, handleChange, index }: ContactFormProps) {
 
-
-
   return (
     <Stack spacing={2}>
       <Alert severity='info' sx={{ mb: 1 }}>
