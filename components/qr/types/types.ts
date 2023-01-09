@@ -266,3 +266,18 @@ export type ProcessHanldlerType = {
   value: string;
   status?: boolean;
 };
+ export type DragField = {
+  type: 'text'|'media';
+  header: string;
+ }
+
+export type DragFields = (TextField|MediaField)[]
+
+export type TextField = DragField & {
+  title?: string;
+  text?: string;
+}
+
+export type MediaField = DragField & {
+  files?: File[];
+}

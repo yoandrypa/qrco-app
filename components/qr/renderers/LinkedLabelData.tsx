@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import { conjunctMethods, toBytes } from '../../../utils';
 import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS } from '../../../consts';
@@ -12,11 +12,9 @@ import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Common from '../helperComponents/Common';
 import Topics from './helpers/Topics';
-import { isValidUrl } from '../../../utils';
 import RenderTextFields from './helpers/RenderTextFields';
-import { DataType, LinkType } from '../types/types';
+import { DataType } from '../types/types';
 import Expander from './helpers/Expander';
-import socialsAreValid from './validator';
 import { Button, Menu, MenuItem, Typography } from '@mui/material';
 import FileUpload from 'react-material-file-upload';
 import RenderChipFields from './helpers/RenderChipFields';
@@ -55,7 +53,7 @@ export default function LinkedLabelData({
   const [galleries, setGalleries] = useState<number>(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const MAX_NUM_GALLERIES = 5;
+  const MAX_NUM_GALLERIES = 6;
 
   const handleClickAddField = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -209,7 +207,7 @@ export default function LinkedLabelData({
       case 'media':
         let title = `Drag 'n' drop some files here, or click to select files. Selected ${
           item['files']?.length || 0
-        } of ${5} allowed`;
+        } of ${MAX_NUM_GALLERIES} allowed`;
         return (
           <Grid item xs={12}>
             <FileUpload
@@ -223,11 +221,11 @@ export default function LinkedLabelData({
               ]} //this should accept images from camera
               multiple
               // @ts-ignore
-              disabled={item.files?.length >= 5}
+              disabled={item.files?.length >= MAX_NUM_GALLERIES}
               // @ts-ignore
               value={item.files}
               title={title}
-              maxFiles={5}
+              maxFiles={MAX_NUM_GALLERIES}
               maxSize={toBytes(FILE_LIMITS['gallery'].totalMbPerFile, 'MB')}
             />
           </Grid>
