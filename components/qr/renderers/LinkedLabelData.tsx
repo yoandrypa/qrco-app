@@ -21,7 +21,8 @@ import { Button, Menu, MenuItem, Typography } from '@mui/material';
 import FileUpload from 'react-material-file-upload';
 import RenderChipFields from './helpers/RenderChipFields';
 import RenderContactForm from '../helperComponents/smallpieces/RenderContactForm';
-
+//@ts-ignore
+import session from "@ebanux/ebanux-utils/sessionStorage";
 interface LinkedLabelDataProps {
   data: DataType;
   setData: Function;
@@ -58,6 +59,7 @@ export default function LinkedLabelData({
   const open = Boolean(anchorEl);
   const MAX_NUM_GALLERIES = 5;
 
+  const { currentAccount } = session;
 
   const handleClickAddField = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -162,7 +164,7 @@ export default function LinkedLabelData({
       if (!tempo.fields) {
         tempo.fields = [];
       }
-      tempo.fields?.push({ type: 'contact', tittle: '', message: '', buttonText: '' });
+      tempo.fields?.push({ type: 'contact', tittle: '', message: '', buttonText: '', email: currentAccount.email });
       return tempo;
     });
     setExpander(data.fields ? (data.fields.length - 1).toString() : '0');

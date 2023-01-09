@@ -5,8 +5,7 @@ import RenderTextFields from '../../renderers/helpers/RenderTextFields';
 import Stack from '@mui/material/Stack';
 import { TextField, Typography } from '@mui/material';
 import Alert from '@mui/material/Alert';
-//@ts-ignore
-import session from "@ebanux/ebanux-utils/sessionStorage";
+
 
 
 interface ContactFormProps {
@@ -20,7 +19,7 @@ interface ContactFormProps {
 
 function RenderContactForm({ title, buttonText, messagePlaceholder, handleChange, index }: ContactFormProps) {
 
-  const { currentAccount } = session;
+
 
   return (
     <Stack spacing={2}>
