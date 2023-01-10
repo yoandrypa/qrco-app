@@ -54,7 +54,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
           if (!data.isSample) {
           for (let i = 0, l = data.files.length; i < l; i += 1) {
             const x = data.files[i] as File | string; // @ts-ignore
-              if (typeof x === 'string' || "Key" in x) { // @ts-ignore
+              if (typeof x === 'string' || x.Key !== undefined) { // @ts-ignore
                 files.push(x);
               } else { // @ts-ignore
                 files.push(await convertBase64(x));
@@ -76,7 +76,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
               const media = {type:"media", files:[]}
               for( let j = 0, k = data.fields[i].files.length; j < k; j += 1) {
                 const file = data.fields[i].files[j] as File | string; // @ts-ignore
-                if (typeof file === 'string' || "Key" in file) { // @ts-ignore
+                if (typeof file === 'string' || file.Key !== undefined) { // @ts-ignore
                   media.files.push(file);
                 } else { // @ts-ignore
                   media.files.push(await convertBase64(file));
