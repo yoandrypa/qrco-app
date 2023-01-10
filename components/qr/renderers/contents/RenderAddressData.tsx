@@ -10,10 +10,9 @@ interface AddressProps {
   data: DataType;
   message?: string;
   handleValues: Function;
-  setIsWrong: (isWrong: boolean) => void;
 }
 
-export default function RenderAddressData({data, handleValues, message, setIsWrong}: AddressProps) {
+export default function RenderAddressData({data, handleValues, message}: AddressProps) {
   const renderItem = (item: string, label: string) => { // @ts-ignore
     const value = data?.[item] || '' as string;
     return (
