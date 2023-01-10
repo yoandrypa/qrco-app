@@ -100,7 +100,7 @@ export default function CardData({data, setData, handleValues, setIsWrong}: Card
                 <Draggable key={`businessItem${x}`} draggableId={`businessItem${x}`} index={index} isDragDisabled={!isDynamic}>
                   {(provided: any, snapshot: any) => (
                     <Box sx={{...getItemStyle(snapshot.isDragging, provided.draggableProps.style),
-                      my: 4, width: '100$'}} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                      my: 4, width: '100%'}} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                       {x === 0 && renderOne()}
                       {x === 1 && renderTwo()}
                       {isDynamic && x === 2 ? renderThree() : null}
