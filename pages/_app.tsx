@@ -23,7 +23,7 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
     <>
       <Head>
         <title>The QR Link | Dynamic QR code</title>
-        <link rel="icon" href="/ebanuxQr.svg"/>
+        <link rel="icon" href="/qlIcon.png"/>
       </Head>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={mainTheme}>

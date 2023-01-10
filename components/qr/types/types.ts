@@ -95,6 +95,7 @@ export type DataType = {
   prevNetworks?: string[];
   userId?: string;
   id?: string;
+  index?: number[];
   qrName?: string;
   number?: string;
   avatarImage?: string;

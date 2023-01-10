@@ -8,7 +8,7 @@ import FormControl from "@mui/material/FormControl";
 
 import dynamic from "next/dynamic";
 
-import RenderMainFontsHandler from "./RenderMainFontsHandler";
+import RenderMainFontsHandler from "../smallpieces/RenderMainFontsHandler";
 import {DataType} from "../../types/types";
 import SectionSelector from "../SectionSelector";
 import ColorSelector from "../ColorSelector";
@@ -16,14 +16,14 @@ import {DEFAULT_COLORS} from "../../constants";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 const RenderBorders = dynamic(() => import("./RenderBorders"));
-const RenderTwoColors = dynamic(() => import("./RenderTwoColors"));
+const RenderTwoColors = dynamic(() => import("../smallpieces/RenderTwoColors"));
 
 interface ButtonsHandlerProps {
   data?: DataType;
   handleValue: Function;
 }
 
-export default function RenderButtonsHandler({data, handleValue}: ButtonsHandlerProps) {
+export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerProps) {
   const isWide = useMediaQuery("(min-width:900px)", {noSsr: true});
   const isWideEnough = useMediaQuery("(min-width:815px)", {noSsr: true});
 

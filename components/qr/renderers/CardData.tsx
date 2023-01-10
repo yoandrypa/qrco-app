@@ -1,18 +1,25 @@
-import {useMemo, useEffect, useState} from 'react';
-import Grid from '@mui/material/Grid';
-import Divider from '@mui/material/Divider';
-import Paper from "@mui/material/Paper";
+import {useEffect, useMemo, useState} from 'react';
+import Box from "@mui/material/Box";
 
 import Common from '../helperComponents/Common';
-import {EMAIL, PHONE, ZIP} from "../constants";
-
-import RenderSocials from "./helpers/RenderSocials";
 import Expander from "./helpers/Expander";
+import DragPaper from "../helperComponents/looseComps/DragPaper";
+import {EMAIL, PHONE, ZIP} from "../constants";
 import {DataType} from "../types/types";
 import {isValidUrl} from "../../../utils";
-import RenderTextFields from "./helpers/RenderTextFields";
-import Topics from "./helpers/Topics";
 import socialsAreValid from "./validator";
+
+import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+
+import dynamic from "next/dynamic";
+import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
+
+const RenderPresentation = dynamic(() => import("./contents/RenderPresentation"));
+const RenderPhones = dynamic(() => import("./contents/RenderPhones"));
+const RenderOrganization = dynamic(() => import("./contents/RenderOrganization"));
+const RenderAddressData = dynamic(() => import("./contents/RenderAddressData"));
+const RenderEmailWeb = dynamic(() => import("./contents/RenderEmailWeb"));
+const RenderSocials = dynamic(() => import("./helpers/RenderSocials"));
 
 interface CardDataProps {
   data: DataType;
@@ -25,29 +32,6 @@ export default function CardData({data, setData, handleValues, setIsWrong}: Card
   const [expander, setExpander] = useState<string | null>(null);
 
   const isDynamic = useMemo(() => Boolean(data?.isDynamic), []) as boolean;  // eslint-disable-line react-hooks/exhaustive-deps
-
-  const renderItem = (item: string, label: string) => {
-    let isError = false as boolean;
-    // @ts-ignore
-    const value = data?.[item] || '' as string;
-
-    if (value.trim().length) {
-      if (['phone', 'fax'].includes(item) && !PHONE.test(value)) {
-        isError = true;
-      } else if (item === 'cell' && !PHONE.test(value)) {
-        isError = true;
-      } else if (item === 'zip' && !ZIP.test(value)) {
-        isError = true;
-      } else if (item === 'web' && !isValidUrl(value)) {
-        isError = true;
-      } else if (item === 'email' && !EMAIL.test(value)) {
-        isError = true;
-      }
-    }
-
-    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={handleValues}
-                             required={item === 'firstName'}/>;
-  };
 
   useEffect(() => {
     let errors = false;
@@ -63,84 +47,71 @@ export default function CardData({data, setData, handleValues, setIsWrong}: Card
     setIsWrong(errors);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const renderOne = () => (<DragPaper elevation={2} sx={{p: 1}} avoidIcon={!isDynamic}>
+    <RenderPresentation data={data} handleValues={handleValues} message="Presentation" />
+    <RenderPhones data={data} handleValues={handleValues} message="Phones" />
+    <RenderOrganization data={data} handleValues={handleValues} message="Organization" />
+  </DragPaper>);
+
+  const renderTwo = () => (<DragPaper elevation={2} sx={{p: 1}} avoidIcon={!isDynamic}>
+    <Expander expand={expander} setExpand={setExpander} item="address" title="Address and other info"/>
+    {expander === "address" && (
+      <Box sx={{width: '100%'}}>
+        <RenderAddressData data={data} handleValues={handleValues} />
+        <RenderEmailWeb data={data} handleValues={handleValues} sx={{ mt: 1 }} />
+      </Box>
+    )}
+  </DragPaper>);
+
+  const renderThree = () => (<DragPaper elevation={2} sx={{p: 1}} avoidIcon={!isDynamic}>
+    <Expander expand={expander} setExpand={setExpander} item="socials" title="Social networks" />
+    {expander === "socials" && <RenderSocials data={data} setData={setData} />}
+  </DragPaper>);
+
+  const onDragEnd = (result: any) => {
+    if (!result?.destination) {
+      return null;
+    }
+
+    setData((prev: DataType) => {
+      const tempo = {...prev};
+
+      const newPositions = tempo.index ? [...tempo.index] : [0, 1, 2];
+      const [removed] = newPositions.splice(result.source.index, 1);
+      newPositions.splice(result.destination.index, 0, removed);
+
+      if (newPositions.toString() === '0,1,2' && tempo.index !== undefined) {
+        delete tempo.index;
+      } else {
+        tempo.index = newPositions;
+      }
+
+      return tempo;
+    });
+  }
+
   return (
     <Common msg="Your contact details. Users can store your info or contact you right away.">
-      <Topics message={'Presentation'}/>
-      <Grid container spacing={1}>
-        <Grid item sm={2} xs={12} style={{paddingTop: 0}}>
-          {renderItem('prefix', 'Prefix')}
-        </Grid>
-        <Grid item sm={5} xs={12} style={{paddingTop: 0}}>
-          {renderItem('firstName', 'First name')}
-        </Grid>
-        <Grid item sm={5} xs={12} style={{paddingTop: 0}}>
-          {renderItem('lastName', 'Last name')}
-        </Grid>
-      </Grid>
-      <Topics message={'Phones'}/>
-      <Grid container spacing={1}>
-        <Grid item sm={4} xs={12} style={{paddingTop: 0}}>
-          {renderItem('cell', 'Cell number')}
-        </Grid>
-        <Grid item sm={4} xs={12} style={{paddingTop: 0}}>
-          {renderItem('phone', 'Alternative phone number')}
-        </Grid>
-        <Grid item sm={4} xs={12} style={{paddingTop: 0}}>
-          {renderItem('fax', 'Fax')}
-        </Grid>
-      </Grid>
-      <Topics message={'Organization'}/>
-      <Grid container spacing={1}>
-        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('organization', 'Organization')}
-        </Grid>
-        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('position', 'Position')}
-        </Grid>
-      </Grid>
-      <Grid container spacing={1}>
-        <Grid item xs={12}>
-          <Paper elevation={2} sx={{p: 1, mt: 1}}>
-            <Expander expand={expander} setExpand={setExpander} item="other" title="Other info"/>
-            {expander === "other" && (
-              <Grid container spacing={1}>
-                <Grid item sm={8} xs={12} style={{paddingTop: 0}}>
-                  {renderItem('address', 'Address')}
-                </Grid>
-                <Grid item sm={4} xs={6} style={{paddingTop: 0}}>
-                  {renderItem('city', 'City')}
-                </Grid>
-                <Grid item sm={4} xs={6} style={{paddingTop: 0}}>
-                  {renderItem('zip', 'Zip code')}
-                </Grid>
-                <Grid item sm={4} xs={6} style={{paddingTop: 0}}>
-                  {renderItem('state', 'State/Province')}
-                </Grid>
-                <Grid item sm={4} xs={6} style={{paddingTop: 0}}>
-                  {renderItem('country', 'Country')}
-                </Grid>
-                <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-                  {renderItem('email', 'Email')}
-                </Grid>
-                <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-                  {renderItem('web', 'Web')}
-                </Grid>
-              </Grid>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="droppable">
+          {(provided: any) => (
+            <Box {...provided.droppableProps} ref={provided.innerRef}>
+              {(data.index || [0, 1, 2]).map((x: number, index: number) => (
+                <Draggable key={`businessItem${x}`} draggableId={`businessItem${x}`} index={index} isDragDisabled={!isDynamic}>
+                  {(provided: any, snapshot: any) => (
+                    <Box sx={{...getItemStyle(snapshot.isDragging, provided.draggableProps.style),
+                      my: 4, width: '100%'}} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                      {x === 0 && renderOne()}
+                      {x === 1 && renderTwo()}
+                      {isDynamic && x === 2 ? renderThree() : null}
+                    </Box>
+                  )}
+                </Draggable>
+              ))}
+            </Box>
             )}
-          </Paper>
-        </Grid>
-        {isDynamic && (
-          <Grid item xs={12}>
-            <Divider sx={{my: 1}}/>
-            <Paper elevation={2} sx={{p: 1, mt: 1}}>
-              <Expander expand={expander} setExpand={setExpander} item="socials" title="Social information"/>
-              {expander === "socials" &&
-                <RenderSocials data={data} setData={setData} />}
-            </Paper>
-            <Divider sx={{my: 1}}/>
-          </Grid>
-        )}
-      </Grid>
+        </Droppable>
+      </DragDropContext>
     </Common>
   );
 }

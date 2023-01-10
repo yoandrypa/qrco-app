@@ -4,10 +4,15 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import {capitalize} from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+
 import RenderIcon from "../../helperComponents/smallpieces/RenderIcon";
 import {DataType, SocialNetworksType, SocialsType} from "../../types/types";
 import {PHONE} from "../../constants";
 import SectionSelector from "../../helperComponents/SectionSelector";
+import {getItemStyle} from "../../helperComponents/looseComps/StyledComponents";
+
+import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 
 import dynamic from "next/dynamic";
 
@@ -21,7 +26,6 @@ interface RenderSocialsProps {
 
 const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) => {
   const selection = useRef<SocialsType | null>(null);
-  const errorDetected = useRef(false);
 
   const handleValues = (item: SocialsType) => (event: ChangeEvent<HTMLInputElement>) => {
     setData((prev: DataType) => {
@@ -50,52 +54,27 @@ const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) =>
       }
 
       return (
-        <TextField
-          label={capitalize(item.network)}
-          autoFocus={item.network === selection.current}
-          size="small"
-          fullWidth
-          placeholder={`Enter just your ${item.network !== 'whatsapp' ? 'username' : 'cell number'}`}
-          margin="dense"
-          value={item.value || ''}
-          onChange={handleValues(item.network)}
-          error={isError}
-          InputProps={{
-            startAdornment: <InputAdornment position="start"><RenderIcon icon={item.network} enabled/></InputAdornment>
-          }}
-        />
+        <Box sx={{width: '100%', display: 'flex'}}>
+          {data?.socials?.length !== 1 && <DragIndicatorIcon sx={{ color: theme => theme.palette.text.disabled, mt: '15px' }} />}
+          <TextField
+            label={capitalize(item.network)}
+            autoFocus={item.network === selection.current}
+            size="small"
+            fullWidth
+            placeholder={`Enter just your ${item.network !== 'whatsapp' ? 'username' : 'cell number'}`}
+            margin="dense"
+            value={item.value || ''}
+            onChange={handleValues(item.network)}
+            error={isError}
+            InputProps={{
+              startAdornment: <InputAdornment position="start"><RenderIcon icon={item.network} enabled/></InputAdornment>
+            }}
+          />
+        </Box>
       );
     }
     return null;
   };
-
-  const renderSocialNetworks = useCallback(() => {
-    errorDetected.current = false;
-    const socials = data.socials || [];
-
-    let columns:number;
-    switch (socials.length) {
-      case 1: {
-        columns = 12;
-        break;
-      }
-      case 2:
-      case 4: {
-        columns = 6;
-        break;
-      }
-      default: {
-        columns = 4;
-        break;
-      }
-    }
-
-    return socials.map((x: SocialNetworksType) => (
-      <Grid item xs={12} sm={columns} style={{paddingTop: 0}} key={`socialnetwork${x}`}>
-        {renderSocial(x)}
-      </Grid>
-    ))
-  }, [data?.socials?.length || 0]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSelection = (item: SocialsType) => {
     selection.current = item;
@@ -111,6 +90,23 @@ const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) =>
         temp.socials.splice(index, 1);
       }
       return temp;
+    });
+  }
+
+  const onDragEnd = (result: any) => {
+    if (!result?.destination) {
+      return null;
+    }
+
+    setData((prev: DataType) => {
+      const tempo = {...prev};
+
+      const newSocials = Array.from(tempo.socials || []);
+      const [removed] = newSocials.splice(result.source.index, 1);
+      newSocials.splice(result.destination.index, 0, removed);
+
+      tempo.socials = newSocials;
+      return tempo;
     });
   }
 
@@ -153,7 +149,29 @@ const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) =>
             handleSelect={handleSelection} tooltip="Telegram" />
         </Box>
       </Grid>
-      {renderSocialNetworks()}
+      <Grid item xs={12} sx={{pl: '12px'}}>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot) => (
+              <Box {...provided.droppableProps} ref={provided.innerRef} sx={{width: '100%'}}>
+                {data?.socials?.map((x: SocialNetworksType, index: number) => {
+                  const itemId = `item${x.network}`
+                  return (
+                    <Draggable key={itemId} draggableId={itemId} index={index} isDragDisabled={data?.socials?.length === 1}>
+                      {(provided, snapshot) => (
+                        <Box ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}
+                             sx={{background: 'red', ...getItemStyle(snapshot.isDragging, provided.draggableProps.style)}}>
+                          {renderSocial(x)}
+                        </Box>
+                      )}
+                    </Draggable>
+                  )
+                })}
+              </Box>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </Grid>
     </Grid>
   );
 }

@@ -8,7 +8,7 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
   'primary', 'secondary', 'backgndImg', 'foregndImg', 'foregndImgType', 'globalFont', 'buttonsFont', 'titlesFont',
   'messagesFont', 'titlesFontSize', 'messagesFontSize', 'buttonsFontSize', 'subtitlesFontSize', 'subtitlesFont',
   'titlesFontStyle', 'subtitlesFontStyle', 'messagesFontStyle', 'buttonsFontStyle', 'globalFontColor', 'buttonShape',
-  'buttonBack', 'buttonBackColor', 'buttonBorders', 'layout'];
+  'buttonBack', 'buttonBackColor', 'buttonBorders', 'layout', 'index'];
 
   Object.keys(data).forEach(x => {  // @ts-ignore
     if (items.some((item: string) => x === item)) { sum += 1; }

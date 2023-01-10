@@ -3,20 +3,27 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
 
 import Common from '../helperComponents/Common';
-import RenderEasiness from "./helpers/RenderEasiness";
-import RenderSocials from "./helpers/RenderSocials";
-import RenderOpeningTime from "./helpers/RenderOpeningTime";
 import Expander from "./helpers/Expander";
+
 import {DataType} from "../types/types";
 import {isValidUrl} from "../../../utils";
-import RenderTextFields from "./helpers/RenderTextFields";
-import {EMAIL, PHONE, ZIP} from "../constants";
-import Topics from "./helpers/Topics";
 import socialsAreValid from "./validator";
+import RenderTextFields from "./helpers/RenderTextFields";
+
+import dynamic from "next/dynamic";
 import RenderProposalsTextFields from "./helpers/RenderProposalsTextFields";
+import RenderCompanyData from "./contents/RenderCompanyData";
+import RenderAddressData from "./contents/RenderAddressData";
+import {EMAIL, PHONE, ZIP} from "../constants";
+import DragPaper from "../helperComponents/looseComps/DragPaper";
+import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
+
+const RenderEasiness = dynamic(() => import("./helpers/RenderEasiness"));
+const RenderSocials = dynamic(() => import("./helpers/RenderSocials"));
+const RenderOpeningTime = dynamic(() => import("./helpers/RenderOpeningTime"));
 
 interface BusinessProps {
   data: DataType;
@@ -34,10 +41,6 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
     if ((value.trim().length === 0 && ['urlOptionLabel', 'urlOptionLink'].includes(item)) ||
       (item === 'urlOptionLink' && !isValidUrl(value))) {
       isError = true;
-    } else if (value.trim().length && ((item === 'web' && !isValidUrl(value)) ||
-      (item === 'email' && !EMAIL.test(value)) || (item === 'phone' && !PHONE.test(value)) ||
-      (item === 'zip' && !ZIP.test(value)))) {
-        isError = true;
     }
     if (item === 'urlOptionLabel') {
       return (<RenderProposalsTextFields
@@ -66,6 +69,49 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
     });
   };
 
+  const renderZero = () => <DragPaper elevation={2} sx={{p: 1}}>
+    <RenderCompanyData data={data} handleValues={handleValues} message="Business info" />
+  </DragPaper>;
+
+  const renderOne = () => <DragPaper elevation={2} sx={{p: 1}}>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+      <Typography sx={{ my: 'auto' }}>{'Action button'}</Typography>
+      <Button sx={{ mb: '5px' }} variant="outlined" color={data.urlOptionLabel === undefined ? 'primary' : 'error'} onClick={handleOptionButton}>
+        {data.urlOptionLabel === undefined ? 'Add action button' : 'Remove action button'}
+      </Button>
+    </Box>
+    {data.urlOptionLabel !== undefined && (
+      <Grid container spacing={1}>
+        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
+          {renderItem('urlOptionLabel', 'Label')}
+        </Grid>
+        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
+          {renderItem('urlOptionLink', 'Link')}
+        </Grid>
+      </Grid>
+    )}
+  </DragPaper>;
+
+  const renderTwo = () => <DragPaper elevation={2} sx={{p: 1}}>
+    <Expander expand={expander} setExpand={setExpander} item="address" title="Address" />
+    {expander === "address" && <RenderAddressData data={data} handleValues={handleValues} />}
+  </DragPaper>;
+
+  const renderThree = () => <DragPaper elevation={2} sx={{p: 1}}>
+    <Expander expand={expander} setExpand={setExpander} item="opening" title="Opening time" />
+    {expander === "opening" && <RenderOpeningTime data={data} setData={setData} />}
+  </DragPaper>;
+
+  const renderFour = () => <DragPaper elevation={2} sx={{p: 1}}>
+    <Expander expand={expander} setExpand={setExpander} item="easiness" title="Business easiness" />
+    {expander === "easiness" && <RenderEasiness data={data} setData={setData} />}
+  </DragPaper>;
+
+  const renderFive = () => <DragPaper elevation={2} sx={{p: 1}}>
+    <Expander expand={expander} setExpand={setExpander} item="socials" title="Social networks" />
+    {expander === "socials" && <RenderSocials data={data} setData={setData} />}
+  </DragPaper>;
+
   useEffect(() => {
     let errors = false;
     if (data.urlOptionLabel !== undefined && data.urlOptionLink !== undefined) {
@@ -84,91 +130,53 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
     setIsWrong(errors);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const onDragEnd = (result: any) => {
+    if (!result?.destination) {
+      return null;
+    }
+
+    setData((prev: DataType) => {
+      const tempo = {...prev};
+
+      const newPositions = tempo.index ? [...tempo.index] : [0, 1, 2, 3, 4, 5];
+      const [removed] = newPositions.splice(result.source.index, 1);
+      newPositions.splice(result.destination.index, 0, removed);
+
+      if (newPositions.toString() === '0,1,2,3,4,5' && tempo.index !== undefined) {
+        delete tempo.index;
+      } else {
+        tempo.index = newPositions;
+      }
+
+      return tempo;
+    });
+  }
+
   return (
     <Common msg="Your business or company details. Users can contact your business or company right away.">
-      <Topics message={'Business info'}/>
-      <Grid container spacing={1}>
-        <Grid item xs={12} style={{paddingTop: 0}}>
-          {renderItem('company', 'Company', true)}
-        </Grid>
-        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('title', 'Title')}
-        </Grid>
-        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('subtitle', 'Subtitle')}
-        </Grid>
-        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('web', 'Web')}
-        </Grid>
-        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('email', 'Email')}
-        </Grid>
-        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('contact', 'Contact name')}
-        </Grid>
-        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('phone', 'Phone')}
-        </Grid>
-        <Grid item xs={12} style={{paddingTop: 0}}>
-          {renderItem('about', 'About')}
-        </Grid>
-      </Grid>
-      <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography sx={{ my: 'auto' }}>{'Action button'}</Typography>
-          <Button sx={{ mb: '5px' }} variant="outlined" color={data.urlOptionLabel === undefined ? 'primary' : 'error'} onClick={handleOptionButton}>
-            {data.urlOptionLabel === undefined ? 'Add action button' : 'Remove action button'}
-          </Button>
-        </Box>
-        {data.urlOptionLabel !== undefined && (
-          <Grid container spacing={1}>
-            <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-              {renderItem('urlOptionLabel', 'Label')}
-            </Grid>
-            <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-              {renderItem('urlOptionLink', 'Link')}
-            </Grid>
-          </Grid>
-        )}
-      </Paper>
-      <Paper elevation={2} sx={{ p: 1, my: 2 }}>
-        <Expander expand={expander} setExpand={setExpander} item="address" title="Address" />
-        {expander === "address" && (
-          <Grid container spacing={1}>
-            <Grid item sm={8} xs={12} style={{paddingTop: 0}}>
-              {renderItem('address', 'Address')}
-            </Grid>
-            <Grid item sm={4} xs={6} style={{paddingTop: 0}}>
-              {renderItem('city', 'City')}
-            </Grid>
-            <Grid item sm={4} xs={6} style={{paddingTop: 0}}>
-              {renderItem('zip', 'Zip code')}
-            </Grid>
-            <Grid item sm={4} xs={6} style={{paddingTop: 0}}>
-              {renderItem('state', 'State/Province')}
-            </Grid>
-            <Grid item sm={4} xs={6} style={{paddingTop: 0}}>
-              {renderItem('country', 'Country')}
-            </Grid>
-          </Grid>
-        )}
-      </Paper>
-      <Paper elevation={2} sx={{ p: 1, my: 2 }}>
-        <Expander expand={expander} setExpand={setExpander} item="opening" title="Opening time" />
-        {expander === "opening" && <RenderOpeningTime data={data} setData={setData} />}
-      </Paper>
-      <Paper elevation={2} sx={{ p: 1, my: 2 }}>
-        <Expander expand={expander} setExpand={setExpander} item="easiness" title="Business easiness" />
-        {expander === "easiness" && <RenderEasiness data={data} setData={setData} />}
-      </Paper>
-      <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
-        <Expander expand={expander} setExpand={setExpander} item="socials" title="Social networks" />
-        {expander === "socials" && (
-          <Grid item xs={12}>
-            <RenderSocials data={data} setData={setData} />
-          </Grid>
-        )}
-      </Paper>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="droppable">
+          {(provided: any) => (
+            <Box {...provided.droppableProps} ref={provided.innerRef}>
+              {(data.index || [0, 1, 2, 3, 4, 5]).map((x: number, index: number) => (
+                <Draggable key={`businessItem${x}`} draggableId={`businessItem${x}`} index={index}>
+                  {(provided: any, snapshot: any) => (
+                    <Box ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}
+                         sx={{...getItemStyle(snapshot.isDragging, provided.draggableProps.style), my: 4, width: '100%'}}>
+                      {x === 0 && renderZero()}
+                      {x === 1 && renderOne()}
+                      {x === 2 && renderTwo()}
+                      {x === 3 && renderThree()}
+                      {x === 4 && renderFour()}
+                      {x === 5 && renderFive()}
+                    </Box>
+                  )}
+                </Draggable>
+              ))}
+            </Box>
+          )}
+        </Droppable>
+      </DragDropContext>
     </Common>
   );
 }

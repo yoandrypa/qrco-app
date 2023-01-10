@@ -1,7 +1,7 @@
+import {ChangeEvent, useEffect, useRef, useState} from "react";
 import Box from "@mui/material/Box";
 import {blueGrey} from "@mui/material/colors";
 import {DataType} from "../../types/types";
-import {ChangeEvent, useEffect, useRef, useState} from "react";
 import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
@@ -28,6 +28,7 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
     } else if (prop.includes('Border') && !isBorder) {
       value = value.replace('Border', '');
     }
+
     handleValue('layout')(`${value}`);
   }
 
@@ -55,7 +56,7 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderLayout = (kind: string, noMore?: boolean) => {
-    const selected = (!data?.layout && kind.startsWith('default')) || data?.layout?.startsWith(kind);
+    const selected = (!data?.layout && kind.startsWith('default')) || data?.layout === kind;
     const inverse = kind.toLowerCase().includes('inverse');
     return (
       <Box
