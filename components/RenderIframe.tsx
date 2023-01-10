@@ -52,15 +52,15 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
         if (data.files) {
           let files: string[] = []; // @ts-ignore
           if (!data.isSample) {
-          for (let i = 0, l = data.files.length; i < l; i += 1) {
-            const x = data.files[i] as File | string; // @ts-ignore
+            for (let i = 0, l = data.files.length; i < l; i += 1) {
+              const x = data.files[i] as File | string; // @ts-ignore
               if (typeof x === 'string' || x.Key !== undefined) { // @ts-ignore
                 files.push(x);
               } else { // @ts-ignore
                 files.push(await convertBase64(x));
               }
             }
-          }  else { // @ts-ignore
+          } else { // @ts-ignore
             files = data.files;
           } // @ts-ignore
           previewData.files = files;

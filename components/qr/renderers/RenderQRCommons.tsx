@@ -24,7 +24,7 @@ import RenderGradientSelector from "./helpers/RenderGradientSelector";
 import Expander from "./helpers/Expander";
 import Context from "../../context/Context";
 
-const RenderButtonsHandler = dynamic(() => import('../helperComponents/smallpieces/RenderButtonsHandler'));
+const RenderButtonsHandler = dynamic(() => import('../helperComponents/looseComps/RenderButtonHandler'));
 const RenderImagePicker = dynamic(() => import('./helpers/RenderImagePicker'));
 const RenderImgPreview = dynamic(() => import('./helpers/RenderImgPreview'));
 const RenderForeImgTypePicker = dynamic(() => import ('./helpers/RenderForeImgTypePicker'));

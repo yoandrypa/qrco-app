@@ -35,3 +35,9 @@ export const ProBadge = styled(Box)(({pro}: { pro?: boolean }) => ({
     marginTop: 4
   }
 }));
+
+export const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
+  userSelect: "none",
+  background: isDragging ? "#ebe8e1" : "none",
+  ...draggableStyle
+});
