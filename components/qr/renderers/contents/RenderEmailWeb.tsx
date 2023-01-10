@@ -8,11 +8,12 @@ import {isValidUrl} from "../../../../utils";
 
 interface RenderEmailWebProps {
   data: DataType;
+  sx?: Object;
   handleValues: Function;
   message?: string;
 }
 
-export default function RenderEmailWeb({data, handleValues, message}: RenderEmailWebProps) {
+export default function RenderEmailWeb({data, handleValues, message, sx}: RenderEmailWebProps) {
   const renderItem = (item: string, label: string) => {
     let isError = false as boolean; // @ts-ignore
     const value = data?.[item] || '' as string;
@@ -29,7 +30,7 @@ export default function RenderEmailWeb({data, handleValues, message}: RenderEmai
   };
 
   return (
-    <Box sx={{width: '100%'}}>
+    <Box sx={{width: '100%', ...sx}}>
       {message && <Topics message={message}/>}
       <Grid container spacing={1}>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>

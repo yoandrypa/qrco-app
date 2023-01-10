@@ -58,7 +58,7 @@ export default function CardData({data, setData, handleValues, setIsWrong}: Card
     {expander === "address" && (
       <Box sx={{width: '100%'}}>
         <RenderAddressData data={data} handleValues={handleValues} />
-        <RenderEmailWeb data={data} handleValues={handleValues} />
+        <RenderEmailWeb data={data} handleValues={handleValues} sx={{ mt: 1 }} />
       </Box>
     )}
   </DragPaper>);
