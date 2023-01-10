@@ -14,13 +14,13 @@ interface DragPaper extends PaperProps {
 export default function DragPaper({children, avoidIcon, ...otherProps}: DragPaper) {
   return (
     <Paper {...otherProps}>
-      {!avoidIcon && (<Tooltip title="Drag knob">
+      {!avoidIcon ? (<Tooltip title="Drag knob">
         <IconButton color="primary" size="small" sx={{
           mt: '-42px', mr: '5px', background: blueGrey[50], '&:hover': {background: blueGrey[100]}
         }}>
           <DragIndicatorIcon sx={{color: theme => theme.palette.text.disabled}} fontSize="small"/>
         </IconButton>
-      </Tooltip>)}
+      </Tooltip>) : <Box sx={{height: '25px'}}/>}
       <Box sx={{ mt: '-20px' }}>
         {children}
       </Box>

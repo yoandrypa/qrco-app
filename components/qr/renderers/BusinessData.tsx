@@ -94,9 +94,7 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
 
   const renderTwo = () => <DragPaper elevation={2} sx={{p: 1}}>
     <Expander expand={expander} setExpand={setExpander} item="address" title="Address" />
-    {expander === "address" && (
-      <RenderAddressData data={data} handleValues={handleValues} setIsWrong={setIsWrong} />
-    )}
+    {expander === "address" && <RenderAddressData data={data} handleValues={handleValues} />}
   </DragPaper>;
 
   const renderThree = () => <DragPaper elevation={2} sx={{p: 1}}>
@@ -164,7 +162,7 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
                 <Draggable key={`businessItem${x}`} draggableId={`businessItem${x}`} index={index}>
                   {(provided: any, snapshot: any) => (
                     <Box ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}
-                         sx={{...getItemStyle(snapshot.isDragging, provided.draggableProps.style), my: 4}}>
+                         sx={{...getItemStyle(snapshot.isDragging, provided.draggableProps.style), my: 4, width: '100$'}}>
                       {x === 0 && renderZero()}
                       {x === 1 && renderOne()}
                       {x === 2 && renderTwo()}
