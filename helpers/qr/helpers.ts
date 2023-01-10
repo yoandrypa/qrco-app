@@ -334,7 +334,7 @@ export const qrNameDisplayer = (name: string, isDynamic: boolean): string => {
   const types = {
     vcard: 'vCard', sms: 'SMS', wifi: 'WiFi', whatsapp: 'WhatsApp', crypto: 'Crypto Payment', 'vcard+': 'vCard Plus',
     social: 'Social Networks', link: 'Link-In-Bio', donations: 'Donation', fundme: 'Fund me', paylink: 'Send Me Money',
-    pdf: 'PDF File', audio: 'Audio File', video: 'Video Files',petId: 'Pet Tag Id', linkedLabel: 'Linked Label'
+    pdf: 'PDF File', audio: 'Audio File', video: 'Video Files',petId: 'Pet Tag Id', linkedLabel: 'Smart Link'
   } // @ts-ignore
   if (types[name] !== undefined) { return types[name]; }
   if (name === 'web') { return isDynamic ? 'Short URL' : 'Website'; }

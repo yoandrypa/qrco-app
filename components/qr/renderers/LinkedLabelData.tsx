@@ -256,7 +256,7 @@ export default function LinkedLabelData({
 
   return (
     // smart Label msg
-    <Common msg="Linked Label">
+    <Common msg="Smart Link">
       <Topics message="Main info" top="3px" />
       <Grid container>
         <Grid item xs={12}>
