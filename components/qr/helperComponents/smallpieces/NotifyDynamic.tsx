@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 import RenderProDesc from "./RenderProDesc";
 import RenderFreeDesc from "./RenderFreeDesc";
-import {ProBadge} from "./StyledComponents";
+import {ProBadge} from "../looseComps/StyledComponents";
 
 interface DynamicProps {
   styling?: object | undefined;

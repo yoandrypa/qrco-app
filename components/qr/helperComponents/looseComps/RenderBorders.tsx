@@ -5,10 +5,8 @@ import NorthWestIcon from '@mui/icons-material/NorthWest';
 import SouthEastIcon from '@mui/icons-material/SouthEast';
 import SouthWestIcon from '@mui/icons-material/SouthWest';
 
-import {DataType} from "../../types/types";
-
 interface RenderBordersProps {
-  data?: DataType;
+  data?: { buttonBorders?: string; };
   handleValue: Function;
 }
 

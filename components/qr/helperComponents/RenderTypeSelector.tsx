@@ -16,7 +16,7 @@ import dynamic from "next/dynamic";
 import {IS_DEV_ENV, ONLY_QR} from "../constants";
 import RenderProDesc from "./smallpieces/RenderProDesc";
 import RenderFreeDesc from "./smallpieces/RenderFreeDesc";
-import {MyBadge} from "./smallpieces/StyledComponents";
+import {MyBadge} from "./looseComps/StyledComponents";
 import {areEquals} from "../../helpers/generalFunctions";
 import initialOptions, {initialData} from "../../../helpers/qr/data";
 import RenderSamplePreview from "./smallpieces/RenderSamplePreview";

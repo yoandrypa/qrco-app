@@ -250,18 +250,19 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           </Box>
           {isWideForPreview && (
             <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
-                                 save={handleSave} style={{mt: 1, ml: '15px', position: 'sticky', top: '120px'}} saveDisabled={isWrong}
+                                 save={handleSave} style={{mt: 1, ml: '15px', position: 'sticky', top: '120px'}}
+                                 saveDisabled={isWrong || !data.qrName?.trim().length} shareLink={options?.data}
                                  qrOptions={optionsForPreview()} step={1} mainImg={data.mode === 'edit' ? foreImg : undefined}
                                  data={previewQRGenerator(data, selected, omitProfileImg)}
                                  onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
-                                 shareLink={options?.data} backImg={data.mode === 'edit' ? backImg : undefined}/> )}</Box>
+                                 backImg={data.mode === 'edit' ? backImg : undefined}/> )}</Box>
       ) : renderChildren()}
       {!openPreview && !isWideForPreview  && <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />}
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={selected === 'web' || !data.isDynamic ? 400 : 700} border={35}>
           <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
-                               save={handleSave} isDrawed saveDisabled={isWrong} style={{mt: '-15px'}} step={1}
-                               data={previewQRGenerator(data, selected, omitProfileImg)}
+                               save={handleSave} saveDisabled={isWrong || !data.qrName?.trim().length} style={{mt: '-15px'}}
+                               data={previewQRGenerator(data, selected, omitProfileImg)} step={1} isDrawed
                                onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
                                shareLink={options?.data} backImg={data.mode === 'edit' ? backImg : undefined}
                                mainImg={data.mode === 'edit' ? foreImg : undefined} qrOptions={optionsForPreview()} />

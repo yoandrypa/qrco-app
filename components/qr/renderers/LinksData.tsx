@@ -35,6 +35,7 @@ import RenderSocials from "./helpers/RenderSocials";
 import pluralize from "pluralize";
 import socialsAreValid from "./validator";
 import RenderProposalsTextFields from "./helpers/RenderProposalsTextFields";
+import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
 
 interface LinksDataProps {
   data: DataType;
@@ -42,12 +43,6 @@ interface LinksDataProps {
   handleValues: Function;
   setIsWrong: (isWrong: boolean) => void;
 }
-
-const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
-  userSelect: "none",
-  background: isDragging ? "#ebe8e1" : "none",
-  ...draggableStyle
-});
 
 export default function LinksData({data, setData, handleValues, setIsWrong}: LinksDataProps) {
   const [expander, setExpander] = useState<string | null>(null);
