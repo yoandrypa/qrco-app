@@ -85,7 +85,7 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
           <Box sx={{width: `calc(100% - ${!isBorder ? 0 : 10}px)`, height: '20px', background: blueGrey[50],
             position: 'absolute', borderRadius: '8px', mt: '-10px', ml: isBorder ? '5px' : 0}}/>
         )}
-        {!omitPrimary && (
+        {!omitPrimary ? (
           <Box sx={{
             width: '48px',
             height: '48px',
@@ -94,9 +94,9 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
             transform: `translate(${!isLeft ? 0 : '-25px'}, ${!inverse ? -24 : -34}px)`,
             border: 'solid 2px #fff',
             borderRadius: !data?.foregndImgType || data.foregndImgType === 'circle' ? '50%' : (data.foregndImgType === 'smooth' ? '10px' : '3px')
-          }}/>)}
+          }}/>) : <Box sx={{height: '48px'}} />}
         {kind.includes('sections') && (
-          <Box sx={{ width: 'calc(100% - 20px)', mx: '5px',  marginTop: `${!inverse ? -18 : -28}px`, marginLeft: 'auto', marginRight: 'auto' }}>
+          <Box sx={{ width: 'calc(100% - 20px)', mx: '5px', marginTop: `${(!inverse ? -18 : -28) - (omitPrimary ? 10 : 0)}px`, marginLeft: 'auto', marginRight: 'auto' }}>
             <Box sx={{ width: '100%', height: '40px', background: blueGrey[300], mb: '10px', borderRadius: '5px' }}/>
             <Box sx={{ width: '100%', height: '40px', background: blueGrey[300], borderRadius: '5px' }}/>
           </Box>
