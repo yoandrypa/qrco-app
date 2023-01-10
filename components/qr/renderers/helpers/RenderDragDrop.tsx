@@ -10,7 +10,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { DataType, DragFields } from '../../types/types';
 import Expander from '../helpers/Expander';
 
-interface LinkedLabelDataProps {
+interface RenderDragDropProps {
   fields: DragFields;
 	setData: Function;
 }
@@ -21,10 +21,10 @@ const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
   ...draggableStyle
 });
 
-export default function LinkedLabelData({
+export default function RenderDragDrop({
 	fields,
 	setData
-}: LinkedLabelDataProps) {
+}: RenderDragDropProps) {
   const [expander, setExpander] = useState<string | null>(null);
 
   const remove = (index: number) => {
@@ -51,10 +51,10 @@ export default function LinkedLabelData({
   };
 
   return (
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragEnd={onDragEnd} >
         <Droppable droppableId="droppable">
           {(provided: any) => (
-            <TableContainer sx={{}}>
+            <TableContainer sx={{paddingBottom:2}}>
               <Table size="small">
                 <TableBody {...provided.droppableProps} ref={provided.innerRef}>
                   {fields?.map((field: any, index: number) => {
@@ -110,12 +110,12 @@ export default function LinkedLabelData({
                                     )
                                   }
                                   item={`item-${index}`}
-                                  title={field.headTitle}
+                                  title={field.header}
                                   deleteButton
                                   handleDelete={() => remove(index)}
                                 />
                                 {expander === index.toString() && (
-                                  <>{field}</>
+                                  <>{field.component}</>
                                 )}
                               </Paper>
                             </TableCell>

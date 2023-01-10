@@ -2,22 +2,14 @@ import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import { conjunctMethods, toBytes } from '../../../utils';
 import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS } from '../../../consts';
-import Paper from '@mui/material/Paper';
-import TableContainer from '@mui/material/TableContainer';
-import Table from '@mui/material/Table';
-import TableRow from '@mui/material/TableRow';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Common from '../helperComponents/Common';
 import Topics from './helpers/Topics';
 import RenderTextFields from './helpers/RenderTextFields';
 import { DataType } from '../types/types';
-import Expander from './helpers/Expander';
 import { Button, Menu, MenuItem, Typography } from '@mui/material';
 import FileUpload from 'react-material-file-upload';
 import RenderChipFields from './helpers/RenderChipFields';
+import RenderDragDrop from './helpers/RenderDragDrop';
 import RenderContactForm from '../helperComponents/smallpieces/RenderContactForm';
 //@ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
@@ -117,11 +109,16 @@ export default function LinkedLabelData({
     setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
   };
   const updateFields = (files: File[], index: number) => {
+    
     setData((prev: DataType) => {
       const tempo = { ...prev };
       if (!tempo.fields) {
         tempo.fields = [];
       }
+      // * only let pass fields with files on it
+      if(tempo.fields[index] === undefined || tempo.fields[index].type !== 'media' )
+        return prev;
+
       const isSameFile = (uploadedFile: File, fileToUpload: File) => {
         return (
           uploadedFile.name === fileToUpload.name &&
@@ -132,12 +129,13 @@ export default function LinkedLabelData({
         tempo.fields[index] = { ...tempo.fields[index], files: [] };
         setGalleries(0);
         return tempo;
-      }
+      }// @ts-ignore
       const oldFiles = tempo.fields[index].files || [];
       let newFiles = conjunctMethods.intersection(oldFiles, files, isSameFile);
       if (newFiles.length === 0) {
         newFiles = [...oldFiles, ...files];
       }
+      // @ts-ignore
       tempo.fields[index].files = newFiles;
       setGalleries(newFiles.length);
       return tempo;
@@ -193,32 +191,34 @@ export default function LinkedLabelData({
     switch (item.type) {
       case 'text':
         return (
-          <Grid container key={index}>
-            <Grid item xs={12}>
-              <RenderTextFields
-                handleValues={(e: any) => {
-                  handleChangeText('title', index, e.target.value);
-                }}
-                label="Title"
-                value={item.title}
-              />
+          <>
+            <Grid container key={index}>
+              <Grid item xs={12}>
+                <RenderTextFields
+                  handleValues={(e: any) => {
+                    handleChangeText('title', index, e.target.value);
+                  }}
+                  label="Title"
+                  value={item.title}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <RenderTextFields
+                  handleValues={(e: any) => {
+                    handleChangeText('text', index, e.target.value);
+                  }}
+                  label="Description"
+                  value={item.text}
+                  multiline
+                />
+              </Grid>
+              <Grid item xs={12} sx={{ pl: 1 }}>
+                <Typography fontSize={10} color="textSecondary">
+                  *At least one field most be filled
+                </Typography>
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <RenderTextFields
-                handleValues={(e: any) => {
-                  handleChangeText('text', index, e.target.value);
-                }}
-                label="Description"
-                value={item.text}
-                multiline
-              />
-            </Grid>
-            <Grid item xs={12} sx={{ pl: 1 }}>
-              <Typography fontSize={10} color="textSecondary">
-                *At least one field most be filled
-              </Typography>
-            </Grid>
-          </Grid>
+          </>
         );
       case 'contact':
         return (
@@ -261,19 +261,19 @@ export default function LinkedLabelData({
   };
 
   const renderLabelTitle = (type: string) => {
-    let fieldtype;
+    let fieldType;
     switch (type) {
       case 'text':
-        fieldtype = 'Title + Description field';
+        fieldType = 'Title + Description field';
         break;
       case 'contact':
-        fieldtype = 'Contact Form';
+        fieldType = 'Contact Form';
         break;
       default:
-        fieldtype = 'Media field'
+        fieldType = 'Media field'
         break;
     }
-    return fieldtype;
+    return fieldType;
   }
 
   useEffect(() => {
@@ -355,85 +355,13 @@ export default function LinkedLabelData({
           </Menu>
         </Grid>
       </Grid>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided: any) => (
-            <TableContainer sx={{}}>
-              <Table size="small">
-                <TableBody {...provided.droppableProps} ref={provided.innerRef}>
-                  {data.fields?.map((x: any, index: number) => {
-                    const itemId = `item-${index}`;
-                    return (
-                      <Draggable
-                        key={itemId}
-                        draggableId={itemId}
-                        index={index}
-                        isDragDisabled={data.fields?.length === 1}>
-                        {(provided: any, snapshot: any) => (
-                          <TableRow
-                            sx={{ p: 0, width: '100%' }}
-                            key={`trow${index}`}
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            style={getItemStyle(
-                              snapshot.isDragging,
-                              provided.draggableProps.style
-                            )}>
-                            <TableCell
-                              sx={{
-                                p: 0,
-                                pr: 1,
-                                width: '40px',
-                                borderBottom: 'none'
-                              }}>
-                              {/* @ts-ignore */}
-                              {data.fields.length > 1 && (
-                                <DragIndicatorIcon
-                                  sx={{
-                                    color: theme => theme.palette.text.disabled
-                                  }}
-                                />
-                              )}
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                p: 0,
-                                pr: 1,
-                                width: '95%',
-                                borderBottom: 'none'
-                              }}>
-                              <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
-                                <Expander
-                                  expand={expander}
-                                  setExpand={() =>
-                                    setExpander(
-                                      index.toString() === expander
-                                        ? ''
-                                        : index.toString()
-                                    )
-                                  }
-                                  item={`item-${index}`}
-                                  title={renderLabelTitle(x.type)}
-                                  deleteButton
-                                  handleDelete={() => remove(index)}
-                                />
-                                {expander === index.toString() && (
-                                  <>{renderFields(x, index)}</>
-                                )}
-                              </Paper>
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </Draggable>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <RenderDragDrop fields={data.fields?data.fields.map((field, index) =>{
+        return {
+          ...field,
+          header: renderLabelTitle(field.type),
+          component:renderFields(field, index)};
+      })
+        :[]}  setData={setData}/>
     </Common>
   );
 }
