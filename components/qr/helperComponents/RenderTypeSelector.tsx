@@ -144,7 +144,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
             {IS_DEV_ENV && renderTypeSelector("linkedLabel", "Share your product's information", true)}
             {IS_DEV_ENV && renderTypeSelector("fundme", "Start your own charity or fundraising campaign", true)}
             {IS_DEV_ENV && renderTypeSelector("paylink", "Receive payments worldwide", true)}
-
+            {IS_DEV_ENV && renderTypeSelector("custom", "Custom QR link from scratch using predefined sections", true)}
           </>)
         }
         {isDynamic ? (<>

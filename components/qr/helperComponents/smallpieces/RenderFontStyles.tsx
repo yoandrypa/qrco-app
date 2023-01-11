@@ -79,9 +79,9 @@ const RenderFontStyles = ({handleValue, property, value}: RenderFontStylesProps)
   }, [color, formats]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    setColor(value?.includes('#') ? value?.slice(value?.indexOf('#')) : '#000000');
+    setColor(value !== undefined && value.includes('#') ? value.slice(value.indexOf('#')) : '#000000');
     const newFormats = [];
-    if (!value && ['titlesFontStyle', 'subtitlesFontStyle'].includes(property)) {
+    if (value === undefined && ['titlesFontStyle', 'subtitlesFontStyle'].includes(property)) {
       newFormats.push('b');
       handleValue(property)('b');
     } else if (value?.includes('b')) {

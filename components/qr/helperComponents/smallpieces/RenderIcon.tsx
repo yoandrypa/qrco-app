@@ -58,6 +58,7 @@ const Coffee = dynamic(() => import('@mui/icons-material/Coffee'));
 const CreditCard = dynamic(() => import('@mui/icons-material/CreditCard'));
 const CurrencyBitcoinIcon = dynamic(() => import('@mui/icons-material/CurrencyBitcoin'));
 const QrCode = dynamic(() => import('@mui/icons-material/QrCode'));
+const CustomizeIcon = dynamic(() => import('@mui/icons-material/DashboardCustomize'));
 
 type RenderIconProp = {
   icon: string;
@@ -69,6 +70,7 @@ type RenderIconProp = {
 export default function RenderIcon({ icon, color, enabled, adjust }: RenderIconProp) {
   const renderIcon = () => {
     switch (icon) {
+      case 'custom': { return <CustomizeIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'copy': { return <ContentCopyIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'phone': { return <PhoneIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'cell': { return <SmartphoneIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }

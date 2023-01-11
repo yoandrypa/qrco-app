@@ -85,21 +85,21 @@ export default function RenderFontsHandler({data, handleValue, selected}: Render
             </Grid>
           </Grid>
           </Paper>
-          <Paper elevation={2} sx={{p: 1, width: '100%', mb: 2}}>
+          {!['vcard+'].includes(selected) && (<Paper elevation={2} sx={{p: 1, width: '100%', mb: 2}}>
             <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Sub titles'}</Typography>
             <Grid container spacing={2}>
               <Grid item xs={isWide ? 4 : 12}>
-                <RenderFontsSelector handleSelect={handleValue} property="subtitlesFont" value={data?.subtitlesFont || "none"} label="Font"/>
+                <RenderFontsSelector handleSelect={handleValue} property="subtitlesFont"value={data?.subtitlesFont || "none"} label="Font"/>
               </Grid>
               <Grid item xs={isWide ? 4 : isWideEnough ? 6 : 12}>
-                <RenderFontsSizeSelector handleSelect={handleValue} property="subtitlesFontSize" value={data?.subtitlesFontSize || "default"} label="Size"/>
+                <RenderFontsSizeSelector handleSelect={handleValue} property="subtitlesFontSize"value={data?.subtitlesFontSize || "default"} label="Size"/>
               </Grid>
               <Grid item xs={isWide ? 4 : isWideEnough ? 6 : 12}>
-                <RenderFontStyles value={data?.subtitlesFontStyle} property="subtitlesFontStyle" handleValue={handleValue}/>
+                <RenderFontStyles value={data?.subtitlesFontStyle} property="subtitlesFontStyle"handleValue={handleValue}/>
               </Grid>
             </Grid>
-          </Paper>
-          {!['social', 'link', 'vcard+'].includes(selected) && (<Paper elevation={2} sx={{p: 1, width: '100%', mb: 2}}>
+          </Paper>)}
+          {!['social', 'link'].includes(selected) && (<Paper elevation={2} sx={{p: 1, width: '100%', mb: 2}}>
             <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Messages'}</Typography>
             <Grid container spacing={2}>
               <Grid item xs={isWide ? 4 : 12}>
@@ -113,7 +113,7 @@ export default function RenderFontsHandler({data, handleValue, selected}: Render
               </Grid>
             </Grid>
           </Paper>)}
-          {!['social'].includes(selected) && (<Paper elevation={2} sx={{p: 1, width: '100%'}}>
+          {!['social', 'gallery'].includes(selected) && (<Paper elevation={2} sx={{p: 1, width: '100%'}}>
             <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Buttons'}</Typography>
             <RenderButtonsFontsHandler handleValue={handleValue} data={data} />
           </Paper>)}

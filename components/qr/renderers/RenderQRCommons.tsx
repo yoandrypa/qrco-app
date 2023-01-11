@@ -185,7 +185,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
           <Expander expand={expander} setExpand={handleExpander} item="fonts" title="Fonts" bold/>
           {expander === 'fonts' && <RenderFontsHandler data={data} handleValue={handleValue} selected={selected} />}
         </Paper>
-        {!['social', 'petId'].includes(selected) && (<Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+        {!['social', 'petId', 'gallery'].includes(selected) && (<Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="buttons" title="Buttons" bold/>
           {expander === 'buttons' && <RenderButtonsHandler handleValue={handleValue} data={data}/>}
         </Paper>)}
