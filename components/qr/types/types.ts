@@ -1,3 +1,5 @@
+import { ReactComponentElement } from "react";
+
 export type CornersAndDotsType = {
   topL: string;
   topR: string;
@@ -210,7 +212,7 @@ export type DataType = {
   contactTitle?: string;
   otherDetails?:HeadAndItemsType;
   urls?:HeadAndItemsType;
-  fields?:any[];
+  fields?:DragFields;
   description?:string;
   categories?: string[];
 
@@ -266,4 +268,30 @@ export type EditType = {
 export type ProcessHanldlerType = {
   value: string;
   status?: boolean;
+};
+ export type DragField = {
+  type: 'text'|'media'|'gallery'|'video'|'contact';
+  header?: string;
+  component?: any// ! react component
+ };
+
+export type Sections = (TextField | MediaField | ContactField);
+
+export type DragFields = Sections[];
+
+export type ContactField = DragField & {
+  title?: string;
+  message?: string;
+  buttonText?: string;
+  email: string;
+
+};
+
+export type TextField = DragField & {
+  title?: string;
+  text?: string;
+};
+
+export type MediaField = DragField & {
+  files?: File[];
 };

@@ -35,3 +35,5 @@ export const FILE_LIMITS = {
   audio: { totalFiles: 1, totalMbPerFile: 30 },
   video: { totalFiles: 4, totalMbPerFile: 300 },
 };
+
+export const MEDIA = ['media', 'gallery', 'video'];

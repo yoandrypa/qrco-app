@@ -1,28 +1,18 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
-import { conjunctMethods, toBytes } from '../../../utils';
-import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS } from '../../../consts';
-import Paper from '@mui/material/Paper';
-import TableContainer from '@mui/material/TableContainer';
-import Table from '@mui/material/Table';
-import TableRow from '@mui/material/TableRow';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { ALLOWED_FILE_EXTENSIONS } from '../../../consts';
 import Common from '../helperComponents/Common';
 import Topics from './helpers/Topics';
-import { isValidUrl } from '../../../utils';
 import RenderTextFields from './helpers/RenderTextFields';
-import { DataType, LinkType } from '../types/types';
-import Expander from './helpers/Expander';
-import socialsAreValid from './validator';
+import { DataType } from '../types/types';
 import { Button, Menu, MenuItem, Typography } from '@mui/material';
-import FileUpload from 'react-material-file-upload';
 import RenderChipFields from './helpers/RenderChipFields';
+import RenderDragDrop from './helpers/RenderDragDrop';
 import RenderContactForm from '../helperComponents/smallpieces/RenderContactForm';
+import RenderGallerySection from '../helperComponents/smallpieces/RenderGallerySection';
 //@ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
+import RenderTitleDesc from './helpers/RenderTitleDesc';
 interface LinkedLabelDataProps {
   data: DataType;
   setData: Function;
@@ -57,8 +47,8 @@ export default function LinkedLabelData({
   const [galleries, setGalleries] = useState<number>(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const MAX_NUM_GALLERIES = 5;
-
+  const MAX_NUM_GALLERIES = 6;
+  
   const { currentAccount } = session;
 
   const handleClickAddField = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -76,28 +66,6 @@ export default function LinkedLabelData({
     });
   }
 
-  const remove = (index: number) => {
-    setData((prev: DataType) => {
-      const tempo = { ...prev };
-      tempo.fields = tempo.fields?.filter((_, i) => i !== index);
-      return tempo;
-    });
-  }
-
-  const onDragEnd = (result: any) => {
-    if (!result?.destination) {
-      return null;
-    }
-
-    setData((prev: DataType) => {
-      const tempo = { ...prev };
-      const newFields = Array.from(tempo.fields || []);
-      const [removed] = newFields.splice(result.source.index, 1);
-      newFields.splice(result.destination.index, 0, removed);
-      tempo.fields = newFields;
-      return tempo;
-    });
-  };
   const handleChangeText = (item: string, index: number, value: string) => {
     setData((prev: DataType) => {
       const tempo = { ...prev };
@@ -118,41 +86,14 @@ export default function LinkedLabelData({
     });
     setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
   };
-  const updateFields = (files: File[], index: number) => {
-    setData((prev: DataType) => {
-      const tempo = { ...prev };
-      if (!tempo.fields) {
-        tempo.fields = [];
-      }
-      const isSameFile = (uploadedFile: File, fileToUpload: File) => {
-        return (
-          uploadedFile.name === fileToUpload.name &&
-          uploadedFile.lastModified === fileToUpload.lastModified
-        );
-      };
-      if (files.length === 0) {
-        tempo.fields[index] = { ...tempo.fields[index], files: [] };
-        setGalleries(0);
-        return tempo;
-      }
-      const oldFiles = tempo.fields[index].files || [];
-      let newFiles = conjunctMethods.intersection(oldFiles, files, isSameFile);
-      if (newFiles.length === 0) {
-        newFiles = [...oldFiles, ...files];
-      }
-      tempo.fields[index].files = newFiles;
-      setGalleries(newFiles.length);
-      return tempo;
-    });
-  };
 
-  const handleAddMediaField = () => {
+  const handleAddMediaField = (type:'media'|'gallery'|'video' = 'media') => {
     setData((prev: DataType) => {
       const tempo = { ...prev };
       if (!tempo.fields) {
         tempo.fields = [];
       }
-      tempo.fields?.push({ type: 'media', files: [] });
+      tempo.fields?.push({ type: type, files: [] });
       return tempo;
     });
     setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
@@ -191,36 +132,41 @@ export default function LinkedLabelData({
       />
     );
   };
+
   const renderFields = (item: any, index: number) => {
     switch (item.type) {
       case 'text':
         return (
-          <Grid container key={index}>
-            <Grid item xs={12}>
-              <RenderTextFields
-                handleValues={(e: any) => {
-                  handleChangeText('title', index, e.target.value);
-                }}
-                label="Title"
-                value={item.title}
-              />
+          <>
+            <Grid container key={index}>
+              <Grid item xs={12}>
+                <RenderTitleDesc
+                  sx={{ p:1, mt:0}}
+                  title={item.title}
+                  description={item.text}
+                  header="*At least one field most be filled"
+                  elevation={0}
+                  handleValues={(item: string) =>
+                    (payload: ChangeEvent<HTMLInputElement> | string) => {
+                      const value =
+                        typeof payload !== 'string'
+                          ? payload.target.value
+                          : payload;
+                      const itemParsed = item === 'title' ? 'title' : 'text';
+                      if (value.length) {
+                        handleChangeText(itemParsed, index, value);
+                      } else {
+                        setData((prev: DataType) => {
+                          const temp = { ...prev }; // @ts-ignore
+                          temp.fields[index][itemParsed] = value;
+                          return temp;
+                        });
+                      }
+                    }}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <RenderTextFields
-                handleValues={(e: any) => {
-                  handleChangeText('text', index, e.target.value);
-                }}
-                label="Description"
-                value={item.text}
-                multiline
-              />
-            </Grid>
-            <Grid item xs={12} sx={{ pl: 1 }}>
-              <Typography fontSize={10} color="textSecondary">
-                *At least one field most be filled
-              </Typography>
-            </Grid>
-          </Grid>
+          </>
         );
       case 'contact':
         return (
@@ -234,47 +180,51 @@ export default function LinkedLabelData({
           />
         );
       case 'media':
-        let title = `Drag 'n' drop some files here, or click to select files. Selected ${item['files']?.length || 0
-          } of ${5} allowed`;
+      case 'gallery':
+      case 'video':
+        let accept:string[] = [];
+        if (item.type === 'media') {
+          accept = [
+            ...ALLOWED_FILE_EXTENSIONS['gallery'],
+            ALLOWED_FILE_EXTENSIONS['video'],
+            'image/*'
+          ];
+        } else if (item.type === 'video') {
+          accept = [ALLOWED_FILE_EXTENSIONS['video']];
+        } else {
+          accept = [...ALLOWED_FILE_EXTENSIONS['gallery'], 'image/*'];
+        }
         return (
-          <Grid item xs={12}>
-            <FileUpload
-              onChange={(files: File[]) => {
-                updateFields(files, index);
-              }}
-              accept={[
-                ...ALLOWED_FILE_EXTENSIONS['gallery'],
-                ALLOWED_FILE_EXTENSIONS['video'],
-                'image/*'
-              ]} //this should accept images from camera
-              multiple
-              // @ts-ignore
-              disabled={item.files?.length >= 5}
-              // @ts-ignore
-              value={item.files}
-              title={title}
-              maxFiles={5}
-              maxSize={toBytes(FILE_LIMITS['gallery'].totalMbPerFile, 'MB')}
-            />
-          </Grid>
+          <RenderGallerySection
+            setData={setData}
+            index={index}
+            item={item}
+            accept={accept}
+          />
         );
     }
   };
 
   const renderLabelTitle = (type: string) => {
-    let fieldtype;
+    let fieldType;
     switch (type) {
       case 'text':
-        fieldtype = 'Title + Description field';
+        fieldType = 'Title + Description Section';
         break;
       case 'contact':
-        fieldtype = 'Contact Form';
+        fieldType = 'Contact Section';
+        break;
+      case 'gallery':
+        fieldType = 'Gallery Section';
+        break;
+      case 'video':
+        fieldType = 'Video Section';
         break;
       default:
-        fieldtype = 'Media field'
+        fieldType = 'Media Section'
         break;
     }
-    return fieldtype;
+    return fieldType;
   }
 
   useEffect(() => {
@@ -287,36 +237,33 @@ export default function LinkedLabelData({
     setIsWrong(isWrong);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // useEffect(() => {
-  //   if (!data.links?.length) {
-  //     setData((prev: DataType) => ({
-  //       ...prev,
-  //       links: [{ label: '', link: '' }]
-  //     }));
-  //   }
-  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   return (
     // smart Label msg
-    <Common msg="Linked Label">
+    <Common msg="Smart Label">
       <Topics message="Main info" top="3px" />
       <Grid container>
         <Grid item xs={12}>
           {renderItem('title', 'Title', true)}
         </Grid>
         <Grid item xs={12}>
-          {renderItem('about', 'Description',)}
+          {renderItem('about', 'Description')}
         </Grid>
       </Grid>
       <Topics message="Categories" top="3px" />
       <Grid container>
         <Grid item xs={12} md={6}>
-          <RenderChipFields values={data.categories ? data.categories : []} handleValues={handleCategories} />
+          <RenderChipFields
+            values={data.categories ? data.categories : []}
+            handleValues={handleCategories}
+          />
         </Grid>
-        <Grid container item xs={12} md={6}
+        <Grid
+          container
+          item
+          xs={12}
+          md={6}
           justifyContent="flex-end"
-          alignItems="center"
-        >
+          alignItems="center">
           <Button
             id="add-field"
             aria-controls={open ? 'basic-menu' : undefined}
@@ -324,9 +271,8 @@ export default function LinkedLabelData({
             aria-expanded={open ? 'true' : undefined}
             variant="outlined"
             onClick={handleClickAddField}
-            size="large"
-          >
-            Add field
+            size="large">
+            Add Section
           </Button>
           <Menu
             id="basic-menu"
@@ -334,107 +280,57 @@ export default function LinkedLabelData({
             open={open}
             onClose={handleCloseAddField}
             MenuListProps={{
-              'aria-labelledby': 'basic-button',
-            }}
-          >
-            <MenuItem onClick={() => {
-              handleAddTextField();
-              handleCloseAddField();
-            }}>Add text field</MenuItem>
-            <MenuItem onClick={() => {
-              handleAddMediaField();
-              handleCloseAddField();
-            }}
-              disabled={galleries >= MAX_NUM_GALLERIES}
-            >Add Media Field</MenuItem>
-            <MenuItem onClick={() => {
-              handleAddContactForm();
-              handleCloseAddField();
-            }}
-
-            >Add Contact Form Field</MenuItem>
+              'aria-labelledby': 'basic-button'
+            }}>
+            <MenuItem
+              onClick={() => {
+                handleAddTextField();
+                handleCloseAddField();
+              }}>
+              Title + Description{' '}
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleAddMediaField('gallery');
+                handleCloseAddField();
+              }}
+              disabled={galleries >= MAX_NUM_GALLERIES}>
+              Gallery
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleAddMediaField('video');
+                handleCloseAddField();
+              }}
+              disabled={galleries >= MAX_NUM_GALLERIES}>
+              Video
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleAddContactForm();
+                handleCloseAddField();
+              }}>
+              Contact Form
+            </MenuItem>
           </Menu>
         </Grid>
       </Grid>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided: any) => (
-            <TableContainer sx={{}}>
-              <Table size="small">
-                <TableBody {...provided.droppableProps} ref={provided.innerRef}>
-                  {data.fields?.map((x: any, index: number) => {
-                    const itemId = `item-${index}`;
-                    return (
-                      <Draggable
-                        key={itemId}
-                        draggableId={itemId}
-                        index={index}
-                        isDragDisabled={data.fields?.length === 1}>
-                        {(provided: any, snapshot: any) => (
-                          <TableRow
-                            sx={{ p: 0, width: '100%' }}
-                            key={`trow${index}`}
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            style={getItemStyle(
-                              snapshot.isDragging,
-                              provided.draggableProps.style
-                            )}>
-                            <TableCell
-                              sx={{
-                                p: 0,
-                                pr: 1,
-                                width: '40px',
-                                borderBottom: 'none'
-                              }}>
-                              {/* @ts-ignore */}
-                              {data.fields.length > 1 && (
-                                <DragIndicatorIcon
-                                  sx={{
-                                    color: theme => theme.palette.text.disabled
-                                  }}
-                                />
-                              )}
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                p: 0,
-                                pr: 1,
-                                width: '95%',
-                                borderBottom: 'none'
-                              }}>
-                              <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
-                                <Expander
-                                  expand={expander}
-                                  setExpand={() =>
-                                    setExpander(
-                                      index.toString() === expander
-                                        ? ''
-                                        : index.toString()
-                                    )
-                                  }
-                                  item={`item-${index}`}
-                                  title={renderLabelTitle(x.type)}
-                                  deleteButton
-                                  handleDelete={() => remove(index)}
-                                />
-                                {expander === index.toString() && (
-                                  <>{renderFields(x, index)}</>
-                                )}
-                              </Paper>
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </Draggable>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <RenderDragDrop
+        expander={expander}
+        setExpander={setExpander}
+        fields={
+          data.fields
+            ? data.fields.map((field, index) => {
+                return {
+                  ...field,
+                  header: renderLabelTitle(field.type),
+                  component: renderFields(field, index)
+                };
+              })
+            : []
+        }
+        setData={setData}
+      />
     </Common>
   );
 }
