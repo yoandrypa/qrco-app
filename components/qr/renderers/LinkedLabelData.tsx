@@ -11,6 +11,7 @@ import FileUpload from 'react-material-file-upload';
 import RenderChipFields from './helpers/RenderChipFields';
 import RenderDragDrop from './helpers/RenderDragDrop';
 import RenderContactForm from '../helperComponents/smallpieces/RenderContactForm';
+import RenderGallerySection from '../helperComponents/smallpieces/RenderGallerySection';
 //@ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
 interface LinkedLabelDataProps {
@@ -66,28 +67,6 @@ export default function LinkedLabelData({
     });
   }
 
-  const remove = (index: number) => {
-    setData((prev: DataType) => {
-      const tempo = { ...prev };
-      tempo.fields = tempo.fields?.filter((_, i) => i !== index);
-      return tempo;
-    });
-  }
-
-  const onDragEnd = (result: any) => {
-    if (!result?.destination) {
-      return null;
-    }
-
-    setData((prev: DataType) => {
-      const tempo = { ...prev };
-      const newFields = Array.from(tempo.fields || []);
-      const [removed] = newFields.splice(result.source.index, 1);
-      newFields.splice(result.destination.index, 0, removed);
-      tempo.fields = newFields;
-      return tempo;
-    });
-  };
   const handleChangeText = (item: string, index: number, value: string) => {
     setData((prev: DataType) => {
       const tempo = { ...prev };
@@ -107,39 +86,6 @@ export default function LinkedLabelData({
       return tempo;
     });
     setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
-  };
-  const updateFields = (files: File[], index: number) => {
-    
-    setData((prev: DataType) => {
-      const tempo = { ...prev };
-      if (!tempo.fields) {
-        tempo.fields = [];
-      }
-      // * only let pass fields with files on it
-      if(tempo.fields[index] === undefined || tempo.fields[index].type !== 'media' )
-        return prev;
-
-      const isSameFile = (uploadedFile: File, fileToUpload: File) => {
-        return (
-          uploadedFile.name === fileToUpload.name &&
-          uploadedFile.lastModified === fileToUpload.lastModified
-        );
-      };
-      if (files.length === 0) {
-        tempo.fields[index] = { ...tempo.fields[index], files: [] };
-        setGalleries(0);
-        return tempo;
-      }// @ts-ignore
-      const oldFiles = tempo.fields[index].files || [];
-      let newFiles = conjunctMethods.intersection(oldFiles, files, isSameFile);
-      if (newFiles.length === 0) {
-        newFiles = [...oldFiles, ...files];
-      }
-      // @ts-ignore
-      tempo.fields[index].files = newFiles;
-      setGalleries(newFiles.length);
-      return tempo;
-    });
   };
 
   const handleAddMediaField = () => {
@@ -232,30 +178,17 @@ export default function LinkedLabelData({
           />
         );
       case 'media':
-        let title = `Drag 'n' drop some files here, or click to select files. Selected ${
-          item['files']?.length || 0
-        } of ${MAX_NUM_GALLERIES} allowed`;
         return (
-          <Grid item xs={12}>
-            <FileUpload
-              onChange={(files: File[]) => {
-                updateFields(files, index);
-              }}
-              accept={[
-                ...ALLOWED_FILE_EXTENSIONS['gallery'],
-                ALLOWED_FILE_EXTENSIONS['video'],
-                'image/*'
-              ]} //this should accept images from camera
-              multiple
-              // @ts-ignore
-              disabled={item.files?.length >= MAX_NUM_GALLERIES}
-              // @ts-ignore
-              value={item.files}
-              title={title}
-              maxFiles={MAX_NUM_GALLERIES}
-              maxSize={toBytes(FILE_LIMITS['gallery'].totalMbPerFile, 'MB')}
-            />
-          </Grid>
+          <RenderGallerySection
+            setData={setData}
+            index={index}
+            item={item}
+            accept={[
+              ...ALLOWED_FILE_EXTENSIONS['gallery'],
+              ALLOWED_FILE_EXTENSIONS['video'],
+              'image/*'
+            ]}
+          />
         );
     }
   };
@@ -285,15 +218,6 @@ export default function LinkedLabelData({
     }
     setIsWrong(isWrong);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // useEffect(() => {
-  //   if (!data.links?.length) {
-  //     setData((prev: DataType) => ({
-  //       ...prev,
-  //       links: [{ label: '', link: '' }]
-  //     }));
-  //   }
-  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     // smart Label msg
