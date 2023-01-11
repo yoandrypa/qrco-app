@@ -270,7 +270,7 @@ export type ProcessHanldlerType = {
   status?: boolean;
 };
  export type DragField = {
-  type: 'text'|'media'|'contact';
+  type: 'text'|'media'|'gallery'|'video'|'contact';
   header?: string;
   component?: any// ! react component
  };

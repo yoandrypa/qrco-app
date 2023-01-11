@@ -88,13 +88,13 @@ export default function LinkedLabelData({
     setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
   };
 
-  const handleAddMediaField = () => {
+  const handleAddMediaField = (type:'media'|'gallery'|'video' = 'media') => {
     setData((prev: DataType) => {
       const tempo = { ...prev };
       if (!tempo.fields) {
         tempo.fields = [];
       }
-      tempo.fields?.push({ type: 'media', files: [] });
+      tempo.fields?.push({ type: type, files: [] });
       return tempo;
     });
     setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
@@ -178,16 +178,26 @@ export default function LinkedLabelData({
           />
         );
       case 'media':
+      case 'gallery':
+      case 'video':
+        let accept:string[] = [];
+        if (item.type === 'media') {
+          accept = [
+            ...ALLOWED_FILE_EXTENSIONS['gallery'],
+            ALLOWED_FILE_EXTENSIONS['video'],
+            'image/*'
+          ];
+        } else if (item.type === 'video') {
+          accept = [ALLOWED_FILE_EXTENSIONS['video']];
+        } else {
+          accept = [...ALLOWED_FILE_EXTENSIONS['gallery'], 'image/*'];
+        }
         return (
           <RenderGallerySection
             setData={setData}
             index={index}
             item={item}
-            accept={[
-              ...ALLOWED_FILE_EXTENSIONS['gallery'],
-              ALLOWED_FILE_EXTENSIONS['video'],
-              'image/*'
-            ]}
+            accept={accept}
           />
         );
     }
@@ -197,13 +207,19 @@ export default function LinkedLabelData({
     let fieldType;
     switch (type) {
       case 'text':
-        fieldType = 'Title + Description field';
+        fieldType = 'Title + Description Section';
         break;
       case 'contact':
-        fieldType = 'Contact Form';
+        fieldType = 'Contact Section';
+        break;
+      case 'gallery':
+        fieldType = 'Gallery Section';
+        break;
+      case 'video':
+        fieldType = 'Video Section';
         break;
       default:
-        fieldType = 'Media field'
+        fieldType = 'Media Section'
         break;
     }
     return fieldType;
@@ -263,19 +279,25 @@ export default function LinkedLabelData({
             <MenuItem onClick={() => {
               handleAddTextField();
               handleCloseAddField();
-            }}>Add text field</MenuItem>
+            }}>Title + Description </MenuItem>
             <MenuItem onClick={() => {
-              handleAddMediaField();
+              handleAddMediaField('gallery');
               handleCloseAddField();
             }}
               disabled={galleries >= MAX_NUM_GALLERIES}
-            >Add Media Field</MenuItem>
+            >Gallery</MenuItem>
+            <MenuItem onClick={() => {
+              handleAddMediaField('video');
+              handleCloseAddField();
+            }}
+              disabled={galleries >= MAX_NUM_GALLERIES}
+            >Video</MenuItem>
             <MenuItem onClick={() => {
               handleAddContactForm();
               handleCloseAddField();
             }}
 
-            >Add Contact Form Field</MenuItem>
+            >Contact Form</MenuItem>
           </Menu>
         </Grid>
       </Grid>
