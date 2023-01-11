@@ -186,7 +186,7 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
     updatingHandler("Uploading assets");
       for ( let index = 0 ; index < data.fields?.length ; index++){
         try{
-        if(data.fields[index].type === "media"){
+        if(['media', 'gallery', 'video'].includes(data.fields[index].type)){//@ts-ignore
           data.fields[index].files = await StorageHandler.upload(data.fields[index].files, `${userInfo.cognito_user_id}/${selected}s`);
           updatingHandler(null, true);
         }
