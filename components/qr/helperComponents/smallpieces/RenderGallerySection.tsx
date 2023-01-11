@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import { conjunctMethods, toBytes } from '../../../../utils';
-import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS } from '../../../../consts';
+import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS , MEDIA} from '../../../../consts';
 import { DataType, MediaField } from '../../types/types';
 import FileUpload from 'react-material-file-upload';
 
@@ -21,6 +21,7 @@ export default function RenderGallerySection({
   index,
   item,
   setData,
+  accept
 }: RenderGallerySectionProps) {
   const [galleries, setGalleries] = useState<number>(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -34,7 +35,7 @@ export default function RenderGallerySection({
         tempo.fields = [];
       }
       // * only let pass fields with files on it
-      if(tempo.fields[index] === undefined || tempo.fields[index].type !== 'media' )
+      if(tempo.fields[index] === undefined || !MEDIA.includes(tempo.fields[index].type) )
         return prev;
 
       const isSameFile = (uploadedFile: File, fileToUpload: File) => {
@@ -68,11 +69,7 @@ export default function RenderGallerySection({
         onChange={(files: File[]) => {
           updateFields(files, index);
         }}
-        accept={[
-          ...ALLOWED_FILE_EXTENSIONS['gallery'],
-          ALLOWED_FILE_EXTENSIONS['video'],
-          'image/*'
-        ]} //this should accept images from camera
+        accept={accept} //this should accept images from camera
         multiple
         // @ts-ignore
         disabled={item.files?.length >= MAX_NUM_GALLERIES}

@@ -5,6 +5,7 @@ import Divider from "@mui/material/Divider";
 import {DataType} from "./qr/types/types";
 import {convertBase64} from "../helpers/qr/helpers";
 import CircularProgress from "@mui/material/CircularProgress";
+import { MEDIA } from "../consts";
 
 interface IframeProps {
   src: string;
@@ -69,11 +70,11 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
           let fields: any[] = []; // @ts-ignore
           if (!data.isSample) {
             for (let i = 0, l = data.fields.length; i < l; i += 1) {
-              if(!['media', 'gallery', 'video'].includes(data.fields[i].type) ){
+              if(!MEDIA.includes(data.fields[i].type) ){
                 fields.push(data.fields[i]);
                 continue;
               }
-              const media = {type:"media", files:[]}// @ts-ignore
+              const media = {type:data.fields[i].type, files:[]}// @ts-ignore
               for( let j = 0, k = data.fields[i].files.length; j < k; j += 1) {// @ts-ignore
                 const file = data.fields[i].files[j] as File | string; // @ts-ignore
                 if (typeof file === 'string' || file.Key !== undefined) { // @ts-ignore
