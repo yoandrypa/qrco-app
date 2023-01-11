@@ -7,7 +7,7 @@ import Paper from "@mui/material/Paper";
 
 import {CardDataProps, DataType, OpeningDaysType, OpeningType} from "../../types/types";
 import {DAYS} from "../../constants";
-import RenderTimeSelector from "./RenderTimeSelector";
+import RenderTimeSelector from "../helpers/RenderTimeSelector";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/AddBox";
 import DeleteIcon from "@mui/icons-material/Delete";

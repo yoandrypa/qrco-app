@@ -41,15 +41,6 @@ export default function RenderPhones({data, handleValues, message}: RenderPhones
           {renderItem('fax', 'Fax')}
         </Grid>
       </Grid>
-      <Topics message={'Organization'}/>
-      <Grid container spacing={1}>
-        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('organization', 'Organization')}
-        </Grid>
-        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('position', 'Position')}
-        </Grid>
-      </Grid>
     </Box>
   );
 }

@@ -31,7 +31,7 @@ import {isValidUrl} from "../../../utils";
 import RenderTextFields from "./helpers/RenderTextFields";
 import {DataType, LinkType} from "../types/types";
 import Expander from "./helpers/Expander";
-import RenderSocials from "./helpers/RenderSocials";
+import RenderSocials from "./contents/RenderSocials";
 import pluralize from "pluralize";
 import socialsAreValid from "./validator";
 import RenderProposalsTextFields from "./helpers/RenderProposalsTextFields";

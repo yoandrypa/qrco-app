@@ -1,3 +1,183 @@
-export default function Custom() {
-  return (<>AAAA</>);
+import React, {ChangeEvent, MouseEvent, useCallback, useEffect, useState} from "react";
+import AddIcon from '@mui/icons-material/Add';
+import Box from "@mui/material/Box";
+
+import Common from "../helperComponents/Common";
+import DragPaper from "../helperComponents/looseComps/DragPaper";
+import Expander from "./helpers/Expander";
+import {CustomType, DataType} from "../types/types";
+
+import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+
+import dynamic from "next/dynamic";
+import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
+import {cleaner, components, CustomProps, getNameStr, validator} from "./custom/helperFuncs";
+
+const CustomMenu = dynamic(() => import("./custom/CustomMenu"));
+const RenderOpeningTime = dynamic(() => import("./contents/RenderOpeningTime"));
+const RenderDateSelector = dynamic(() => import("./contents/RenderDateSelector"));
+const RenderSocials = dynamic(() => import("./contents/RenderSocials"));
+const RenderEasiness = dynamic(() => import("./contents/RenderEasiness"));
+const RenderConfirmDlg = dynamic(() => import("../../renderers/RenderConfirmDlg"));
+const RenderAddressData = dynamic(() => import("./contents/RenderAddressData"));
+const RenderCompanyData = dynamic(() => import("./contents/RenderCompanyData"));
+const RenderEmailWeb = dynamic(() => import("./contents/RenderEmailWeb"));
+const RenderOrganization = dynamic(() => import("./contents/RenderOrganization"));
+const RenderPhones = dynamic(() => import("./contents/RenderPhones"));
+const RenderPresentation = dynamic(() => import("./contents/RenderPresentation"));
+const Button = dynamic(() => import("@mui/material/Button"));
+const TextField = dynamic(() => import("@mui/material/TextField"));
+const DialogContent = dynamic(() => import("@mui/material/DialogContent"));
+const Dialog = dynamic(() => import("@mui/material/Dialog"));
+const DialogActions = dynamic(() => import("@mui/material/DialogActions"));
+const Typography = dynamic(() => import("@mui/material/Typography"));
+
+export default function Custom({data, setData, handleValues, setIsWrong}: CustomProps) {
+  const [showOptions, setShowOptions] = useState<HTMLButtonElement | null>(null);
+  const [openEmpty, setOpenEmpty] = useState<number | undefined>(undefined);
+  const [emptyValue, setEmptyValue] = useState<string>('');
+  const [expander, setExpander] = useState<string | null>(null);
+  const [confirm, setConfirm] = useState<{index: number, item: string} | undefined>(undefined);
+
+  const handleOptions = (e: MouseEvent<HTMLButtonElement>) => {
+    setShowOptions(e.currentTarget);
+  }
+
+  const handleCloseDlg = useCallback(() => {
+    setEmptyValue('');
+    setOpenEmpty(undefined);
+  }, []);
+
+  const handleAdd = (item?: string) => {
+    setData((prev: DataType) => {
+      const newData = {...prev};
+      if (!newData.custom) { newData.custom = []; } // @ts-ignore
+      const itemName = item || emptyValue;
+      newData.custom.push(itemName);
+      setExpander(itemName);
+      if (openEmpty) { handleCloseDlg(); }
+      return newData;
+    });
+  }
+
+  const handleDelete = (index: number, item: string) => {
+    setData((prev: DataType) => {
+      const newData = {...prev}; // @ts-ignore
+      newData.custom.splice(index, 1); // @ts-ignore
+      if (!newData.custom.length) { delete newData.custom; }
+      cleaner(newData, item);
+      return newData;
+    });
+  }
+
+  const handleRemove = (index: number, item: string) => () => {
+    setConfirm({index, item});
+  };
+
+  const handle = (item: string) => () => {
+    if (item === 'empty') {
+      setOpenEmpty(-1); // @ts-ignore
+    } else {
+      handleAdd(item);
+    }
+    setShowOptions(null);
+  }
+
+  const onDragEnd = (result: any) => {
+    if (!result?.destination) { return null; }
+
+    setData((prev: DataType) => {
+      const tempo = {...prev};
+
+      const newPositions = prev.custom || [];
+      const [removed] = newPositions.splice(result.source.index, 1);
+      newPositions.splice(result.destination.index, 0, removed);
+
+      tempo.custom = newPositions;
+
+      return tempo;
+    });
+  }
+
+  useEffect(() => {
+    const errors = validator(data);
+    setIsWrong(errors);
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <Common msg="Create a custom QR Link on your own, using the predefined sections.">
+      <Box sx={{mt: 1, width: '100%'}}>
+        <Button startIcon={<AddIcon />} variant="outlined" onClick={handleOptions}>{'Add...'}</Button>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided: any) => (
+              <Box {...provided.droppableProps} ref={provided.innerRef}>
+                {data.custom?.map((x: CustomType | string, index: number) => {
+                  const onlyOne = data.custom?.length === 1;
+                  const item = `item${index}`;
+                  return (
+                    <Draggable key={item} draggableId={item} index={index} isDragDisabled={onlyOne}>
+                      {(prov: any, snap: any) => (
+                        <Box sx={{my: 4, width: '100%', ...getItemStyle(snap.isDragging, prov.draggableProps.style)}}
+                             ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
+                          {typeof x === "string" ? (
+                            <DragPaper elevation={2} sx={{p: 1}} avoidIcon={onlyOne} removeFunc={handleRemove(index, x)}>
+                              <Expander expand={expander} setExpand={setExpander} item={x} title={getNameStr(x)} />
+                              {expander === x && (<>
+                                {x === components[0].type && <RenderAddressData data={data} handleValues={handleValues} />}
+                                {x === components[1].type && <RenderCompanyData data={data} handleValues={handleValues} />}
+                                {x === components[2].type && <RenderDateSelector data={data} setData={setData} label="Date" />}
+                                {x === components[3].type && <RenderEmailWeb data={data} handleValues={handleValues} />}
+                                {x === components[4].type && <RenderEasiness data={data} setData={setData} />}
+                                {x === components[5].type && <RenderOrganization data={data} handleValues={handleValues} />}
+                                {x === components[6].type && <RenderPhones data={data} handleValues={handleValues} />}
+                                {x === components[7].type && <RenderPresentation data={data} handleValues={handleValues} />}
+                                {x === components[8].type && <RenderOpeningTime data={data} setData={setData} />}
+                                {x === components[9].type && <RenderSocials data={data} setData={setData} />}
+                              </>)}
+                            </DragPaper>
+                          ) : x}
+                        </Box>
+                      )}
+                    </Draggable>
+                  );
+                })}
+              </Box>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </Box>
+      {showOptions && <CustomMenu handle={handle} data={data} showOptions={showOptions} setShowOptions={setShowOptions} />}
+      {openEmpty !== undefined && (
+        <Dialog onClose={handleCloseDlg} open={true}>
+          <DialogContent>
+            <Typography sx={{mb: 2}}>{'Enter the section description:'}</Typography>
+            <TextField
+              autoFocus
+              fullWidth
+              value={emptyValue}
+              size="small"
+              label="Section description"
+              onChange={(event: ChangeEvent<HTMLInputElement>) => setEmptyValue(event.target.value)}/>
+          </DialogContent>
+          <DialogActions sx={{width: 'calc(100% - 16px)', mb: 1}}>
+            <Button variant="outlined" disabled={!emptyValue.trim().length} onClick={() => handleAdd()}>Ok</Button>
+            <Button variant="outlined" onClick={handleCloseDlg}>Cancel</Button>
+          </DialogActions>
+        </Dialog>
+      )}
+      {confirm !== undefined && (
+        <RenderConfirmDlg
+          handleCancel={() => setConfirm(undefined)}
+          handleOk={() => {
+            handleDelete(confirm.index, confirm.item);
+            setConfirm(undefined);
+          }}
+          title="Confirm" noMsg="No" yesMsg="Yes"
+          message="You are going to remove the selected section."
+          confirmationMsg="Are you sure?"
+        />
+      )}
+    </Common>
+  );
 }
