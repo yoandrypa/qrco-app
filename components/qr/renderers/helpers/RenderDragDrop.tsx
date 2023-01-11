@@ -13,6 +13,8 @@ import Expander from '../helpers/Expander';
 interface RenderDragDropProps {
   fields: DragFields;
 	setData: Function;
+  expander:string|null;
+  setExpander:Function;
 }
 
 const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
@@ -23,9 +25,10 @@ const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
 
 export default function RenderDragDrop({
 	fields,
-	setData
+	setData,
+  expander,
+  setExpander
 }: RenderDragDropProps) {
-  const [expander, setExpander] = useState<string | null>(null);
 
   const remove = (index: number) => {
       setData((prev: DataType) => {

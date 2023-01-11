@@ -246,18 +246,24 @@ export default function LinkedLabelData({
           {renderItem('title', 'Title', true)}
         </Grid>
         <Grid item xs={12}>
-          {renderItem('about', 'Description',)}
+          {renderItem('about', 'Description')}
         </Grid>
       </Grid>
       <Topics message="Categories" top="3px" />
       <Grid container>
         <Grid item xs={12} md={6}>
-          <RenderChipFields values={data.categories ? data.categories : []} handleValues={handleCategories} />
+          <RenderChipFields
+            values={data.categories ? data.categories : []}
+            handleValues={handleCategories}
+          />
         </Grid>
-        <Grid container item xs={12} md={6}
+        <Grid
+          container
+          item
+          xs={12}
+          md={6}
           justifyContent="flex-end"
-          alignItems="center"
-        >
+          alignItems="center">
           <Button
             id="add-field"
             aria-controls={open ? 'basic-menu' : undefined}
@@ -265,8 +271,7 @@ export default function LinkedLabelData({
             aria-expanded={open ? 'true' : undefined}
             variant="outlined"
             onClick={handleClickAddField}
-            size="large"
-          >
+            size="large">
             Add Section
           </Button>
           <Menu
@@ -275,41 +280,57 @@ export default function LinkedLabelData({
             open={open}
             onClose={handleCloseAddField}
             MenuListProps={{
-              'aria-labelledby': 'basic-button',
-            }}
-          >
-            <MenuItem onClick={() => {
-              handleAddTextField();
-              handleCloseAddField();
-            }}>Title + Description </MenuItem>
-            <MenuItem onClick={() => {
-              handleAddMediaField('gallery');
-              handleCloseAddField();
-            }}
-              disabled={galleries >= MAX_NUM_GALLERIES}
-            >Gallery</MenuItem>
-            <MenuItem onClick={() => {
-              handleAddMediaField('video');
-              handleCloseAddField();
-            }}
-              disabled={galleries >= MAX_NUM_GALLERIES}
-            >Video</MenuItem>
-            <MenuItem onClick={() => {
-              handleAddContactForm();
-              handleCloseAddField();
-            }}
-
-            >Contact Form</MenuItem>
+              'aria-labelledby': 'basic-button'
+            }}>
+            <MenuItem
+              onClick={() => {
+                handleAddTextField();
+                handleCloseAddField();
+              }}>
+              Title + Description{' '}
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleAddMediaField('gallery');
+                handleCloseAddField();
+              }}
+              disabled={galleries >= MAX_NUM_GALLERIES}>
+              Gallery
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleAddMediaField('video');
+                handleCloseAddField();
+              }}
+              disabled={galleries >= MAX_NUM_GALLERIES}>
+              Video
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleAddContactForm();
+                handleCloseAddField();
+              }}>
+              Contact Form
+            </MenuItem>
           </Menu>
         </Grid>
       </Grid>
-      <RenderDragDrop fields={data.fields?data.fields.map((field, index) =>{
-        return {
-          ...field,
-          header: renderLabelTitle(field.type),
-          component:renderFields(field, index)};
-      })
-        :[]}  setData={setData}/>
+      <RenderDragDrop
+        expander={expander}
+        setExpander={setExpander}
+        fields={
+          data.fields
+            ? data.fields.map((field, index) => {
+                return {
+                  ...field,
+                  header: renderLabelTitle(field.type),
+                  component: renderFields(field, index)
+                };
+              })
+            : []
+        }
+        setData={setData}
+      />
     </Common>
   );
 }
