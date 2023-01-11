@@ -2,7 +2,7 @@ import {useEffect} from "react";
 import Box from "@mui/material/Box";
 
 import Common from "../helperComponents/Common";
-import RenderSocials from "./helpers/RenderSocials";
+import RenderSocials from "./contents/RenderSocials";
 
 import {DataType} from "../types/types";
 import socialsAreValid from "./validator";

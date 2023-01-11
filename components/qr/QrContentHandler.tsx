@@ -12,6 +12,7 @@ import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
 import DonationsData, { DonationsProps } from './renderers/DonationsData';
 import { qrNameDisplayer } from "../../helpers/qr/helpers";
 
+const Custom = dynamic(() => import("./renderers/Custom"));
 const SingleData = dynamic(() => import('./renderers/SingleData'));
 const WhatsAppData = dynamic(() => import('./renderers/WhatsAppData'));
 const FacebookData = dynamic(() => import('./renderers/FacebookData'));
@@ -92,6 +93,9 @@ const QrContentHandler = () => { // @ts-ignore
       }
       case 'wifi': {
         return <WifiData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
+      }
+      case 'custom': {
+        return <Custom data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />;
       }
       case 'vcard+':
       case 'vcard': {

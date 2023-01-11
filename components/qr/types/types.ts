@@ -1,4 +1,4 @@
-import { ReactComponentElement } from "react";
+import {ReactNode} from "react";
 
 export type CornersAndDotsType = {
   topL: string;
@@ -90,6 +90,7 @@ export type SocialProps = {
 
 export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram' | 'title' | 'about';
 export type SocialNetworksType = { network: SocialsType, value?: string };
+export type CustomType = {component: ReactNode, name: string};
 
 export type DataType = {
   qrType?: string;
@@ -98,6 +99,7 @@ export type DataType = {
   userId?: string;
   id?: string;
   index?: number[];
+  custom?: (CustomType | string)[];
   qrName?: string;
   number?: string;
   avatarImage?: string;
@@ -217,7 +219,7 @@ export type DataType = {
   categories?: string[];
 
 };
-export type validTypes = 'text' | 'email' | 'phone' | 'web' | 'number'| 'date' | 'fax'|'url' | 'string';
+export type validTypes = 'text' | 'email' | 'phone' | 'web' | 'number'| 'date' | 'fax'| 'url' | 'string';
 export type HeadAndItemsType = {
   heading: string;
   items: [{

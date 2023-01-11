@@ -19,7 +19,7 @@ const RenderPhones = dynamic(() => import("./contents/RenderPhones"));
 const RenderOrganization = dynamic(() => import("./contents/RenderOrganization"));
 const RenderAddressData = dynamic(() => import("./contents/RenderAddressData"));
 const RenderEmailWeb = dynamic(() => import("./contents/RenderEmailWeb"));
-const RenderSocials = dynamic(() => import("./helpers/RenderSocials"));
+const RenderSocials = dynamic(() => import("./contents/RenderSocials"));
 
 interface CardDataProps {
   data: DataType;

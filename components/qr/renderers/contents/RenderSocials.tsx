@@ -16,7 +16,7 @@ import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 
 import dynamic from "next/dynamic";
 
-const RenderTitleDesc = dynamic(() => import("./RenderTitleDesc"));
+const RenderTitleDesc = dynamic(() => import("../helpers/RenderTitleDesc"));
 
 interface RenderSocialsProps {
   data: DataType;

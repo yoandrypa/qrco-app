@@ -21,9 +21,9 @@ import DragPaper from "../helperComponents/looseComps/DragPaper";
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
 
-const RenderEasiness = dynamic(() => import("./helpers/RenderEasiness"));
-const RenderSocials = dynamic(() => import("./helpers/RenderSocials"));
-const RenderOpeningTime = dynamic(() => import("./helpers/RenderOpeningTime"));
+const RenderEasiness = dynamic(() => import("./contents/RenderEasiness"));
+const RenderSocials = dynamic(() => import("./contents/RenderSocials"));
+const RenderOpeningTime = dynamic(() => import("./contents/RenderOpeningTime"));
 
 interface BusinessProps {
   data: DataType;

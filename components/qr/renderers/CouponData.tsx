@@ -18,7 +18,7 @@ import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
 
 import dynamic from "next/dynamic";
 
-const RenderDateSelector = dynamic(() => import("./helpers/RenderDateSelector"));
+const RenderDateSelector = dynamic(() => import("./contents/RenderDateSelector"));
 const RenderAddressData = dynamic(() => import("./contents/RenderAddressData"));
 
 type CouponProps = {

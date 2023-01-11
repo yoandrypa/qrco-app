@@ -6,7 +6,7 @@ import Paper from '@mui/material/Paper';
 import Common from '../helperComponents/Common';
 import { EMAIL, PHONE, YEAR, ZIP } from '../constants';
 
-import RenderSocials from './helpers/RenderSocials';
+import RenderSocials from './contents/RenderSocials';
 import Expander from './helpers/Expander';
 import { DataType } from '../types/types';
 import { isValidUrl, validate } from '../../../utils';
@@ -96,27 +96,27 @@ export default function PetIdData({
   };
   const checkData = () => {
     let band = false;
-    if (!data?.petName?.trim().length) 
+    if (!data?.petName?.trim().length)
       band = true;
-    
+
     if(data?.petYearOfBirth && !YEAR.test(data?.petYearOfBirth))
       band = true;
-    
+
     if(data?.phone && !PHONE.test(data?.phone))
       band = true;
-    
+
     if(data?.fax && !PHONE.test(data?.fax))
       band = true;
-    
+
     if(data?.website && !isValidUrl(data?.website))
       band = true;
-    
+
     if(data?.email && !EMAIL.test(data?.email))
       band = true;
-    
+
     if(data?.zip && !ZIP.test(data?.zip))
       band = true;
-    
+
     if( data?.urls && data.urls.items?.length > 0)
       data.urls.items.forEach((url: any) => {
         if (!isValidUrl(url.value) || !url.value.trim().length) {
@@ -138,7 +138,7 @@ export default function PetIdData({
     } else if (isDynamic) {
       errors = !socialsAreValid(data);
     }
-    
+
 
     setIsWrong(errors);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
