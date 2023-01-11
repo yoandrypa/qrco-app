@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import { conjunctMethods, toBytes } from '../../../../utils';
 import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS } from '../../../../consts';

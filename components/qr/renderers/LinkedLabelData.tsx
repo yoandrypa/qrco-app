@@ -1,19 +1,18 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
-import { conjunctMethods, toBytes } from '../../../utils';
-import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS } from '../../../consts';
+import { ALLOWED_FILE_EXTENSIONS } from '../../../consts';
 import Common from '../helperComponents/Common';
 import Topics from './helpers/Topics';
 import RenderTextFields from './helpers/RenderTextFields';
 import { DataType } from '../types/types';
 import { Button, Menu, MenuItem, Typography } from '@mui/material';
-import FileUpload from 'react-material-file-upload';
 import RenderChipFields from './helpers/RenderChipFields';
 import RenderDragDrop from './helpers/RenderDragDrop';
 import RenderContactForm from '../helperComponents/smallpieces/RenderContactForm';
 import RenderGallerySection from '../helperComponents/smallpieces/RenderGallerySection';
 //@ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
+import RenderTitleDesc from './helpers/RenderTitleDesc';
 interface LinkedLabelDataProps {
   data: DataType;
   setData: Function;
@@ -133,6 +132,7 @@ export default function LinkedLabelData({
       />
     );
   };
+
   const renderFields = (item: any, index: number) => {
     switch (item.type) {
       case 'text':
@@ -140,28 +140,30 @@ export default function LinkedLabelData({
           <>
             <Grid container key={index}>
               <Grid item xs={12}>
-                <RenderTextFields
-                  handleValues={(e: any) => {
-                    handleChangeText('title', index, e.target.value);
-                  }}
-                  label="Title"
-                  value={item.title}
+                <RenderTitleDesc
+                  sx={{ p:1, mt:0}}
+                  title={item.title}
+                  description={item.text}
+                  header="*At least one field most be filled"
+                  elevation={0}
+                  handleValues={(item: string) =>
+                    (payload: ChangeEvent<HTMLInputElement> | string) => {
+                      const value =
+                        typeof payload !== 'string'
+                          ? payload.target.value
+                          : payload;
+                      const itemParsed = item === 'title' ? 'title' : 'text';
+                      if (value.length) {
+                        handleChangeText(itemParsed, index, value);
+                      } else {
+                        setData((prev: DataType) => {
+                          const temp = { ...prev }; // @ts-ignore
+                          temp.fields[index][itemParsed] = value;
+                          return temp;
+                        });
+                      }
+                    }}
                 />
-              </Grid>
-              <Grid item xs={12}>
-                <RenderTextFields
-                  handleValues={(e: any) => {
-                    handleChangeText('text', index, e.target.value);
-                  }}
-                  label="Description"
-                  value={item.text}
-                  multiline
-                />
-              </Grid>
-              <Grid item xs={12} sx={{ pl: 1 }}>
-                <Typography fontSize={10} color="textSecondary">
-                  *At least one field most be filled
-                </Typography>
               </Grid>
             </Grid>
           </>
@@ -237,7 +239,7 @@ export default function LinkedLabelData({
 
   return (
     // smart Label msg
-    <Common msg="Smart Link">
+    <Common msg="Smart Label">
       <Topics message="Main info" top="3px" />
       <Grid container>
         <Grid item xs={12}>
@@ -265,7 +267,7 @@ export default function LinkedLabelData({
             onClick={handleClickAddField}
             size="large"
           >
-            Add field
+            Add Section
           </Button>
           <Menu
             id="basic-menu"
