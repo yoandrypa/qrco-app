@@ -16,8 +16,8 @@ export default function RenderCompanyData({data, handleValues, message}: Company
   const renderItem = (item: string, label: string, required?: boolean) => {
     let isError = false as boolean; // @ts-ignore
     const value = data?.[item] || '' as string;
-    if (value.trim().length && ((item === 'web' && !isValidUrl(value)) ||
-      (item === 'email' && !EMAIL.test(value)) || (item === 'phone' && !PHONE.test(value)))) {
+    if (value.trim().length && ((item === 'companyWebSite' && !isValidUrl(value)) ||
+      (item === 'companyEmail' && !EMAIL.test(value)) || (item === 'companyPhone' && !PHONE.test(value)))) {
       isError = true;
     }
     return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={handleValues}
@@ -38,16 +38,16 @@ export default function RenderCompanyData({data, handleValues, message}: Company
           {renderItem('subtitle', 'Subtitle')}
         </Grid>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('web', 'Web')}
+          {renderItem('companyWebSite', 'Web')}
         </Grid>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('email', 'Email')}
+          {renderItem('companyEmail', 'Email')}
         </Grid>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
           {renderItem('contact', 'Contact name')}
         </Grid>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('phone', 'Phone')}
+          {renderItem('companyPhone', 'Phone')}
         </Grid>
         <Grid item xs={12} style={{paddingTop: 0}}>
           {renderItem('about', 'About')}

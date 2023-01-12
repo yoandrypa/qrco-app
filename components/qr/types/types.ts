@@ -137,6 +137,9 @@ export type DataType = {
   descriptionAbout?: string;
   titleText?: string;
   subtitle?: string;
+  companyWebSite?: string;
+  companyEmail?: string;
+  companyPhone?: string;
   web?: string;
   website?: string;
   url?: string;

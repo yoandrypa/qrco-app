@@ -118,8 +118,9 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
       if (!data.urlOptionLabel.trim().length || !data.urlOptionLink.trim().length || !isValidUrl(data.urlOptionLink)) {
         errors = true;
       }
-    } else if ((data.web?.trim().length && !isValidUrl(data.web)) ||
-      (data.email?.trim().length && !EMAIL.test(data.email)) || (data.phone?.trim().length && !PHONE.test(data.phone)) ||
+    } else if ((data.companyWebSite?.trim().length && !isValidUrl(data.companyWebSite)) ||
+      (data.companyEmail?.trim().length && !EMAIL.test(data.companyEmail)) ||
+      (data.companyPhone?.trim().length && !PHONE.test(data.companyPhone)) ||
       (data.zip?.trim().length && !ZIP.test(data.zip))) {
       errors = true;
     } else if (!data.company?.trim().length) {
