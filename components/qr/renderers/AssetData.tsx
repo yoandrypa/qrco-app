@@ -64,7 +64,7 @@ const AssetData = ({ type, data, setData, handleValues }: AssetDataProps) => {
     if (data?.files?.length !== 1 && data?.autoOpen) {
       handleValues('autoOpen')(false);
     }
-  }, [data?.files?.length]);
+  }, [data?.files?.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Common
