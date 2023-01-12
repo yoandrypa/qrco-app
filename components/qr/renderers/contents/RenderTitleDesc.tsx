@@ -1,7 +1,8 @@
 import Typography from '@mui/material/Typography';
-import RenderTextFields from './RenderTextFields';
+import RenderTextFields from '../helpers/RenderTextFields';
 import Paper from '@mui/material/Paper';
 import React from 'react';
+import Box from "@mui/material/Box";
 
 interface RenderTitleDescProps {
   title?: string;
@@ -10,6 +11,8 @@ interface RenderTitleDescProps {
   header?: string;
   elevation?: number;
   sx?: object;
+  noHeader?: boolean;
+  noPaper?: boolean;
 }
 
 export default function RenderTitleDesc({
@@ -18,27 +21,39 @@ export default function RenderTitleDesc({
   handleValues,
   header,
   elevation,
+  noHeader,
+  noPaper,
   sx
 }: RenderTitleDescProps) {
-  return (
-    <Paper sx={{ p: 2, my: 2 , ...sx}} elevation={elevation !== undefined ? elevation : 1}>
-      <Typography
-        sx={{ fontSize: 'small', color: theme => theme.palette.text.disabled }}>
+
+  const renderContent = () => (
+    <Box>
+      {!noHeader && <Typography sx={{fontSize: 'small', color: theme => theme.palette.text.disabled}}>
         {header ? header : 'Optional'}
-      </Typography>
+      </Typography>}
       <RenderTextFields
-        item="title"
+        item="titleAbout"
         label="Title"
         value={title || ''}
         handleValues={handleValues}
       />
       <RenderTextFields
         multiline
-        item="about"
+        item="descriptionAbout"
         label="Description"
         value={description || ''}
         handleValues={handleValues}
       />
+    </Box>
+  );
+
+  if (noPaper) {
+    return renderContent();
+  }
+
+  return (
+    <Paper sx={{ p: 2, my: 2 , ...sx}} elevation={elevation !== undefined ? elevation : 1}>
+      {renderContent()}
     </Paper>
   );
 }

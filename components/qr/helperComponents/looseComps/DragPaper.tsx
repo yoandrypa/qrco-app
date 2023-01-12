@@ -35,7 +35,7 @@ export default function DragPaper({children, avoidIcon, removeFunc, ...otherProp
           </IconButton>
         </Tooltip>
       )}
-      <Box sx={{ mt: '-20px' }}>
+      <Box sx={{ mt: !avoidIcon && !removeFunc ? '-20px' : '-5px' }}>
         {children}
       </Box>
     </Paper>

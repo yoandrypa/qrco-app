@@ -132,6 +132,9 @@ export type DataType = {
   contact?: string;
   about?: string;
   title?: string;
+  titleAbout?: string;
+  autoOpen?: boolean;
+  descriptionAbout?: string;
   titleText?: string;
   subtitle?: string;
   web?: string;

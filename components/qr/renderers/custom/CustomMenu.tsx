@@ -1,9 +1,10 @@
-import {components, getName, getNameStr} from "./helperFuncs";
+// import {components, getName, getNameStr} from "./helperFuncs";
+import {components} from "./helperFuncs";
 import React, {ChangeEvent, useState} from "react";
 import MenuList from "@mui/material/MenuList";
 import {MenuItem, TextField} from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
-import Typography from "@mui/material/Typography";
+// import Typography from "@mui/material/Typography";
 import Popover from "@mui/material/Popover";
 
 import {DataType} from "../../types/types";
@@ -70,11 +71,11 @@ export default function CustomMenu({data, handle, showOptions, setShowOptions}: 
         }}
         onChange={(event: ChangeEvent<HTMLInputElement>) => setFilter(event.target.value)}/>
       <MenuList sx={{maxHeight: '255px', overflowY: 'auto', overflowX: 'hidden'}}>
-        {'EMPTY SELECTION'.includes(filter.toUpperCase()) && (<MenuItem onClick={handle('empty')}>
-          <ListItemText>
-            <Typography sx={{color: theme => theme.palette.text.disabled}}>{'Empty section...'}</Typography>
-          </ListItemText>
-        </MenuItem>)}
+        {/*{'EMPTY SELECTION'.includes(filter.toUpperCase()) && (<MenuItem onClick={handle('empty')}>*/}
+        {/*  <ListItemText>*/}
+        {/*    <Typography sx={{color: theme => theme.palette.text.disabled}}>{'Empty section...'}</Typography>*/}
+        {/*  </ListItemText>*/}
+        {/*</MenuItem>)}*/}
         {render()}
       </MenuList>
     </Popover>

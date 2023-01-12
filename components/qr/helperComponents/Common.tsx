@@ -67,7 +67,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           (['buttonsFont', 'titlesFont', 'messagesFont', 'titlesFontSize', 'messagesFontSize', 'buttonsFontSize',
               'subtitlesFontSize', 'subtitlesFont', 'layout'].includes(prop) && (['none', 'default'].includes(payload))
           )) && data[prop] === payload) || (prop === 'buttonShape' && payload === '1') ||
-        (prop === 'buttonBack' && payload === 'default')) {
+        (prop === 'buttonBack' && payload === 'default') || (prop === 'autoOpen' && !payload)) {
         setData((prev: any) => {
           const tempo = {...prev};
           delete tempo[prop];

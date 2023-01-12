@@ -22,7 +22,9 @@ const QrTypeSelector = () => { // @ts-ignore
   const [displayConfirm, setDisplayConfirm] = useState<string | null>(null);
 
   const proceedWithSelection = (payload: string): void => {
-    setSelected((prev: string) => prev === payload ? null : payload);
+    if (selected !== payload) {
+      setSelected(payload);
+    }
   };
 
   const handleOk = () => {
