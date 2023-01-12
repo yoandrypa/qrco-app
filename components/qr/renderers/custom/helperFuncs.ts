@@ -32,6 +32,9 @@ export const validator = (data: DataType): boolean => {
 
   if (!data.company?.trim().length || !data.firstName?.trim().length || (data.phone?.trim().length && !PHONE.test(data.phone)) ||
     (data.fax?.trim().length && !PHONE.test(data.fax)) || (data.cell?.trim().length && !PHONE.test(data.cell)) ||
+    (data.companyPhone?.trim().length && !PHONE.test(data.companyPhone)) ||
+    (data.companyWebSite?.trim().length && !isValidUrl(data.companyWebSite)) ||
+    (data.companyEmail?.trim().length && !EMAIL.test(data.companyEmail)) ||
     (data.zip?.trim().length && !ZIP.test(data.zip)) || (data.web?.trim().length && !isValidUrl(data.web)) ||
     (data.email?.trim().length && !EMAIL.test(data.email))) {
     errors = true;
@@ -47,9 +50,51 @@ export const validator = (data: DataType): boolean => {
 }
 
 export const cleaner = (data: DataType, item: string): void => {
+  const deleteItem = (item: string): void => { // @ts-ignore
+    if (data[item] !== undefined) { delete data[item]; }
+  }
   if (item === 'easiness' && data.easiness !== undefined) {
     delete data.easiness;
   } else if (item === 'socials' && data.socials !== undefined) {
     delete data.socials;
+  } else if (item === 'links' && data.links !== undefined) {
+    delete data.links;
+  } else if (item === 'address') {
+    deleteItem('address');
+    deleteItem('city');
+    deleteItem('zip');
+    deleteItem('state');
+    deleteItem('country');
+  } else if (item === 'company') {
+    deleteItem('company');
+    deleteItem('title');
+    deleteItem('subtitle');
+    deleteItem('web');
+    deleteItem('email');
+    deleteItem('contact');
+    deleteItem('phone');
+    deleteItem('about');
+  } else if (item === 'date' && data.value !== undefined) {
+    delete data.value;
+  } else if (item === 'email') {
+    deleteItem('email');
+    deleteItem('web');
+  } else if (item === 'organization') {
+    deleteItem('organization');
+    deleteItem('position');
+  } else if (item === 'phones') {
+    deleteItem('cell');
+    deleteItem('phone');
+    deleteItem('fax');
+  } else if (item === 'presentation') {
+    deleteItem('prefix');
+    deleteItem('firstName');
+    deleteItem('lastName');
+  } else if (item === 'opening') {
+    deleteItem('is12hours');
+    deleteItem('openingTime');
+  } else if (item === 'title') {
+    deleteItem('titleAbout');
+    deleteItem('descriptionAbout');
   }
 }
