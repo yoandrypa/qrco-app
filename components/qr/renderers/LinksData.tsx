@@ -56,12 +56,6 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
     setIsWrong(isWrong);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    if (!data.links?.length) {
-      setData((prev: DataType) => ({...prev, links: [{label: '', link: ''}]}));
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   return (
     <Common msg="Add at least one link to your websites.">
       <Topics message="Main info" top="3px"/>

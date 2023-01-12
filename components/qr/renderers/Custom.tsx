@@ -114,41 +114,37 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
           <Droppable droppableId="droppable">
             {(provided: any) => (
               <Box {...provided.droppableProps} ref={provided.innerRef}>
-                {data.custom?.map((x: CustomType | string, index: number) => {
-                  const onlyOne = data.custom?.length === 1;
-                  const item = `item${index}`;
-                  return (
-                    <Draggable key={item} draggableId={item} index={index} isDragDisabled={onlyOne}>
-                      {(prov: any, snap: any) => (
-                        <Box sx={{my: 4, width: '100%', ...getItemStyle(snap.isDragging, prov.draggableProps.style)}}
-                             ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
-                          {typeof x === "string" ? (
-                            <DragPaper elevation={2} sx={{p: 1}} avoidIcon={onlyOne} removeFunc={handleRemove(index, x)}>
-                              <Expander expand={expander} setExpand={setExpander} item={x} title={getNameStr(x)} />
-                              {expander === x && (<>
-                                {x === components[0].type && <RenderAddressData data={data} handleValues={handleValues} />}
-                                {x === components[1].type && <RenderCompanyData data={data} handleValues={handleValues} />}
-                                {x === components[2].type && <RenderDateSelector data={data} setData={setData} label="Date" />}
-                                {x === components[3].type && <RenderEmailWeb data={data} handleValues={handleValues} />}
-                                {x === components[4].type && <RenderEasiness data={data} setData={setData} />}
-                                {x === components[5].type && <RenderLinks data={data} setData={setData} />}
-                                {x === components[6].type && <RenderOrganization data={data} handleValues={handleValues} />}
-                                {x === components[7].type && <RenderPhones data={data} handleValues={handleValues} />}
-                                {x === components[8].type && <RenderPresentation data={data} handleValues={handleValues} />}
-                                {x === components[9].type && <RenderOpeningTime data={data} setData={setData} />}
-                                {x === components[10].type && <RenderSocials data={data} setData={setData} />}
-                                {x === components[11].type && (
-                                  <RenderTitleDesc handleValues={handleValues} title={data.titleAbout} noHeader noPaper
-                                                   description={data.descriptionAbout} sx={{mt: '5px'}}/>
-                                )}
-                              </>)}
-                            </DragPaper>
-                          ) : x}
-                        </Box>
-                      )}
-                    </Draggable>
-                  );
-                })}
+                {data.custom?.map((x: CustomType | string, index: number) => (
+                  <Draggable key={`item${index}`} draggableId={`item${index}`} index={index} isDragDisabled={data.custom?.length === 1}>
+                    {(prov: any, snap: any) => (
+                      <Box sx={{my: 4, width: '100%', ...getItemStyle(snap.isDragging, prov.draggableProps.style)}}
+                           ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
+                        {typeof x === "string" ? (
+                          <DragPaper elevation={2} sx={{p: 1}} avoidIcon={data.custom?.length === 1} removeFunc={handleRemove(index, x)}>
+                            <Expander expand={expander} setExpand={setExpander} item={x} title={getNameStr(x)} />
+                            {expander === x && (<>
+                              {x === components[0].type && <RenderAddressData data={data} handleValues={handleValues} />}
+                              {x === components[1].type && <RenderCompanyData data={data} handleValues={handleValues} />}
+                              {x === components[2].type && <RenderDateSelector data={data} setData={setData} label="Date" />}
+                              {x === components[3].type && <RenderEmailWeb data={data} handleValues={handleValues} />}
+                              {x === components[4].type && <RenderEasiness data={data} setData={setData} />}
+                              {x === components[5].type && <RenderLinks data={data} setData={setData} />}
+                              {x === components[6].type && <RenderOrganization data={data} handleValues={handleValues} />}
+                              {x === components[7].type && <RenderPhones data={data} handleValues={handleValues} />}
+                              {x === components[8].type && <RenderPresentation data={data} handleValues={handleValues} />}
+                              {x === components[9].type && <RenderOpeningTime data={data} setData={setData} />}
+                              {x === components[10].type && <RenderSocials data={data} setData={setData} />}
+                              {x === components[11].type && (
+                                <RenderTitleDesc handleValues={handleValues} title={data.titleAbout} noHeader noPaper
+                                                 description={data.descriptionAbout} sx={{mt: '5px'}}/>
+                              )}
+                            </>)}
+                          </DragPaper>
+                        ) : x}
+                      </Box>
+                    )}
+                  </Draggable>
+                ))}
               </Box>
             )}
           </Droppable>
