@@ -1,4 +1,4 @@
-import {DataType} from "../../types/types";
+import {DataType, LinkType} from "../../types/types";
 import {EMAIL, PHONE, ZIP} from "../../constants";
 import {isValidUrl} from "../../../../utils";
 import socialsAreValid from "../validator";
@@ -36,7 +36,8 @@ export const validator = (data: DataType): boolean => {
     (data.companyWebSite?.trim().length && !isValidUrl(data.companyWebSite)) ||
     (data.companyEmail?.trim().length && !EMAIL.test(data.companyEmail)) ||
     (data.zip?.trim().length && !ZIP.test(data.zip)) || (data.web?.trim().length && !isValidUrl(data.web)) ||
-    (data.email?.trim().length && !EMAIL.test(data.email))) {
+    (data.email?.trim().length && !EMAIL.test(data.email)) ||
+    (data?.links?.some((x: LinkType) => (!x.label.trim().length || !x.link.trim().length || !isValidUrl(x.link))))) {
     errors = true;
   } else if (data.urlOptionLabel !== undefined && data.urlOptionLink !== undefined) {
     if (!data.urlOptionLabel.trim().length || !data.urlOptionLink.trim().length || !isValidUrl(data.urlOptionLink)) {
