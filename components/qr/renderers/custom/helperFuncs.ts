@@ -5,10 +5,10 @@ import socialsAreValid from "../validator";
 
 export const components = [
   {type: 'address', name: 'Address'}, {type: 'company', name: 'Company'}, {type: 'date', name: 'Date'},
-  {type: 'email', name: 'Email and web'}, {type: 'easiness', name: 'Easiness'},
+  {type: 'email', name: 'Email and web'}, {type: 'easiness', name: 'Easiness'}, {type: 'links', name: 'Links'},
   {type: 'organization', name: 'Organization'}, {type: 'phones', name: 'Phones and cells'},
   {type: 'presentation', name: 'Presentation'}, {type: 'opening', name: 'Opening time'},
-  {type: 'socials', name: 'Social networks'}
+  {type: 'socials', name: 'Social networks'}, {type: 'title', name: 'Title and description'}
 ];
 
 export const getName = (index: number) => {
@@ -47,7 +47,9 @@ export const validator = (data: DataType): boolean => {
 }
 
 export const cleaner = (data: DataType, item: string): void => {
-  if (item === 'easiness' && data.easiness) {
+  if (item === 'easiness' && data.easiness !== undefined) {
     delete data.easiness;
+  } else if (item === 'socials' && data.socials !== undefined) {
+    delete data.socials;
   }
 }

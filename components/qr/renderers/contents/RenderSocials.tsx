@@ -16,7 +16,7 @@ import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 
 import dynamic from "next/dynamic";
 
-const RenderTitleDesc = dynamic(() => import("../helpers/RenderTitleDesc"));
+const RenderTitleDesc = dynamic(() => import("./RenderTitleDesc"));
 
 interface RenderSocialsProps {
   data: DataType;
@@ -32,7 +32,7 @@ const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) =>
       const tempo = {...prev};
       // data.about aims to the description for reusing the same predefined type
 
-      if (['title', 'about'].includes(item)) { // @ts-ignore
+      if (['title', 'descriptionAbout'].includes(item)) { // @ts-ignore
         tempo[item] = event.target.value;
       }
       if (tempo.socials) {
@@ -118,7 +118,7 @@ const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) =>
     <Grid container spacing={1}>
       {showTitleAndDesc && (
         <Grid item xs={12}>
-          <RenderTitleDesc handleValues={handleValues} title={data.title} description={data.about} />
+          <RenderTitleDesc handleValues={handleValues} title={data.titleAbout} description={data.descriptionAbout} />
         </Grid>
       )}
       <Grid item xs={12}>

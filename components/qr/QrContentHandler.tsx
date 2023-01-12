@@ -45,10 +45,10 @@ type QrContentHandlerProps = {
 const QrContentHandler = () => { // @ts-ignore
   const { data, setData, selected, setIsWrong, userInfo }: QrContentHandlerProps = useContext(Context);
 
-  const handleValues = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string) => {
-    const value = typeof payload !== 'string' ? payload.target.value : payload;
+  const handleValues = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
+    const value = typeof payload === 'string' || typeof payload === 'boolean' ? payload : payload.target.value;
 
-    if (value.length) {
+    if ((typeof value === "string" && value.length) || payload) {
       setData((prev: DataType) => ({ ...prev, [item]: value })); // @ts-ignore
     } else if (data[item]) {
       setData((prev: DataType) => {

@@ -12,7 +12,7 @@ import RenderContactForm from '../helperComponents/smallpieces/RenderContactForm
 import RenderGallerySection from '../helperComponents/smallpieces/RenderGallerySection';
 //@ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
-import RenderTitleDesc from './helpers/RenderTitleDesc';
+import RenderTitleDesc from './contents/RenderTitleDesc';
 interface LinkedLabelDataProps {
   data: DataType;
   setData: Function;
@@ -48,7 +48,7 @@ export default function LinkedLabelData({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const MAX_NUM_GALLERIES = 6;
-  
+
   const { currentAccount } = session;
 
   const handleClickAddField = (event: React.MouseEvent<HTMLButtonElement>) => {

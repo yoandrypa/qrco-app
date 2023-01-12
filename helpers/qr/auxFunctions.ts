@@ -83,16 +83,16 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
       populate('web', 'https://www.example.com');
       genSocials();
     } else if (selected === 'social') {
-      populate('title', 'Sample Social Networks');
-      populate('about', 'This is a brief description for the social networks');
+      populate('titleAbout', 'Sample Social Networks');
+      populate('descriptionAbout', 'This is a brief description for the social networks');
       populate('socials', [
         {network: 'twitter', value: 'twitter_account'}, {network: 'facebook', value: 'facebook_account'},
         {network: 'telegram', value: 'telegram_account'}, {network: 'youtube', value: 'youtube_account'},
         {network: 'whatsapp', value: '1234567890'}
       ]);
     } else if (selected === 'link') {
-      populate('title', 'Sample Links');
-      populate('about', 'This is a brief description for the links');
+      populate('titleAbout', 'Sample Links');
+      populate('descriptionAbout', 'This is a brief description for the links');
       delete obj.links;
       populate('links', [
         {label: 'My website', link: 'https://www.example.com'}, {label: 'My blog', link: 'https://www.example.com'},
@@ -112,32 +112,32 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
       genAddress();
     } else if (selected === 'gallery') {
       cleanAssets();
-      populate('title', 'Title of the Gallery');
-      populate('about', 'A description for your images gallery');
+      populate('titleAbout', 'Title of the Gallery');
+      populate('descriptionAbout', 'A description for your images gallery');
       populate('files', [
         {name: "0land.jpg", Key: "galleries/0land.jpg"}, {name: "1land.jpg", Key: "galleries/1land.jpg"},
         {name: "2land.jpg", Key: "galleries/2land.jpg"}, {name: "3land.jpg", Key: "galleries/3land.jpg"}
       ]);
     } else if (selected === 'audio') {
       cleanAssets();
-      populate('title', 'Title for the Audio Album');
-      populate('about', 'A description for your audios');
+      populate('titleAbout', 'Title for the Audio Album');
+      populate('descriptionAbout', 'A description for your audios');
       populate('files', [{
         ETag: '"25c1051320d50a1607e60c2ad8804e5a"',
         Key: "audios/Luerod Bounce - Will i am (Orchrestral mix)mp3.mp3"
       }]);
     } else if (selected === 'pdf') {
       cleanAssets();
-      populate('title', 'PDFs around us!');
-      populate('about', 'Describe your pdfs files!');
+      populate('titleAbout', 'PDFs around us!');
+      populate('descriptionAbout', 'Describe your pdfs files!');
       populate('files', [{
         name: 'Photoshop for beginners NEW22.pdf',
         Key: 'pdfs/Photoshop for beginners NEW22.pdf'
       }]);
     } else if (selected === 'video') {
       cleanAssets();
-      populate('title', 'Videos Sample');
-      populate('about', 'Description for your video files!');
+      populate('titleAbout', 'Videos Sample');
+      populate('descriptionAbout', 'Description for your video files!');
       populate('files', [{
         ETag: '"7ead95e45c3545b88ec3c1721c2a0921"',
         Key: 'videos/Facebook 0330478876988862(MP4).mp4'
