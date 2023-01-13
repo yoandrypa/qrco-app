@@ -63,7 +63,7 @@ async function createCheckoutSession(
         {
           price: price_id,
           // For metered billing, do not pass quantity
-          quantity: 1
+          // quantity: 1
         }
       ],
       success_url: `https://${process.env.REACT_APP_SERVER_BASE_URL}/plans/account?session_id={CHECKOUT_SESSION_ID}`,
