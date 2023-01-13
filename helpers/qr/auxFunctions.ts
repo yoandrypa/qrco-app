@@ -61,9 +61,9 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
       populate('companyWebSite', 'https://www.example.com');
       populate('companyEmail', 'mybusinessemail@email.com');
       populate('contact', 'Contact Name');
-      populate('companyPhone', '+151234567890');
-      populate('companyCell', '+151234567890');
-      populate('companyFax', '+151234567890');
+      populate('companyPhone', '+1234567890');
+      populate('companyCell', '+1234567890');
+      populate('companyFax', '+1234567890');
       populate('about', 'This is a brief description to the company');
       populate('urlOptionLabel', 'Our website');
       populate('urlOptionLink', 'https://www.example.com');
@@ -75,9 +75,9 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
       populate('prefix', 'Sir');
       populate('firstName', 'Name');
       populate('lastName', 'Lastname');
-      populate('cell', '+1545454545');
-      populate('phone', '+1555555555');
-      populate('fax', '+11234567890');
+      populate('cell', '+1234567890');
+      populate('phone', '+1234567890');
+      populate('fax', '+1234567890');
       populate('organization', 'Sample Organization');
       populate('position', 'Position at Sample Organization');
       genAddress();
