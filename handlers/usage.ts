@@ -12,6 +12,7 @@ export async function reportUsage(customerId: string, subscriptionId: string, nu
     try {
         // Get the subscription for this customer
         const [user] = await findUserByCustomerId(customerId);
+
         const subscriptionId = user.subscriptionData.id;
         const totalUsage = await recordUsage(numRequests, user.id);
         return ({ numRequests: totalUsage });
