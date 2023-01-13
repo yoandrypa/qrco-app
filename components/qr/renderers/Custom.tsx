@@ -62,6 +62,8 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
     });
   }
 
+  console.log(data);
+
   const handleDelete = (index: number, item: string) => {
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
@@ -102,7 +104,7 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
   }
 
   useEffect(() => {
-    const errors = validator(data);
+    const errors = validator(data, data.custom || []);
     setIsWrong(errors);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
