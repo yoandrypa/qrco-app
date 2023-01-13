@@ -74,7 +74,7 @@ const SendMeMoneyData = ({ data, handleValues, setIsWrong, setData }: SendMeMone
                         <span style={{ color: "blue" }}><Link href='mailto:info@ebanux.com'>info@ebanux.com</Link></span>
                     </Typography>
                 </Alert>
-                {/* <Grid container>
+                <Grid container>
                     <Grid item xs={12} sx={{ mt: 1 }}>
                         <FileUpload
                             onChange={handleChange}
@@ -88,7 +88,7 @@ const SendMeMoneyData = ({ data, handleValues, setIsWrong, setData }: SendMeMone
                             maxSize={toBytes(FILE_LIMITS['gallery'].totalMbPerFile, "MB")}
                         />
                     </Grid>
-                </Grid> */}
+                </Grid>
                 <Grid container spacing={2} marginTop={2} >
                     <Grid item xs={8}>
                         <RenderTextFields
