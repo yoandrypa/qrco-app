@@ -1,5 +1,5 @@
 const EBANUX_API = process.env.REACT_EBANUX_API || 'https://dev.ebanux.link';
-import { EbanuxDonationPriceData } from '../components/qr/types/types';
+import { EbanuxDonationPriceData, EbanuxSimplePaymentLinkData } from '../components/qr/types/types';
 
 //@ts-ignore
 import { request, createAxiosInstance } from "@ebanux/ebanux-utils/request";
@@ -25,4 +25,9 @@ export async function updateEbanuxDonationPrice(userId: string, priceId: string,
     };
     const response = await axios.post(`${EBANUX_API}/api/v1/donation`, payload)
     return response?.data;
+}
+
+export async function createPaymentLink(userId: string, productData: EbanuxSimplePaymentLinkData) {
+
+
 }
