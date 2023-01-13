@@ -62,8 +62,6 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
     });
   }
 
-  console.log(data);
-
   const handleDelete = (index: number, item: string) => {
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
