@@ -59,6 +59,7 @@ const CreditCard = dynamic(() => import('@mui/icons-material/CreditCard'));
 const CurrencyBitcoinIcon = dynamic(() => import('@mui/icons-material/CurrencyBitcoin'));
 const QrCode = dynamic(() => import('@mui/icons-material/QrCode'));
 const CustomizeIcon = dynamic(() => import('@mui/icons-material/DashboardCustomize'));
+const PersonSearchIcon = dynamic(() =>  import('@mui/icons-material/PersonSearch'));
 
 type RenderIconProp = {
   icon: string;
@@ -130,6 +131,7 @@ export default function RenderIcon({ icon, color, enabled, adjust }: RenderIconP
       case 'paylink': { return <CreditCard sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'crypto': { return <CurrencyBitcoinIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
       case 'linkedLabel': { return <QrCode sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
+      case 'findMe': {{ return <PersonSearchIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }}
       default: { return <TextSnippetOutlinedIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
     }
   };
