@@ -33,6 +33,7 @@ const LinksData = dynamic(() => import('./renderers/LinksData'));
 const PleaseWait = dynamic(() => import('../PleaseWait'));
 const RenderNoUserWarning = dynamic(() => import('./helperComponents/smallpieces/RenderNoUserWarning'));
 const LinkedLabelData = dynamic(() => import('./renderers/LinkedLabelData'));
+const FindMeData = dynamic(() => import ('./renderers/FindMeData'));
 
 type QrContentHandlerProps = {
   data: DataType;
@@ -142,6 +143,9 @@ const QrContentHandler = () => { // @ts-ignore
       }
       case 'linkedLabel': {
         return <LinkedLabelData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
+      }
+      case 'findMe':{
+        return <FindMeData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
       }
       default: {
         return <NetworksData data={data} setData={handlePayload} setIsWrong={setIsWrong} />
