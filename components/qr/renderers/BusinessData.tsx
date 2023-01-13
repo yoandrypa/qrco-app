@@ -121,6 +121,8 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
     } else if ((data.companyWebSite?.trim().length && !isValidUrl(data.companyWebSite)) ||
       (data.companyEmail?.trim().length && !EMAIL.test(data.companyEmail)) ||
       (data.companyPhone?.trim().length && !PHONE.test(data.companyPhone)) ||
+      (data.companyCell?.trim().length && !PHONE.test(data.companyCell)) ||
+      (data.companyFax?.trim().length && !PHONE.test(data.companyFax)) ||
       (data.zip?.trim().length && !ZIP.test(data.zip))) {
       errors = true;
     } else if (!data.company?.trim().length) {
