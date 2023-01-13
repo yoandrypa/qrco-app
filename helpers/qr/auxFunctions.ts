@@ -112,6 +112,22 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
       populate('value', '1669934672000');
       populate('text', 'Wanna add some terms and conditions? No problem! You can set them here.');
       genAddress();
+    } else if (selected === 'custom') {
+      populate('custom', ['title', 'presentation', 'phones', 'socials']);
+      populate('titleAbout', 'This is the sample title');
+      populate('descriptionAbout', 'This is the sample description');
+      populate('prefix', 'Sir');
+      populate('firstName', 'Name');
+      populate('lastName', 'Lastname');
+      populate('cell', '+1234567890');
+      populate('phone', '+1234567890');
+      populate('fax', '+1234567890');
+      populate('organization', 'Sample Organization');
+      populate('position', 'Position at Sample Organization');
+      genAddress();
+      populate('email', 'myemail@email.com');
+      populate('web', 'https://www.example.com');
+      genSocials();
     } else if (selected === 'gallery') {
       cleanAssets();
       populate('titleAbout', 'Title of the Gallery');

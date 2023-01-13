@@ -1,12 +1,4 @@
-import {
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import {ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
 import Box from "@mui/material/Box";
 import Context from "../context/Context";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -22,8 +14,7 @@ import ProcessHandler from "./renderers/ProcessHandler";
 import { getStep, saveOrUpdate, steps, StepsProps } from "./auxFunctions";
 import RenderNextButton from "./helperComponents/smallpieces/RenderNextButton";
 import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
-import RenderFloatingButtons
-  from "./helperComponents/smallpieces/RenderFloatingButtons";
+import RenderFloatingButtons from "./helperComponents/smallpieces/RenderFloatingButtons";
 import RenderPreview from "./renderers/RenderPreview";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
@@ -49,28 +40,13 @@ const QrWizard = ({ children }: QrWizardProps) => {
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
 
   // @ts-ignore
-  const {
-    selected,
-    data,
-    userInfo,
-    options,
-    frame,
-    background,
-    cornersData,
-    dotsData,
-    isWrong,
-    loading,
-    setOptions,
-    setLoading,
-    setRedirecting,
-    clearData,
-  }: StepsProps = useContext(Context);
+  const {selected, data, userInfo, options, frame, background, cornersData, dotsData, isWrong, loading, setOptions,
+    setLoading, setRedirecting, clearData}: StepsProps = useContext(Context);
 
   const router = useRouter();
 
   const handleBack = () => {
-    router.push(
-      router.pathname === QR_DESIGN_ROUTE ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE,
+    router.push(router.pathname === QR_DESIGN_ROUTE ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE,
       undefined, { shallow: true }).then(() => setLoading(false));
   };
 
@@ -85,8 +61,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
     forceUpdate();
   };
 
-  const currentStep = useMemo(() => getStep(router.pathname),
-    [router.pathname]);
+  const currentStep = useMemo(() => getStep(router.pathname), [router.pathname]);
 
   const lastStep = (goToList: boolean) => {
     const item = document.getElementById("qrCodeReferenceId");
@@ -94,35 +69,28 @@ const QrWizard = ({ children }: QrWizardProps) => {
       setForceDownload({ item });
     } else {
       clearData();
-      router.push(goToList ? "/" : QR_TYPE_ROUTE, undefined, { shallow: true }).
-        then(() => setLoading(false));
+      router.push(goToList ? "/" : QR_TYPE_ROUTE, undefined, { shallow: true })
+        .then(() => setLoading(false));
     }
   };
   const handleNext = async () => {
     setLoading(true); // @ts-ignore
     if ([QR_TYPE_ROUTE, "/"].includes(router.pathname)) {
       if (data.isDynamic && !isLogged) {
-        router.push({
-          pathname: QR_CONTENT_ROUTE,
-          query: { selected, address: router.query.address },
-        }).then(() => setLoading(false));
+        router.push({pathname: QR_CONTENT_ROUTE, query: { selected, address: router.query.address }})
+          .then(() => setLoading(false));
       } else {
-        router.push({
-          pathname: QR_CONTENT_ROUTE,
-          query: { address: router.query.address },
-        }, undefined, { shallow: true }).
-          then(() => setLoading(false));
+        router.push({pathname: QR_CONTENT_ROUTE,query: { address: router.query.address }}, undefined, { shallow: true })
+          .then(() => setLoading(false));
       }
     } else if (router.pathname === QR_DESIGN_ROUTE && isLogged) {
-      await saveOrUpdate(data, userInfo, options, frame, background,
-        cornersData, dotsData, selected, setLoading, setIsError,
+      await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setIsError,
         undefined, router, lastStep, dataInfo.current.length, updatingHandler);
     } else if (router.pathname === QR_DESIGN_ROUTE && !isLogged) {
       lastStep(false);
     } else {
-      router.push(
-        router.pathname === QR_TYPE_ROUTE ? QR_CONTENT_ROUTE : QR_DESIGN_ROUTE,
-        undefined, { shallow: true }).then(() => setLoading(false));
+      router.push(router.pathname === QR_TYPE_ROUTE ? QR_CONTENT_ROUTE : QR_DESIGN_ROUTE, undefined, { shallow: true })
+        .then(() => setLoading(false));
     }
   };
 
@@ -130,29 +98,18 @@ const QrWizard = ({ children }: QrWizardProps) => {
     const observer = new IntersectionObserver(
       (payload: IntersectionObserverEntry[]) => {
         setVisible(payload[0].isIntersecting || false);
-      }, {
-        root: document.querySelector("#scrollArea"),
-        rootMargin: "0px",
-        threshold: [0.3],
-      });
+      }, {root: document.querySelector("#scrollArea"), rootMargin: "0px", threshold: [0.3]});
 
     observer.observe(btnRef.current);
     setSize(sizeRef.current.offsetWidth);
     const getWidth = () => { setSize(sizeRef.current.offsetWidth); };
     window.addEventListener("resize", getWidth);
 
-    if (router.pathname === QR_CONTENT_ROUTE && isLogged && data?.isDynamic &&
-      !Boolean(options.id) && options.mode === undefined) {
+    if (router.pathname === QR_CONTENT_ROUTE && isLogged && data?.isDynamic && !Boolean(options.id) && options.mode === undefined) {
       const genShortLinkAndId = async () => {
         const id = getUuid();
         const shortCode = router.query?.address || await generateId(); // @ts-ignore
-        setOptions((prev: OptionsType) => ({
-          ...prev,
-          id,
-          shortCode,
-          data: generateShortLink(shortCode,
-            process.env.REACT_APP_SHORT_URL_DOMAIN),
-        }));
+        setOptions((prev: OptionsType) => ({...prev, id, shortCode, data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN)}));
       };
       genShortLinkAndId();
     }
@@ -178,9 +135,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           mode={data?.mode}
           selected={selected}/>
         <Stepper activeStep={currentStep} sx={{ width: "100%", my: 0 }}>
-          {steps.map((label: string) => <Step key={label}>
-            <StepLabel>{isWide ? label : ""}</StepLabel>
-          </Step>)}
+          {steps.map((label: string) => <Step key={label}><StepLabel>{isWide ? label : ""}</StepLabel></Step>)}
         </Stepper>
         <RenderNextButton
           handleNext={handleNext}
@@ -192,9 +147,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           qrName={data?.qrName}/>
       </Box>
       <Box sx={{ position: "absolute", top: "32px" }} ref={btnRef}/>
-      <Box sx={{ minHeight: "calc(100vh - 205}px)" }}>
-        {children}
-      </Box>
+      <Box sx={{ minHeight: "calc(100vh - 205}px)" }}>{children}</Box>
       {dataInfo.current.length ? <ProcessHandler process={dataInfo.current} handleCommand={
         (isError?: boolean) => {
           dataInfo.current = [];
@@ -234,8 +187,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           }}/>
       )}
       {isError &&
-        <Notifications autoHideDuration={3500} message="Error accessing data!"
-                       onClose={() => setIsError(false)} showProgress/>}
+        <Notifications autoHideDuration={3500} message="Error accessing data!" onClose={() => setIsError(false)} showProgress/>}
     </>
   );
 };
