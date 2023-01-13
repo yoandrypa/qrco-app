@@ -5,6 +5,7 @@ import RenderTextFields from "../helpers/RenderTextFields";
 import {DataType} from "../../types/types";
 import Box from "@mui/material/Box";
 import Topics from "../helpers/Topics";
+import RenderPhones from "./RenderPhones";
 
 interface CompanyProps {
   data: DataType;
@@ -17,7 +18,7 @@ export default function RenderCompanyData({data, handleValues, message}: Company
     let isError = false as boolean; // @ts-ignore
     const value = data?.[item] || '' as string;
     if (value.trim().length && ((item === 'companyWebSite' && !isValidUrl(value)) ||
-      (item === 'companyEmail' && !EMAIL.test(value)) || (item === 'companyPhone' && !PHONE.test(value)))) {
+      (item === 'companyEmail' && !EMAIL.test(value)))) {
       isError = true;
     }
     return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={handleValues}
@@ -43,11 +44,11 @@ export default function RenderCompanyData({data, handleValues, message}: Company
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
           {renderItem('companyEmail', 'Email')}
         </Grid>
-        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
+        <Grid item xs={12} style={{paddingTop: 0}}>
           {renderItem('contact', 'Contact name')}
         </Grid>
-        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-          {renderItem('companyPhone', 'Phone')}
+        <Grid item xs={12} sx={{pt: 1}}>
+          <RenderPhones data={data} handleValues={handleValues} isCompany />
         </Grid>
         <Grid item xs={12} style={{paddingTop: 0}}>
           {renderItem('about', 'About')}

@@ -124,6 +124,7 @@ export type DataType = {
   organization?: string;
   position?: string;
   address?: string;
+  address2?: string;
   city?: string;
   zip?: string;
   state?: string;
@@ -140,6 +141,8 @@ export type DataType = {
   companyWebSite?: string;
   companyEmail?: string;
   companyPhone?: string;
+  companyCell?: string;
+  companyFax?: string;
   web?: string;
   website?: string;
   url?: string;

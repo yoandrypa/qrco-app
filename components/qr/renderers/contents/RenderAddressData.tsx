@@ -25,8 +25,11 @@ export default function RenderAddressData({data, handleValues, message}: Address
     <Box sx={{width: '100%'}}>
       {message && <Topics message={message}/>}
       <Grid container spacing={1}>
-        <Grid item sm={8} xs={12} style={{paddingTop: 0}}>
+        <Grid item xs={12} style={{paddingTop: 0}}>
           {renderItem('address', 'Address')}
+        </Grid>
+        <Grid item sm={8} xs={12} style={{paddingTop: 0}}>
+          {renderItem('address2', 'Address 2')}
         </Grid>
         <Grid item sm={4} xs={6} style={{paddingTop: 0}}>
           {renderItem('city', 'City')}

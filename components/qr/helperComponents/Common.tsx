@@ -13,7 +13,7 @@ import dynamic from "next/dynamic";
 
 import Context from "../../context/Context";
 import RenderQRCommons from "../renderers/RenderQRCommons";
-import {DEFAULT_COLORS, NO_MICROSITE} from "../constants";
+import {DEFAULT_COLORS, NO_MICROSITE, PROFILE_IMAGE} from "../constants";
 import {download} from "../../../handlers/storage";
 import {DataType} from "../types/types";
 import {previewQRGenerator} from "../../../helpers/qr/auxFunctions";
@@ -192,7 +192,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const omitProfileImg = useMemo(() => (
-    !['vcard+', 'link', 'business', 'social', 'donations', 'petId', 'linkedLabel'].includes(selected) || !data?.isDynamic
+    !PROFILE_IMAGE.includes(selected) || !data?.isDynamic
   ), [selected, data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
