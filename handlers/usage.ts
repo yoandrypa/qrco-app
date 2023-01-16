@@ -23,7 +23,6 @@ export async function recordUsage(usageQuantity: number, subscriptionId: string)
     const subscriptionItems = await stripe.subscriptionItems.list({
         subscription: subscriptionId,
     });
-    console.log('subscription list items', subscriptionItems);
     const subscriptionItemID = subscriptionItems.data[0].id;
 
     // The idempotency key allows you to retry this usage record call if it fails.
