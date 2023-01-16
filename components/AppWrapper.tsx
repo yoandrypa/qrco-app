@@ -36,7 +36,7 @@ import CountDown from "./countdown/CountDown";
 import { get as getUser } from "../handlers/users"; // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage"; // @ts-ignore
 import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
-
+import { list } from '../handlers/qrs'
 interface Props {
   window?: () => Window;
   children: ReactElement;
@@ -67,7 +67,7 @@ interface AppWrapperProps {
 
 export default function AppWrapper(props: AppWrapperProps) {
   const {
-    children, userInfo, handleLogout, clearData, setLoading, setIsTrialMode, mode, isTrialMode, setRedirecting
+    children, userInfo, handleLogout, clearData, setLoading, setIsTrialMode: setIsFreeMode, mode, isTrialMode: isFreeMode, setRedirecting
   } = props;
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
@@ -83,8 +83,8 @@ export default function AppWrapper(props: AppWrapperProps) {
 
   const beforeLogout = () => {
     if (handleLogout) {
-      if (setIsTrialMode) {
-        setIsTrialMode(false);
+      if (setIsFreeMode) {
+        setIsFreeMode(false);
       }
       setStartTrialDate(null);
       handleLogout();
@@ -132,12 +132,19 @@ export default function AppWrapper(props: AppWrapperProps) {
       };
 
       fetchUser().then(profile => {//@ts-ignore
-        if (profile?.createdAt !== null && !profile?.customerId) {//(!profile?.customerId || profile?.subscriptionData?.status !== "active")) {
+        if (!profile?.customerId) {//(!profile?.customerId || profile?.subscriptionData?.status !== "active")) {
           // @ts-ignore
-          setIsTrialMode(true); //@ts-ignore
+          setIsFreeMode(true); //@ts-ignore
           setStartTrialDate(profile.createdAt);
+          //@ts-ignore
+          list({ userId: userInfo.cognito_user_id }).then(qrs => { // @ts-ignore
+            if (qrs.count >= 1) {
+              console.log('You have reach the limit for the free account')
+            }
+          });
+          //Not in free account
         } else { // @ts-ignore
-          setIsTrialMode(false); //@ts-ignore
+          setIsFreeMode(false); //@ts-ignore
           setStartTrialDate(null);
         }
       }).catch(console.error);
@@ -220,7 +227,7 @@ export default function AppWrapper(props: AppWrapperProps) {
                     </Menu>
                   </>)}
                 </>)}
-                {isTrialMode && startTrialDate && <CountDown startDate={startTrialDate} />}
+                {isFreeMode && <CountDown />}
               </Box>
             </Toolbar>
             {/*{isTrialMode && startTrialDate && <CountDown startDate={startTrialDate} />}*/}
