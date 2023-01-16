@@ -16,13 +16,14 @@ export const PRIVATE_ROUTES = [
   "/plans/buy/*",
   "/links/*",
   "/auth_callback"
-
 ];
 
 export const PARAM_QR_TEXT = "qr_text" as string;
 
 export const NO_MICROSITE = ["facebook", "twitter", "whatsapp", "paylink", "fundme"];
 export const ONLY_QR = ["fundme", "paylink"];
+
+export const PROFILE_IMAGE = ['vcard+', 'link', 'business', 'social', 'donations', 'petId', 'linkedLabel', 'custom'];
 
 export const EMAIL = new RegExp("^\\w+(\\.\\w+)*(\\+\\w+(\\.\\w+)*)?@\\w+(\\.\\w+)+$", "i");
 export const PHONE = new RegExp("^(\\+\\d{1,3}\\s?)?((\\(\\d{1,3}\\))|\\d{1,3})(\\s|\\-)?(\\d+((\\s|\\-)\\d+)*)$");
@@ -61,7 +62,7 @@ export const DAYS = {
   wed: "Wednesday",
   thu: "Thursday",
   fri: "Friday",
-  sat: "Saturday",
+  sat: "Saturday"
 } as object;
 
 export const FRAMES_LENGTH = 10 as number;
@@ -80,7 +81,7 @@ export const COLORS = [
   { p: "#37474f", s: "#cfd8dc" },
   { p: "#006064", s: "#e6ee9c" },
   { p: "#880e4f", s: "#9fa8da" },
-  { p: "#bf360c", s: "#d7ccc8" },
+  { p: "#bf360c", s: "#a8a19b" },
   { p: "#212121", s: "#b0bec5" }
 ] as ColorTypes[];
 

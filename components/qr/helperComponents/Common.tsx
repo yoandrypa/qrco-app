@@ -13,7 +13,7 @@ import dynamic from "next/dynamic";
 
 import Context from "../../context/Context";
 import RenderQRCommons from "../renderers/RenderQRCommons";
-import {DEFAULT_COLORS, NO_MICROSITE} from "../constants";
+import {DEFAULT_COLORS, NO_MICROSITE, PROFILE_IMAGE} from "../constants";
 import {download} from "../../../handlers/storage";
 import {DataType} from "../types/types";
 import {previewQRGenerator} from "../../../helpers/qr/auxFunctions";
@@ -21,6 +21,7 @@ import {saveOrUpdate} from "../auxFunctions";
 import {handleDesignerString} from "../../../helpers/qr/helpers";
 import {initialData} from "../../../helpers/qr/data";
 
+const Edit = dynamic(() => import("@mui/icons-material/Edit"));
 const Notifications = dynamic(() => import('../../notifications/Notifications'));
 const RenderPreviewDrawer = dynamic(() => import('./smallpieces/RenderPreviewDrawer'));
 const RenderPreviewButton = dynamic(() => import('./smallpieces/RenderPreviewButton'));
@@ -192,7 +193,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const omitProfileImg = useMemo(() => (
-    !['vcard+', 'link', 'business', 'social', 'donations', 'petId', 'linkedLabel', 'findMe'].includes(selected) || !data?.isDynamic
+    !PROFILE_IMAGE.includes(selected) || !data?.isDynamic
   ), [selected, data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -228,11 +229,19 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
               }}
             />
             {![...NO_MICROSITE, 'web'].includes(selected) && data?.isDynamic ? (
-              <Box sx={{ width: '100%' }}>
+              <Box sx={{width: '100%', position: 'relative'}}>
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>
                   <Tab label="Content" icon={<ArticleIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
                   <Tab label="Design" icon={<DesignServicesIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
                 </Tabs>
+                {data.mode === 'edit' && (
+                  <Box sx={{position: 'absolute', right: '5px', top: '15px', display: 'flex'}}>
+                    <Edit fontSize="small" sx={{mt: '-3px', transform: 'rotate(-10deg)', color: theme => theme.palette.primary.light}} />
+                    <Typography sx={{fontSize: 'small', fontWeight: 'lighter', color: theme => theme.palette.primary.light}}>
+                      {`EDIT${isWideForPreview ? ' MODE' : ''}`}
+                    </Typography>
+                  </Box>
+                )}
                 {tabSelected === 0 ? renderChildren() : (
                   <RenderQRCommons
                     isWideForPreview={isWideForPreview}
@@ -255,7 +264,10 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                                  qrOptions={optionsForPreview()} step={1} mainImg={data.mode === 'edit' ? foreImg : undefined}
                                  data={previewQRGenerator(data, selected, omitProfileImg)}
                                  onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
-                                 backImg={data.mode === 'edit' ? backImg : undefined}/> )}</Box>
+                                 backImg={data.mode === 'edit' ? backImg : undefined}
+            />
+          )}
+        </Box>
       ) : renderChildren()}
       {!openPreview && !isWideForPreview  && <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />}
       {openPreview && ( // @ts-ignore

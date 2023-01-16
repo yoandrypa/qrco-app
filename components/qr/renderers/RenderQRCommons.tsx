@@ -17,13 +17,13 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import dynamic from "next/dynamic";
 import {DataType} from "../types/types";
-import {COLORS, DEFAULT_COLORS, IS_DEV_ENV} from "../constants";
-import RenderColorPreset from "./helpers/RenderColorPreset";
-import ColorSelector from "../helperComponents/ColorSelector";
+import {DEFAULT_COLORS, IS_DEV_ENV} from "../constants";
 import RenderGradientSelector from "./helpers/RenderGradientSelector";
 import Expander from "./helpers/Expander";
 import Context from "../../context/Context";
+import RenderMainColors from "./helpers/RenderMainColors";
 
+const RenderSingleBackColor = dynamic(() => import("./helpers/RenderSingleBackColor"));
 const RenderButtonsHandler = dynamic(() => import('../helperComponents/looseComps/RenderButtonHandler'));
 const RenderImagePicker = dynamic(() => import('./helpers/RenderImagePicker'));
 const RenderImgPreview = dynamic(() => import('./helpers/RenderImgPreview'));
@@ -106,21 +106,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
         </Box>
       )}
       <Box sx={{p: 1, mt: 1}}>
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}>
-          <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Main colors'}</Typography>
-          {COLORS.map(x => (<RenderColorPreset handleValue={handleValue} colors={x} key={x.p} selected={
-              (!data?.primary && !data?.secondary && x.p === DEFAULT_COLORS.p && x.s === DEFAULT_COLORS.s) ||
-              (x.p === data?.primary && x.s === data?.secondary)} />
-          ))}
-          <Box sx={{width: '100%', display: 'flex', flexDirection: {sm: 'row', xs: 'column'}}}>
-            <Box sx={{minWidth: '120px', width: '100%', mr: {sm: '4px', xs: 0}}}>
-              <ColorSelector label="Primary color" color={data?.primary || DEFAULT_COLORS.p} handleData={handleValue} property="primary"/>
-            </Box>
-            <Box sx={{minWidth: '120px', width: '100%', ml: {sm: '4px', xs: 0}}}>
-              <ColorSelector label="Secondary color" color={data?.secondary || DEFAULT_COLORS.s} handleData={handleValue} property="secondary"/>
-            </Box>
-          </Box>
-        </Paper>
+        <RenderMainColors data={data} handleValue={handleValue} />
         <Paper sx={{p: 1, mb: '10px'}} elevation={2}>
           <Typography sx={{fontWeight: 'bold'}}>{'Images'}</Typography>
           <Box sx={{
@@ -154,7 +140,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
                     disabled={loading}
                     onClick={handleSelectFile('foregndImg')}
                     color="primary">
-                    {`Main image${backgndImg && !loading ? ' / Loaded' : ''}`}
+                    {`Main image${backgndImg && !loading ? ' | Loaded' : ''}`}
                   </Button>
                 </Tooltip>
                 {foregndImg && !loading && renderOptions('foregndImg')}
@@ -171,7 +157,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
             <FormControlLabel value="gradient" control={<Radio/>} label="Gradient"/>
           </RadioGroup>
           {(data?.backgroundType === undefined || data.backgroundType === 'single') && (
-            <ColorSelector label="" color={data?.backgroundColor || '#ffffff'} allowClear handleData={handleValue} property="backgroundColor"/>
+            <RenderSingleBackColor data={data} handleValue={handleValue} />
           )}
           {data?.backgroundType === 'gradient' && (
             <RenderGradientSelector

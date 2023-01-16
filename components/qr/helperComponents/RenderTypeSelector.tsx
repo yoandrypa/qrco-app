@@ -156,8 +156,9 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
         </>) : null}
       </Grid>
       {isWideForPreview && selected && (
-        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '56px', width: '370px', position: 'sticky', top: '120px'}} step={0}
-                             isDynamic={data.isDynamic || false} onlyQr={ONLY_QR.includes(selected) || !data.isDynamic} />
+        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '56px', width: '370px', position: 'sticky', top: '120px'}}
+                             isDynamic={data.isDynamic || false} onlyQr={ONLY_QR.includes(selected) || !data.isDynamic}
+                             showSampleMessage step={0} />
       )}
       {!openPreview && !isWideForPreview && selected && ( // @ts-ignore
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Sample"/>
@@ -165,7 +166,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer setOpenPreview={setOpenPreview} border={35} height={!data.isDynamic ? 425 : 700} > {/* @ts-ignore */}
           <RenderSamplePreview onlyQr={[...ONLY_QR, 'web'].includes(selected) || !data.isDynamic} selected={selected}
-                               isDrawed style={{mt: '-15px'}} step={0} isDynamic={data.isDynamic || false} />
+                               isDrawed style={{mt: '-15px'}} step={0} isDynamic={data.isDynamic || false} showSampleMessage />
         </RenderPreviewDrawer>
       )}
       {displayConfirm && (

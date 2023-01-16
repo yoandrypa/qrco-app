@@ -27,24 +27,40 @@ export interface CustomProps {
   setIsWrong: (isWrong: boolean) => void;
 }
 
-export const validator = (data: DataType): boolean => {
+export const validator = (data: DataType, sections: any[]): boolean => {
+  if (!sections.length || !socialsAreValid(data)) {
+    return true;
+  }
+
   let errors = false;
 
-  if (!data.company?.trim().length || !data.firstName?.trim().length || (data.phone?.trim().length && !PHONE.test(data.phone)) ||
-    (data.fax?.trim().length && !PHONE.test(data.fax)) || (data.cell?.trim().length && !PHONE.test(data.cell)) ||
+  if (!errors && sections.includes('company') && (!data.company?.trim().length || (
     (data.companyPhone?.trim().length && !PHONE.test(data.companyPhone)) ||
+    (data.companyCell?.trim().length && !PHONE.test(data.companyCell)) ||
+    (data.companyFax?.trim().length && !PHONE.test(data.companyFax)) ||
     (data.companyWebSite?.trim().length && !isValidUrl(data.companyWebSite)) ||
-    (data.companyEmail?.trim().length && !EMAIL.test(data.companyEmail)) ||
-    (data.zip?.trim().length && !ZIP.test(data.zip)) || (data.web?.trim().length && !isValidUrl(data.web)) ||
-    (data.email?.trim().length && !EMAIL.test(data.email)) ||
-    (data?.links?.some((x: LinkType) => (!x.label.trim().length || !x.link.trim().length || !isValidUrl(x.link))))) {
+    (data.companyEmail?.trim().length && !EMAIL.test(data.companyEmail))
+  ))) {
+    errors = true;
+  } else if (sections.includes('address') && data.zip?.trim().length && !ZIP.test(data.zip)) {
+    errors = true;
+  } else if (sections.includes('email') && data.email?.trim().length && !EMAIL.test(data.email)) {
+    errors = true;
+  } else if (sections.includes('links') && data?.links?.some((x: LinkType) =>
+      (!x.label.trim().length || !x.link.trim().length || !isValidUrl(x.link)))) {
+    errors = true;
+  } else if (sections.includes('phones') && ((data.phone?.trim().length && !PHONE.test(data.phone)) ||
+    (data.cell?.trim().length && !PHONE.test(data.cell)) || (data.fax?.trim().length && !PHONE.test(data.fax)))) {
+    errors = true;
+  } else if (sections.includes('presentation') && !data.firstName?.trim().length) {
+    errors = true;
+  } else if (sections.includes('email') && (data.web?.trim().length && !isValidUrl(data.web)) ||
+    (data.email?.trim().length && !EMAIL.test(data.email))) {
     errors = true;
   } else if (data.urlOptionLabel !== undefined && data.urlOptionLink !== undefined) {
     if (!data.urlOptionLabel.trim().length || !data.urlOptionLink.trim().length || !isValidUrl(data.urlOptionLink)) {
       errors = true;
     }
-  } else if (data?.isDynamic) {
-    errors = !socialsAreValid(data);
   }
 
   return errors;

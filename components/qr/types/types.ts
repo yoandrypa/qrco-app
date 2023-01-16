@@ -1,4 +1,4 @@
-import {ReactNode} from "react";
+import { ReactNode } from "react";
 
 export type CornersAndDotsType = {
   topL: string;
@@ -90,7 +90,7 @@ export type SocialProps = {
 
 export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram' | 'title' | 'about';
 export type SocialNetworksType = { network: SocialsType, value?: string };
-export type CustomType = {component: ReactNode, name: string};
+export type CustomType = { component: ReactNode, name: string };
 
 export type DataType = {
   qrType?: string;
@@ -124,6 +124,7 @@ export type DataType = {
   organization?: string;
   position?: string;
   address?: string;
+  address2?: string;
   city?: string;
   zip?: string;
   state?: string;
@@ -140,6 +141,8 @@ export type DataType = {
   companyWebSite?: string;
   companyEmail?: string;
   companyPhone?: string;
+  companyCell?: string;
+  companyFax?: string;
   web?: string;
   website?: string;
   url?: string;
@@ -218,15 +221,15 @@ export type DataType = {
   headingTextText?: string;
   headingTextHeading?: string;
   contactTitle?: string;
-  otherDetails?:HeadAndItemsType;
-  urls?:HeadAndItemsType;
-  fields?:DragFields;
-  description?:string;
+  otherDetails?: HeadAndItemsType;
+  urls?: HeadAndItemsType;
+  fields?: DragFields;
+  description?: string;
   categories?: string[];
   contactForm?:ContactField;
 
 };
-export type validTypes = 'text' | 'email' | 'phone' | 'web' | 'number'| 'date' | 'fax'| 'url' | 'string';
+export type validTypes = 'text' | 'email' | 'phone' | 'web' | 'number' | 'date' | 'fax' | 'url' | 'string';
 export type HeadAndItemsType = {
   heading: string;
   items: [{
@@ -241,6 +244,13 @@ export type EbanuxDonationPriceData = {
   name: string,
   unitAmountUSD: number,
   redirectUrl: string,
+}
+
+export interface EbanuxSimplePaymentLinkData {
+  productName: string,
+  productDescription: string,
+  images: string[],
+  amount: number
 }
 
 export type CardDataProps = {
@@ -278,11 +288,11 @@ export type ProcessHanldlerType = {
   value: string;
   status?: boolean;
 };
- export type DragField = {
-  type: 'text'|'media'|'gallery'|'video'|'contact';
+export type DragField = {
+  type: 'text' | 'media' | 'gallery' | 'video' | 'contact';
   header?: string;
   component?: any// ! react component
- };
+};
 
 export type Sections = (TextField | MediaField | ContactField);
 
