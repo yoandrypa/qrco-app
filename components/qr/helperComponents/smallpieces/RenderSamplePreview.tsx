@@ -43,6 +43,7 @@ interface SamplePrevProps {
   backImg?: File | string;
   mainImg?: File | string;
   step: number;
+  showSampleMessage?: boolean;
 }
 interface WithSelection extends SamplePrevProps { selected: string; code?: never; }
 interface WithSCode extends SamplePrevProps { selected?: never; code: string; }
@@ -50,7 +51,7 @@ interface WithSCode extends SamplePrevProps { selected?: never; code: string; }
 const clearUrl = (url: string): string => url.slice(url.indexOf('//') + 2);
 
 const RenderSamplePreview = ({
-    step, isDynamic, onlyQr, data, selected, style, save, code, isDrawed, saveDisabled, qrOptions, backImg, mainImg, shareLink
+    step, isDynamic, onlyQr, data, selected, style, save, code, isDrawed, saveDisabled, qrOptions, backImg, mainImg, shareLink, showSampleMessage
   }: WithSelection | WithSCode) => {
   const [prev, setPrev] = useState<string>(!onlyQr ? 'preview' : 'qr');
   const [copied, setCopied] = useState<boolean>(false);
@@ -177,6 +178,9 @@ const RenderSamplePreview = ({
               <SaveIcon fontSize="small" sx={{mb: '1px'}} />
               <Typography>{'Save'}</Typography>
             </Button>
+          )}
+          {showSampleMessage && (
+            <Typography sx={{mr: '10px', color: theme => theme.palette.text.disabled, fontSize: 'small'}}>SAMPLE</Typography>
           )}
         </Box>
       </Box>
