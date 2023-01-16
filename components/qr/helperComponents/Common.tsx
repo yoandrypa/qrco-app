@@ -12,6 +12,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import dynamic from "next/dynamic";
 
 import Context from "../../context/Context";
+import RenderQRCommons from "../renderers/RenderQRCommons";
 import {DEFAULT_COLORS, NO_MICROSITE, PROFILE_IMAGE} from "../constants";
 import {download} from "../../../handlers/storage";
 import {DataType} from "../types/types";
@@ -25,7 +26,6 @@ const Notifications = dynamic(() => import('../../notifications/Notifications'))
 const RenderPreviewDrawer = dynamic(() => import('./smallpieces/RenderPreviewDrawer'));
 const RenderPreviewButton = dynamic(() => import('./smallpieces/RenderPreviewButton'));
 const RenderSamplePreview = dynamic(() => import('./smallpieces/RenderSamplePreview'));
-const RenderQRCommons = dynamic(() => import("../renderers/RenderQRCommons"));
 
 interface CommonProps {
   msg: string;

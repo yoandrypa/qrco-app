@@ -140,7 +140,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
                     disabled={loading}
                     onClick={handleSelectFile('foregndImg')}
                     color="primary">
-                    {`Main image${backgndImg && !loading ? ' / Loaded' : ''}`}
+                    {`Main image${backgndImg && !loading ? ' | Loaded' : ''}`}
                   </Button>
                 </Tooltip>
                 {foregndImg && !loading && renderOptions('foregndImg')}
