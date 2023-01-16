@@ -15,7 +15,8 @@ import { getUuid } from "../../helpers/qr/helpers";
 import { generateId, generateShortLink } from "../../utils";
 import * as QrHandler from "../../handlers/qrs";
 import { QR_CONTENT_ROUTE, QR_TYPE_ROUTE } from "./constants";
-
+import { get as getUser } from "../../handlers/users"; // @ts-ignore
+import { recordUsage } from "../../handlers/usage";
 //@ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
 
@@ -181,16 +182,16 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
       updatingHandler(null, false);
     }
   }
-  
-  if( updatingHandler && selected === "linkedLabel" && data.fields) {
+
+  if (updatingHandler && selected === "linkedLabel" && data.fields) {
     updatingHandler("Uploading assets");
-      for ( let index = 0 ; index < data.fields?.length ; index++){
-        try{
-        if(['media', 'gallery', 'video'].includes(data.fields[index].type)){//@ts-ignore
+    for (let index = 0; index < data.fields?.length; index++) {
+      try {
+        if (['media', 'gallery', 'video'].includes(data.fields[index].type)) {//@ts-ignore
           data.fields[index].files = await StorageHandler.upload(data.fields[index].files, `${userInfo.cognito_user_id}/${selected}s`);
           updatingHandler(null, true);
         }
-      } catch{
+      } catch {
         updatingHandler(null, false);
       }
     }
@@ -303,6 +304,16 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
         address: options.shortCode || await generateId(), // @ts-ignore
         ...qrData.shortLinkId
       };
+
+      //This logic  will execute when a new Dynamic QR is created
+      console.log('creating a Dynamic QR');
+      if (userInfo) {
+        const user = await getUser(userInfo.cognito_user_id);
+        if (user.subscriptionData?.status == 'active') {
+          await recordUsage(1, user.subscriptionData.id)
+        }
+      }
+
     }
     qrDesign.id = qrDesignId;
   }
