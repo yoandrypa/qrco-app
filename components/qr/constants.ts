@@ -16,7 +16,6 @@ export const PRIVATE_ROUTES = [
   "/plans/buy/*",
   "/links/*",
   "/auth_callback"
-
 ];
 
 export const PARAM_QR_TEXT = "qr_text" as string;
@@ -82,7 +81,7 @@ export const COLORS = [
   { p: "#37474f", s: "#cfd8dc" },
   { p: "#006064", s: "#e6ee9c" },
   { p: "#880e4f", s: "#9fa8da" },
-  { p: "#bf360c", s: "#d7ccc8" },
+  { p: "#bf360c", s: "#a8a19b" },
   { p: "#212121", s: "#b0bec5" }
 ] as ColorTypes[];
 
