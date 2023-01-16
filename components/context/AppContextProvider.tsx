@@ -1,14 +1,14 @@
-import {ReactNode, useCallback, useEffect, useMemo, useRef, useState} from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 
 import Context from "./Context";
-import {initialBackground, initialData, initialFrame} from "../../helpers/qr/data";
-import {BackgroundType, CornersAndDotsType, DataType, FramesType, OptionsType} from "../qr/types/types";
-import {PARAM_QR_TEXT, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE, QR_TYPE_ROUTE} from "../qr/constants";
+import { initialBackground, initialData, initialFrame } from "../../helpers/qr/data";
+import { BackgroundType, CornersAndDotsType, DataType, FramesType, OptionsType } from "../qr/types/types";
+import { PARAM_QR_TEXT, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE, QR_TYPE_ROUTE } from "../qr/constants";
 import AppWrapper from "../AppWrapper";
-import {dataCleaner, getBackgroundObject, getCornersAndDotsObject, getFrameObject, handleInitialData} from "../../helpers/qr/helpers";
+import { dataCleaner, getBackgroundObject, getCornersAndDotsObject, getFrameObject, handleInitialData } from "../../helpers/qr/helpers";
 import { create, get } from "../../handlers/users";
 
 // @ts-ignore
@@ -20,7 +20,7 @@ const Loading = dynamic(() => import("../Loading"));
 const PleaseWait = dynamic(() => import("../PleaseWait"));
 const Generator = dynamic(() => import("../qr/Generator"));
 
-const AppContextProvider = ({ children }: {children: ReactNode}) => {
+const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [options, setOptions] = useState<OptionsType>(handleInitialData("Ebanux"));
   const [cornersData, setCornersData] = useState<CornersAndDotsType>(null);
   const [dotsData, setDotsData] = useState<CornersAndDotsType>(null);
@@ -167,14 +167,14 @@ const AppContextProvider = ({ children }: {children: ReactNode}) => {
       if (qrText !== undefined && qrText.length) {
         return (
           <AppWrapper>
-            <Generator forceOverride={qrText}/>
+            <Generator forceOverride={qrText} />
           </AppWrapper>
         );
       }
     } else {
       return (
-        <AppWrapper setIsTrialMode={setIsTrialMode} handleLogout={logout} clearData={clearData} setLoading={setLoading}
-                    mode={data.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} userInfo={userInfo}>
+        <AppWrapper setIsFreeMode={setIsTrialMode} handleLogout={logout} clearData={clearData} setLoading={setLoading}
+          mode={data.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} userInfo={userInfo}>
           {loading && <Loading />}
           {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>
