@@ -223,6 +223,7 @@ export type DataType = {
   fields?:DragFields;
   description?:string;
   categories?: string[];
+  contactForm?:ContactField;
 
 };
 export type validTypes = 'text' | 'email' | 'phone' | 'web' | 'number'| 'date' | 'fax'| 'url' | 'string';

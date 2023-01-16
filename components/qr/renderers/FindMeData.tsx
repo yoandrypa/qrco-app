@@ -16,6 +16,9 @@ import MultipleField from '../helperComponents/MultipleField';
 import RenderSelectField from './helpers/RenderSelectField';
 import RenderPresentation from './contents/RenderPresentation';
 import RenderAddressData from './contents/RenderAddressData';
+import RenderContactForm from '../helperComponents/smallpieces/RenderContactForm';
+//@ts-ignore
+import session from "@ebanux/ebanux-utils/sessionStorage";
 
 interface FindMeDataProps {
   data: DataType;
@@ -35,7 +38,7 @@ export default function FindMeData({
   setIsWrong
 }: FindMeDataProps) {
   const [expander, setExpander] = useState<string | null>(null);
-
+  const { currentAccount } = session;
   const isDynamic = useMemo(() => Boolean(data?.isDynamic), []) as boolean; // eslint-disable-line react-hooks/exhaustive-deps
   
   const renderSelectItem = (item: string, label: string, options: {value: string, label: string}[], whatSave?:'label'|'value' ) => {
@@ -139,6 +142,37 @@ export default function FindMeData({
                   <MultipleField
                     item={{ key: 'urls', label: 'URL', type: 'url', requireLabel: true, requireValue: true }}
                   />
+                </Grid>
+              </Grid>
+            )}
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sx={{p:1}}>
+          <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
+            <Expander
+              expand={expander}
+              setExpand={setExpander}
+              item="contactForm"
+              title="Contact Form"
+            />
+            {expander === 'contactForm' && (
+              <Grid container spacing={1}>
+                <Grid item xs={12} sx={{ mt: 1 }}>
+                <RenderContactForm
+                  // email={item.email}
+                  title={data.contactForm?.title||''}
+                  buttonText={data.contactForm?.buttonText||''}
+                  messagePlaceholder={data.contactForm?.message||''}
+                  handleChange={(type:string, index:number, value:string) => {
+                    const newData = {...data};
+                    if(!newData.contactForm)
+                      newData.contactForm = {type: 'contact', email: currentAccount.email, [type]: value};
+                    else
+                      newData.contactForm = { ...newData.contactForm, [type]:value }
+                    handlePayload(newData);
+                    }}
+                  index={0}
+                />
                 </Grid>
               </Grid>
             )}
