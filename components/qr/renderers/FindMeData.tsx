@@ -51,39 +51,9 @@ export default function FindMeData({
 
   const checkData = () => { 
     let band = false;
-    if (!data?.petName?.trim().length)
+    if (!data?.firstName?.trim().length)
       band = true;
 
-    if(data?.petYearOfBirth && !YEAR.test(data?.petYearOfBirth))
-      band = true;
-
-    if(data?.phone && !PHONE.test(data?.phone))
-      band = true;
-
-    if(data?.fax && !PHONE.test(data?.fax))
-      band = true;
-
-    if(data?.website && !isValidUrl(data?.website))
-      band = true;
-
-    if(data?.email && !EMAIL.test(data?.email))
-      band = true;
-
-    if(data?.zip && !ZIP.test(data?.zip))
-      band = true;
-
-    if( data?.urls && data.urls.items?.length > 0)
-      data.urls.items.forEach((url: any) => {
-        if (!isValidUrl(url.value) || !url.value.trim().length) {
-          band = true;
-        }
-      });
-    if( data?.otherDetails && data.otherDetails.items?.length > 0)
-      data.otherDetails.items.forEach((detail: any) => {
-        if (!detail.value.trim().length) {
-          band = true;
-        }
-      });
     return band;
   };
   useEffect(() => {

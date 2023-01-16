@@ -192,7 +192,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const omitProfileImg = useMemo(() => (
-    !['vcard+', 'link', 'business', 'social', 'donations', 'petId', 'linkedLabel'].includes(selected) || !data?.isDynamic
+    !['vcard+', 'link', 'business', 'social', 'donations', 'petId', 'linkedLabel', 'findMe'].includes(selected) || !data?.isDynamic
   ), [selected, data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
