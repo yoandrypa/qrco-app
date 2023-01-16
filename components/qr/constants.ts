@@ -23,7 +23,7 @@ export const PARAM_QR_TEXT = "qr_text" as string;
 export const NO_MICROSITE = ["facebook", "twitter", "whatsapp", "paylink", "fundme"];
 export const ONLY_QR = ["fundme", "paylink"];
 
-export const PROFILE_IMAGE = ['vcard+', 'link', 'business', 'social', 'donations', 'petId', 'linkedLabel', 'custom'];
+export const PROFILE_IMAGE = ['vcard+', 'link', 'business', 'social', 'donations', 'petId', 'linkedLabel', 'custom', 'findMe'];
 
 export const EMAIL = new RegExp("^\\w+(\\.\\w+)*(\\+\\w+(\\.\\w+)*)?@\\w+(\\.\\w+)+$", "i");
 export const PHONE = new RegExp("^(\\+\\d{1,3}\\s?)?((\\(\\d{1,3}\\))|\\d{1,3})(\\s|\\-)?(\\d+((\\s|\\-)\\d+)*)$");
