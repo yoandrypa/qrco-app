@@ -62,7 +62,7 @@ export const DAYS = {
   wed: "Wednesday",
   thu: "Thursday",
   fri: "Friday",
-  sat: "Saturday",
+  sat: "Saturday"
 } as object;
 
 export const FRAMES_LENGTH = 10 as number;
