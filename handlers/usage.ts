@@ -1,5 +1,4 @@
 import Stripe from 'stripe'
-import Customer from 'stripe'
 import { findByCustomerId as findUserByCustomerId } from '../handlers/users';
 import { getUuid } from '../helpers/qr/helpers';
 const stripe = new Stripe(process.env.REACT_STRIPE_SECRET_KEY || 'sk_test_51Ksb3LCHh3XhfaZr2tgzaQKAQtuTF9vRtgdXBS7X2rAaPC6FNoLQ3hyPFVmlnRhsif0FDdbi5cdgEh7Y1Wt9Umo900w9YPUGo6', {
@@ -12,7 +11,6 @@ export async function reportUsage(customerId: string, subscriptionId: string, nu
     try {
         // Get the subscription for this customer
         const [user] = await findUserByCustomerId(customerId);
-
         const subscriptionId = user.subscriptionData.id;
         const totalUsage = await recordUsage(numRequests, user.id);
         return ({ numRequests: totalUsage });

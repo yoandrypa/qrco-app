@@ -310,10 +310,9 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
       if (userInfo) {
         const user = await getUser(userInfo.cognito_user_id);
         if (user.subscriptionData?.status == 'active') {
-          await recordUsage(1, user.subscriptionData.id)
+          //TODO
         }
       }
-
     }
     qrDesign.id = qrDesignId;
   }
