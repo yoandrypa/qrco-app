@@ -1,3 +1,4 @@
+import Box from "@mui/material/Box";
 import ColorSelector from "../../helperComponents/ColorSelector";
 import {ColorTypes, DataType} from "../../types/types";
 import {COLORS} from "../../constants";
@@ -10,18 +11,18 @@ interface SingleColorProps {
 
 export default function RenderSingleBackColor({data, handleValue}: SingleColorProps) {
   const before = () => (payload: ColorTypes) => {
-    handleValue('backgroundColor')(payload.p);
+    handleValue('backgroundColor')(payload.s);
   }
 
   return (
-    <>
+    <Box sx={{mt: '12px'}}>
       {[{ p: "#ffffff", s: "#ffffff" }, ...COLORS].slice(0, -1).map(x => (
         <RenderColorPreset
-          onlyPrimary
+          onlyOne
           handleValue={before}
           colors={x}
-          key={x.p}
-          selected={(!data?.backgroundColor && x.p === '#ffffff') || x.p === data?.backgroundColor}
+          key={x.s}
+          selected={(!data?.backgroundColor && x.s === '#ffffff') || x.s === data?.backgroundColor}
         />
       ))}
       <ColorSelector
@@ -31,6 +32,6 @@ export default function RenderSingleBackColor({data, handleValue}: SingleColorPr
         handleData={handleValue}
         property="backgroundColor"
       />
-    </>
+    </Box>
   );
 }

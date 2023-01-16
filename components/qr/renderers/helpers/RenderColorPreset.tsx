@@ -6,10 +6,10 @@ interface RenderColorPresetProps {
   colors: ColorTypes;
   selected?: boolean;
   gradient?: boolean;
-  onlyPrimary?: boolean;
+  onlyOne?: boolean;
 }
 
-export default function RenderColorPreset({gradient, handleValue, selected, colors, onlyPrimary}: RenderColorPresetProps) {
+export default function RenderColorPreset({gradient, handleValue, selected, colors, onlyOne}: RenderColorPresetProps) {
   return (
     <Box sx={{display: 'inline-flex', mr: '10px'}}>
       <Box
@@ -29,12 +29,12 @@ export default function RenderColorPreset({gradient, handleValue, selected, colo
         {!gradient ? (
           <>
             <Box sx={{
-              background: colors.p,
-              width: !onlyPrimary ? '25px' : '100%',
+              background: !onlyOne ? colors.p : colors.s,
+              width: !onlyOne ? '25px' : '100%',
               height: '44px',
-              borderRadius: !onlyPrimary ? '25px 0 0 25px' : '25px'
+              borderRadius: !onlyOne ? '25px 0 0 25px' : '25px'
             }}/>
-            {!onlyPrimary && <Box sx={{background: colors.s, width: '25px', height: '44px', borderRadius: '0 25px 25px 0'}}/>}
+            {!onlyOne && <Box sx={{background: colors.s, width: '25px', height: '44px', borderRadius: '0 25px 25px 0'}}/>}
           </>
         ) : (
           <Box sx={{

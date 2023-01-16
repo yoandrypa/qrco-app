@@ -44,11 +44,16 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
         if (shareLink && data.shortlinkurl === undefined) { // @ts-ignore
           previewData.shortlinkurl = shareLink;
         }
+
         if ((!isInEdition && data.backgndImg) || backImg) { // @ts-ignore
-          previewData.backgndImg = !isInEdition ? (typeof data.backgndImg !== 'string' ? await convertBase64(data.backgndImg) : data.backgndImg) : backImg;
+          previewData.backgndImg = !isInEdition ? ( // @ts-ignore
+            typeof data.backgndImg !== 'string' ? await convertBase64(data.backgndImg) : data.backgndImg
+          ) : backImg;
         }
         if ((!isInEdition && data.foregndImg) || mainImg) { // @ts-ignore
-          previewData.foregndImg = !isInEdition ? (typeof data.foregndImg !== 'string' ? await convertBase64(data.foregndImg) : data.foregndImg) : mainImg;
+          previewData.foregndImg = !isInEdition ? ( // @ts-ignore
+            typeof data.foregndImg !== 'string' ? await convertBase64(data.foregndImg) : data.foregndImg
+          ) : mainImg;
         } // @ts-ignore
         if (data.files) {
           let files: string[] = []; // @ts-ignore
