@@ -236,7 +236,9 @@ export default function LinkedLabelData({
     }
     setIsWrong(isWrong);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
-
+  useEffect(()=>{
+    handleAddMediaField('gallery');
+  },[])
   return (
     // smart Label msg
     <Common msg="Smart Label">
@@ -249,7 +251,7 @@ export default function LinkedLabelData({
           {renderItem('about', 'Description')}
         </Grid>
       </Grid>
-      <Topics message="Categories" top="3px" />
+      <Topics message="Tags" top="3px" />
       <Grid container>
         <Grid item xs={12} md={6}>
           <RenderChipFields
