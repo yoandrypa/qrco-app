@@ -310,7 +310,7 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
         const user = await getUser(userInfo.cognito_user_id);
         if (user.subscriptionData?.status == 'active') {
           try {
-            await saveUsage(user.customerId, user.subscriptionData.id, 1);
+            await saveUsage(user.customerId, 1);
             await recordUsage(1, user.subscriptionData.id);
           } catch (error) {
             console.error('unable to report usage', error)
