@@ -238,7 +238,7 @@ export default function LinkedLabelData({
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(()=>{
     handleAddMediaField('gallery');
-  },[])
+  },[])  // eslint-disable-line react-hooks/exhaustive-deps
   return (
     // smart Label msg
     <Common msg="Smart Label">

@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import { Delete } from "@mui/icons-material";
 
 interface ExpanderProps {
+  multi?: boolean;
   expand: string | null;
   setExpand: (expander: string | null) => void;
   item: string;
@@ -17,9 +18,9 @@ interface ExpanderProps {
   handleDelete?: () => void;
 }
 
-const Expander = ({expand, setExpand, item, title, bold, required, deleteButton, handleDelete}: ExpanderProps) => {
+const Expander = ({expand, setExpand, item, title, bold, required, deleteButton, handleDelete, multi}: ExpanderProps) => {
   const handleExpand = () => {
-    if (expand === item) {
+    if (multi === undefined && expand === item) {
       setExpand(null);
     } else {
       setExpand(item);

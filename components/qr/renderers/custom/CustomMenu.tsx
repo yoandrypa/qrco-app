@@ -31,7 +31,7 @@ export default function CustomMenu({data, handle, showOptions, setShowOptions}: 
   const render = () => {
     const list = components.filter(x => x.name.toUpperCase().includes(filter.toUpperCase()));
     return list.map(x => {
-      if ((!data.custom || !data.custom.includes(x.type))) {
+      if ((!data.custom || !data.custom.some(cust => cust.component === x.type))) {
         return <MenuItem onClick={handle(x.type)}><ListItemText>{x.name}</ListItemText></MenuItem>;
       }
       return null;
@@ -43,8 +43,8 @@ export default function CustomMenu({data, handle, showOptions, setShowOptions}: 
       open
       anchorEl={showOptions}
       onClose={() => setShowOptions(null)}
-      anchorOrigin={{vertical: 'top', horizontal: 'center'}}
-      transformOrigin={{vertical: 'top', horizontal: 'center'}}
+      anchorOrigin={{vertical: 'top', horizontal: 'left'}}
+      transformOrigin={{vertical: 'top', horizontal: 'left'}}
     >
       <TextField
         sx={{width: '250px'}}

@@ -27,6 +27,13 @@ export interface CustomProps {
   setIsWrong: (isWrong: boolean) => void;
 }
 
+export interface CustomEditProps {
+  anchor: HTMLButtonElement;
+  index: number;
+  item: string;
+  name?: string;
+}
+
 export const validator = (data: DataType, sections: any[]): boolean => {
   if (!sections.length || !socialsAreValid(data)) {
     return true;

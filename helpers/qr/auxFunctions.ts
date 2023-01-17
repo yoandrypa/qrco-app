@@ -113,7 +113,9 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
       populate('text', 'Wanna add some terms and conditions? No problem! You can set them here.');
       genAddress();
     } else if (selected === 'custom') {
-      populate('custom', ['title', 'presentation', 'phones', 'socials']);
+      populate('custom', [
+        {component: 'title'}, {component: 'presentation', name: 'Custom section name'}, {component: 'phones'}, {component: 'socials'}
+      ]);
       populate('titleAbout', 'This is the sample title');
       populate('descriptionAbout', 'This is the sample description');
       populate('prefix', 'Sir');
