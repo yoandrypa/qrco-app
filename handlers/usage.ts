@@ -1,6 +1,7 @@
 import Stripe from 'stripe'
 import { findByCustomerId as findUserByCustomerId, update, get } from '../handlers/users';
 import { getUuid } from '../helpers/qr/helpers';
+import axios from 'axios'
 
 const stripe = new Stripe(process.env.REACT_STRIPE_SECRET_KEY || 'sk_test_51Ksb3LCHh3XhfaZr2tgzaQKAQtuTF9vRtgdXBS7X2rAaPC6FNoLQ3hyPFVmlnRhsif0FDdbi5cdgEh7Y1Wt9Umo900w9YPUGo6', {
     // https://github.com/stripe/stripe-node#configuration
@@ -16,35 +17,18 @@ export async function saveUsage(userId: string, numRequests: number) {
     }
 }
 
-export async function recordPlanUsage(usageQuantity: number, subscriptionId: string, customerId: string) {
-    const subscriptionItems = await stripe.subscriptionItems.list({
-        subscription: subscriptionId,
-    });
-    const subscriptionItemID = subscriptionItems.data[0].id;
-
-    // The idempotency key allows you to retry this usage record call if it fails.
-    const idempotencyKey = getUuid();
-    const timestamp = (Date.now() / 1000);
-
-    try {
-        await stripe.subscriptionItems.createUsageRecord(
-            subscriptionItemID,
-            {
-                quantity: usageQuantity,
-                timestamp: timestamp,
-                action: 'set',
-            },
-            {
-                idempotencyKey,
-            }
-        );
-    } catch (error) {
-        if (error instanceof Error) {
-            console.error(`Usage report failed for item ID ${subscriptionItemID} with
-            idempotency key ${idempotencyKey}: ${error.toString()}`);
-        }
+export async function recordPlanUsage(usageQuantity: number, subscriptionId: string, userId: string, overwrite: boolean = false) {
+    const response = await axios.post('/api/usage', {
+        usage: usageQuantity,
+        subscriptionId: subscriptionId,
+        userId: userId,
+        overwrite: overwrite
+    })
+    if (response.status != 200) {
+        console.error('Error saving plan usage: ', response);
+        return new Error(response.statusText);
     }
-
+    return true;
 }
 
 
