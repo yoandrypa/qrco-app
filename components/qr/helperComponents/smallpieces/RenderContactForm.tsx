@@ -13,8 +13,8 @@ interface ContactFormProps {
   messagePlaceholder: string;
   buttonText: string;
   email?: string;
-  handleChange: Function;
-  index: Number
+  handleChange: (type: string, index: number, value: string) => void;
+  index: number
 }
 
 function RenderContactForm({ title, buttonText, messagePlaceholder, handleChange, index }: ContactFormProps) {
