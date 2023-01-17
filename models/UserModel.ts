@@ -47,6 +47,10 @@ const UserSchema = new dynamoose.Schema({
       periodEndsAt: Number
     },
     required: false
+  },
+  planUsage: {
+    type: Number,
+    default: 0
   }
 }, {
   "saveUnknown": [

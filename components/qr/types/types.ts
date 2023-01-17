@@ -249,7 +249,8 @@ export interface EbanuxSimplePaymentLinkData {
   productName: string,
   productDescription: string,
   images: string[],
-  amount: number
+  amount: number,
+  successUrl?: string
 }
 
 export type CardDataProps = {

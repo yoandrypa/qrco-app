@@ -35,7 +35,7 @@ type Props = {
   /**
    * Start date of the trial period (createdAt field of user profile)
    */
-  startDate: number | string | Date;
+
 }
 
 const CountDown = (props: Props) => {
@@ -43,7 +43,7 @@ const CountDown = (props: Props) => {
   const [hours, setHours] = useState<number>(23);
   const [minutes, setMinutes] = useState<number>(59);
   const [seconds, setSeconds] = useState<number>(59);
-  const [trialIsOver, setTrialIsOver] = useState<boolean>(false);
+  const [subscriptionExpired, setSubscriptionExpired] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleOpen = (event: MouseEvent<HTMLButtonElement>) => {
@@ -63,42 +63,42 @@ const CountDown = (props: Props) => {
     // console.log(days, hours, minutes,seconds)
   }
 
-  useLayoutEffect(() => {
-    const initialDate = new Date(props.startDate);
-    const countToDate = (initialDate.setDate(initialDate.getDate() + 14)); //new Date().setDate(new Date().getDate() + 14)
-    let previousTimeBetweenDates;
-    const now = new Date();
-    if (countToDate <= Number(now)) {
-      setTrialIsOver(true);
-    } else {
-      const interval = setInterval(() => {
+  // useLayoutEffect(() => {
+  //   const initialDate = new Date(props.startDate);
+  //   const countToDate = (initialDate.setDate(initialDate.getDate() + 14)); //new Date().setDate(new Date().getDate() + 14)
+  //   let previousTimeBetweenDates;
+  //   const now = new Date();
+  //   if (countToDate <= Number(now)) {
+  //     setTrialIsOver(true);
+  //   } else {
+  //     const interval = setInterval(() => {
 
-        const currentDate = Number(new Date());
-        const timeBetweenDates = Math.ceil((countToDate - currentDate) / 1000);
-        if (timeBetweenDates <= 0) {
-          // setTrialIsOver(true);
-          clearInterval(interval);
-        } else {
-          flipAllCards(timeBetweenDates);
-          previousTimeBetweenDates = timeBetweenDates;
+  //       const currentDate = Number(new Date());
+  //       const timeBetweenDates = Math.ceil((countToDate - currentDate) / 1000);
+  //       if (timeBetweenDates <= 0) {
+  //         // setTrialIsOver(true);
+  //         clearInterval(interval);
+  //       } else {
+  //         flipAllCards(timeBetweenDates);
+  //         previousTimeBetweenDates = timeBetweenDates;
 
-          // if (days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0) {
-          //   setTrialIsOver(true);
-          // }
-        }
+  //         // if (days <= 0 && hours <= 0 && minutes <= 0 && seconds <= 0) {
+  //         //   setTrialIsOver(true);
+  //         // }
+  //       }
 
-      }, 1000);
+  //     }, 1000);
 
-      return () => clearInterval(interval);
-    }
-  }, [trialIsOver]); // eslint-disable-line react-hooks/exhaustive-deps
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [trialIsOver]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
-      <Tooltip title={`${trialIsOver ? "Trial has ended" : "Free mode"}. Click for details`}>
+      <Tooltip title={`${subscriptionExpired ? "Trial has ended" : "Free mode"}. Click for details`}>
         <IconButton sx={{ ml: '5px' }} onClick={handleOpen}>
           <Box sx={{
-            border: anchorEl ? 'unset' : theme => `solid 5px ${trialIsOver ? theme.palette.error.main : theme.palette.warning.main}`,
+            border: anchorEl ? 'unset' : theme => `solid 5px ${subscriptionExpired ? theme.palette.error.main : theme.palette.warning.main}`,
             width: '40px',
             height: '40px',
             position: 'absolute',
@@ -107,7 +107,7 @@ const CountDown = (props: Props) => {
             borderRadius: '100%',
             animation: anchorEl ? 'unset' : `${grow} 2s infinite ease`
           }} />
-          <NotificationsActiveIcon color={trialIsOver ? "error" : "warning"} sx={{ animation: anchorEl ? 'unset' : `${ring} 2s infinite ease`, '&:hover': { animation: 'unset' } }} />
+          <NotificationsActiveIcon color="info" sx={{ animation: anchorEl ? 'unset' : `${ring} 2s infinite ease`, '&:hover': { animation: 'unset' } }} />
         </IconButton>
       </Tooltip>
       {anchorEl && (<Popover
@@ -117,8 +117,8 @@ const CountDown = (props: Props) => {
         anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Box sx={{ p: 2, background: theme => trialIsOver ? theme.palette.error.light : theme.palette.warning.light }}>
-          {trialIsOver ? (
+        <Box sx={{ p: 2, background: theme => theme.palette.info.light }}>
+          {subscriptionExpired ? (
             <Typography>
               {"You're on a free account, Please Upgrade now to get access to more features. Click "}
               <span style={{ color: "blue" }}><Link href="/plans">here</Link></span>
@@ -128,8 +128,8 @@ const CountDown = (props: Props) => {
             <Typography sx={{ display: 'inline' }}>
               {"You are in free mode. Please subscribe to a plan "}
               <span style={{ color: "blue" }}><Link href="/plans">here</Link></span>
-              {". Your free trial ends in:"}
-              <Box className={".MuiAlert-standardWarning"} sx={{ display: 'inline-block', ml: '5px' }}>
+              {/* {". Your free trial ends in:"} */}
+              {/* <Box className={".MuiAlert-standardWarning"} sx={{ display: 'inline-block', ml: '5px' }}>
                 <div className={style.container}>
                   {days > 0 && <div className={style.container_segment}>
                     <div className={style.segment}>
@@ -188,7 +188,7 @@ const CountDown = (props: Props) => {
                     </div>
                   </div>}
                 </div>
-              </Box>
+              </Box> */}
             </Typography>
           )}
         </Box>

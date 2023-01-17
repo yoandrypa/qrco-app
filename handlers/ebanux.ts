@@ -28,6 +28,14 @@ export async function updateEbanuxDonationPrice(userId: string, priceId: string,
 }
 
 export async function createPaymentLink(userId: string, productData: EbanuxSimplePaymentLinkData) {
-
+    const payload = {
+        amount: productData.amount,
+        cognitoUserId: userId,
+        productName: productData.productName,
+        description: productData.productDescription,
+        successUrl: productData.successUrl
+    };
+    const response = await axios.post(`${EBANUX_API}/api/v1/sendmemoney`, payload)
+    return response?.data;
 
 }
