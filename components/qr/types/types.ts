@@ -90,7 +90,7 @@ export type SocialProps = {
 
 export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram' | 'title' | 'about';
 export type SocialNetworksType = { network: SocialsType, value?: string };
-export type CustomType = { component: ReactNode, name: string };
+export type CustomType = { component: string, name?: string };
 
 export type DataType = {
   qrType?: string;
@@ -99,7 +99,7 @@ export type DataType = {
   userId?: string;
   id?: string;
   index?: number[];
-  custom?: (CustomType | string)[];
+  custom?: CustomType[];
   qrName?: string;
   number?: string;
   avatarImage?: string;

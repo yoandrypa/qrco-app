@@ -1,11 +1,10 @@
-import { MouseEvent, useLayoutEffect, useState } from "react";
-import style from "./CountDown.module.css";
+import {MouseEvent, useState} from "react";
 import Typography from "@mui/material/Typography";
-import pluralize from "pluralize";
 import Link from "next/link";
 import IconButton from '@mui/material/IconButton';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import { keyframes } from "@mui/system";
+import ErrorIcon from '@mui/icons-material/Error';
+import {keyframes} from "@mui/system";
 import Popover from "@mui/material/Popover";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
@@ -97,17 +96,21 @@ const CountDown = (props: Props) => {
     <>
       <Tooltip title={`${subscriptionExpired ? "Trial has ended" : "Free mode"}. Click for details`}>
         <IconButton sx={{ ml: '5px' }} onClick={handleOpen}>
-          <Box sx={{
-            border: anchorEl ? 'unset' : theme => `solid 5px ${subscriptionExpired ? theme.palette.error.main : theme.palette.warning.main}`,
-            width: '40px',
-            height: '40px',
-            position: 'absolute',
-            right: 0,
-            opacity: 1,
-            borderRadius: '100%',
-            animation: anchorEl ? 'unset' : `${grow} 2s infinite ease`
-          }} />
-          <NotificationsActiveIcon color="info" sx={{ animation: anchorEl ? 'unset' : `${ring} 2s infinite ease`, '&:hover': { animation: 'unset' } }} />
+          {subscriptionExpired ? (<>
+            <Box sx={{
+              border: anchorEl ? 'unset' : theme => `solid 5px theme.palette.error.main}`,
+              width: '40px',
+              height: '40px',
+              position: 'absolute',
+              right: 0,
+              opacity: 1,
+              borderRadius: '100%',
+              animation: anchorEl ? 'unset' : `${grow} 2s infinite ease`
+            }} />
+            <NotificationsActiveIcon color="error" sx={{
+              animation: anchorEl ? 'unset' : `${ring} 2s infinite ease`, '&:hover': { animation: 'unset' }
+            }} />
+          </>) : <ErrorIcon color="info"/>}
         </IconButton>
       </Tooltip>
       {anchorEl && (<Popover

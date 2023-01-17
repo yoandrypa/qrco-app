@@ -31,6 +31,7 @@ export interface CustomEditProps {
   anchor: HTMLButtonElement;
   index: number;
   item: string;
+  name?: string;
 }
 
 export const validator = (data: DataType, sections: any[]): boolean => {

@@ -35,32 +35,33 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
   const [showOptions, setShowOptions] = useState<HTMLButtonElement | null>(null);
   const [openEmpty, setOpenEmpty] = useState<number | undefined>(undefined);
   const [emptyValue, setEmptyValue] = useState<string>('');
-  const [expander, setExpander] = useState<string | null>(null);
+  const [expander, setExpander] = useState<string[]>([]);
   const [confirm, setConfirm] = useState<{index: number, item: string} | undefined>(undefined);
   const [open, setOpen] = useState<CustomEditProps | null>(null); // aims to editor
 
-  const handleOptions = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleOptions = useCallback((e: MouseEvent<HTMLButtonElement>) => {
     setShowOptions(e.currentTarget);
-  }
+  }, []);
 
   const handleCloseDlg = useCallback(() => {
     setEmptyValue('');
     setOpenEmpty(undefined);
   }, []);
 
-  const handleAdd = (item?: string) => {
+  const handleAdd = useCallback((item?: string) => {
     setData((prev: DataType) => {
       const newData = {...prev};
       if (!newData.custom) { newData.custom = []; } // @ts-ignore
-      const itemName = item || emptyValue;
-      newData.custom.push(itemName);
-      setExpander(itemName);
+      const component = item || emptyValue;
+      newData.custom.push({component});
+      setExpander([...expander, component]);
       if (openEmpty) { handleCloseDlg(); }
       return newData;
     });
-  }
+  }, [data.custom?.length, openEmpty, expander]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDelete = (index: number, item: string) => {
+    setConfirm(undefined);
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
       newData.custom.splice(index, 1); // @ts-ignore
@@ -70,22 +71,49 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
     });
   }
 
-  const handleRemove = (index: number, item: string) => () => {
+  const handleRemove = useCallback((index: number, item: string) => () => {
     setConfirm({index, item});
-  };
+  }, []);
 
-  const handleEdit = (index: number, item: string) => (event: MouseEvent<HTMLButtonElement>) => {
-    setOpen({item, index, anchor: event.currentTarget});
-  };
+  const handleExpander = useCallback((item: string) => {
+    setExpander((prevState: string[]) => {
+      const newExpander = [...prevState];
+      const index = newExpander.indexOf(item);
+      if (index !== -1) {
+        newExpander.splice(index, 1);
+      } else {
+        newExpander.push(item);
+      }
+      return newExpander;
+    });
+  }, [expander]);  // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handle = (item: string) => () => {
+  const handleAccept = useCallback((value: string, index: number, item: string) => {
+    setOpen(null);
+    setData((prev: DataType) => {
+      const newData = {...prev};
+      const original = components.find(x => x.type === item);
+      if (original?.name === value && newData?.custom?.[index]?.name !== undefined) {
+        delete newData.custom[index].name;
+      } else if (newData?.custom?.[index]) {
+        newData.custom[index].name = value;
+      }
+      return newData;
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleEdit = useCallback((index: number, item: string, name?: string) => (event: MouseEvent<HTMLButtonElement>) => {
+    setOpen({item, index, name, anchor: event.currentTarget});
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handle = useCallback((item: string) => () => {
     if (item === 'empty') {
       setOpenEmpty(-1); // @ts-ignore
     } else {
       handleAdd(item);
     }
     setShowOptions(null);
-  }
+  }, []);
 
   const onDragEnd = (result: any) => {
     if (!result?.destination) { return null; }
@@ -116,45 +144,56 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
           <Droppable droppableId="droppable">
             {(provided: any) => (
               <Box {...provided.droppableProps} ref={provided.innerRef}>
-                {data.custom?.map((x: CustomType | string, index: number) => (
-                  <Draggable key={`item${index}`} draggableId={`item${index}`} index={index} isDragDisabled={data.custom?.length === 1}>
-                    {(prov: any, snap: any) => (
-                      <Box sx={{my: 4, width: '100%', ...getItemStyle(snap.isDragging, prov.draggableProps.style)}}
-                           ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
-                        {typeof x === "string" ? (
-                          <DragPaper elevation={2} sx={{p: 1}} avoidIcon={data.custom?.length === 1} // @ts-ignore
-                                     editFunc={handleEdit(index, x)} removeFunc={handleRemove(index, x)}>
-                            <Expander expand={expander} setExpand={setExpander} item={x} title={getNameStr(x)} />
-                            {expander === x && (<>
-                              {x === components[0].type && <RenderAddressData data={data} handleValues={handleValues} />}
-                              {x === components[1].type && <RenderCompanyData data={data} handleValues={handleValues} />}
-                              {x === components[2].type && <RenderDateSelector data={data} setData={setData} label="Date" />}
-                              {x === components[3].type && <RenderEmailWeb data={data} handleValues={handleValues} />}
-                              {x === components[4].type && <RenderEasiness data={data} setData={setData} />}
-                              {x === components[5].type && <RenderLinks data={data} setData={setData} />}
-                              {x === components[6].type && <RenderOrganization data={data} handleValues={handleValues} />}
-                              {x === components[7].type && <RenderPhones data={data} handleValues={handleValues} />}
-                              {x === components[8].type && <RenderPresentation data={data} handleValues={handleValues} />}
-                              {x === components[9].type && <RenderOpeningTime data={data} setData={setData} />}
-                              {x === components[10].type && <RenderSocials data={data} setData={setData} />}
-                              {x === components[11].type && (
+                {data.custom?.map((x: CustomType, index: number) => {
+                  const { component } = x;
+                  const expanded = expander.find(x => x === component);
+                  return (
+                    <Draggable key={`item${index}`} draggableId={`item${index}`} index={index} isDragDisabled={data.custom?.length === 1}>
+                      {(prov: any, snap: any) => (
+                        <Box sx={{my: 4, width: '100%', ...getItemStyle(snap.isDragging, prov.draggableProps.style)}}
+                             ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
+                          <DragPaper elevation={2} sx={{p: 1}} avoidIcon={data.custom?.length === 1}
+                                     removeFunc={handleRemove(index, component)}
+                                     editFunc={component !== 'title' ? handleEdit(index, component, x.name) : undefined}>
+                            {/* @ts-ignore */}
+                            <Expander expand={expanded || null} setExpand={handleExpander} item={component} title={x.name || getNameStr(component)} multi bold={Boolean(x.name)} />
+                            {expanded !== undefined && (<>
+                              {component === components[0].type && <RenderAddressData data={data} handleValues={handleValues}/>}
+                              {component === components[1].type && <RenderCompanyData data={data} handleValues={handleValues}/>}
+                              {component === components[2].type && <RenderDateSelector data={data} setData={setData} label="Date"/>}
+                              {component === components[3].type && <RenderEmailWeb data={data} handleValues={handleValues}/>}
+                              {component === components[4].type && <RenderEasiness data={data} setData={setData}/>}
+                              {component === components[5].type && <RenderLinks data={data} setData={setData}/>}
+                              {component === components[6].type && <RenderOrganization data={data} handleValues={handleValues}/>}
+                              {component === components[7].type && <RenderPhones data={data} handleValues={handleValues}/>}
+                              {component === components[8].type && <RenderPresentation data={data} handleValues={handleValues}/>}
+                              {component === components[9].type && <RenderOpeningTime data={data} setData={setData}/>}
+                              {component === components[10].type && <RenderSocials data={data} setData={setData}/>}
+                              {component === components[11].type && (
                                 <RenderTitleDesc handleValues={handleValues} title={data.titleAbout} noHeader noPaper
                                                  description={data.descriptionAbout} sx={{mt: '5px'}}/>
                               )}
                             </>)}
                           </DragPaper>
-                        ) : x}
-                      </Box>
-                    )}
-                  </Draggable>
-                ))}
+                        </Box>
+                      )}
+                    </Draggable>
+                  )
+                })}
               </Box>
             )}
           </Droppable>
         </DragDropContext>
       </Box>
       {showOptions && <CustomMenu handle={handle} data={data} showOptions={showOptions} setShowOptions={setShowOptions} />}
-      {open && <CustomEditSection handleClose={() => setOpen(null)} anchor={open.anchor} value={open.item} />}
+      {open && (
+        <CustomEditSection
+          handleClose={() => setOpen(null)}
+          anchor={open.anchor}
+          value={open.item}
+          handleOk={(value: string) => handleAccept(value, open.index, open.item)}
+        />
+      )}
       {openEmpty !== undefined && (
         <CustomNewSection
           emptyValue={emptyValue} setEmptyValue={setEmptyValue} // @ts-ignore
@@ -163,10 +202,7 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
       {confirm !== undefined && (
         <RenderConfirmDlg
           handleCancel={() => setConfirm(undefined)}
-          handleOk={() => {
-            handleDelete(confirm.index, confirm.item);
-            setConfirm(undefined);
-          }}
+          handleOk={() => handleDelete(confirm.index, confirm.item)}
           title="Confirm" noMsg="No" yesMsg="Yes"
           message="You are going to remove the selected section."
           confirmationMsg="Are you sure?"

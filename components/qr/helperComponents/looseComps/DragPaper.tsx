@@ -1,4 +1,4 @@
-import {ReactNode} from "react";
+import {MouseEvent, ReactNode} from "react";
 import Paper, {PaperProps} from "@mui/material/Paper";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import IconButton from "@mui/material/IconButton";
@@ -15,7 +15,7 @@ interface DragPaper extends PaperProps {
   children: ReactNode;
   avoidIcon?: boolean;
   removeFunc?: () => void;
-  editFunc?: () => void;
+  editFunc?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
 const buttonStyles = (edit: boolean) => {
@@ -43,7 +43,7 @@ export default function DragPaper({children, avoidIcon, editFunc, removeFunc, ..
       )}
       {removeFunc !== undefined && (
         <Tooltip title="Remove">
-          <IconButton size="small" onClick={(e) =>removeFunc} sx={buttonStyles(false)}>
+          <IconButton size="small" onClick={removeFunc} sx={buttonStyles(false)}>
             <DeleteIcon sx={{color: '#fff'}} fontSize="small"/>
           </IconButton>
         </Tooltip>
