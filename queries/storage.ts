@@ -1,49 +1,58 @@
 import { s3Client } from "../libs";
 import {
-  PutObjectCommand,
   PutObjectCommandInput,
-  GetObjectCommand,
   GetObjectCommandInput,
-  DeleteObjectsCommand,
   DeleteObjectsCommandInput,
   ObjectIdentifier,
-  CompleteMultipartUploadCommand,
   CompleteMultipartUploadCommandInput,
-  CreateMultipartUploadCommand,
   CreateMultipartUploadCommandInput,
-  UploadPartCommand,
   UploadPartCommandInput,
   CompleteMultipartUploadCommandOutput,
-  HeadObjectCommandInput,
-  HeadObjectCommand
+  GetObjectAttributesCommandInput,
+  GetObjectAttributesCommandOutput
 } from "@aws-sdk/client-s3";
 
-export const checkIfExist: (key: string) => Promise<any> = async (key: string) => {
+const uc = require("unix-checksum");
+
+export const checkIfExist = async (key: string, checkSum?: string) => {
   try {
-    const input: HeadObjectCommandInput = {
+    const input: GetObjectAttributesCommandInput = {
       Bucket: String(process.env.REACT_AWS_BUCKET_NAME),
-      Key: key
+      Key: key,
+      ObjectAttributes: ["Checksum"]
     };
-    const command: HeadObjectCommand = new HeadObjectCommand(input);
-    return await s3Client.send(command);
-  } catch (e) {
-    return e;
+    //const command: HeadObjectCommand = new HeadObjectCommand(input);
+    const response: GetObjectAttributesCommandOutput = await s3Client.getObjectAttributes(input);
+    if (!checkSum) {
+      return response; //TODO temporal fix for multipart upload
+    } else if (response.Checksum?.ChecksumCRC32C !== checkSum) {
+      return false;
+    }
+    return response;
+  } catch (e: any) {
+    if (e.$metadata.httpStatusCode === 404) {
+      return false;
+    }
+    throw e;
   }
 };
 
-export const upload = async (file: File, key = "") => {
+export const upload = async (file: File, key: string) => {
   try {
-    let response = await checkIfExist(key);
-    if (response.$metadata.httpStatusCode === 404) {
+    const body = Buffer.from(await file.arrayBuffer());
+    const checkSum = uc.crc32c(body, "base64");
+    let response = await checkIfExist(key, checkSum);
+    if (!response) {
       const input: PutObjectCommandInput = {
         Bucket: String(process.env.REACT_AWS_BUCKET_NAME),
-        Body: Buffer.from(await file.arrayBuffer()),
+        Body: body,
         Key: key,
         ContentLength: file.size,
-        ContentType: file.type
+        ContentType: file.type,
+        ChecksumAlgorithm: "CRC32C",
+        ChecksumCRC32C: checkSum
       };
-      const command: PutObjectCommand = new PutObjectCommand(input);
-      response = await s3Client.send(command);
+      response = await s3Client.putObject(input);
     }
     return {
       ...response,
@@ -56,8 +65,10 @@ export const upload = async (file: File, key = "") => {
 
 export const multipartUpload = async (file: File, key = ""): Promise<CompleteMultipartUploadCommandOutput> => {
   try {
+    const buffer = Buffer.from(await file.arrayBuffer());
+    //const checkSum = uc.crc32c(buffer, "base64");
     let response = await checkIfExist(key);
-    if (response.$metadata.httpStatusCode === 200) {
+    if (response) {
       return {
         ...response,
         Key: key
@@ -69,14 +80,11 @@ export const multipartUpload = async (file: File, key = ""): Promise<CompleteMul
       Bucket,
       Key,
       ContentType: file.type
+      //ChecksumAlgorithm: "CRC32C"
     };
-    const createUploadResponse = await s3Client.send(
-      new CreateMultipartUploadCommand(input)
-    );
+    const createUploadResponse = await s3Client.createMultipartUpload(input);
     const { UploadId } = createUploadResponse;
     console.log("Upload initiated. Upload ID: ", UploadId);
-
-    const buffer = Buffer.from(await file.arrayBuffer());
 
     // 5MB is the minimum part size
     // Last part can be any size (no min.)
@@ -97,15 +105,19 @@ export const multipartUpload = async (file: File, key = ""): Promise<CompleteMul
         startOfPart += 1;
       }
 
+      const bufferPart = buffer.subarray(startOfPart, endOfPart + 1);
+      //const checkSum = uc.crc32c(bufferPart, "base64");
       const uploadParams: UploadPartCommandInput = {
         // add 1 to endOfPart due to slice end being non-inclusive
-        Body: buffer.subarray(startOfPart, endOfPart + 1),
+        Body: bufferPart,
         Bucket,
         Key,
         UploadId,
         PartNumber: i
+        //ChecksumAlgorithm: "CRC32C",
+        //ChecksumCRC32C: checkSum
       };
-      const uploadPartResponse = await s3Client.send(new UploadPartCommand(uploadParams));
+      const uploadPartResponse = await s3Client.uploadPart(uploadParams);
       console.log(`Part #${i} uploaded. ETag: `, uploadPartResponse.ETag);
 
       remainingBytes -= Math.min(partSize, remainingBytes);
@@ -123,9 +135,10 @@ export const multipartUpload = async (file: File, key = ""): Promise<CompleteMul
       MultipartUpload: {
         Parts: uploadedParts
       }
+      //ChecksumCRC32C: uc.crc32c(checkSums, "base64")
     };
     console.log("Completing upload...");
-    const completeData = await s3Client.send(new CompleteMultipartUploadCommand(completeParams));
+    const completeData = await s3Client.completeMultipartUpload(completeParams);
     console.log("Upload complete: ", completeData.Key, "\n---");
     return completeData;
   } catch (e) {
@@ -139,8 +152,7 @@ export const download = async (key: string) => {
       Key: key,
       Bucket: String(process.env.REACT_AWS_BUCKET_NAME)
     };
-    const command: GetObjectCommand = new GetObjectCommand(downloadParams);
-    return await s3Client.send(command);
+    return await s3Client.getObject(downloadParams);
   } catch (e) {
     return e;
   }
@@ -155,8 +167,7 @@ export const remove = async (keys: ObjectIdentifier[]) => {
         Quiet: true
       }
     };
-    const command: DeleteObjectsCommand = new DeleteObjectsCommand(deleteParams);
-    return await s3Client.send(command);
+    return await s3Client.deleteObjects(deleteParams);
   } catch (e) {
     return e;
   }

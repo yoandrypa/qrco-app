@@ -1,35 +1,26 @@
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
-
-import { Amplify, Auth } from "aws-amplify";
+import dynamic from "next/dynamic";
 
 import Context from "./Context";
-import {initialData, initialBackground, initialFrame} from "../../helpers/qr/data";
+import { initialBackground, initialData, initialFrame } from "../../helpers/qr/data";
 import { BackgroundType, CornersAndDotsType, DataType, FramesType, OptionsType } from "../qr/types/types";
-import { PARAM_QR_TEXT, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_TYPE_ROUTE } from "../qr/constants";
+import { PARAM_QR_TEXT, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE, QR_TYPE_ROUTE } from "../qr/constants";
 import AppWrapper from "../AppWrapper";
-import awsExports from "../../libs/aws/aws-exports";
-import PleaseWait from "../PleaseWait";
-import Generator from "../qr/Generator";
-import Loading from "../Loading";
-import {
-  dataCleaner,
-  getBackgroundObject,
-  getCornersAndDotsObject,
-  getFrameObject,
-  handleInitialData
-} from "../../helpers/qr/helpers";
+import { dataCleaner, getBackgroundObject, getCornersAndDotsObject, getFrameObject, handleInitialData } from "../../helpers/qr/helpers";
+import { create, get } from "../../handlers/users";
 
-Amplify.configure(awsExports);
+// @ts-ignore
+import session from "@ebanux/ebanux-utils/sessionStorage";
+// @ts-ignore
+import cookies from "@ebanux/ebanux-utils/cookiesStorage";
 
-interface ContextProps {
-  children: ReactNode;
-}
+const Loading = dynamic(() => import("../Loading"));
+const PleaseWait = dynamic(() => import("../PleaseWait"));
+const Generator = dynamic(() => import("../qr/Generator"));
 
-const AppContextProvider = (props: ContextProps) => {
-  const { children } = props;
-
+const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [options, setOptions] = useState<OptionsType>(handleInitialData("Ebanux"));
   const [cornersData, setCornersData] = useState<CornersAndDotsType>(null);
   const [dotsData, setDotsData] = useState<CornersAndDotsType>(null);
@@ -39,125 +30,71 @@ const AppContextProvider = (props: ContextProps) => {
   const [isTrialMode, setIsTrialMode] = useState<boolean>(false);
 
   const [selected, setSelected] = useState<string | null>(null);
-  const [step, setStep] = useState<number>(0);
-  const [forceClear, setForceClear] = useState<boolean>(false);
 
   const [userInfo, setUserInfo] = useState(null);
   const [verifying, setVerifying] = useState<boolean>(true);
+  const [redirecting, setRedirecting] = useState<boolean>(false);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [isWrong, setIsWrong] = useState<boolean>(false);
 
   const doneInitialRender = useRef<boolean>(false);
-  const doNotNavigate = useRef<boolean>(false);
+  const forbidClear = useRef<boolean>(false);
 
   const router = useRouter();
 
   const isUserInfo = useMemo(() => userInfo !== null, [userInfo]);
 
-  const clearData = useCallback((keepType?: boolean, item?: 'value' | 'message', value?: string, doNot?: boolean) => {
-    setForceClear(false);
+  const doNotClear = useCallback(() => {
+    forbidClear.current = true;
+  }, []);
 
-    if (!keepType || doNot) {
-      setSelected(null);
-    }
-    setBackground(initialBackground);
-    setFrame(initialFrame);
-    setDotsData(null);
-    setCornersData(null);
+  const resetSelected = useCallback(() => {
+    setSelected(`vcard${data?.isDynamic ? '+' : ''}`);
+  }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    setIsWrong(false);
-    setLoading(false);
-    setStep(0);
-    setOptions(handleInitialData("Ebanux"));
+  const clearData = useCallback(
+    (keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean) => {
+      if (!keepType || doNot || takeAwaySelection) {
+        resetSelected();
+      }
+      setBackground(initialBackground);
+      setFrame(initialFrame);
+      setDotsData(null);
+      setCornersData(null);
+      setIsWrong(false);
+      setLoading(false);
+      setOptions(handleInitialData("Ebanux"));
 
-    if (data.mode === 'edit' || doNot) {
-      doNotNavigate.current = true;
-    }
+      let newData: DataType;
+      if (!keepType || data?.isDynamic) {
+        newData = initialData;
+      } else {
+        newData = {};
+      }
 
-    let newData:DataType;
-    if (!keepType || data.isDynamic) {
-      newData = initialData;
-    } else {
-      newData = {};
-    }
-
-    if (item !== undefined) {
-      newData[item] = value;
-    }
-
-    setData(newData);
-  }, [data?.isDynamic, data.mode]); // eslint-disable-line react-hooks/exhaustive-deps
+      setData(newData);
+    }, [data?.isDynamic, data.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (doneInitialRender.current && (router.pathname === QR_TYPE_ROUTE || (router.pathname === '/' && !isUserInfo))) {
-      if (selected !== null) {
-        if (selected === "web") {
-          clearData(true, 'value', 'https://www.example.com');
-        } else if (selected === "facebook") {
-          clearData(true, 'message', 'https://www.example.com');
-        } else if (selected === "text") {
-          clearData(true, 'value', 'Enter any text here');
-        } else {
-          clearData(true);
-        }
-      } else {
+    if (doneInitialRender.current && options.mode === undefined) {
+      if (!forbidClear.current) {
         clearData(true);
-      }
-      if (step !== 0) {
-        setStep(0);
-      }
-      if (isWrong) {
-        setIsWrong(false);
+      } else {
+        forbidClear.current = false;
       }
     }
   }, [selected]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (doneInitialRender.current && options?.mode !== 'edit') {
-      setSelected(null);
+    if (doneInitialRender.current && options?.mode !== "edit") {
+      resetSelected();
     }
   }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (doneInitialRender.current && !doNotNavigate.current) {
-      let pathLocation = QR_TYPE_ROUTE;
-      if (step === 1) {
-        pathLocation = QR_CONTENT_ROUTE;
-      } else if (step === 2) {
-        pathLocation = QR_DESIGN_ROUTE;
-      }
-      router.push(pathLocation, undefined, {shallow: true}).then(() => { setLoading(false); });
-    } else {
-      doneInitialRender.current = true;
-      doNotNavigate.current = false;
-    }
-  }, [step]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (options?.mode !== 'edit' && router.query.mode !== 'edit') {
-      if ([QR_CONTENT_ROUTE, QR_DESIGN_ROUTE].includes(router.pathname)) {
-        if (data?.isDynamic && !isUserInfo && !router.query.login) {
-          router.push({pathname: "/", query: {path: router.pathname, login: true}}, "/").then(() => { setLoading(false); });
-        } else if (selected === null) {
-          router.push(QR_TYPE_ROUTE, undefined, {shallow: true}).then(() => { setLoading(false); });
-        }
-      }
-      if (router.pathname === "/") {
-        if (step === 2) {
-          if (isUserInfo) {
-            doNotNavigate.current = true;
-          }
-          clearData(false);
-        } else if (!router.query.login && step !== 0) {
-          setStep(0);
-        }
-      }
-    }
-
-    if (loading) {
-      setLoading(false);
-    }
+    if (loading) { setLoading(false); }
+    if (redirecting) { setRedirecting(false); }
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -167,57 +104,61 @@ const AppContextProvider = (props: ContextProps) => {
   }, [isUserInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (forceClear) {
-      doNotNavigate.current = true;
-      clearData();
-    }
-  }, [forceClear]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    const verify = async () => {
-      try {
-        const userData = await Auth.currentAuthenticatedUser();
-        setUserInfo(userData);
-      } catch {
-        setUserInfo(null);
-        setVerifying(false);
-      }
-    };
-    verify();
-  }, []);
-
-  useEffect(() => {
     if (options.mode === "edit") {
-      setCornersData(getCornersAndDotsObject(options, 'corners'));
-      setDotsData(getCornersAndDotsObject(options, 'cornersDot'));
+      setCornersData(getCornersAndDotsObject(options, "corners"));
+      setDotsData(getCornersAndDotsObject(options, "cornersDot"));
       setBackground(getBackgroundObject(options) || initialBackground);
       setFrame(getFrameObject(options) || initialFrame);
       setData(dataCleaner(options));
       setOptions(dataCleaner(options, true)); // @ts-ignore
       setSelected(options.qrType);
-      setStep(options?.isDynamic ? 1 : 2);
     }
-   }, [options.mode]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [options.mode]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const userCreation = async (id: string) => {
+      try {
+        const user = await get(id);
+        if (!user) {
+          await create({ id });
+        }
+      } catch {
+        console.log("Error accessing user.");
+      }
+    };
+
+    try {
+      const userData = session.currentAccount;
+      setUserInfo(userData);
+
+      if (userData) {
+        userCreation(userData.cognito_user_id);
+      }
+    } catch {
+      setUserInfo(null);
+      setVerifying(false);
+    }
+    doneInitialRender.current = true;
+  }, []);
 
   const logout = useCallback(async () => {
     setLoading(true);
-    try {
-      await Auth.signOut();
-      setUserInfo(null);
-      clearData(false); // includes setLoading as false
-      await router.replace('/');
-    } catch (error) {
-      setLoading(false);
-      console.log("error signing out: ", error);
-    }
+    const params = { logout_uri: session.appBaseUrl, client_id: session.appClientId };
+    const queryString = Object.keys(params).map((key) => { // @ts-ignore
+      return `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`;
+    }).join("&");
+    session.del("credentials");
+    session.del("account");
+    cookies.del("account");
+    window.location.href = `${process.env.REACT_APP_OAUTH_LOGOUT_URL || ""}?${queryString}`;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (router.pathname.startsWith("/qr") && ![QR_TYPE_ROUTE, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE].includes(router.pathname)) {
-    return (<>{children}</>);
-  }
-
-  if (verifying) {
-    return (<PleaseWait />);
+  if (router.pathname.startsWith("/qr") && ![
+    QR_TYPE_ROUTE,
+    QR_CONTENT_ROUTE,
+    QR_DESIGN_ROUTE,
+    QR_DETAILS_ROUTE].includes(router.pathname)) {
+    return <>{children}</>;
   }
 
   const renderContent = () => {
@@ -232,30 +173,27 @@ const AppContextProvider = (props: ContextProps) => {
       }
     } else {
       return (
-        <AppWrapper userInfo={userInfo} handleLogout={logout} clearData={clearData} setLoading={setLoading} setIsTrialMode={setIsTrialMode} mode={data.mode}>
-          {children}
+        <AppWrapper setIsFreeMode={setIsTrialMode} handleLogout={logout} clearData={clearData} setLoading={setLoading}
+          mode={data.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} userInfo={userInfo}>
+          {loading && <Loading />}
+          {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>
       );
     }
   };
 
-  return (<>
-      {loading && <Loading />}
-      <Context.Provider value={{
-        cornersData, setCornersData,
-        dotsData, setDotsData,
-        frame, setFrame,
-        background, setBackground,
-        options, setOptions,
-        selected, setSelected,
-        data, setData, isTrialMode,
-        userInfo, setUserInfo,
-        step, setStep, setForceClear,
-        loading, setLoading,
-        isWrong, setIsWrong}}>
-        {renderContent()}
-      </Context.Provider>
-    </>
+  if (verifying) {
+    return <PleaseWait />
+  }
+
+  return (
+    <Context.Provider value={{
+      cornersData, setCornersData, dotsData, setDotsData, frame, setFrame, background, setBackground,
+      options, setOptions, selected, setSelected, data, setData, isTrialMode, userInfo,
+      clearData, loading, setLoading, setRedirecting, isWrong, setIsWrong, doNotClear
+    }}>
+      {renderContent()}
+    </Context.Provider>
   );
 };
 

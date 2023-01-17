@@ -1,5 +1,12 @@
-import { ReactElement, ReactNode, cloneElement, useCallback, useState, MouseEvent, useEffect } from "react";
-
+import {
+  ReactElement,
+  ReactNode,
+  cloneElement,
+  useCallback,
+  useState,
+  MouseEvent,
+  useEffect
+} from "react";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -19,6 +26,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
+import RenderConfirmDlg from "./renderers/RenderConfirmDlg";
 
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -26,7 +34,10 @@ import Link from "next/link";
 import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
 import RenderNewQrButton from "./renderers/RenderNewQrButton";
 import CountDown from "./countdown/CountDown";
-import { get as getUser } from "../handlers/users";
+import { get as getUser } from "../handlers/users"; // @ts-ignore
+import session from "@ebanux/ebanux-utils/sessionStorage"; // @ts-ignore
+import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
+import { list } from '../handlers/qrs'
 
 interface Props {
   window?: () => Window;
@@ -39,12 +50,9 @@ function ElevationScroll({ children, window }: Props) {
   const trigger = useScrollTrigger({
     disableHysteresis: true,
     threshold: 0,
-    target: window ? window() : undefined
+    target: window ? window() : undefined,
   });
-
-  return cloneElement(children, {
-    elevation: trigger ? 5 : 0
-  });
+  return cloneElement(children, { elevation: trigger ? 5 : 0 });
 }
 
 interface AppWrapperProps {
@@ -52,17 +60,22 @@ interface AppWrapperProps {
   children: ReactNode;
   userInfo?: any;
   handleLogout?: () => void;
-  clearData?: (keepType?: boolean, item?: undefined, value?: undefined, doNot?: boolean) => void;
+  clearData?: (keepType?: boolean, doNot?: boolean) => void;
   setLoading?: (loading: boolean) => void;
-  setIsTrialMode?: (isTrialMode: boolean) => void;
+  setRedirecting?: (redirecting: boolean) => void;
+  setIsFreeMode?: (isFreeMode: boolean) => void;
+  isTrialMode?: boolean;
 }
 
 export default function AppWrapper(props: AppWrapperProps) {
-  const { children, userInfo, handleLogout, clearData, setLoading, setIsTrialMode, mode } = props;
+  const {
+    children, userInfo, handleLogout, clearData, setLoading, setIsFreeMode: setIsFreeMode, mode, isTrialMode: isFreeMode, setRedirecting
+  } = props;
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
-
+  const [freeLimitReached, setFreeLimitReached] = useState<boolean>(false)
+  const [showLimitDlg, setShowLimitDlg] = useState<boolean>(false)
   const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -70,6 +83,16 @@ export default function AppWrapper(props: AppWrapperProps) {
   const handleCloseNavMenu = useCallback(() => {
     setAnchorElNav(null);
   }, []);
+
+  const beforeLogout = () => {
+    if (handleLogout) {
+      if (setIsFreeMode) {
+        setIsFreeMode(false);
+      }
+      setStartTrialDate(null);
+      handleLogout();
+    }
+  };
 
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
   const router = useRouter();
@@ -81,49 +104,56 @@ export default function AppWrapper(props: AppWrapperProps) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleLogin = useCallback(() => {
-    handleLoading();
-    router.push({ pathname: "/", query: { login: true } }, "/")
-      .then(() => {
-        handleLoading(false);
-      });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    startAuthorizationFlow();
+  }, []);
 
   const handleNavigation = useCallback(() => {
-    const isEdit = mode === 'edit';
-    const isInListView = router.pathname === '/';
+    const isInListView = router.pathname === "/";
+    const isEdit = !isInListView && mode === "edit";
 
-    if (clearData !== undefined) {
-      clearData(false, undefined, undefined, isEdit || !isInListView);
+    setAnchorElNav(null);
+    if (freeLimitReached && !isEdit) {
+      setShowLimitDlg(true);
+      return;
     }
+
+    if (setRedirecting && !isInListView) { setRedirecting(true); }
+    if (clearData !== undefined) { clearData(false, isEdit || !isInListView); }
     handleLoading();
-    const navigationOptions = {pathname: !isEdit && isInListView ? QR_TYPE_ROUTE : "/", query: {}};
+    const navigationOptions = { pathname: !isEdit && isInListView ? QR_TYPE_ROUTE : "/", query: {} };
     if (isEdit) { //@ts-ignore
       navigationOptions.query = { mode };
     }
 
-    router.push(navigationOptions, '/', { shallow: true }).then(() => {
-      handleLoading(false);
-    });
+    router.push(navigationOptions, isInListView ? QR_TYPE_ROUTE : "/",
+      { shallow: true }).then(() => {
+        handleLoading(false);
+        if (setRedirecting) { setRedirecting(false); }
+      });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
-
 
   useEffect(() => {
     if (userInfo) {
       const fetchUser = async () => {
-        return await getUser(userInfo.attributes.sub);
+        return await getUser(userInfo.cognito_user_id);
       };
 
-      fetchUser().then(profile => {
-        let isInTrialMode = false;
-        //@ts-ignore
-        if (profile?.createdAt !== null && !profile?.customerId) {
-          isInTrialMode = true;
-          //@ts-ignore
+      fetchUser().then(profile => {//@ts-ignore
+        if (!profile?.customerId) {//(!profile?.customerId || profile?.subscriptionData?.status !== "active")) {
+          // @ts-ignore
+          setIsFreeMode(true); //@ts-ignore
           setStartTrialDate(profile.createdAt);
-        }
-
-        if (setIsTrialMode !== undefined) {
-          setIsTrialMode(isInTrialMode);
+          console.log('Is on free mode')
+          //@ts-ignore
+          list({ userId: userInfo.cognito_user_id }).then(qrs => { // @ts-ignore
+            if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) {
+              setFreeLimitReached(true);
+            }
+          });
+          //Not in free account
+        } else { // @ts-ignore
+          setIsFreeMode(false); //@ts-ignore
+          setStartTrialDate(null);
         }
       }).catch(console.error);
     }
@@ -135,94 +165,105 @@ export default function AppWrapper(props: AppWrapperProps) {
       {handleLogout !== undefined && !router.query.login && (<ElevationScroll>
         <AppBar component="nav" sx={{ background: "#fff", height }}>
           <Container sx={{ my: "auto" }}>
-            <Toolbar
-              sx={{ display: "flex", justifyContent: "space-between", color: theme => theme.palette.text.primary }}>
+            <Toolbar sx={{ "&.MuiToolbar-root": { px: 0 }, display: "flex", justifyContent: "space-between", color: theme => theme.palette.text.primary }}>
               <Link href={{ pathname: !userInfo ? QR_TYPE_ROUTE : "/" }}>
-                <Box sx={{ display: "flex", cursor: "pointer" }}>
-                  <Box component="img" alt="EBANUX" src="/ebanuxQr.svg"
-                       sx={{ width: "40px", display: isWide ? "block" : "none" }} />
-                  <Typography sx={{ my: "auto", ml: "5px", fontSize: "28.8px", fontWeight: "bold" }}>The QR
-                    Link</Typography>
-                </Box>
+                <Box component="img" alt="EBANUX" src="/logo.svg" sx={{ width: "160px", cursor: "pointer" }} />
               </Link>
-              {router.query[PARAM_QR_TEXT] === undefined && (<>
-                {isWide ? (<>
-                  {!userInfo ? (
-                    <Button
-                      startIcon={<LoginIcon />}
-                      onClick={handleLogin}
-                      variant="contained"
-                      sx={{ height: "28px", mr: "5px", my: "auto" }}>
-                      {"Login"}
-                    </Button>
-                  ) : (
-                    <Box sx={{ display: "flex" }}>
-                      <RenderNewQrButton pathname={router.pathname} handleNavigation={handleNavigation} />
+              <Box sx={{ display: "flex" }}>
+                {router.query[PARAM_QR_TEXT] === undefined && (<>
+                  {isWide ? (<>
+                    {!userInfo ? (
                       <Button
-                        startIcon={<LogoutIcon />}
-                        onClick={handleLogout}
+                        startIcon={<LoginIcon />}
+                        onClick={handleLogin}
                         variant="contained"
-                        sx={{ height: "28px", ml: "10px", my: "auto" }}>
-                        {"Logout"}
+                        sx={{ height: "28px", mr: "5px", my: "auto" }}>
+                        {"Login"}
                       </Button>
-                    </Box>
-                  )}
-                </>) : (<>
-                  <IconButton
-                    size="large"
-                    aria-label="responsive-user-menu"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={handleOpenNavMenu}
-                    color="inherit"
-                  >
-                    <MenuIcon />
-                  </IconButton>
-                  <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorElNav}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-                    keepMounted
-                    transformOrigin={{ vertical: "top", horizontal: "left" }}
-                    open={anchorElNav !== null}
-                    onClose={handleCloseNavMenu}
-                    sx={{ display: { xs: "block", md: "none" } }}
-                  >
-                    {!userInfo && (
-                      <MenuItem key="loginMenuItem" onClick={handleLogin}>
-                        <LoginIcon />
-                        <Typography textAlign="center">{"Login"}</Typography>
-                      </MenuItem>
+                    ) : (
+                      <Box sx={{ display: "flex" }}>
+                        <RenderNewQrButton pathname={router.pathname} handleNavigation={handleNavigation} />
+                        <Button
+                          startIcon={<LogoutIcon />}
+                          onClick={beforeLogout}
+                          variant="contained"
+                          sx={{ height: "28px", ml: "10px", my: "auto" }}>
+                          {"Logout"}
+                        </Button>
+                      </Box>
                     )}
-                    {userInfo && (
-                      <MenuItem key="navigateMenuItem" onClick={handleNavigation}>
-                        {router.pathname === "/" ? <QrCodeIcon /> : <FirstPageIcon />}
-                        <Typography
-                          textAlign="center">{router.pathname === "/" ? "Create QR Code" : "My QR Codes"}</Typography>
-                      </MenuItem>
-                    )}
-                    {userInfo && <Divider />}
-                    {userInfo && (
-                      <MenuItem key="logoutMenuItem" onClick={handleLogout}>
-                        <LogoutIcon />
-                        <Typography textAlign="center">{"Logout"}</Typography>
-                      </MenuItem>
-                    )}
-                  </Menu>
+                  </>) : (<>
+                    <IconButton
+                      size="large"
+                      aria-label="responsive-user-menu"
+                      aria-controls="menu-appbar"
+                      aria-haspopup="true"
+                      onClick={handleOpenNavMenu}
+                      color="inherit"
+                    >
+                      <MenuIcon />
+                    </IconButton>
+                    <Menu
+                      id="menu-appbar"
+                      anchorEl={anchorElNav}
+                      anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+                      keepMounted
+                      transformOrigin={{ vertical: "top", horizontal: "left" }}
+                      open={anchorElNav !== null}
+                      onClose={handleCloseNavMenu}
+                      sx={{ display: { xs: "block", md: "none" } }}
+                    >
+                      {!userInfo && (
+                        <MenuItem key="loginMenuItem" onClick={handleLogin}>
+                          <LoginIcon />
+                          <Typography textAlign="center">{"Login"}</Typography>
+                        </MenuItem>
+                      )}
+                      {userInfo && (
+                        <MenuItem key="navigateMenuItem" onClick={handleNavigation}>
+                          {router.pathname === "/" ? <QrCodeIcon /> : <FirstPageIcon />}
+                          <Typography textAlign="center">{router.pathname === "/" ? "Create QR Link" : "My QR Links"}</Typography>
+                        </MenuItem>
+                      )}
+                      {userInfo && <Divider />}
+                      {userInfo && (
+                        <MenuItem key="logoutMenuItem" onClick={beforeLogout}>
+                          <LogoutIcon />
+                          <Typography textAlign="center">{"Logout"}</Typography>
+                        </MenuItem>
+                      )}
+                    </Menu>
+                  </>)}
                 </>)}
-              </>)}
+                {isFreeMode && <CountDown />}
+                {showLimitDlg &&
+                  <RenderConfirmDlg
+                    title="Ops"
+                    message="Your free account only allows for one Dynamic QR. Upgrade to a paid plan to add more QRs. Click here to upgrade now."
+                    handleOk={() => {
+                      router.push('/plans')
+                      setShowLimitDlg(false)
+                    }}
+                    handleCancel={() => setShowLimitDlg(false)}
+                    yesMsg='Upgrade'
+                  />}
+              </Box>
             </Toolbar>
-            {startTrialDate && <CountDown startDate={startTrialDate} />}
+            {/*{isTrialMode && startTrialDate && <CountDown startDate={startTrialDate} />}*/}
           </Container>
         </AppBar>
       </ElevationScroll>)}
       <Container sx={{ width: "100%" }}>
         <Box sx={{ height }} /> {/* Aims to fill the header's gap */}
-        <Box sx={{ mx: "auto", minHeight: "calc(100vh - 145px)", pt: startTrialDate ? 3 : 0 }}>
+        <Box sx={{ mx: "auto", minHeight: `calc(100vh - ${router.pathname === '/' ? 140 : 135}px)` }}>
           {children}
         </Box>
         {handleLogout !== undefined && !router.query.login && (
-          <Box sx={{ height: "40px", display: "flex", justifyContent: "space-betweem" }}>
+          <Box sx={{
+            height: "40px",
+            display: "flex",
+            justifyContent: "space-betweem",
+          }}>
             <Box sx={{ display: "flex", width: "100%" }}>
               <Typography sx={{ my: "auto", display: { sm: "block", xs: "none" } }}>
                 {"Powered by"}
@@ -234,9 +275,9 @@ export default function AppWrapper(props: AppWrapperProps) {
                 my: "auto",
                 color: theme => theme.palette.text.disabled,
                 fontSize: "small",
-                display: "inline-flex"
+                display: "inline-flex",
               }}>
-                {userInfo.username.replace(/@.*$/, "")}
+                {userInfo.email.replace(/@.*$/, "")}
                 <AccountBoxIcon sx={{ mt: "-1px" }} />
               </Typography>
             )}

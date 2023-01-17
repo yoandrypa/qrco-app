@@ -2,39 +2,56 @@ import {useContext, useState} from 'react';
 
 import Context from '../context/Context';
 import RenderTypeSelector from "./helperComponents/RenderTypeSelector";
-import Popper from "@mui/material/Popper";
-import Fade from "@mui/material/Fade";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
+import {areEquals} from "../helpers/generalFunctions";
+import initialOptions, {initialData} from "../../helpers/qr/data";
+import {DataType, OptionsType} from "./types/types";
+
+import dynamic from "next/dynamic";
+const RenderLoseDataConfirm = dynamic(() => import("./helperComponents/smallpieces/RenderLoseDataConfirm"));
 
 interface QrTypeSelectorProps {
   setSelected: Function;
   selected?: string | null;
+  userInfo: string;
+  options: OptionsType;
+  data: DataType;
 }
 
-const QrTypeSelector = () => {
-  // @ts-ignore
-  const {setSelected, selected}: QrTypeSelectorProps = useContext(Context);
-  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+const QrTypeSelector = () => { // @ts-ignore
+  const {data, options, setSelected, selected, userInfo}: QrTypeSelectorProps = useContext(Context);
+  const [displayConfirm, setDisplayConfirm] = useState<string | null>(null);
 
-  const handleSelect = (payload: string, target: HTMLDivElement): void => {
-    // setAnchorEl(selected === payload && target !== null ? null : target);
-    setSelected((prev: string) => prev === payload ? null : payload);
+  const proceedWithSelection = (payload: string): void => {
+    if (selected !== payload) {
+      setSelected(payload);
+    }
+  };
+
+  const handleOk = () => {
+    proceedWithSelection(displayConfirm || '');
+    setDisplayConfirm(null);
+  };
+
+  const handleSelect = (payload: string): void => {
+    const compareWith = {...initialOptions, data: options.data}; // @ts-ignore
+    if (options.id) {compareWith.id = options.id;} // @ts-ignore
+    if (options.shortCode) {compareWith.shortCode = options.shortCode;}
+    const dataComp = {...data};
+    if (initialData.isDynamic !== undefined) {
+      dataComp.isDynamic = initialData.isDynamic;
+    }
+    if (!areEquals(dataComp, initialData) || !areEquals(options, compareWith)) {
+      setDisplayConfirm(payload);
+    } else {
+      proceedWithSelection(payload);
+    }
   };
 
   return (
     <>
-      <RenderTypeSelector selected={selected} handleSelect={handleSelect}/>
-      {anchorEl && (
-        <Popper open anchorEl={anchorEl} placement="bottom" transition>
-        {({TransitionProps}) => (
-          <Fade {...TransitionProps} timeout={350}>
-            <Paper>
-              <Typography sx={{p: 2}}>The content of the Popper.</Typography>
-            </Paper>
-          </Fade>
-        )}
-      </Popper>
+      <RenderTypeSelector selected={selected} handleSelect={handleSelect} isLogged={Boolean(userInfo)}/>
+      {displayConfirm !== null && (
+        <RenderLoseDataConfirm handleOk={handleOk} handleCancel={() => setDisplayConfirm(null)} />
       )}
     </>
   );

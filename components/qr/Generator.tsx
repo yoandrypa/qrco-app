@@ -5,51 +5,45 @@ import Typography from '@mui/material/Typography';
 import DownloadIcon from '@mui/icons-material/Download';
 import BrushIcon from '@mui/icons-material/Brush';
 import CropFreeIcon from '@mui/icons-material/CropFree';
+import PrintIcon from '@mui/icons-material/Print';
+import useMediaQuery from "@mui/material/useMediaQuery";
+
+import dynamic from "next/dynamic";
 
 import {Accordion, AccordionDetails, AccordionSummary} from '../renderers/Renderers';
 
 import {checkForAlpha, convertBase64, downloadAsSVGOrVerify, handleDesignerString} from '../../helpers/qr/helpers';
-import {BackgroundType, CornersAndDotsType, FramesType, OptionsType} from './types/types';
-import Code from './sections/Code';
-import Frames from './sections/Frames';
-import Logos from './sections/Logos';
+import {OptionsType} from './types/types';
+
 import QrGenerator from './QrGenerator';
 import {initialBackground, initialFrame} from '../../helpers/qr/data';
-import RenderDownload from './helperComponents/RenderDownload';
-import PDFGenDlg from './helperComponents/PDFGenDlg';
 import Context from '../context/Context';
-import RenderNoUserWarning from "./helperComponents/RenderNoUserWarning";
-import NotifyDynamic from "./helperComponents/NotifyDynamic";
-import Notifications from "../../components/notifications/Notifications";
+import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
 import {FRAMES_LENGTH} from "./constants";
+import {GeneratorProps, GenProps} from "./auxFunctions";
 
-interface GeneratorProps {
-  options: OptionsType;
-  setOptions: Function;
-  background: BackgroundType;
-  setBackground: Function;
-  frame: FramesType;
-  setFrame: Function;
-  selected: string;
-  userInfo: object;
-  cornersData?: CornersAndDotsType | null;
-  dotsData?: CornersAndDotsType | null;
-}
+const PDFGenDlg = dynamic(() => import('./helperComponents/PDFGenDlg'));
+const RenderDownload = dynamic(() => import('./helperComponents/RenderDownload'));
+const Notifications = dynamic(() => import('../../components/notifications/Notifications'));
+const RenderPreviewButton = dynamic(() => import('./helperComponents/smallpieces/RenderPreviewButton'));
+const RenderPreviewDrawer = dynamic(() => import('./helperComponents/smallpieces/RenderPreviewDrawer'));
+const RenderNoUserWarning = dynamic(() => import('./helperComponents/smallpieces/RenderNoUserWarning'));
+const Code = dynamic(() => import('./sections/Code'));
+const Frames = dynamic(() => import('./sections/Frames'));
+const Logos = dynamic(() => import('./sections/Logos'));
 
-interface GenProps {
-  forceOverride?: string | undefined;
-}
-
-const Generator = ({forceOverride}: GenProps) => {
-  // @ts-ignore
-  const { options, setOptions, background, setBackground, frame, setFrame, data, selected, userInfo, cornersData, dotsData }: GeneratorProps = useContext(Context);
-
+const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
+  const { options, setOptions, background, setBackground, frame, setFrame, data, selected, userInfo, cornersData,
+    dotsData, setIsWrong }: GeneratorProps = useContext(Context);
   const [expanded, setExpanded] = useState<string>('style');
   const [error, setError] = useState<object | string | null>(null);
   const [anchor, setAnchor] = useState<object | null>(null);
   const [updating, setUpdating] = useState<boolean>(false);
-  const [generatePdf, setGeneratePdf] = useState<object | null>(null);
+  const [generatePdf, setGeneratePdf] = useState<boolean>(false);
   const [isReadable, setIsReadable] = useState<{ readable: boolean; } | boolean | null>(null);
+  const [openPreview, setOpenPreview] = useState<boolean>(false);
+
+  const isWideForPreview = useMediaQuery("(min-width:800px)", { noSsr: true });
 
   const qrImageData = useRef<any>(null);
   const doneFirst = useRef<boolean>(false);
@@ -84,7 +78,7 @@ const Generator = ({forceOverride}: GenProps) => {
         }
         setBackground(back);
       } else {
-        setError('The selected file is larger than 50 kilobytes.')
+        setError('The selected file is larger than 50 kB.')
       }
     }
     fileInput.current.value = '';
@@ -224,6 +218,14 @@ const Generator = ({forceOverride}: GenProps) => {
   }, [background.invert]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    let wrong = false;
+    if (background.type === 'image' && !background.file) {
+      wrong = true;
+    }
+    setIsWrong(wrong);
+  }, [background.file, background.type]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     if (doneFirst.current && Boolean(options?.backgroundOptions)) {
       const opts = {...options};
       opts.backgroundOptions.color = background.file ? '#ffffff00' : '#ffffff';
@@ -242,20 +244,57 @@ const Generator = ({forceOverride}: GenProps) => {
     if (updating) {
       setTimeout(() => {
         setUpdating(false);
-      }, 100);
+      }, 350);
     }
     if (!doneFirst.current) {
       doneFirst.current = true;
     }
   }, [updating]);
 
+  useEffect(() => {
+    if (isWideForPreview && openPreview) { setOpenPreview(false); }
+  }, [isWideForPreview]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const renderQrGenerator = () => (
+    <>
+      <Box sx={{mt: {sm: 0, xs: 1}}}>
+        <QrGenerator
+          ref={qrImageData}
+          options={options}
+          frame={frame}
+          hidden={updating}
+          command={command}
+          cornersData={cornersData}
+          dotsData={dotsData} // @ts-ignore
+          overrideValue={dataToOverride}
+          background={!background.file ? null : background}/>
+        <Box sx={{width: '100%', height: '35px', mt: '-2px', textAlign: 'center'}}>
+          {isReadable ? ( // @ts-ignore
+            <Typography sx={{color: theme => isReadable.readable ? theme.palette.success.dark : theme.palette.error.dark, height: '25px'}}> {/* @ts-ignore */}
+              {`${isReadable.readable ? 'High' : 'Low'} chance to be readable.`}
+            </Typography>
+          ) : (
+            <Button variant="contained" onClick={checkForReadability} startIcon={<CropFreeIcon/>} sx={{width: '100%', height: '25px'}}>
+              {'Check for readability'}
+            </Button>
+          )}
+        </Box>
+      </Box>
+      <Box sx={{ display: 'flex' }}>
+        <Button sx={{mt: '10px', width: '100%'}} variant="outlined" onClick={handleDownload} startIcon={<DownloadIcon/>}>
+          {'Download'}
+        </Button>
+        <Button sx={{mt: '10px', width: '120px', ml: '5px'}} variant="outlined" onClick={() => setGeneratePdf(true)} startIcon={<PrintIcon/>}>
+          {'Print'}
+        </Button>
+      </Box>
+   </>
+  );
+
   return (
     <> {/* @ts-ignore */}
-      {error && <Notifications open message={error} onClose={() => {
-        setError(null);
-      }}/>}
-      {background.type === 'image' &&
-        <input ref={fileInput} type="file" accept="image/*" style={{display: 'none'}} onChange={onLoadFile}/>}
+      {error && <Notifications open message={error} onClose={() => setError(null)}/>}
+      {background.type === 'image' && <input ref={fileInput} type="file" accept="image/*" style={{display: 'none'}} onChange={onLoadFile}/>}
       <Box sx={{border: '1px solid rgba(0, 0, 0, .125)', borderRadius: '5px', p: 1, width: '100%'}}>
         {!Boolean(userInfo) && forceOverride === undefined && <RenderNoUserWarning/>}
         <Box sx={{display: 'flex', width: '100%', position: 'relative'}}>
@@ -264,59 +303,10 @@ const Generator = ({forceOverride}: GenProps) => {
             <Typography variant="h6">QR Designer</Typography>
             <Typography>QR Code appearance settings</Typography>
           </Box>
-          {data.isDynamic && <NotifyDynamic styling={{position: 'absolute', right: '5px'}}/>}
+          <NotifyDynamic styling={{position: 'absolute', right: 0}} isDynamic={Boolean(data.isDynamic)}/>
         </Box>
-        <Box sx={{display: 'flex', flexDirection: {sm: 'row', xs: 'column'}, m: {sm: 2, xs: 0}}}>
-          <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            width: {sm: '430px', xs: '100%'}
-          }}>
-            {updating ? <Typography sx={{
-              position: 'absolute',
-              ml: 1,
-              mt: 1,
-              color: theme => theme.palette.text.disabled
-            }}>{'Generating QR...'}</Typography> : null}
-            <Box sx={{mt: {sm: 0, xs: 1}}}>
-              <QrGenerator
-                ref={qrImageData}
-                options={options}
-                frame={frame}
-                hidden={updating}
-                command={command}
-                cornersData={cornersData}
-                dotsData={dotsData} // @ts-ignore
-                overrideValue={dataToOverride}
-                background={!background.file ? null : background}/>
-              <Box sx={{width: '100%', height: '35px', mt: '-2px', textAlign: 'center'}}>
-                {isReadable ? ( // @ts-ignore
-                  <Typography sx={{color: theme => isReadable.readable ? theme.palette.success.dark : theme.palette.error.dark, height: '25px'}}>
-                    {/* @ts-ignore */}
-                    {`${isReadable.readable ? 'High' : 'Low'} chance to be readable.`}
-                  </Typography>
-                ) : (
-                  <Button variant="contained" onClick={checkForReadability} startIcon={<CropFreeIcon/>}
-                          sx={{width: '100%', height: '25px'}}>
-                    {'Check for readability'}
-                  </Button>
-                )}
-              </Box>
-            </Box>
-            <Button sx={{mt: '10px', width: '100%'}} variant="outlined" onClick={handleDownload}
-                    startIcon={<DownloadIcon/>}>
-              {'Download'}
-            </Button>
-          </Box>
-          <Box sx={{
-            width: '100%',
-            ml: {sm: 2, xs: 0},
-            mt: {sm: 0, xs: 2},
-            overflow: 'auto',
-            textAlign: 'left'
-          }}>
-            {/* @ts-ignore */}
+        <Box sx={{display: 'flex', m: {sm: 2, xs: 0}}}>
+          <Box sx={{ width: '100%', mr: isWideForPreview ? 2 : 0, overflow: 'auto', textAlign: 'left' }}> {/* @ts-ignore */}
             <Accordion expanded={expanded === 'style'} onChange={handleExpand('style')}>
               <AccordionSummary aria-controls="style-content" id="style-header">
                 <Typography>Body</Typography>
@@ -331,7 +321,7 @@ const Generator = ({forceOverride}: GenProps) => {
                   handleReset={handleReset}
                 />
               </AccordionDetails>
-            </Accordion>{/* @ts-ignore */}
+            </Accordion> {/* @ts-ignore */}
             <Accordion expanded={expanded === 'frame'} onChange={handleExpand('frame')}>
               <AccordionSummary aria-controls="frame-content" id="frame-header">
                 <Typography>Frame</Typography>
@@ -339,7 +329,7 @@ const Generator = ({forceOverride}: GenProps) => {
               <AccordionDetails>
                 <Frames frame={frame} handleMainFrame={handleMainFrame} handleFrame={handleFrame}/>
               </AccordionDetails>
-            </Accordion>{/* @ts-ignore */}
+            </Accordion> {/* @ts-ignore */}
             <Accordion expanded={expanded === 'logo'} onChange={handleExpand('logo')}>
               <AccordionSummary aria-controls="logo-content" id="logo-header">
                 <Typography>Logo</Typography>
@@ -349,19 +339,30 @@ const Generator = ({forceOverride}: GenProps) => {
               </AccordionDetails>
             </Accordion>
           </Box>
+          <Box sx={{display: isWideForPreview ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'space-between', width: {sm: '430px', xs: '100%'}}}>
+            {updating ? <Typography sx={{ position: 'absolute', ml: 1, mt: 1, color: theme => theme.palette.text.disabled}}>{'Generating QR...'}</Typography> : null}
+            {renderQrGenerator()}
+          </Box>
         </Box>
       </Box>
+      {!isWideForPreview && !openPreview && ( // @ts-ignore
+        <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />
+      )}
+      {openPreview && ( // @ts-ignore
+        <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={450} border={10} autoHeight>
+          <Box sx={{mx: '10px'}}>{renderQrGenerator()}</Box>
+        </RenderPreviewDrawer>
+      )}
       {Boolean(anchor) && (
         <RenderDownload
           frame={frame}
           qrImageData={qrImageData.current}
           anchor={anchor}
-          setAnchor={setAnchor}
-          setGeneratePdf={setGeneratePdf}/>
+          setAnchor={setAnchor}/>
       )}
-      {Boolean(generatePdf) && (
+      {generatePdf && (
         <PDFGenDlg
-          data={qrImageData.current} // @ts-ignore
+          data={qrImageData.current}
           handleClose={() => setGeneratePdf(false)}
           isFramed={frame?.type && frame.type !== '/frame/frame0.svg' || false}/>
       )}

@@ -11,8 +11,16 @@ const LinkSchema = new dynamoose.Schema({
   },*/
   type: {
     type: String,
-    enum: ["redirect_link", "qr_link", "download_link"],
+    enum: [ "redirect_link", "qr_link", "download_link" ],
     default: "qr_link"
+  },
+  claimable: {
+    type: Boolean,
+    default: false
+  },
+  preGenerated: {
+    type: Boolean,
+    default: false
   },
   address: {
     type: String,
@@ -22,7 +30,7 @@ const LinkSchema = new dynamoose.Schema({
     }
   },
   description: {
-    type: [String, dynamoose.type.NULL]
+    type: [ String, dynamoose.type.NULL ]
   },
   banned: {
     type: Boolean,
@@ -32,14 +40,21 @@ const LinkSchema = new dynamoose.Schema({
   bannedById: {
     type: UserModel
   },
+  paused: {
+    type: Boolean,
+    default: false
+  },
+  pausedById: {
+    type: UserModel
+  },
   domainId: {
-    type: [DomainModel, dynamoose.type.NULL]
+    type: [ DomainModel, dynamoose.type.NULL ]
   },
   password: {
-    type: [String, dynamoose.type.NULL]
+    type: [ String, dynamoose.type.NULL ]
   },
   expireIn: {
-    type: [Date, dynamoose.type.NULL]
+    type: [ Date, dynamoose.type.NULL ]
   },
   target: {
     type: String,

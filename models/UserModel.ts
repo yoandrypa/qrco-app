@@ -8,6 +8,9 @@ const UserSchema = new dynamoose.Schema({
     type: String,
     default: getUuid()
   },
+  email: {
+    type: String,
+  },
   banned: {
     type: Boolean,
     required: true,
@@ -44,6 +47,10 @@ const UserSchema = new dynamoose.Schema({
       periodEndsAt: Number
     },
     required: false
+  },
+  planUsage: {
+    type: Number,
+    default: 0
   }
 }, {
   "saveUnknown": [

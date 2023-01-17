@@ -26,9 +26,12 @@ export const create = async (data: CreateLinkData) => {
       target,
       domain,
       expireIn,
-      type
+      type,
     } = data.body;
-    const domainId = domain ? { userId: domain.userId, createdAt: domain.createdAt } : null;
+    const domainId = domain ? {
+      userId: domain.userId,
+      createdAt: domain.createdAt,
+    } : null;
 
     // @ts-ignore
     const targetDomain = utils.removeWww(URL.parse(target).hostname);
@@ -41,16 +44,16 @@ export const create = async (data: CreateLinkData) => {
       Link.find({
         target: { eq: target },
         userId: { eq: data.user.id },
-        domainId: { eq: domainId }
+        domainId: { eq: domainId },
       }),
       customUrl &&
       Link.findByAddress({
         address: { eq: customUrl },
-        domainId: { eq: domainId }
+        domainId: { eq: domainId },
       }),
       !customUrl && utils.generateId(domainId),
       validators.bannedDomain(data.user.id, targetDomain),
-      validators.bannedHost(data.user.id, targetDomain)
+      validators.bannedHost(data.user.id, targetDomain),
     ]);
 
     // if "reuse" is true, try to return
@@ -74,7 +77,7 @@ export const create = async (data: CreateLinkData) => {
       target,
       expireIn,
       type,
-      userId: data.user.id
+      userId: data.user.id,
     };
     if (domainId) {
       params.domainId = domainId;
@@ -97,37 +100,43 @@ export const list = async (query: Query) => {
     const { limit, skip, search, all, userId } = query;
 
     const match = {
-      ...(!all && { userId: { eq: userId } })
+      ...(!all && { userId: { eq: userId } }),
     };
 
     // @ts-ignore
-    const [links, total]: [any[], number] = await Link.list(match, { limit, search, skip });
+    const [links, total]: [any[], number] = await Link.list(match,
+      { limit, search, skip });
 
-    const data = await Promise.all(links.map(async (link: LinkJoinedDomainType) => {
-      if (link.domainId) {
-        const domain = (await DomainHandler.find({ userId }))[0];
-        link.domain = domain?.address;
-      }
-      return utils.sanitize.link(link);
-    }));
+    const data = await Promise.all(
+      links.map(async (link: LinkJoinedDomainType) => {
+        if (link.domainId) {
+          const domain = (await DomainHandler.find({ userId }))[0];
+          link.domain = domain?.address;
+        }
+        return utils.sanitize.link(link);
+      }));
 
     return {
       total,
       limit,
       skip,
-      data
+      data,
     };
   } catch (e: any) {
     throw new CustomError(e.message, 500, e);
   }
 };
 
-export const get = async (address: string) => {
-  const linkItem = await Link.find({ address: { eq: address } });
-  if (!linkItem) {
+export const get = async (key: { userId: string, createdAt: number }) => {
+  try {
+    return await Link.get(key);
+  } catch (e: any) {
+    throw new CustomError(e.message, 500, e);
+  }
+  /*if (!linkItem) {
     return;
   }
-  return utils.sanitize.link(linkItem);
+  return utils.sanitize.link(linkItem);*/
 };
 
 export const find = async (linkId: string) => {
@@ -152,7 +161,7 @@ export const edit = async (data: UpdateLinkData) => {
 
     const linkData = await Link.find({
       id: { eq: id },
-      userId: { eq: data.user.id }
+      userId: { eq: data.user.id },
     });
 
     if (!linkData) {
@@ -170,10 +179,10 @@ export const edit = async (data: UpdateLinkData) => {
       address !== linkData.address &&
       Link.find({
         address: { eq: address },
-        domainId: { eq: domainId }
+        domainId: { eq: domainId },
       }),
       validators.bannedDomain(data.user.id, targetDomain),
-      validators.bannedHost(data.user.id, targetDomain)
+      validators.bannedHost(data.user.id, targetDomain),
     ]);
 
     // Check if custom link already exists
@@ -184,14 +193,15 @@ export const edit = async (data: UpdateLinkData) => {
     // Update link
     const updatedLink = await Link.update(
       {
-        id: linkData.id
+        userId: linkData.user.id,
+        createdAt: linkData.createdAt,
       },
       {
         ...(address && { address }),
         ...(description && { description }),
         ...(target && { target }),
-        ...(expireIn && { expireIn })
-      }
+        ...(expireIn && { expireIn }),
+      },
     );
 
     // @ts-ignore
@@ -203,7 +213,7 @@ export const edit = async (data: UpdateLinkData) => {
 
 export const remove = async (match: { userId: string, createdAt: number }) => {
   try {
-    if (typeof match["createdAt"] === "string") {
+    if (typeof match["createdAt"] !== "number") {
       match["createdAt"] = (new Date(match["createdAt"])).getTime();
     }
     const linkData = await Link.remove(match);

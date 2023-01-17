@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import PhotoIcon from '@mui/icons-material/Photo';
 
 import FileUpload from "react-material-file-upload";
 import {ALLOWED_FILE_EXTENSIONS} from "../../../../consts";
@@ -35,6 +36,14 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
   return (
     <Dialog onClose={handleClose} open={true}>
       <DialogContent dividers>
+        <Box sx={{ display: 'flex', width: '100%' }}>
+          <Box sx={{ mb: 2, display: 'flex' }}>
+            <PhotoIcon sx={{ color: theme => theme.palette.primary.dark, pb: '2px' }} />
+            <Typography>{'Pick the'}</Typography>
+            <Typography sx={{fontWeight: 'bold', mx: '5px'}}>{`${title}`}</Typography>
+            <Typography>{'image.'}</Typography>
+          </Box>
+        </Box>
         {wasError && (
           <Box sx={{ width: '100%', textAlign: 'center'}}>
             <Typography sx={{ color: theme => theme.palette.error.dark, mb: 2, fontWeight: 'bold' }}>
@@ -42,14 +51,7 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
             </Typography>
           </Box>
         )}
-        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-          <Box sx={{ mb: 2, display: 'flex' }}>
-            <Typography>{'Please, select the'}</Typography>
-            <Typography sx={{fontWeight: 'bold', mx: '5px'}}>{`${title}`}</Typography>
-            <Typography>{'image.'}</Typography>
-          </Box>
-        </Box>
-        <Paper sx={{ width: 370, height: 'auto', p: 1 }}>
+        <Paper sx={{ width: '100%', height: 'auto' }}>
           <FileUpload
             value={[]}
             // @ts-ignore
@@ -57,7 +59,7 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
             multiple={false}
             maxFiles={1}
             accept={ALLOWED_FILE_EXTENSIONS.gallery}
-            title="Select the image or drag and drop it here"
+            title="Select an image by hitting 'Upload' button or drag and drop it here"
           />
         </Paper>
       </DialogContent>

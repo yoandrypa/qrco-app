@@ -7,41 +7,21 @@ import frame4 from '../../components/qr/frames/frame4';
 import frame5 from '../../components/qr/frames/frame5';
 import frame6 from '../../components/qr/frames/frame6';
 import frame7 from '../../components/qr/frames/frame7';
-import {DataType, FramesType, SocialNetworksType, SocialsType} from '../../components/qr/types/types';
+import { DataType, FramesType } from '../../components/qr/types/types';
 import initialOptions from "./data";
-
-const exists = (socials: SocialNetworksType[] | undefined, item: SocialsType): boolean => (
-  socials !== undefined && socials.length > 0 && socials.some((x: SocialNetworksType) => x.network === item)
-);
-
-const getValue = (socials: SocialNetworksType[] | undefined, item: SocialsType): string => {
-  if (socials) {
-    const network = socials.find((x: SocialNetworksType) => x.network === item);
-    if (network) {
-      return network.value || '';
-    }
-  }
-  return '';
-};
+import {capitalize} from "@mui/material";
 
 export const handleDesignerString = (selected: string | null | undefined, data: DataType): string => {
   let designerString = '';
   switch (selected) {
     case 'text':
-    case 'web': {
-      designerString = data.value || '';
-      break;
-    }
-    case 'sms': {
-      designerString = `SMSTO:${data.number || ''}:${data.message}`;
-      break;
-    }
+    case 'web': { return data.value || ''; }
+    case 'sms': { return `SMSTO:${data.number || ''}:${data.message}`; }
     case 'email': {
       const params: { subject?: string; body?: string; } = {};
       if (data.subject) { params.subject = data.subject; }
       if (data.body) { params.body = data.body; }
-      designerString = `mailto:${data?.email || ''}${Object.keys(params).length ? `?${new URLSearchParams(params).toString()}` : ''}`;
-      break;
+      return `mailto:${data?.email || ''}${Object.keys(params).length ? `?${new URLSearchParams(params).toString()}` : ''}`;
     }
     case 'wifi': {
       designerString = `WIFI:S:${data.name};P:${data.password || ''}`;
@@ -67,32 +47,22 @@ export const handleDesignerString = (selected: string | null | undefined, data: 
       if (data.email) { designerString += `EMAIL:${data.email}\n`; }
       if (data.web) { designerString += `URL:${data.web}\n`; }
       designerString += 'VERSION:3.0\nEND:VCARD\n';
-      if (exists(data.socials, 'facebook')) { designerString += `facebook:${getValue(data.socials, 'facebook')}\n` }
-      if (exists(data.socials, 'twitter')) { designerString += `twitter:${getValue(data.socials, 'twitter')}\n` }
-      if (exists(data.socials, 'instagram')) { designerString += `instagram:${getValue(data.socials, 'instagram')}\n` }
-      if (exists(data.socials, 'youtube')) { designerString += `youtube:${getValue(data.socials, 'youtube')}\n` }
-      if (exists(data.socials, 'whatsapp')) { designerString += `whatsapp:${getValue(data.socials, 'whatsapp')}\n` }
-      if (exists(data.socials, 'linkedin')) { designerString += `linkedin:${getValue(data.socials, 'linkedin')}\n` }
-      if (exists(data.socials, 'pinterest')) { designerString += `pinterest:${getValue(data.socials, 'pinterest')}\n` }
-      if (exists(data.socials, 'telegram')) { designerString += `facebook:${getValue(data.socials, 'telegram')}\n` }
       break;
     }
     case 'twitter': {
-      designerString += `https://twitter.com/intent/tweet?text=${encodeURIComponent(data.text || '')}`;
+      designerString = `https://twitter.com/intent/tweet?text=${encodeURIComponent(data.text || '')}`;
       designerString += `${data.url ? encodeURIComponent(` ${data.url}`) : ''}`;
       designerString += `${data.hashtags ? encodeURIComponent(` ${data.hashtags.split(',').map((x: string) => `#${x}`).join(' ')}`) : ''}`;
       designerString += `${data.via ? encodeURIComponent(` @${data.via}`) : ''}`;
       break;
     }
     case 'whatsapp': {
-      designerString += `https://wa.me/${data.number}`;
+      designerString = `https://wa.me/${data.number || ''}`;
       if (data.message) { designerString += `?text=${encodeURIComponent(data.message)}`; }
       break;
     }
-    case 'facebook': {
-      designerString += `https://www.facebook.com/sharer.php?u=${encodeURIComponent(data.message || '')}`;
-      break;
-    }
+    case 'facebook': { return `https://www.facebook.com/sharer.php?u=${encodeURIComponent(data.message || '')}`; }
+    case 'crypto': { return `Blockchain: ${data.urlOptionLabel || 'btc'},to: ${data.subject} info: ${data.message || ''}`; }
   }
   return designerString;
 };
@@ -105,12 +75,14 @@ export const getBase64FromUrl = async (url: string) => {
     reader.readAsDataURL(blob);
     reader.onloadend = () => {
       const base64data = reader.result;
-      resolve(base64data);
+      setTimeout(() => {
+        resolve(base64data);
+      }, 200);
     }
   });
 };
 
-export const convertBase64 = (file: Blob): object => {
+export const convertBase64 = (file: Blob | File): object => {
   return new Promise((resolve, reject) => {
     const fileReader = new FileReader();
     fileReader.readAsDataURL(file);
@@ -127,8 +99,7 @@ export const checkForAlpha = (file: Blob): Promise<{ depth: number; type: string
   return new Promise((resolve, reject) => {
     const fileReader = new FileReader();
     fileReader.readAsArrayBuffer(file);
-    fileReader.onload = () => {
-      // @ts-ignore
+    fileReader.onload = () => { // @ts-ignore
       const view = new DataView(fileReader.result);
       if (view.getUint32(0) === 0x89504E47 && view.getUint32(4) === 0x0D0A1A0A) {
         const depth = view.getUint8(8 + 8 + 8);
@@ -191,17 +162,15 @@ const delta = (rgbA: number[], rgbB: number[]): number => {
   return i < 0 ? 0 : Math.sqrt(i);
 }
 
-export const downloadAsSVGOrVerify = (qrImageData: { outerHTML: string; }, verify: Function | undefined, contrast: {color1?: string; color2: string} | undefined): void => {
-  const svgData = qrImageData.outerHTML.replaceAll(' href', ' xlink:href');
+export const downloadAsSVGOrVerify = (qrImageData: string | { outerHTML: string; }, verify: Function | undefined, contrast: { color1?: string; color2: string } | undefined): void => {
+  const svgData = (typeof qrImageData === 'string' ? qrImageData : qrImageData.outerHTML).replaceAll(' href', ' xlink:href');
   const data = new Blob([svgData], { type: 'image/svg+xml' });
-  if (verify) {
-    // @ts-ignore
+  if (verify) { // @ts-ignore
     if (contrast && delta(getRGB(contrast.color1), getRGB(contrast.color2)) <= 45) {
       verify({ readable: false });
     } else {
       QrScanner.scanImage(data, { returnDetailedScanResult: true })
-        .then(() => { verify({ readable: true }); })
-        .catch(() => { verify({ readable: false }); });
+        .then(() => verify({ readable: true })).catch(() => verify({ readable: false }));
     }
   } else {
     const element = document.createElement('a');
@@ -213,20 +182,17 @@ export const downloadAsSVGOrVerify = (qrImageData: { outerHTML: string; }, verif
   }
 };
 
-export const downloadAsPNG = async (svgData: { outerHTML: string | number | boolean; }, frame: FramesType | { type: string; }, verify: Function | undefined, contrast: any | undefined): Promise<void> => {
-  const base64doc = window.btoa(decodeURIComponent(encodeURIComponent(svgData.outerHTML)));
+export const downloadAsPNG = async (svgData: string | { outerHTML: string | number | boolean; }, frame: FramesType | { type: string; }, verify: Function | undefined, contrast: any | undefined): Promise<void> => {
+  const base64doc = window.btoa(decodeURIComponent(encodeURIComponent(typeof svgData === 'string' ? svgData : svgData.outerHTML)));
   const imageToHandle = document.createElement('img');
   imageToHandle.src = 'data:image/svg+xml;base64,' + base64doc;
   const canvas = document.createElement('canvas');
   imageToHandle.onload = () => {
     const w: number = 280;
-    const h: number = frame.type !== '' && frame.type !== '/frame/frame0.svg' ? 330 : 280;
-    // @ts-ignore
-    canvas.setAttribute('width', w);
-    // @ts-ignore
+    const h: number = frame.type !== '' && frame.type !== '/frame/frame0.svg' ? 330 : 280; // @ts-ignore
+    canvas.setAttribute('width', w); // @ts-ignore
     canvas.setAttribute('height', h);
-    const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
-    // @ts-ignore
+    const context: CanvasRenderingContext2D | null = canvas.getContext('2d'); // @ts-ignore
     context.drawImage(imageToHandle, 0, 0, w, h);
     const data = canvas.toDataURL('image/png', 1);
     if (!verify) {
@@ -235,14 +201,12 @@ export const downloadAsPNG = async (svgData: { outerHTML: string | number | bool
       anchor.href = data;
       anchor.click();
       anchor.remove();
-    } else {
-      // @ts-ignore
+    } else { // @ts-ignore
       if (contrast && delta(getRGB(contrast.color1), getRGB(contrast.color2)) <= 45) {
         verify({ readable: false });
       } else {
         QrScanner.scanImage(data, { returnDetailedScanResult: true })
-          .then(() => { verify({ readable: true }); })
-          .catch(() => { verify({ readable: false }); });
+          .then(() => verify({ readable: true })).catch(() => verify({ readable: false }));
       }
     }
     imageToHandle.remove();
@@ -252,9 +216,8 @@ export const downloadAsPNG = async (svgData: { outerHTML: string | number | bool
 
 export const getFrame = (frame: FramesType): string => {
   let result: string;
-  const defaultColor:string = '#000000';
+  const defaultColor: string = '#000000';
   const renderFrameText = () => frame.text !== undefined ? frame.text : 'SCAN ME' as string;
-
   if (frame.type === '/frame/frame0.svg') {
     result = frame0(frame.color);
   } else if (frame.type === '/frame/frame1.svg') {
@@ -279,13 +242,13 @@ export function getUuid(): string {
   let dt = new Date().getTime();
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (dt + Math.random() * 16) % 16 | 0;
-    dt = Math.floor(dt/16);
-    return (c === 'x' ? r :(r&0x3|0x8)).toString(16);
+    dt = Math.floor(dt / 16);
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
   });
 }
 
 export const getFrameObject = (qrDesign: any) => (
-  qrDesign.frame?.type ? {
+  qrDesign?.frame?.type ? {
     type: qrDesign.frame?.type,
     text: qrDesign.frame?.text,
     color: qrDesign.frame?.color,
@@ -310,30 +273,30 @@ export const getOptionsObject = (qrDesign: any) => {
     cornersDotOptions: qrDesign.cornersDotOptions
   };
 
-  if (object.cornersDotOptions.type === '') {
+  if (object.cornersDotOptions?.type === '') {
     object.cornersDotOptions.type = null;
   }
-  if (object.cornersSquareOptions.type === '') {
+  if (object.cornersSquareOptions?.type === '') {
     object.cornersSquareOptions.type = null;
   }
   return object;
 };
 
 export const getBackgroundObject = (qrDesign: any) => (
-  !qrDesign.background?.type ? null : {
-  type: qrDesign.background?.type,
-  opacity: qrDesign.background?.opacity,
-  size: qrDesign.background?.size,
-  file: qrDesign.background?.file,
-  x: qrDesign.background?.x,
-  y: qrDesign.background?.y,
-  imgSize: qrDesign.background?.imgSize || 1,
-  invert: qrDesign.background?.invert || false,
-  backColor: qrDesign.background?.backColor || null
-});
+  !qrDesign?.background?.type ? null : {
+    type: qrDesign.background?.type,
+    opacity: qrDesign.background?.opacity,
+    size: qrDesign.background?.size,
+    file: qrDesign.background?.file,
+    x: qrDesign.background?.x,
+    y: qrDesign.background?.y,
+    imgSize: qrDesign.background?.imgSize || 1,
+    invert: qrDesign.background?.invert || false,
+    backColor: qrDesign.background?.backColor || null
+  });
 
 export const getCornersAndDotsObject = (qrDesign: any, item: string) => (
-  qrDesign[item] ? {
+  qrDesign?.[item] ? {
     topL: qrDesign[item].topL,
     topR: qrDesign[item].topR,
     bottom: qrDesign[item].bottom
@@ -350,26 +313,78 @@ export const handleInitialData = (value: string | null | undefined) => {
 };
 
 export const dataCleaner = (options: any, mainObj?: boolean) => {
-  const data = {...options};
-
+  const data = { ...options };
   const base = ['backgroundOptions', 'cornersDotOptions', 'cornersSquareOptions', 'dotsOptions', 'imageOptions',
     'qrOptions', 'margin', 'type', 'width', 'height', 'image', 'data'] as string[];
 
   if (!mainObj) {
     [...base, 'qrOptionsId', 'shortLinkId', 'qrData', 'qrDesign', 'id', 'qrType', 'userId'].forEach((x: string) => {
-      if (data[x]) {
-        delete data[x];
-      }
+      if (data[x]) { delete data[x]; }
     });
   } else {
     const checkFor = [...base, 'id', 'userId', 'shortCode', 'qrType', 'mode'] as string[];
     Object.keys(data).forEach((x: string) => {
-      if (!checkFor.includes(x)) {
-        delete data[x];
-      }
+      if (!checkFor.includes(x)) { delete data[x]; }
     });
   }
-
   return data;
+};
+
+export const qrNameDisplayer = (name: string, isDynamic: boolean): string => {
+  const types = {
+    vcard: 'vCard', sms: 'SMS', wifi: 'WiFi', whatsapp: 'WhatsApp', crypto: 'Crypto Payment', 'vcard+': 'vCard Plus',
+    social: 'Social Networks', link: 'Link-In-Bio', donations: 'Donation', fundme: 'Fund me', paylink: 'Send Me Money',
+    pdf: 'PDF File', audio: 'Audio File', video: 'Video Files',petId: 'Pet Tag Id', linkedLabel: 'Smart Label', findMe:"Find Me"
+  } // @ts-ignore
+  if (types[name] !== undefined) { return types[name]; }
+  if (name === 'web') { return isDynamic ? 'Short URL' : 'Website'; }
+  return capitalize(name);
 }
 
+const clearItem = (item: string): string => {
+  if (item === 'vcard+') { return 'vcard'; }
+  if (item === 'link') { return 'links'; }
+  if (item === 'donations') { return 'donation'; }
+  return item;
+};
+
+export const cleanSelectionForMicrositeURL = (item: string, isDynamic: boolean, forSrc?: boolean): string => {
+  if (item === 'web') { return 'https://a-qr.link/zDexu6'; }
+
+  if (!forSrc) {
+    switch (item) {
+      case 'business' : { return 'https://a-qr.link/uLDANI'; }
+      case 'vcard+' : { return 'https://a-qr.link/OPLGC3'; }
+      case'social' : { return 'https://a-qr.link/nIF867'; }
+      case 'link' : { return 'https://a-qr.link/DOBwac'; }
+      case 'coupon' : { return 'https://a-qr.link/jaJws0'; }
+      case 'donation' : { return 'https://a-qr.link/KiajsU'; }
+      case 'pdf' : { return 'https://a-qr.link/5iuiJf'; }
+      case 'audio' : { return 'https://a-qr.link/ao4ZUe'; }
+      case 'gallery' : { return 'https://a-qr.link/DyhL4H'; }
+      case 'video' : { return 'https://a-qr.link/AD3yLH'; }
+    }
+  }
+
+  if (isDynamic) {
+    return `${process.env.REACT_MICROSITES_ROUTE}/sample/${clearItem(item)}`;
+  }
+
+  return `sample qr ${clearItem(item)}`;
+};
+
+// @ts-ignore
+export const debounce = (func, delay, { leading } = {}) => { // @ts-ignore
+  let timerId; // @ts-ignore
+  return (...args) => { // @ts-ignore
+    if (!timerId && leading) {
+      func(...args);
+    } // @ts-ignore
+    clearTimeout(timerId);
+    timerId = setTimeout(() => func(...args), delay);
+  }
+}
+
+export const getSx = (theme: any) => ({
+  border: `solid 1px ${theme.palette.primary.main}`, borderRadius: '100%', width: '40px', height: '40px', my: 'auto', p: '5px', color: theme.palette.primary.main
+});

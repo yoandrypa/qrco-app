@@ -114,7 +114,7 @@ const QrGenerator = ({ hidden, options, frame, background, command, overrideValu
           backSize = sizeWH * background.size;
           posXY = Math.round((originalDimensions - backSize) / 2);
         } else if (background.size > 1) {
-          const dimensions = originalDimensions - (Boolean(frame.type) ? 20 : 0);
+          const dimensions = originalDimensions - (Boolean(frame?.type) ? 20 : 0);
           const newSize = Math.round(dimensions / background.size);
           const newPos = Math.round((originalDimensions - newSize) / 2);
           parsed.props.x = newPos;
@@ -136,7 +136,7 @@ const QrGenerator = ({ hidden, options, frame, background, command, overrideValu
 
       return (
         <svg viewBox={`0 0 ${originalDimensions} ${!isFramed || frame.type === '/frame/frame0.svg' ? originalDimensions : '330'}`}
-             xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" ref={ref}>
+             xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" ref={ref} id="qrCodeReferenceId">
           {back && background.invert && (
             <filter id="inverse-difference" colorInterpolationFilters="sRGB">
               <feComponentTransfer result="invert">

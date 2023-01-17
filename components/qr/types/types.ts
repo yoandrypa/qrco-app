@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export type CornersAndDotsType = {
   topL: string;
   topR: string;
@@ -86,8 +88,9 @@ export type SocialProps = {
   isDynamic?: boolean;
 };
 
-export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram';
+export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram' | 'title' | 'about';
 export type SocialNetworksType = { network: SocialsType, value?: string };
+export type CustomType = { component: string, name?: string };
 
 export type DataType = {
   qrType?: string;
@@ -95,6 +98,8 @@ export type DataType = {
   prevNetworks?: string[];
   userId?: string;
   id?: string;
+  index?: number[];
+  custom?: CustomType[];
   qrName?: string;
   number?: string;
   avatarImage?: string;
@@ -119,6 +124,7 @@ export type DataType = {
   organization?: string;
   position?: string;
   address?: string;
+  address2?: string;
   city?: string;
   zip?: string;
   state?: string;
@@ -127,8 +133,18 @@ export type DataType = {
   contact?: string;
   about?: string;
   title?: string;
+  titleAbout?: string;
+  autoOpen?: boolean;
+  descriptionAbout?: string;
+  titleText?: string;
   subtitle?: string;
+  companyWebSite?: string;
+  companyEmail?: string;
+  companyPhone?: string;
+  companyCell?: string;
+  companyFax?: string;
   web?: string;
+  website?: string;
   url?: string;
   via?: string;
   hashtags?: string;
@@ -164,6 +180,31 @@ export type DataType = {
     taxi?: boolean;
     wifi?: boolean;
   } | undefined;
+  backgroundImageFile?: string;
+  backgroundType?: string;
+  backgroundColor?: string;
+  backgroundColorRight?: string;
+  backgroundDirection?: string;
+  backgroundImage?: File | string;
+  globalFont?: string;
+  globalFontColor?: string;
+  buttonsFont?: string;
+  buttonShape?: string;
+  buttonBack?: string;
+  buttonBorders?: string;
+  buttonBackColor?: string;
+  layout?: string;
+  titlesFont?: string;
+  subtitlesFont?: string;
+  messagesFont?: string;
+  titlesFontSize?: string;
+  subtitlesFontSize?: string;
+  messagesFontSize?: string;
+  buttonsFontSize?: string;
+  titlesFontStyle?: string;
+  subtitlesFontStyle?: string;
+  messagesFontStyle?: string;
+  buttonsFontStyle?: string;
   primary?: string;
   secondary?: string;
   isDynamic?: boolean;
@@ -173,14 +214,30 @@ export type DataType = {
   foregndImg?: File | string;
   foregndImgType?: 'circle' | 'smooth' | 'square' | null;
   files?: File[];
+  petName?: string;
+  petBreed?: string;
+  petYearOfBirth?: string;
+  petGender?: string;
+  headingTextText?: string;
+  headingTextHeading?: string;
+  contactTitle?: string;
+  otherDetails?: HeadAndItemsType;
+  urls?: HeadAndItemsType;
+  fields?: DragFields;
+  description?: string;
+  categories?: string[];
+  contactForm?:ContactField;
+
 };
-
-export type DonationsData = {
-  name: string,
-  image?: string,
-  shortText: string
+export type validTypes = 'text' | 'email' | 'phone' | 'web' | 'number' | 'date' | 'fax' | 'url' | 'string';
+export type HeadAndItemsType = {
+  heading: string;
+  items: [{
+    label: string;
+    value: string;
+    type?: validTypes
+  }];
 }
-
 export type EbanuxDonationPriceData = {
   priceId?: string,
   productId?: string,
@@ -189,22 +246,24 @@ export type EbanuxDonationPriceData = {
   redirectUrl: string,
 }
 
-export type CardDataProps = {
-  data: DataType;
-  setData: Function;
-};
+export interface EbanuxSimplePaymentLinkData {
+  productName: string,
+  productDescription: string,
+  images: string[],
+  amount: number,
+  successUrl?: string
+}
 
-export type UpdaterType = {
-  options: OptionsType;
-  background?: BackgroundType;
-  corners?: CornersAndDotsType;
-  cornersDot?: CornersAndDotsType;
-  frame?: FramesType;
+export type CardDataProps = {
+  data: DataType; setData: Function;
 };
 
 export type ColorTypes = {
-  p: string,
-  s: string
+  p: string; s: string;
+};
+
+export type FontTypes = {
+  type: string; name: string;
 };
 
 export type EditType = {
@@ -218,14 +277,41 @@ export type EditType = {
   qrOptionsId?: any;
   backgndImg?: any;
   foregndImg?: any;
+  mode?: string;
   value?: string;
   primary?: string;
   secondary?: string;
-  createdAt?: string;
+  createdAt: number;
   updatedAt?: string;
 };
 
 export type ProcessHanldlerType = {
   value: string;
   status?: boolean;
+};
+export type DragField = {
+  type: 'text' | 'media' | 'gallery' | 'video' | 'contact';
+  header?: string;
+  component?: any// ! react component
+};
+
+export type Sections = (TextField | MediaField | ContactField);
+
+export type DragFields = Sections[];
+
+export type ContactField = DragField & {
+  title?: string;
+  message?: string;
+  buttonText?: string;
+  email: string;
+
+};
+
+export type TextField = DragField & {
+  title?: string;
+  text?: string;
+};
+
+export type MediaField = DragField & {
+  files?: File[];
 };

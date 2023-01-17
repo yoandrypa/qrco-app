@@ -4,6 +4,8 @@ import Typography from '@mui/material/Typography';
 
 import Common from '../helperComponents/Common';
 import {isValidUrl} from "../../../utils";
+import RenderPreviewURLString from "./helpers/RenderPreviewURLString";
+import Box from "@mui/material/Box";
 
 type TwitterDataProps = {
   data: {
@@ -36,9 +38,17 @@ const TwitterData = ({data, setData, setIsWrong}: TwitterDataProps) => {
   const renderAvailability = () => {
     const total = availableTwittChars(data);
     if (total < 0) {
-      return <Typography color="error">Too many characters, the total amount of characters must be 280</Typography>
+      return (
+        <Typography color="error" sx={{ fontSize: 'small' }}>
+          {'Too many characters, the total amount of characters must be 280'}
+        </Typography>
+      );
     }
-    return <Typography>{`${total} available character${total !== 1 ? 's' : 0}`}</Typography>;
+    return (
+      <Typography sx={{ fontSize: 'small', color: theme => theme.palette.text.disabled }}>
+        {`${total} available character${total !== 1 ? 's' : 0}`}
+      </Typography>
+    );
   };
 
   useEffect(() => {
@@ -48,39 +58,40 @@ const TwitterData = ({data, setData, setIsWrong}: TwitterDataProps) => {
 
   return (
     <Common msg="You can post a tweet with a link, an user's reference and a list of hashtags.">
-      <>
-        <TextField
-          label="Text"
-          size="small"
-          fullWidth
-          margin="dense"
-          value={data?.text || ''}
-          onChange={handleValues('text')}/>
-        <TextField
-          label="Mention username (do not include the @ symbol)"
-          size="small"
-          fullWidth
-          margin="dense"
-          value={data?.via || ''}
-          onChange={handleValues('via')}/>
-        <TextField
-          label="Hashtags (comma separated, do not include the # symbol)"
-          size="small"
-          fullWidth
-          margin="dense"
-          value={data?.hashtags || ''}
-          onChange={handleValues('hashtags')}/>
-        <TextField
-          label="URL"
-          size="small"
-          fullWidth
-          margin="dense"
-          // @ts-ignore
-          error={data?.url && !isValidUrl(data.url)}
-          value={data?.url || ''}
-          onChange={handleValues('url')}/>
+      <TextField
+        label="Text"
+        size="small"
+        fullWidth
+        margin="dense"
+        value={data?.text || ''}
+        onChange={handleValues('text')}/>
+      <TextField
+        label="Mention username (do not include the @ symbol)"
+        size="small"
+        fullWidth
+        margin="dense"
+        value={data?.via || ''}
+        onChange={handleValues('via')}/>
+      <TextField
+        label="Hashtags (comma separated, do not include the # symbol)"
+        size="small"
+        fullWidth
+        margin="dense"
+        value={data?.hashtags || ''}
+        onChange={handleValues('hashtags')}/>
+      <TextField
+        label="URL"
+        size="small"
+        fullWidth
+        margin="dense"
+        // @ts-ignore
+        error={data?.url && !isValidUrl(data.url)}
+        value={data?.url || ''}
+        onChange={handleValues('url')}/>
+      <Box sx={{ width: '100%', textAlign: 'right' }}>
         {renderAvailability()}
-      </>
+      </Box>
+      <RenderPreviewURLString selected="twitter" data={data}/>
     </Common>);
 };
 

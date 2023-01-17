@@ -1,55 +1,59 @@
 import { ChangeEvent, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
 
-import RenderIcon from './helperComponents/RenderIcon';
-
+import RenderIcon from './helperComponents/smallpieces/RenderIcon';
 import Context from '../context/Context';
-import SingleData from './renderers/SingleData';
-import WhatsAppData from './renderers/WhatsAppData';
-import FacebookData from './renderers/FacebookData';
-import WifiData from './renderers/WifiData';
-import CardData from './renderers/CardData';
-import EmailData from './renderers/EmailData';
-import SMSData from './renderers/SMSData';
-import TwitterData from './renderers/TwitterData';
-import AssetData from './renderers/AssetData';
-import NotifyDynamic from "./helperComponents/NotifyDynamic";
-import BusinessData from "./renderers/BusinessData";
-import NetworksData from "./renderers/NetworksData.";
-import CouponData from "./renderers/CouponData";
-import DonationsData, { DonationsProps } from './renderers/DonationsData';
-import CryptoData from './renderers/CryptoData';
-import FundMe from './renderers/FundMeData';
-import SimplePayLinkData from './renderers/SimplePayLinkData';
-
 import { DataType, SocialProps } from './types/types';
-import LinksData from "./renderers/LinksData";
-import PleaseWait from "../PleaseWait";
+
+import dynamic from "next/dynamic";
+
+import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
+import DonationsData, { DonationsProps } from './renderers/DonationsData';
+import { qrNameDisplayer } from "../../helpers/qr/helpers";
+
+const Custom = dynamic(() => import("./renderers/Custom"));
+const SingleData = dynamic(() => import('./renderers/SingleData'));
+const WhatsAppData = dynamic(() => import('./renderers/WhatsAppData'));
+const FacebookData = dynamic(() => import('./renderers/FacebookData'));
+const WifiData = dynamic(() => import('./renderers/WifiData'));
+const CardData = dynamic(() => import('./renderers/CardData'));
+const EmailData = dynamic(() => import('./renderers/EmailData'));
+const SMSData = dynamic(() => import('./renderers/SMSData'));
+const TwitterData = dynamic(() => import('./renderers/TwitterData'));
+const AssetData = dynamic(() => import('./renderers/AssetData'));
+const BusinessData = dynamic(() => import('./renderers/BusinessData'));
+const PetIdData = dynamic(() => import('./renderers/PetIdData'));
+const NetworksData = dynamic(() => import('./renderers/NetworksData'));
+const CouponData = dynamic(() => import('./renderers/CouponData'));
+const CryptoData = dynamic(() => import('./renderers/CryptoData'));
+const SendMeMoneyData = dynamic(() => import('./renderers/SendMeMoneyData'));
+const FundMe = dynamic(() => import('./renderers/FundMeData'));
+const LinksData = dynamic(() => import('./renderers/LinksData'));
+const PleaseWait = dynamic(() => import('../PleaseWait'));
+const RenderNoUserWarning = dynamic(() => import('./helperComponents/smallpieces/RenderNoUserWarning'));
+const LinkedLabelData = dynamic(() => import('./renderers/LinkedLabelData'));
+const FindMeData = dynamic(() => import ('./renderers/FindMeData'));
 
 type QrContentHandlerProps = {
   data: DataType;
+  userInfo: object;
   setData: Function;
   selected?: string | null;
-  isWrong: boolean;
   setIsWrong: (isWrong: boolean) => void;
 }
 
-const QrContentHandler = () => {
-  // @ts-ignore
-  const { data, setData, selected, isWrong, setIsWrong }: QrContentHandlerProps = useContext(Context);
+const QrContentHandler = () => { // @ts-ignore
+  const { data, setData, selected, setIsWrong, userInfo }: QrContentHandlerProps = useContext(Context);
 
-  const handleValues = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string) => {
-    const value = typeof payload !== 'string' ? payload.target.value : payload;
+  const handleValues = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
+    const value = typeof payload === 'string' || typeof payload === 'boolean' ? payload : payload.target.value;
 
-    if (value.length) {
-      setData((prev: DataType) => ({ ...prev, [item]: value }));
-      // @ts-ignore
+    if ((typeof value === "string" && value.length) || payload) {
+      setData((prev: DataType) => ({ ...prev, [item]: value })); // @ts-ignore
     } else if (data[item]) {
       setData((prev: DataType) => {
-        const temp = { ...prev };
-        // @ts-ignore
+        const temp = { ...prev }; // @ts-ignore
         delete temp[item];
         return temp;
       });
@@ -67,7 +71,6 @@ const QrContentHandler = () => {
     switch (selected) {
       case 'web': {
         return (<SingleData
-          isWrong={isWrong}
           setIsWrong={setIsWrong}
           label="Website"
           msg="Type in the website to link the QR Code."
@@ -76,7 +79,6 @@ const QrContentHandler = () => {
       }
       case 'text': {
         return (<SingleData
-          isWrong={isWrong}
           setIsWrong={setIsWrong}
           label="Message"
           limit={300}
@@ -88,11 +90,13 @@ const QrContentHandler = () => {
         return <WhatsAppData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
       }
       case 'facebook': {
-        // @ts-ignore
-        return (<FacebookData data={data} setData={handlePayload} setIsWrong={setIsWrong} isWrong={isWrong} />);
+        return (<FacebookData data={data} setData={handlePayload} setIsWrong={setIsWrong} />);
       }
       case 'wifi': {
         return <WifiData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
+      }
+      case 'custom': {
+        return <Custom data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />;
       }
       case 'vcard+':
       case 'vcard': {
@@ -122,14 +126,26 @@ const QrContentHandler = () => {
       case 'video': {
         return <AssetData type={selected} data={data} setData={handlePayload} handleValues={handleValues} />;
       }
-      case 'donations': {
-        return <DonationsData data={data} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong} />
+      case 'donation': {
+        return <DonationsData data={data} handleValues={handleValues} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong} />
       }
       case 'paylink': {
-        return <SimplePayLinkData />
+        return <SendMeMoneyData data={data} setData={handlePayload} handleValues={handleValues} setIsWrong={setIsWrong} />
       }
       case 'crypto': {
         return <CryptoData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
+      }
+      case 'fundme': {
+        return <FundMe data={data} setData={setData} handleValues={handleValues} />
+      }
+      case 'petId': {
+        return <PetIdData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
+      }
+      case 'linkedLabel': {
+        return <LinkedLabelData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
+      }
+      case 'findMe':{
+        return <FindMeData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
       }
       default: {
         return <NetworksData data={data} setData={handlePayload} setIsWrong={setIsWrong} />
@@ -141,13 +157,13 @@ const QrContentHandler = () => {
     <>
       {selected ? (
         <>
+          {!Boolean(userInfo) && <Box sx={{ mb: '10px' }}><RenderNoUserWarning /></Box>}
           <Box sx={{ display: 'inline' }}>
             <RenderIcon icon={selected} enabled adjust />
           </Box>
-          <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{selected?.toUpperCase() || ''}</Typography>
-          <Typography sx={{ display: 'inline' }}>: Enter the QR data</Typography>
-          {data.isDynamic && <NotifyDynamic />}
-          <Divider sx={{ my: '10px' }} />
+          <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{qrNameDisplayer(selected || '', data?.isDynamic || false)}</Typography>
+          <Typography sx={{ display: { xs: 'none', sm: 'inline' } }}>: Enter the content</Typography>
+          <NotifyDynamic isDynamic={data?.isDynamic || false} />
           <Box sx={{ textAlign: 'left', width: '100%' }}>
             {renderSel()}
           </Box>

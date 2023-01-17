@@ -1,14 +1,17 @@
-// @ts-nocheck
-
 'use strict'
 
-import { useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
+import ClearIcon from '@mui/icons-material/Clear';
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
+// @ts-ignore
 import { SketchPicker } from 'react-color';
 
 const hex = /^#?([0-9A-Fa-f]{3}){1,2}$/;
@@ -26,24 +29,28 @@ interface ColorSelProps {
   label: string;
   property: string;
   handleData: Function;
+  allowClear?: boolean;
+  sx?: object;
 }
 
-const ColorSelector = ({ color, handleData, label, property }: ColorSelProps) => {
+const ColorSelector = ({ color, handleData, label, property, allowClear, sx }: ColorSelProps) => {
   const [anchor, setAnchor] = useState(null);
   const [value, setValue] = useState(color || '#000000');
 
   const ref = useRef(null);
   const cursorPos = useRef<number>(0);
 
+  // @ts-ignore
   const handlePicker = ({ currentTarget }) => {
     setAnchor(currentTarget);
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     cursorPos.current = event.target.selectionStart || 0;
     setValue(handleValue(event.target.value));
   };
 
+  // @ts-ignore
   const handlePaste = ({ clipboardData }) => {
     const text = clipboardData.getData('text/plain');
     if (text.length && hex.test(value)) {
@@ -51,16 +58,20 @@ const ColorSelector = ({ color, handleData, label, property }: ColorSelProps) =>
     }
   };
 
-  const handleColor = payload => {
+  const handleColor = (payload: { hex: any; }) => {
     handleData(property)(payload.hex);
   };
 
+  const handleClear = () => {
+    handleData(property)({clear: true});
+  };
+
   useEffect(() => {
-    if (color !== value) {
+    if (color !== value) { // @ts-ignore
       setValue(color);
     }
-    if (ref.current) {
-      ref.current.selectionStart = cursorPos.current;
+    if (ref.current) { // @ts-ignore
+      ref.current.selectionStart = cursorPos.current; // @ts-ignore
       ref.current.selectionEnd = cursorPos.current;
     }
   }, [color]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -77,54 +88,72 @@ const ColorSelector = ({ color, handleData, label, property }: ColorSelProps) =>
 
   return (
     <>
-      <TextField
-        size="small"
-        fullWidth
-        margin="dense"
-        variant="outlined"
-        label={label}
-        value={value?.slice(1) || '000000'}
-        onChange={handleChange}
-        onPaste={handlePaste}
-        inputProps={{ ref }}
-        error={!hex.test(value)}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Typography>#</Typography>
-            </InputAdornment>
-          ),
-          endAdornment: (
-            <InputAdornment position="end" sx={{ mt: '5px', mr: '-5px' }}>
-              <Box
-                sx={{
-                  cursor: 'pointer',
-                  p: '3px',
-                  mt: '-5px',
-                  mr: '-3px',
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '5px',
-                  border: 'solid 1px black',
-                  borderColor: theme => theme.palette.text.disabled,
-                  backgroundClip: 'content-box',
-                  backgroundColor: color || 'inherit'
-                }}
-                onClick={handlePicker} />
-            </InputAdornment>
-          )
-        }}
-      />
+      <Box sx={{ display: 'flex', ...sx }}>
+        <TextField
+          size="small"
+          fullWidth
+          margin="dense"
+          variant="outlined"
+          label={label}
+          value={value?.slice(1) || '000000'}
+          onChange={handleChange}
+          onPaste={handlePaste}
+          inputProps={{ ref }}
+          sx={allowClear ? {"& .MuiOutlinedInput-root": { "& > fieldset": { borderRadius: '5px 0 0 5px' }}} : undefined}
+          error={!hex.test(value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Typography>#</Typography>
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end" sx={{ mt: '5px', mr: '-5px' }}>
+                <Box
+                  sx={{
+                    cursor: 'pointer',
+                    p: '3px',
+                    mt: '-5px',
+                    mr: '-9px',
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '5px',
+                    border: 'solid 1px black',
+                    borderColor: theme => theme.palette.text.disabled,
+                    backgroundClip: 'content-box',
+                    backgroundColor: color || 'inherit'
+                  }}
+                  onClick={handlePicker} />
+              </InputAdornment>
+            )
+          }}
+        />
+        {allowClear && (
+          <Tooltip title="Clear color selection">
+            <Button
+              onClick={handleClear}
+              disabled={value !== undefined && ['#fff', '#ffffff'].includes(value.toLowerCase())}
+              color="error"
+              variant="contained"
+              sx={{height: '40px', mt: 1, borderRadius: '0 5px 5px 0'}}>
+              <ClearIcon sx={{mx: 'auto'}} />
+            </Button>
+          </Tooltip>
+        )}
+      </Box>
       {anchor && (
         <Popover
           id="reasonPopover"
           open
           anchorEl={anchor}
-          onClose={() => { setAnchor(null); }}
+          onClose={() => setAnchor(null)}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           transformOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
           <SketchPicker color={color} onChangeComplete={handleColor} disableAlpha presetColors={[]}/>
+          <Button endIcon={<HighlightOffIcon />} sx={{ my: 1, height: '25px', width: '100%' }} onClick={() => setAnchor(null)}>
+            {'Close'}
+          </Button>
         </Popover>
       )}
     </>

@@ -4,7 +4,7 @@ type Props = {}
 
 const donationsHome = (props: Props) => {
   return (
-    <div>Donations site component</div>
+    <div>donation site component</div>
   )
 }
 

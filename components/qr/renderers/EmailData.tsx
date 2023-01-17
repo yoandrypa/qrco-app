@@ -3,6 +3,7 @@ import TextField from '@mui/material/TextField';
 import Common from '../helperComponents/Common';
 import MultiLineDetails from '../helperComponents/MultiLineDetails';
 import {EMAIL} from "../constants";
+import Typography from "@mui/material/Typography";
 
 type EmailDataProps = {
   data: {
@@ -47,6 +48,11 @@ export default function EmailData({ data, setData, setIsWrong }: EmailDataProps)
           // @ts-ignore
           error={data?.email && !EMAIL.test(data.email)}
           onChange={handleValues('email')} />
+        {!data?.subject?.length && !data?.body?.length ? (
+          <Typography sx={{color: theme => theme.palette.text.disabled}} variant="caption">
+            {'Don\'t forget to enter subject or message, or both'}
+          </Typography>
+        ) : <div style={{ height: '24px' }} />}
         <TextField
           label="Subject"
           size="small"

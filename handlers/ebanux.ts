@@ -1,39 +1,41 @@
-import axios from 'axios'
-const SERVER_URL = process.env.REACT_NODE_ENV === 'develop' ? 'https://dev.ebanux.link' : 'https://ebanux.link'
-import { EbanuxDonationPriceData } from '../components/qr/types/types';
+const EBANUX_API = process.env.REACT_EBANUX_API || 'https://dev.ebanux.link';
+import { EbanuxDonationPriceData, EbanuxSimplePaymentLinkData } from '../components/qr/types/types';
 
-const APIv1 = axios.create({
-    baseURL: `${SERVER_URL}/api/v1`
-});
+//@ts-ignore
+import { request, createAxiosInstance } from "@ebanux/ebanux-utils/request";
 
-//Temporarely use of APIv1 and APIv2 until is fully migrated
-export const APIv2 = axios.create({
-    baseURL: `${SERVER_URL}/api/v2.0`,
 
-});
+const axios = createAxiosInstance(EBANUX_API);
 
-export const createEbanuxDonationPrice = async (userId: string, token: string, data: EbanuxDonationPriceData) => {
-    const result = await APIv1.post('/donation', {
+export const createEbanuxDonationPrice = async (userId: string, data: EbanuxDonationPriceData) => {
+    const payload = {
         amount: data.unitAmountUSD,
         cognitoUserId: userId
-    }, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-    return result;
+    };
+    const response = await axios.post(`${EBANUX_API}/api/v1/donation`, payload)
+    return response?.data;
 }
 
-async function updateEbanuxDonationPrice(userId: string, token: string, priceId: string, data: EbanuxDonationPriceData) {
-    const result = await APIv1.patch('/donation', {
+export async function updateEbanuxDonationPrice(userId: string, priceId: string, data: EbanuxDonationPriceData) {
+    const payload = {
         amount: data.unitAmountUSD,
         cognitoUserId: userId,
         priceId: data.priceId,
         productId: data.productId
-    }, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-    return result;
+    };
+    const response = await axios.post(`${EBANUX_API}/api/v1/donation`, payload)
+    return response?.data;
+}
+
+export async function createPaymentLink(userId: string, productData: EbanuxSimplePaymentLinkData) {
+    const payload = {
+        amount: productData.amount,
+        cognitoUserId: userId,
+        productName: productData.productName,
+        description: productData.productDescription,
+        successUrl: productData.successUrl
+    };
+    const response = await axios.post(`${EBANUX_API}/api/v1/sendmemoney`, payload)
+    return response?.data;
+
 }

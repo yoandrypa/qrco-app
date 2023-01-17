@@ -1,32 +1,32 @@
 import Common from "../helperComponents/Common";
 import FileUpload from "react-material-file-upload";
-import React, { useContext, useEffect } from "react";
+import React, {ChangeEvent, useContext, useEffect} from "react";
 import Grid from "@mui/material/Grid";
-import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS } from "../../../consts";
-import { conjunctMethods, toBytes } from "../../../utils";
+import {ALLOWED_FILE_EXTENSIONS, FILE_LIMITS} from "../../../consts";
+import {conjunctMethods, toBytes} from "../../../utils";
 
 import pluralize from "pluralize";
 import Context from "../../context/Context";
-import RenderTextFields from "./helpers/RenderTextFields";
-import Typography from "@mui/material/Typography";
+import RenderTitleDesc from "./contents/RenderTitleDesc";
+
+import dynamic from "next/dynamic";
+
+const Switch = dynamic(() => import("@mui/material/Switch"));
+const FormControlLabel = dynamic(() => import("@mui/material/FormControlLabel"));
 
 type AssetDataProps = {
   type: "gallery" | "video" | "pdf" | "audio";
   data: {
     files?: File[];
-    title?: string;
-    description?: string;
+    autoOpen?: boolean;
+    titleAbout?: string;
+    descriptionAbout?: string;
   };
   handleValues: Function;
   setData: Function;
 }
 
 const AssetData = ({ type, data, setData, handleValues }: AssetDataProps) => {
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === "clickaway") {
-      return;
-    }
-  };
   // @ts-ignore
   const { setIsWrong } = useContext(Context);
 
@@ -60,10 +60,19 @@ const AssetData = ({ type, data, setData, handleValues }: AssetDataProps) => {
     title += ` Selected ${data["files"]?.length || 0} of ${totalFiles} allowed`;
   }
 
+  useEffect(() => {
+    if (data?.files?.length !== 1 && data?.autoOpen) {
+      handleValues('autoOpen')(false);
+    }
+  }, [data?.files?.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <Common
       msg={`You can upload a maximum of ${pluralize("file", totalFiles, true)} of size ${FILE_LIMITS[type].totalMbPerFile} MBs.`}>
       <Grid container>
+        <Grid item xs={12}>
+          <RenderTitleDesc handleValues={handleValues} title={data.titleAbout} description={data.descriptionAbout} />
+        </Grid>
         <Grid item xs={12}>
           <FileUpload
             onChange={handleChange}
@@ -78,15 +87,14 @@ const AssetData = ({ type, data, setData, handleValues }: AssetDataProps) => {
             maxSize={toBytes(FILE_LIMITS[type].totalMbPerFile, "MB")}
           />
         </Grid>
-        <Grid item xs={12}>
-          <Typography sx={{ mt: 2, fontSize: 'small', color: theme => theme.palette.text.disabled }}>{'Optional'}</Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <RenderTextFields item="title" label="Title" value={data.title || ''} handleValues={handleValues} />
-        </Grid>
-        <Grid item xs={12} style={{paddingTop: 0}}>
-          <RenderTextFields multiline item="description" label="Description" value={data.description || ''} handleValues={handleValues} />
-        </Grid>
+        {type === 'pdf' && data?.files?.length === 1 && (
+          <Grid item xs={12}>
+            <FormControlLabel label="Auto open" control={
+              <Switch checked={data?.autoOpen} inputProps={{'aria-label': 'isAutoOpen'}}
+                      onChange={(event: ChangeEvent<HTMLInputElement>) => handleValues('autoOpen')(event.target.checked)} />}
+            />
+          </Grid>
+        )}
       </Grid>
     </Common>
   );

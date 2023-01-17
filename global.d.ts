@@ -12,7 +12,7 @@ interface UserType {
   subscriptionData?: UserSubscription;
   customerId?: string;
   planType?: string;
-
+  planUsage?: number
 }
 
 interface UserQueryType {
@@ -52,10 +52,10 @@ type CognitoUserData = {
   LastAuthUser: string,
   userData: string,
   UserAttributes:
-    {
-      Name: string,
-      Value: string
-    }[],
+  {
+    Name: string,
+    Value: string
+  }[],
   Username: string
 }
 
@@ -104,6 +104,8 @@ interface LinkType {
   address?: string | undefined;
   bannedById?: string;
   banned: boolean;
+  pausedById?: string;
+  paused: boolean;
   description?: string | undefined;
   domainId?: { userId: string, createdAt: number } | null;
   expireIn?: string | undefined;
@@ -117,7 +119,7 @@ interface LinkType {
 }
 
 interface QrDataType {
-  id: string;
+  createdAt: number;
   qrName: string;
   qrType: string;
   userId: string;
@@ -153,8 +155,10 @@ interface LinkSanitizedType {
   userId: string;
   domain?: string | undefined;
   banned: boolean;
-  id: string;
+  //id: string;
   bannedById: undefined;
+  paused: boolean;
+  pausedById: undefined;
 }
 
 interface LinkJoinedDomainType extends LinkType {

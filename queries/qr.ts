@@ -15,20 +15,51 @@ export const create = async (data: { shortLink: ObjectType; qrDesign: ObjectType
     if (data.qrDesign) {
       transactions.push(QrOptionsModel.transaction.create(data.qrDesign));
     }
+    const creationDate = Date.now();
     if (data.qrData) {
-      data.qrData.createdAt = Date.now();
+      data.qrData.createdAt = creationDate;
       transactions.push(QrDataModel.transaction.create(data.qrData));
     }
-    return await dynamoose.transaction(transactions);
+
+    const txResponse = await dynamoose.transaction(transactions);
+
+    return {...txResponse, creationDate};
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const count = async (match: Partial<QrDataQueryType>, params: ListParams) => {
+  try {
+    const query = QrDataModel.query(match);
+
+    /*if (params.search) {
+      query.and().parenthesis(
+        new dynamoose.Condition()
+          .where("description")
+          .contains(params.search)
+          .or()
+          .where("address")
+          .contains(params.search)
+          .or()
+          .where("target")
+          .contains(params.search)
+      );
+    }*/
+
+    const result = await query.count().exec();
+
+    return result.count;
   } catch (e) {
     throw e;
   }
 };
 
 interface ListParams {
-  limit: number;
+  limit?: number;
   search?: string;
-  skip?: number;
+  startAt?: ObjectType;
+  sort?: "ascending" | "descending";
 }
 
 export const list = async (match: Partial<QrDataQueryType>, params: ListParams) => {
@@ -50,11 +81,16 @@ export const list = async (match: Partial<QrDataQueryType>, params: ListParams) 
       );
     }*/
 
-    const results = await query.limit(params.limit || 10).sort("descending").exec();
-    // @ts-ignore
-    const qrs: QrDataType[] = results;
+    //query.limit(params.limit || 10).sort(params.sort || "descending");
+    query.sort(params.sort || "descending");
 
-    return [qrs, results.count];
+    if (params.startAt) {
+      query.startAt(params.startAt);
+    }
+
+    const results = await query.exec();
+
+    return [results, results.lastKey];
   } catch (e) {
     throw e;
   }
@@ -63,6 +99,14 @@ export const list = async (match: Partial<QrDataQueryType>, params: ListParams) 
 export const get = async (key: { userId: string, createdAt: number }) => {
   try {
     return await QrDataModel.get(key);
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const find = async (condition: any) => {
+  try {
+    return await QrDataModel.query(condition).exec()
   } catch (e) {
     throw e;
   }

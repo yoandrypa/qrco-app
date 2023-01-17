@@ -57,7 +57,7 @@ const PDFGenDlg = ({ handleClose, data, isFramed }: PDFGenDlgProps) => {
   };
 
   const generatePdf = () => {
-    const dataURL = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(data.outerHTML)}`;
+    const dataURL = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(typeof data === 'string' ? data : data.outerHTML)}`;
     const canvas: HTMLCanvasElement = document.createElement('canvas');
     const img: HTMLImageElement = new Image();
     const canvasW: number = settings.size;
@@ -93,11 +93,11 @@ const PDFGenDlg = ({ handleClose, data, isFramed }: PDFGenDlgProps) => {
   }, [settings]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Dialog onClose={handleClose} open maxWidth="md">
+    <Dialog onClose={handleClose} open={true} maxWidth="md">
       <DialogContent dividers="paper">
         <Typography sx={{ fontWeight: 'bold' }}>PDF Settings</Typography>
-        <Box sx={{ p: 1, width: { sm: '650px', xs: '100%' }, display: 'flex', flexDirection: { sm: 'row', xs: 'column' } }}>
-          <Box sx={{ width: '100%', pr: 2 }}>
+        <Box sx={{ p: 1, width: { md: '650px', sm: '100%', xs: '100%' }, display: 'flex', flexDirection: { md: 'row', sm: 'column', xs: 'column' } }}>
+          <Box sx={{ width: '100%', pr: {md: 2, sm: 0, xs: 0} }}>
             <Paper sx={{ p: 1 }} elevation={2}>
               <Typography>Page Settings</Typography>
               <FormControl sx={{ m: 0, mt: 1, width: '100%' }} size="small">
@@ -185,10 +185,9 @@ const PDFGenDlg = ({ handleClose, data, isFramed }: PDFGenDlgProps) => {
               />
             </Paper>
           </Box>
-          <Paper elevation={2} sx={{ p: 1 }}>
-            <Typography>Preview</Typography>
+          <Paper elevation={2} sx={{ p: 1, mt: {md: 0, sm: 1, xs: 1} }}>
             {pdfDocument ? (
-              <PDFViewer width="200px" height="275px" showToolbar={false}>
+              <PDFViewer width="100%" height="100%" showToolbar={false}>
                 {pdfDocument}
               </PDFViewer>
             ) : <Typography>...</Typography>}
