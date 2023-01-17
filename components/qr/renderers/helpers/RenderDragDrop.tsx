@@ -9,12 +9,14 @@ import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { DataType, DragFields } from '../../types/types';
 import Expander from '../helpers/Expander';
+import { Box } from '@mui/material';
+import DragPaper from '../../helperComponents/looseComps/DragPaper';
 
 interface RenderDragDropProps {
   fields: DragFields;
 	setData: Function;
   expander:string|null;
-  setExpander:Function;
+  setExpander:(expander: string | null) => void;
 }
 
 const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
@@ -57,9 +59,7 @@ export default function RenderDragDrop({
       <DragDropContext onDragEnd={onDragEnd} >
         <Droppable droppableId="droppable">
           {(provided: any) => (
-            <TableContainer sx={{paddingBottom:2}}>
-              <Table size="small">
-                <TableBody {...provided.droppableProps} ref={provided.innerRef}>
+              <Box {...provided.droppableProps} ref={provided.innerRef}>
                   {fields?.map((field: any, index: number) => {
                     const itemId = `item-${index}`;
                     return (
@@ -69,41 +69,10 @@ export default function RenderDragDrop({
                         index={index}
                         isDragDisabled={fields?.length === 1}>
                         {(provided: any, snapshot: any) => (
-                          <TableRow
-                            sx={{ p: 0, width: '100%' }}
-                            key={`trow${index}`}
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            style={getItemStyle(
-                              snapshot.isDragging,
-                              provided.draggableProps.style
-                            )}>
-                            <TableCell
-                              sx={{
-                                p: 0,
-                                pr: 1,
-                                width: '40px',
-                                borderBottom: 'none'
-                              }}>
-                              {/* @ts-ignore */}
-                              {fields.length > 1 && (
-                                <DragIndicatorIcon
-                                  sx={{
-                                    color: theme => theme.palette.text.disabled
-                                  }}
-                                />
-                              )}
-                            </TableCell>
-                            <TableCell
-                              sx={{
-                                p: 0,
-                                pr: 1,
-                                width: '95%',
-                                borderBottom: 'none'
-                              }}>
-                              <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
-                                <Expander
+                          <Box sx={{my: 4, width: '100%', ...getItemStyle(snapshot.isDragging, provided.draggableProps.style)}}
+                          ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                            <DragPaper elevation={2} sx={{p: 1}} avoidIcon={fields?.length === 1} removeFunc={()=>remove(index)}>
+                            <Expander
                                   expand={expander}
                                   setExpand={() =>
                                     setExpander(
@@ -120,16 +89,13 @@ export default function RenderDragDrop({
                                 {expander === index.toString() && (
                                   <>{field.component}</>
                                 )}
-                              </Paper>
-                            </TableCell>
-                          </TableRow>
+                              </DragPaper>
+                          </Box>
                         )}
                       </Draggable>
                     );
                   })}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                </Box>
           )}
         </Droppable>
       </DragDropContext>
