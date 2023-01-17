@@ -1,5 +1,5 @@
 type Match<T> = {
-  [K in keyof T]?: T[K] | [ ">" | ">=" | "<=" | "<", T[K] ];
+  [K in keyof T]?: T[K] | [">" | ">=" | "<=" | "<", T[K]];
 };
 
 interface UserType {
@@ -12,7 +12,7 @@ interface UserType {
   subscriptionData?: UserSubscription;
   customerId?: string;
   planType?: string;
-
+  planUsage?: number
 }
 
 interface UserQueryType {
@@ -52,10 +52,10 @@ type CognitoUserData = {
   LastAuthUser: string,
   userData: string,
   UserAttributes:
-    {
-      Name: string,
-      Value: string
-    }[],
+  {
+    Name: string,
+    Value: string
+  }[],
   Username: string
 }
 
