@@ -310,6 +310,8 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
         const user = await getUser(userInfo.cognito_user_id);
         if (user.subscriptionData?.status == 'active') {
           try {
+            const currentUsage = user.planUsage || 0;
+            console.log('add 1 to current usage ', currentUsage);
             await saveUsage(user.customerId, 1);
             await recordUsage(1, user.subscriptionData.id);
           } catch (error) {
