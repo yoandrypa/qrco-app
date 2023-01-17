@@ -1,4 +1,4 @@
-import React, {ChangeEvent, MouseEvent, useCallback, useEffect, useState} from "react";
+import {MouseEvent, useCallback, useEffect, useState} from "react";
 import AddIcon from '@mui/icons-material/Add';
 import Box from "@mui/material/Box";
 
@@ -11,8 +11,10 @@ import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 
 import dynamic from "next/dynamic";
 import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
-import {cleaner, components, CustomProps, getNameStr, validator} from "./custom/helperFuncs";
+import {cleaner, components, CustomEditProps, CustomProps, getNameStr, validator} from "./custom/helperFuncs";
+import CustomNewSection from "./custom/CustomNewSection";
 
+const CustomEditSection = dynamic(() => import("./custom/CustomEditSection"));
 const RenderLinks = dynamic(() => import("./contents/RenderLinks"));
 const RenderTitleDesc = dynamic(() => import("./contents/RenderTitleDesc"));
 const CustomMenu = dynamic(() => import("./custom/CustomMenu"));
@@ -28,11 +30,6 @@ const RenderOrganization = dynamic(() => import("./contents/RenderOrganization")
 const RenderPhones = dynamic(() => import("./contents/RenderPhones"));
 const RenderPresentation = dynamic(() => import("./contents/RenderPresentation"));
 const Button = dynamic(() => import("@mui/material/Button"));
-const TextField = dynamic(() => import("@mui/material/TextField"));
-const DialogContent = dynamic(() => import("@mui/material/DialogContent"));
-const Dialog = dynamic(() => import("@mui/material/Dialog"));
-const DialogActions = dynamic(() => import("@mui/material/DialogActions"));
-const Typography = dynamic(() => import("@mui/material/Typography"));
 
 export default function Custom({data, setData, handleValues, setIsWrong}: CustomProps) {
   const [showOptions, setShowOptions] = useState<HTMLButtonElement | null>(null);
@@ -40,6 +37,7 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
   const [emptyValue, setEmptyValue] = useState<string>('');
   const [expander, setExpander] = useState<string | null>(null);
   const [confirm, setConfirm] = useState<{index: number, item: string} | undefined>(undefined);
+  const [open, setOpen] = useState<CustomEditProps | null>(null); // aims to editor
 
   const handleOptions = (e: MouseEvent<HTMLButtonElement>) => {
     setShowOptions(e.currentTarget);
@@ -76,6 +74,10 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
     setConfirm({index, item});
   };
 
+  const handleEdit = (index: number, item: string) => (event: MouseEvent<HTMLButtonElement>) => {
+    setOpen({item, index, anchor: event.currentTarget});
+  };
+
   const handle = (item: string) => () => {
     if (item === 'empty') {
       setOpenEmpty(-1); // @ts-ignore
@@ -109,7 +111,7 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
   return (
     <Common msg="Create a custom QR Link on your own, using the predefined sections.">
       <Box sx={{mt: 1, width: '100%'}}>
-        <Button startIcon={<AddIcon />} variant="outlined" onClick={handleOptions}>{'Add...'}</Button>
+        <Button startIcon={<AddIcon />} variant="outlined" onClick={handleOptions}>{'Sections...'}</Button>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided: any) => (
@@ -120,7 +122,8 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
                       <Box sx={{my: 4, width: '100%', ...getItemStyle(snap.isDragging, prov.draggableProps.style)}}
                            ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
                         {typeof x === "string" ? (
-                          <DragPaper elevation={2} sx={{p: 1}} avoidIcon={data.custom?.length === 1} removeFunc={handleRemove(index, x)}>
+                          <DragPaper elevation={2} sx={{p: 1}} avoidIcon={data.custom?.length === 1} // @ts-ignore
+                                     editFunc={handleEdit(index, x)} removeFunc={handleRemove(index, x)}>
                             <Expander expand={expander} setExpand={setExpander} item={x} title={getNameStr(x)} />
                             {expander === x && (<>
                               {x === components[0].type && <RenderAddressData data={data} handleValues={handleValues} />}
@@ -151,23 +154,11 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
         </DragDropContext>
       </Box>
       {showOptions && <CustomMenu handle={handle} data={data} showOptions={showOptions} setShowOptions={setShowOptions} />}
+      {open && <CustomEditSection handleClose={() => setOpen(null)} anchor={open.anchor} value={open.item} />}
       {openEmpty !== undefined && (
-        <Dialog onClose={handleCloseDlg} open={true}>
-          <DialogContent>
-            <Typography sx={{mb: 2}}>{'Enter the section description:'}</Typography>
-            <TextField
-              autoFocus
-              fullWidth
-              value={emptyValue}
-              size="small"
-              label="Section description"
-              onChange={(event: ChangeEvent<HTMLInputElement>) => setEmptyValue(event.target.value)}/>
-          </DialogContent>
-          <DialogActions sx={{width: 'calc(100% - 16px)', mb: 1}}>
-            <Button variant="outlined" disabled={!emptyValue.trim().length} onClick={() => handleAdd()}>Ok</Button>
-            <Button variant="outlined" onClick={handleCloseDlg}>Cancel</Button>
-          </DialogActions>
-        </Dialog>
+        <CustomNewSection
+          emptyValue={emptyValue} setEmptyValue={setEmptyValue} // @ts-ignore
+          handleAdd={handleAdd} handleCloseDlg={handleCloseDlg} />
       )}
       {confirm !== undefined && (
         <RenderConfirmDlg

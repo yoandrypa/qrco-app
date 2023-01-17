@@ -43,8 +43,8 @@ export default function CustomMenu({data, handle, showOptions, setShowOptions}: 
       open
       anchorEl={showOptions}
       onClose={() => setShowOptions(null)}
-      anchorOrigin={{vertical: 'top', horizontal: 'center'}}
-      transformOrigin={{vertical: 'top', horizontal: 'center'}}
+      anchorOrigin={{vertical: 'top', horizontal: 'left'}}
+      transformOrigin={{vertical: 'top', horizontal: 'left'}}
     >
       <TextField
         sx={{width: '250px'}}
