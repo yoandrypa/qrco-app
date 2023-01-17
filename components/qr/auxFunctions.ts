@@ -268,7 +268,6 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
       }
 
     } else {
-
       try {
         prevUpdatingHandler("Creating Donation microsite");
         const price = await EbanuxHandler.createEbanuxDonationPrice(userInfo.cognito_user_id,
