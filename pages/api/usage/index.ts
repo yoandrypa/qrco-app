@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.REACT_STRIPE_SECRET_KEY || 'sk_test_51Ksb3
     apiVersion: '2022-08-01',
 });
 
-async function recordUsage(usageQuantity: number, subscriptionId: string) {
+async function recordUsage(usageQuantity: number, subscriptionId: string, overwrite: boolean = false) {
     const subscriptionItems = await stripe.subscriptionItems.list({
         subscription: subscriptionId,
     });
@@ -24,7 +24,8 @@ async function recordUsage(usageQuantity: number, subscriptionId: string) {
             {
                 quantity: usageQuantity,
                 timestamp: timestamp,
-                action: 'set',
+                //overwrite or increment usage
+                action: overwrite ? 'set' : 'increment',
             },
             {
                 idempotencyKey,
@@ -39,6 +40,16 @@ async function recordUsage(usageQuantity: number, subscriptionId: string) {
 
 }
 
+/**
+ * 
+ * @param req subscriptionId, userId, usage: number,(Optional) overwrite: false
+ * @param res `
+ * {
+ * success: true
+ * }
+ * `
+ * @returns 
+ */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method != 'POST') return res.status(405).send('Method not allowed');
     if (req.body.subscriptionId) {
@@ -46,7 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             //update in stripe
             await recordUsage(1, req.body.subscriptionId);
             //save in db
-            await saveUsage(req.body.customerId, req.body.subscriptionId, 1);
+            await saveUsage(req.body.userId, req.body.usage);
             res.status(200).json({ success: true, message: 'Subscription usage was successfully setted' });
         } catch (error) {
             res.status(500).json(error)

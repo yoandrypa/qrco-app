@@ -16,7 +16,7 @@ import { generateId, generateShortLink } from "../../utils";
 import * as QrHandler from "../../handlers/qrs";
 import { QR_CONTENT_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { get as getUser } from "../../handlers/users"; // @ts-ignore
-import { recordUsage, saveUsage } from "../../handlers/usage";
+import { recordPlanUsage, recordUsage, saveUsage } from "../../handlers/usage";
 //@ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
 
@@ -312,8 +312,7 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
           try {
             const currentUsage = user.planUsage || 0;
             console.log('add 1 to current usage ', currentUsage);
-            await saveUsage(user.customerId, 1);
-            await recordUsage(1, user.subscriptionData.id);
+            const result = await recordPlanUsage(1, user.subscriptionData.id, userInfo.cognito_user_id)
           } catch (error) {
             console.error('unable to report usage', error)
           }
