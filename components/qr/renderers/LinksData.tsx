@@ -49,8 +49,8 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
 
   useEffect(() => {
     let isWrong = false;
-    if (!data?.title?.trim().length || data?.links?.some((x: LinkType) => (!x.label.trim().length ||
-      !x.link.trim().length || !isValidUrl(x.link))) || !socialsAreValid(data)) {
+    if (data?.links?.some((x: LinkType) => (!x.label.trim().length || !x.link.trim().length || !isValidUrl(x.link)))
+      || !socialsAreValid(data)) {
       isWrong = true;
     }
     setIsWrong(isWrong);
