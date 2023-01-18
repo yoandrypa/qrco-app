@@ -11,8 +11,8 @@ export const PLAN_TEST_MODE_PRICES = {
   basic: "price_1MPKgZCHh3XhfaZr0TqlLqG5",
   business: "price_1MPLAcCHh3XhfaZrawQADusR",
   premium: "price_1MPLFYCHh3XhfaZrWh5DXZPR",
-  basicAnnual: "price_1MPLAcCHh3XhfaZrF2OFNWnm",
-  businessAnnual: "price_1Lf9DaCHh3XhfaZro7S6wRVr",
+  basicAnnual: "price_1MPL1ZCHh3XhfaZrIS02aX7P",
+  businessAnnual: "price_1MPLAcCHh3XhfaZrF2OFNWnm",
   premiumAnnual: "price_1MPLFYCHh3XhfaZrHdyDr93R"
 };
 export const PLAN_LIVE_MODE_PRICES = {
