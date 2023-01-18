@@ -113,7 +113,7 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
       handleAdd(item);
     }
     setShowOptions(null);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onDragEnd = (result: any) => {
     if (!result?.destination) { return null; }
