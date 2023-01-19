@@ -82,12 +82,8 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
           lg={!selected ? 3 : isWideForThreeColumns ? 4 : 6}
           md={!selected ? 4 : (isWideForThreeColumns ? 4 : 6)} sm={6} xs={12}>
       <TypeSelector
-        icon={item}
-        isDynamic={isDynamic}
-        enabled={enabled}
-        description={description}
-        selected={selected === item}
-        handleSelect={handleSelect}/>
+        icon={item} isDynamic={isDynamic} enabled={enabled} description={description} selected={selected === item}
+        handleSelect={handleSelect} />
     </Grid>
   );
 
@@ -99,7 +95,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
 
   return (
     <Box sx={{display: 'flex'}}>
-      <Grid container spacing={1}>
+      <Grid container spacing={1} sx={{height: 'fit-content'}}>
         <Grid item xs={12}>
           <Tabs value={isDynamic ? 0 : 1} onChange={(_, newSel: number) => handleClick(newSel)}>
             <Tab sx={{pr: '37px', mr: '3px'}} label={
@@ -157,7 +153,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
         </>) : null}
       </Grid>
       {isWideForPreview && selected && (
-        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '56px', width: '370px', position: 'sticky', top: '120px'}}
+        <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '56px', width: '287px', position: 'sticky', top: '120px'}}
                              isDynamic={data.isDynamic || false} onlyQr={ONLY_QR.includes(selected) || !data.isDynamic}
                              showSampleMessage step={0} />
       )}

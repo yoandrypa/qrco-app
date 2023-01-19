@@ -12,22 +12,20 @@ import Typography from "@mui/material/Typography";
 import LinkIcon from "@mui/icons-material/Link";
 import SaveIcon from "@mui/icons-material/Save";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import Divider from "@mui/material/Divider";
+import {debounce} from "@mui/material";
 
 import {NO_MICROSITE, ONLY_QR} from "../../constants";
-
 import RenderPreview from "../../renderers/RenderPreview";
 import Notifications from "../../../notifications/Notifications";
 import {cleanSelectionForMicrositeURL, qrNameDisplayer} from "../../../../helpers/qr/helpers";
 import {DataType} from "../../types/types";
 import RenderCellPhoneShape from "../RenderCellPhoneShape";
-
-import dynamic from "next/dynamic";
-import PleaseWait from "../../../PleaseWait";
-import {debounce} from "@mui/material";
-import Divider from "@mui/material/Divider";
-import Popover from "@mui/material/Popover";
 import RenderIcon from "./RenderIcon";
 
+import dynamic from "next/dynamic";
+const PleaseWait = dynamic(() => import("../../../PleaseWait"));
+const Popover = dynamic(() => import("@mui/material/Popover"));
 const RenderIframe = dynamic(() => import('../../../RenderIframe'), {suspense: true});
 
 interface SamplePrevProps {
@@ -131,7 +129,7 @@ const RenderSamplePreview = ({
               mt: '14px',
               ml: !onlyQr ? '10px' : 0,
               whiteSpace: 'nowrap',
-              width: !onlyQr ? '177px' : '230px',
+              width: !onlyQr ? '177px' : '210px',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               fontSize: '13px'
