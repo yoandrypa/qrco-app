@@ -63,7 +63,7 @@ async function createCheckoutSession(
     // For metered billing, do not pass quantity
     if ([pricesList.premium, pricesList.premiumAnnual].includes(price_id)) {
       //@ts-ignore
-      pricePayload = { ...pricePayload, quantity: 1 }
+      lineItem = { ...pricePayload, quantity: 1 }
     }
     const session = stripe.checkout.sessions.create({
       mode: 'subscription',
