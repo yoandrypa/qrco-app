@@ -1,12 +1,12 @@
-import type {AppProps} from "next/app";
-import {useState} from "react";
-import {createTheme, StyledEngineProvider, ThemeProvider} from "@mui/material/styles";
+import type { AppProps } from "next/app";
+import { useState } from "react";
+import { createTheme, StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
 import Head from "next/head";
 
-import {themeConfig} from "../utils/theme";
+import { themeConfig } from "../utils/theme";
 
 import AppContextProvider from "../components/context/AppContextProvider";
-import {MAIN_CONFIG} from "../consts";
+import { MAIN_CONFIG } from "../consts";
 
 import "../styles/globals.css";
 
@@ -22,8 +22,8 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
   return (
     <>
       <Head>
-        <title>The QR Link | Dynamic QR code</title>
-        <link rel="icon" href="/qlIcon.png"/>
+        <title>The QR Lynk | Dynamic QR code</title>
+        <link rel="icon" href="/qlIcon.png" />
       </Head>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={mainTheme}>
