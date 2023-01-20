@@ -255,6 +255,8 @@ export default function LinkedLabelData({
       <Grid container>
         <Grid item xs={12} md={6}>
           <RenderChipFields
+            label='Tags'
+            placeHolder='Add Tags'
             values={data.categories ? data.categories : []}
             handleValues={handleCategories}
           />

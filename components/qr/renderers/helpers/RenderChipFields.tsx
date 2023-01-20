@@ -3,6 +3,7 @@ import { Autocomplete, Chip, FormControl, InputLabel, TextField } from "@mui/mat
 
 interface RenderChipFieldsProps {
   label?: string;
+  placeHolder?:string;
   required?: boolean;
   handleValues:(values: string[]) => void;
   isError?: boolean;
@@ -12,7 +13,7 @@ interface RenderChipFieldsProps {
   freeSolo?: boolean;
 }
 
-const RenderChipFields = ({values, handleValues, label, item, required, isError, options,freeSolo}: RenderChipFieldsProps) => {
+const RenderChipFields = ({values, handleValues, label, item, required, isError, options,freeSolo, placeHolder}: RenderChipFieldsProps) => {
   if(!options) options = [];
   const newOptions = [...options];
   if(freeSolo !== false)
@@ -39,8 +40,8 @@ const RenderChipFields = ({values, handleValues, label, item, required, isError,
         <TextField
           {...params}
           variant="filled"
-          label="Categories"
-          placeholder="Add Categories"
+          label={label}
+          placeholder={placeHolder||''}
         />
       )}
     />
