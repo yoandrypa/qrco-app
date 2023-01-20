@@ -1,6 +1,20 @@
 import {DataType} from "../../components/qr/types/types";
 import {bannerImg, mainImg} from "./previewFiles";
 
+const onlyOneGallery = (data:DataType) =>{
+  if (data.fields !== undefined) {
+    const fields = data.fields;
+    if (fields.length === 1) {
+      const field = fields[0];//@ts-ignore
+      if (field.type === 'gallery' && field.files.length === 0) {
+        return true;
+      }
+    }
+  }
+  return false;
+
+}
+
 export const previewQRGenerator = (data: DataType, selected: string, omit?: boolean) => {
   let sum = 0;
 
@@ -10,11 +24,12 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
   'titlesFontStyle', 'subtitlesFontStyle', 'messagesFontStyle', 'buttonsFontStyle', 'globalFontColor', 'buttonShape',
   'buttonBack', 'buttonBackColor', 'buttonBorders', 'layout', 'index'];
 
-  Object.keys(data).forEach(x => {  // @ts-ignore
+  Object.keys(data).forEach(x => {  // @ts-ignore    
     if (items.some((item: string) => x === item)) { sum += 1; }
   });
 
   if (data.files !== undefined && data.files.length === 0) { sum += 1; }
+  if (data.fields !== undefined && (data.fields.length === 0|| onlyOneGallery(data))) { sum += 1; }
   if (data.socials !== undefined && data.socials.length === 0) { sum += 1; }
   if (selected === 'link' && data.links) { sum += 1; }
 
@@ -197,7 +212,132 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
       populate('address1', '1234 Main St');
       populate('email', 'fido@gmail.com');
       populate('zip', '91500');
+    }else if ( selected ==='findMe'){
+      cleanAssets();
+      populate("zip", "10021");
+      populate("lastName", "Lopez");
+      populate("country", "USA");
+      populate("isDynamic", true);
+      populate("address", "First Avenue");
+      populate("city", "San Fransisco");
+      populate("prefix", "");
+      populate("otherDetails", {
+        "heading": "",
+        "items": []
+      });
+      populate("contactForm", {
+        "buttonText": "Sen",
+        "type": "contact",
+        "title": "Email me",
+        "message": "I found your earphones",
+        "email": "test@hmail.com"
+      });
+      populate("firstName", "Victor");
+      populate("urls", {
+        "heading": "",
+        "items": []
+      });
+      populate("qrName", "Find");
+      populate("qrType", "findMe");
+      populate("state", "San Fransisca");
+      populate("socials", [
+        {
+          "value": "yo",
+          "network": "facebook"
+        },
+        {
+          "value": "+53555555",
+          "network": "whatsapp"
+        },
+        {
+          "value": "el",
+          "network": "twitter"
+        },
+        {
+          "value": "nosostos",
+          "network": "telegram"
+        }
+      ]);  
+    }else if ( selected ==='linkedLabel'){
+      cleanAssets();
+      populate("qrName", "Label Kitchen Items 1");
+      populate("qrType", "linkedLabel");
+      populate("about", "Box 3: Kitchen Items. See the items below");
+      populate("title", "What's in this box? ");
+      obj['fields']= [
+        {
+          "type": "text",
+          "title": "Coffee makers",
+          "text": ""
+        },
+        {
+          "type": "media",
+          "files": [
+            {
+              "name": "2.jpeg",//@ts-ignore
+              "Key": "linkedLabels/2.jpeg"
+            },
+            {
+              "name": "2.jpeg",//@ts-ignore
+              "Key": "linkedLabels/3.jpeg"
+            },
+            {
+              "name": "2.jpeg",//@ts-ignore
+              "Key": "linkedLabels/4.jpeg"
+            },
+            {
+              "name": "2.jpeg",//@ts-ignore
+              "Key": "linkedLabels/5.jpeg"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "title": "Other items",
+          "text": ""
+        },
+        {
+          "type": "media",
+          "files": [
+            {
+              "name": "2.jpeg",//@ts-ignore
+              "Key": "linkedLabels/6.jpeg"
+            },
+            {
+              "name": "2.jpeg",//@ts-ignore
+              "Key": "linkedLabels/7.jpeg"
+            },
+            {
+              "name": "2.jpeg",//@ts-ignore
+              "Key": "linkedLabels/8.jpeg"
+            },
+            {
+              "name": "2.jpeg",//@ts-ignore
+              "Key": "linkedLabels/9.jpeg"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "title": "Supplies",
+          "text": ""
+        },
+        {
+          "type": "media",
+          "files": [
+            {
+              "name": "2.jpeg",//@ts-ignore
+              "Key": "linkedLabels/10.jpeg"
+            },
+            {
+              "name": "2.jpeg",//@ts-ignore
+              "Key": "linkedLabels/11.jpeg"
+            }
+          ]
+        }
+      ];
     }
   }
+
   return obj;
 }

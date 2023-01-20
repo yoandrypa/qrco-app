@@ -75,12 +75,12 @@ export default function FindMeData({
         <RenderPresentation data={data} handleValues={handleValues} />
       </Grid>
       <Topics message={'Address'} />
-      <Grid container spacing={1} sx={{mt:1}}>
+      <Grid container item spacing={1} sx={{mt:1}}>
         <RenderAddressData data={data} handleValues={handleValues} />
       </Grid>
-      <Grid container spacing={1}>
-        <Grid item xs={12} sx={{p:1}}>
-          <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
+      <Grid container spacing={1} >
+        <Grid item xs={12} sx={{ml:-1}}>
+          <Paper elevation={2} sx={{ p: 1, mt: 1}}>
             <Expander
               expand={expander}
               setExpand={setExpander}
@@ -98,7 +98,7 @@ export default function FindMeData({
             )}
           </Paper>
         </Grid>
-        <Grid item xs={12} sx={{p:1}}>
+        <Grid item xs={12} sx={{ml:-1}}>
           <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
             <Expander
               expand={expander}
@@ -117,7 +117,7 @@ export default function FindMeData({
             )}
           </Paper>
         </Grid>
-        <Grid item xs={12} sx={{p:1}}>
+        <Grid item xs={12} sx={{ml:-1}}>
           <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
             <Expander
               expand={expander}
@@ -149,8 +149,7 @@ export default function FindMeData({
           </Paper>
         </Grid>
         {isDynamic && (
-          <Grid item xs={12} sx={{p:1}}>
-            <Divider sx={{ my: 1 }} />
+          <Grid item xs={12} sx={{ml:-1}}>
             <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
               <Expander
                 expand={expander}
@@ -162,7 +161,6 @@ export default function FindMeData({
                 <RenderSocials data={data} setData={handlePayload} />
               )}
             </Paper>
-            <Divider sx={{ my: 1 }} />
           </Grid>
         )}
       </Grid>
