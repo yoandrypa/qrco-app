@@ -21,7 +21,6 @@ interface ContactFormProps {
 function RenderContactForm({ title, buttonText, messagePlaceholder, handleChange, index, email, setIsWrong }: ContactFormProps) {
 
   useEffect(() => {
-    console.log('validating email')
     let isWrong = false;
     if (email) {
       if (!EMAIL.test(email)) {
