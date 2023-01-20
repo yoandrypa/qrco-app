@@ -19,6 +19,7 @@ import RenderAddressData from './contents/RenderAddressData';
 import RenderContactForm from '../helperComponents/smallpieces/RenderContactForm';
 //@ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
+import RenderPhones from './contents/RenderPhones';
 
 interface FindMeDataProps {
   data: DataType;
@@ -73,6 +74,7 @@ export default function FindMeData({
       <Topics message={'Presentation'} />
       <Grid container spacing={1} sx={{mt:1}}>
         <RenderPresentation data={data} handleValues={handleValues} />
+        <RenderPhones data={data} handleValues={handleValues} message="Phones" />
       </Grid>
       <Topics message={'Address'} />
       <Grid container item spacing={1} sx={{mt:1}}>
