@@ -37,10 +37,18 @@ const QrTypeSelector = () => { // @ts-ignore
     if (options.id) {compareWith.id = options.id;} // @ts-ignore
     if (options.shortCode) {compareWith.shortCode = options.shortCode;}
     const dataComp = {...data};
-    if (initialData.isDynamic !== undefined) {
-      dataComp.isDynamic = initialData.isDynamic;
+
+    const originalData = {...initialData};
+
+    if (originalData.isDynamic !== undefined) {
+      dataComp.isDynamic = originalData.isDynamic;
     }
-    if (!areEquals(dataComp, initialData) || !areEquals(options, compareWith)) {
+
+    if (dataComp.claim !== undefined) { // @ts-ignore
+      originalData.claim = dataComp.claim;
+    }
+
+    if (!areEquals(dataComp, originalData) || !areEquals(options, compareWith)) {
       setDisplayConfirm(payload);
     } else {
       proceedWithSelection(payload);

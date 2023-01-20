@@ -1,24 +1,26 @@
 import {ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
 import Box from "@mui/material/Box";
 import Context from "../context/Context";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import Stepper from "@mui/material/Stepper";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
-import { useRouter } from "next/router";
 
 import { generateId, generateShortLink } from "../../utils";
 import { OptionsType, ProcessHanldlerType } from "./types/types";
 import { QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { getUuid } from "../../helpers/qr/helpers";
-import Notifications from "../notifications/Notifications";
-import ProcessHandler from "./renderers/ProcessHandler";
 import { getStep, saveOrUpdate, steps, StepsProps } from "./auxFunctions";
 import RenderNextButton from "./helperComponents/smallpieces/RenderNextButton";
 import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
-import RenderFloatingButtons from "./helperComponents/smallpieces/RenderFloatingButtons";
-import RenderPreview from "./renderers/RenderPreview";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Stepper from "@mui/material/Stepper";
+
+import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
+
+const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
+const Notifications = dynamic(() => import("../notifications/Notifications"));
+const ProcessHandler = dynamic(() => import("./renderers/ProcessHandler"));
+const RenderPreview = dynamic(() => import("./renderers/RenderPreview"));
 
 interface QrWizardProps {
   children: ReactNode;

@@ -141,8 +141,7 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
 };
 
 /**
- * dataInfo would be dataInfo.current.length at QrWizard component
- * @param data
+ * @param dataSource is data
  * @param userInfo
  * @param options
  * @param frame
@@ -155,10 +154,10 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
  * @param success
  * @param router
  * @param lastStep
- * @param dataInfo
+ * @param dataInfo would be dataInfo.current.length at QrWizard component
  * @param updatingHandler
  */
-export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, options: OptionsType, frame: FramesType,
+export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps, options: OptionsType, frame: FramesType,
   background: BackgroundType, cornersData: CornersAndDotsType,
   dotsData: CornersAndDotsType, selected: string,
   setLoading: (loading: boolean) => void, setIsError: (isError: boolean) => void,
@@ -171,12 +170,18 @@ export const saveOrUpdate = async (data: DataType, userInfo: UserInfoProps, opti
     }
   }
 
+  const data = {...dataSource};
+
+  if (data.claim) {
+    delete data.claim;
+  }
+
   const dataLength = updatingHandler !== undefined && dataInfo !== undefined && dataInfo > 0;
 
   if (updatingHandler && ["pdf", "audio", "gallery", "video"].includes(selected)) { //Process assets before saving de QR Data
     updatingHandler("Uploading assets");
     try { // @ts-ignore
-      data["files"] = await StorageHandler.upload(data["files"], `${userInfo.cognito_user_id}/${selected}s`);
+      data.files = await StorageHandler.upload(data.files, `${userInfo.cognito_user_id}/${selected}s`);
       updatingHandler(null, true);
     } catch {
       updatingHandler(null, false);
