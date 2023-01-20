@@ -87,7 +87,7 @@ export default function LinkedLabelData({
     setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
   };
 
-  const handleAddMediaField = (type:'media'|'gallery'|'video' = 'media') => {
+  const handleAddMediaField = (type: 'media' | 'gallery' | 'video' = 'media') => {
     setData((prev: DataType) => {
       const tempo = { ...prev };
       if (!tempo.fields) {
@@ -141,7 +141,7 @@ export default function LinkedLabelData({
             <Grid container key={index}>
               <Grid item xs={12}>
                 <RenderTitleDesc
-                  sx={{ p:1, mt:0}}
+                  sx={{ p: 1, mt: 0 }}
                   title={item.title}
                   description={item.text}
                   header="*At least one field most be filled"
@@ -171,7 +171,8 @@ export default function LinkedLabelData({
       case 'contact':
         return (
           <RenderContactForm
-            // email={item.email}
+            email={item.email}
+            setIsWrong={setIsWrong}
             title={item.title}
             buttonText={item.buttonText}
             messagePlaceholder={item.message}
@@ -182,7 +183,7 @@ export default function LinkedLabelData({
       case 'media':
       case 'gallery':
       case 'video':
-        let accept:string[] = [];
+        let accept: string[] = [];
         if (item.type === 'media') {
           accept = [
             ...ALLOWED_FILE_EXTENSIONS['gallery'],
@@ -236,9 +237,9 @@ export default function LinkedLabelData({
     }
     setIsWrong(isWrong);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(()=>{
+  useEffect(() => {
     handleAddMediaField('gallery');
-  },[])  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])  // eslint-disable-line react-hooks/exhaustive-deps
   return (
     // smart Label msg
     <Common msg="Smart Label">
@@ -323,12 +324,12 @@ export default function LinkedLabelData({
         fields={
           data.fields
             ? data.fields.map((field, index) => {
-                return {
-                  ...field,
-                  header: renderLabelTitle(field.type),
-                  component: renderFields(field, index)
-                };
-              })
+              return {
+                ...field,
+                header: renderLabelTitle(field.type),
+                component: renderFields(field, index)
+              };
+            })
             : []
         }
         setData={setData}
