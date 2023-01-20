@@ -20,7 +20,6 @@ const RenderChipFields = ({values, handleValues, label, item, required, isError,
     newOptions.push("Add New");
   return (
   <FormControl fullWidth error={isError} required={required} size='small' margin="dense">
-      <InputLabel id={`${item}-label`}>{label}</InputLabel>
       <Autocomplete
       value={values}
       onChange={(event, newValue, reason) => {

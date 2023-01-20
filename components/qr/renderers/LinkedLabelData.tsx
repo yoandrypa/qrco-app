@@ -43,7 +43,7 @@ export default function LinkedLabelData({
   handleValues,
   setIsWrong
 }: LinkedLabelDataProps) {
-  const [expander, setExpander] = useState<string | null>(null);
+  const [expander, setExpander] = useState<boolean[]>([]);
   const [galleries, setGalleries] = useState<number>(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -84,7 +84,7 @@ export default function LinkedLabelData({
       tempo.fields?.push({ type: 'text', title: '', text: '' });
       return tempo;
     });
-    setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
+    setExpander([...expander, true]);
   };
 
   const handleAddMediaField = (type:'media'|'gallery'|'video' = 'media') => {
@@ -96,7 +96,7 @@ export default function LinkedLabelData({
       tempo.fields?.push({ type: type, files: [] });
       return tempo;
     });
-    setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
+    setExpander([...expander, true]);
   }
 
   const handleAddContactForm = () => {
@@ -108,7 +108,7 @@ export default function LinkedLabelData({
       tempo.fields?.push({ type: 'contact', title: '', message: '', buttonText: '', email: currentAccount.email });
       return tempo;
     });
-    setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
+    setExpander([...expander, true]);
   }
 
   const renderItem = (item: string, label: string, required?: boolean, placeholder?: string) => {
@@ -301,14 +301,14 @@ export default function LinkedLabelData({
               disabled={galleries >= MAX_NUM_GALLERIES}>
               Gallery
             </MenuItem>
-            <MenuItem
+            {/* <MenuItem
               onClick={() => {
                 handleAddMediaField('video');
                 handleCloseAddField();
               }}
               disabled={galleries >= MAX_NUM_GALLERIES}>
               Video
-            </MenuItem>
+            </MenuItem> */}
             <MenuItem
               onClick={() => {
                 handleAddContactForm();
