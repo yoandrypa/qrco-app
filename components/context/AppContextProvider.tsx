@@ -54,28 +54,31 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     setSelected(data?.isDynamic ? DEFAULT_DYNAMIC_SELECTED : DEFAULT_STATIC_SELECTED);
   }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const clearData = useCallback(
-    (keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean) => {
-      if (!keepType || doNot || takeAwaySelection) {
-        resetSelected();
-      }
-      setBackground(initialBackground);
-      setFrame(initialFrame);
-      setDotsData(null);
-      setCornersData(null);
-      setIsWrong(false);
-      setLoading(false);
-      setOptions(handleInitialData("Ebanux"));
+  const clearData = useCallback((keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean) => {
+    if (!keepType || doNot || takeAwaySelection) {
+      resetSelected();
+    }
+    setBackground(initialBackground);
+    setFrame(initialFrame);
+    setDotsData(null);
+    setCornersData(null);
+    setIsWrong(false);
+    setLoading(false);
+    setOptions(handleInitialData("Ebanux"));
 
-      let newData: DataType;
-      if (!keepType || data?.isDynamic) {
-        newData = initialData;
-      } else {
-        newData = {};
-      }
+    let newData: DataType;
+    if (!keepType || data?.isDynamic) {
+      newData = initialData;
+    } else {
+      newData = {};
+    }
 
-      setData(newData);
-    }, [data?.isDynamic, data.mode]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (data.claim) {
+      newData.claim = data.claim;
+    }
+
+    setData(newData);
+  }, [data?.isDynamic, data?.mode, data?.claim]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (doneInitialRender.current && options.mode === undefined) {

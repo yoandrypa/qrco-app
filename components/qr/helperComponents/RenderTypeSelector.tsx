@@ -1,12 +1,11 @@
 import {useContext, useEffect, useMemo, useState} from "react";
 import Grid from "@mui/material/Grid";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
-import TypeSelector from "./TypeSelector";
 import Box from "@mui/material/Box";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import Context from "../../context/Context";
 import {DataType} from "../types/types";
@@ -16,11 +15,14 @@ import dynamic from "next/dynamic";
 import {IS_DEV_ENV, ONLY_QR} from "../constants";
 import RenderProDesc from "./smallpieces/RenderProDesc";
 import RenderFreeDesc from "./smallpieces/RenderFreeDesc";
+import TypeSelector from "./TypeSelector";
 import {MyBadge} from "./looseComps/StyledComponents";
 import {areEquals} from "../../helpers/generalFunctions";
 import initialOptions, {initialData} from "../../../helpers/qr/data";
+
 import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
 
+const RenderClaimingInfo = dynamic(() => import("./smallpieces/RenderClaimingInfo"));
 const RenderLoseDataConfirm = dynamic(() => import('./smallpieces/RenderLoseDataConfirm'));
 const RenderPreviewDrawer = dynamic(() => import('./smallpieces/RenderPreviewDrawer'));
 const RenderPreviewButton = dynamic(() => import('./smallpieces/RenderPreviewButton'));
@@ -97,25 +99,30 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
     <Box sx={{display: 'flex'}}>
       <Grid container spacing={1} sx={{height: 'fit-content'}}>
         <Grid item xs={12}>
-          <Tabs value={isDynamic ? 0 : 1} onChange={(_, newSel: number) => handleClick(newSel)}>
-            <Tab sx={{pr: '37px', mr: '3px'}} label={
-              <MyBadge badgeContent={
-                <Tooltip title={<RenderProDesc/>} arrow>
-                  <span>Pro</span>
-                </Tooltip>
-              } color="primary" pro>
-                <Typography>{isWide ? "Dynamic QR Codes" : "Dynamic"}</Typography>
-              </MyBadge>
-            }/>
-            <Tab sx={{pr: '39px'}} label={
-              <MyBadge badgeContent={
-                <Tooltip title={<RenderFreeDesc />} arrow>
-                  <span>Free</span>
-                </Tooltip>} color="success">
-                <Typography>{isWide ? "Static QR Codes" : "Static"}</Typography>
-              </MyBadge>
-            }/>
-          </Tabs>
+          <Box sx={{width: '100%', position: 'relative'}}>
+            <Tabs value={isDynamic ? 0 : 1} onChange={(_, newSel: number) => handleClick(newSel)}>
+              <Tab sx={{pr: '37px', mr: '3px'}} label={
+                <MyBadge badgeContent={
+                  <Tooltip title={<RenderProDesc/>} arrow>
+                    <span>Pro</span>
+                  </Tooltip>
+                } color="primary" pro>
+                  <Typography>{isWide ? "Dynamic QR Codes" : "Dynamic"}</Typography>
+                </MyBadge>
+              }/>
+              <Tab sx={{pr: '39px'}} disabled={data.claim !== undefined} label={
+                <MyBadge badgeContent={
+                  <Tooltip title={<RenderFreeDesc />} arrow>
+                    <span>Free</span>
+                  </Tooltip>} color="success" disabled={data.claim !== undefined}>
+                  <Typography>{isWide ? "Static QR Codes" : "Static"}</Typography>
+                </MyBadge>
+              }/>
+            </Tabs>
+            {data.claim !== undefined && (<Box sx={{position: 'absolute', textAlign: 'center', top: '7px', right: 0}}>
+              <RenderClaimingInfo claim={data.claim} />
+            </Box>)}
+          </Box>
         </Grid>
         {renderTypeSelector("web",  isDynamic ? "Transform a long URL in a shortened link" : "Link to any page on the web", true)}
         {!isDynamic ?
