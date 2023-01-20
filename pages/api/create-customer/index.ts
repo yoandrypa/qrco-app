@@ -24,7 +24,7 @@ async function createCustomerInStripe(email: string): Promise<string | Error> {
 }
 
 function getCurrentPrices() {
-  if (process.env.REACT_APP_MODE != 'PROD') {
+  if (process.env.REACT_NODE_ENV != 'production') {
     return PLAN_TEST_MODE_PRICES
   } else {
     return PLAN_TEST_MODE_PRICES
@@ -54,17 +54,22 @@ async function createCheckoutSession(
     case 'premiumAnnual':
       price_id = pricesList.premiumAnnual
       break;
+    default:
+      price_id = "unknown"
+      break;
   }
   try {
+    let lineItem = { price: price_id }
+    // For metered billing, do not pass quantity
+    if ([pricesList.premium, pricesList.premiumAnnual].includes(price_id)) {
+      //@ts-ignore
+      lineItem = { ...pricePayload, quantity: 1 }
+    }
     const session = stripe.checkout.sessions.create({
       mode: 'subscription',
       customer: customer_id,
       line_items: [
-        {
-          price: price_id,
-          // For metered billing, do not pass quantity
-          quantity: 1
-        }
+        lineItem
       ],
       success_url: `https://${process.env.REACT_APP_SERVER_BASE_URL}/plans/account?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `https://${process.env.REACT_APP_SERVER_BASE_URL}/plans/`
