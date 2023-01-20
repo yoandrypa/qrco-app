@@ -54,7 +54,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     setSelected(data?.isDynamic ? DEFAULT_DYNAMIC_SELECTED : DEFAULT_STATIC_SELECTED);
   }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const clearData = useCallback((keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean) => {
+  const clearData = useCallback((keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean, claim?: string) => {
     if (!keepType || doNot || takeAwaySelection) {
       resetSelected();
     }
@@ -73,8 +73,8 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       newData = {};
     }
 
-    if (data.claim) {
-      newData.claim = data.claim;
+    if (claim) {
+      newData.claim = claim;
     }
 
     setData(newData);
@@ -83,7 +83,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (doneInitialRender.current && options.mode === undefined) {
       if (!forbidClear.current) {
-        clearData(true);
+        clearData(true, false,  false, data.claim);
       } else {
         forbidClear.current = false;
       }
