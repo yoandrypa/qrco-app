@@ -27,7 +27,7 @@ function getCurrentPrices() {
   if (process.env.REACT_NODE_ENV != 'production') {
     return PLAN_TEST_MODE_PRICES
   } else {
-    return PLAN_TEST_MODE_PRICES
+    return PLAN_LIVE_MODE_PRICES
   }
 }
 
