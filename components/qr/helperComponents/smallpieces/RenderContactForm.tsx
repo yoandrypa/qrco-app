@@ -1,11 +1,11 @@
 /* eslint-disable react/no-unescaped-entities */
-import React from 'react'
+import React, { useEffect } from 'react'
 import Grid from "@mui/material/Grid";
 import RenderTextFields from '../../renderers/helpers/RenderTextFields';
 import Stack from '@mui/material/Stack';
 import { TextField, Typography } from '@mui/material';
 import Alert from '@mui/material/Alert';
-
+import { EMAIL } from '../../constants';
 
 
 interface ContactFormProps {
@@ -14,16 +14,38 @@ interface ContactFormProps {
   buttonText: string;
   email?: string;
   handleChange: (type: string, index: number, value: string) => void;
-  index: number
+  index: number;
+  setIsWrong: Function;
 }
 
-function RenderContactForm({ title, buttonText, messagePlaceholder, handleChange, index }: ContactFormProps) {
+function RenderContactForm({ title, buttonText, messagePlaceholder, handleChange, index, email, setIsWrong }: ContactFormProps) {
 
+  useEffect(() => {
+    console.log('validating email')
+    let isWrong = false;
+    if (email) {
+      if (!EMAIL.test(email)) {
+        setIsWrong(true);
+      } else {
+        setIsWrong(false)
+      }
+    }
+  }, [email, setIsWrong]);
   return (
     <Stack spacing={2}>
       <Alert severity='info' sx={{ mb: 1 }}>
-        The message will be sent to your account's email
+        Use this address to receive the message from your contact form.
       </Alert>
+      <TextField
+        label='Inbox email'
+        type='email'
+        fullWidth
+        size='small'
+        placeholder='your@email.com'
+        variant='outlined'
+        value={email}
+        onChange={(e) => handleChange('email', index, e.target.value)}
+      />
       <TextField
         label='Title'
         fullWidth
