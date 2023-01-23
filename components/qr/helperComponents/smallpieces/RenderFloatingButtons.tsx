@@ -7,8 +7,6 @@ interface RenderFloatingButtons {
   loading: boolean;
   step: number;
   selected?: string;
-  mode?: string;
-  isDynamic: boolean;
   isLogged: boolean;
   qrName?: string;
   isWrong: boolean;
@@ -17,7 +15,7 @@ interface RenderFloatingButtons {
 }
 
 export default function RenderFloatingButtons(
-  { loading, step, selected, mode, isDynamic, handleBack, handleNext, qrName, isWrong, isLogged, size}:
+  { loading, step, selected, handleBack, handleNext, qrName, isWrong, isLogged, size}:
     RenderFloatingButtons) {
   return (
     <Box sx={{ position: 'fixed', width: `${size}px`, top: '100px', display: 'flex', justifyContent: 'space-between' }}>
@@ -25,8 +23,6 @@ export default function RenderFloatingButtons(
         step={step}
         handleBack={handleBack}
         loading={loading}
-        isDynamic={isDynamic}
-        mode={mode}
         selected={selected}
       /> : <Box />}
       {!isWrong ? <RenderNextButton

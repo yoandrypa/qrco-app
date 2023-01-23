@@ -6,7 +6,8 @@ import dynamic from "next/dynamic";
 import Context from "./Context";
 import { initialBackground, initialData, initialFrame } from "../../helpers/qr/data";
 import { BackgroundType, CornersAndDotsType, DataType, FramesType, OptionsType } from "../qr/types/types";
-import { PARAM_QR_TEXT, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE, QR_TYPE_ROUTE } from "../qr/constants";
+import { DEFAULT_DYNAMIC_SELECTED, DEFAULT_STATIC_SELECTED, PARAM_QR_TEXT, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE,
+  QR_DETAILS_ROUTE, QR_TYPE_ROUTE } from "../qr/constants";
 import AppWrapper from "../AppWrapper";
 import { dataCleaner, getBackgroundObject, getCornersAndDotsObject, getFrameObject, handleInitialData } from "../../helpers/qr/helpers";
 import { create, get } from "../../handlers/users";
@@ -50,36 +51,39 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const resetSelected = useCallback(() => {
-    setSelected(`vcard${data?.isDynamic ? '+' : ''}`);
+    setSelected(data?.isDynamic ? DEFAULT_DYNAMIC_SELECTED : DEFAULT_STATIC_SELECTED);
   }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const clearData = useCallback(
-    (keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean) => {
-      if (!keepType || doNot || takeAwaySelection) {
-        resetSelected();
-      }
-      setBackground(initialBackground);
-      setFrame(initialFrame);
-      setDotsData(null);
-      setCornersData(null);
-      setIsWrong(false);
-      setLoading(false);
-      setOptions(handleInitialData("Ebanux"));
+  const clearData = useCallback((keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean, claim?: string) => {
+    if (!keepType || doNot || takeAwaySelection) {
+      resetSelected();
+    }
+    setBackground(initialBackground);
+    setFrame(initialFrame);
+    setDotsData(null);
+    setCornersData(null);
+    setIsWrong(false);
+    setLoading(false);
+    setOptions(handleInitialData("Ebanux"));
 
-      let newData: DataType;
-      if (!keepType || data?.isDynamic) {
-        newData = initialData;
-      } else {
-        newData = {};
-      }
+    let newData: DataType;
+    if (!keepType || data?.isDynamic) {
+      newData = initialData;
+    } else {
+      newData = {};
+    }
 
-      setData(newData);
-    }, [data?.isDynamic, data.mode]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (claim) {
+      newData.claim = claim;
+    }
+
+    setData(newData);
+  }, [data?.isDynamic, data?.mode, data?.claim]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (doneInitialRender.current && options.mode === undefined) {
       if (!forbidClear.current) {
-        clearData(true);
+        clearData(true, false,  false, data.claim);
       } else {
         forbidClear.current = false;
       }
@@ -153,11 +157,8 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     window.location.href = `${process.env.REACT_APP_OAUTH_LOGOUT_URL || ""}?${queryString}`;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (router.pathname.startsWith("/qr") && ![
-    QR_TYPE_ROUTE,
-    QR_CONTENT_ROUTE,
-    QR_DESIGN_ROUTE,
-    QR_DETAILS_ROUTE].includes(router.pathname)) {
+  if (router.pathname.startsWith("/qr") && ![QR_TYPE_ROUTE, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE]
+    .includes(router.pathname)) {
     return <>{children}</>;
   }
 

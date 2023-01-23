@@ -15,8 +15,8 @@ import DragPaper from '../../helperComponents/looseComps/DragPaper';
 interface RenderDragDropProps {
   fields: DragFields;
 	setData: Function;
-  expander:string|null;
-  setExpander:(expander: string | null) => void;
+  expander:boolean[];
+  setExpander:(expander: boolean[]) => void;
 }
 
 const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
@@ -73,20 +73,17 @@ export default function RenderDragDrop({
                           ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                             <DragPaper elevation={2} sx={{p: 1}} avoidIcon={fields?.length === 1} removeFunc={()=>remove(index)}>
                             <Expander
-                                  expand={expander}
-                                  setExpand={() =>
-                                    setExpander(
-                                      index.toString() === expander
-                                        ? ''
-                                        : index.toString()
-                                    )
+                                  expand={expander[index]?`item-${index}`:null}
+                                  setExpand={() =>{
+                                    const newExpander = [...expander]
+                                    newExpander[index] = !newExpander[index];
+                                    setExpander(newExpander);
+                                  }
                                   }
                                   item={`item-${index}`}
                                   title={field.header}
-                                  deleteButton
-                                  handleDelete={() => remove(index)}
                                 />
-                                {expander === index.toString() && (
+                                {expander[index] && (
                                   <>{field.component}</>
                                 )}
                               </DragPaper>

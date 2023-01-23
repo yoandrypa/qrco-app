@@ -10,14 +10,14 @@ export const StepperButtons = styled(Button)(({theme}) => ({
   "&.Mui-disabled": { backgroundColor: theme.palette.text.disabled, color: grey[300] }
 }));
 
-export const MyBadge = styled(Badge)(({pro}: { pro?: boolean }) => ({
+export const MyBadge = styled(Badge)(({pro, disabled}: { pro?: boolean, disabled?: boolean }) => ({
   '& .MuiBadge-badge': {
     top: 11,
     right: pro ? -20 : -22,
     height: 18,
     fontSize: '0.55rem',
     borderRadius: '4px',
-    background: pro ? '#000' : blue[800]
+    background: !disabled ? (pro ? '#000' : blue[800]) : grey[400]
   }
 }));
 

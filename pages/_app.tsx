@@ -22,7 +22,7 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
   return (
     <>
       <Head>
-        <title>The QR Lynk | Dynamic QR code</title>
+        <title>QRLynk | Pro QR codes</title>
         <link rel="icon" href="/qlIcon.png" />
       </Head>
       <StyledEngineProvider injectFirst>

@@ -1,36 +1,35 @@
-import {SetStateAction, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import DownloadIcon from '@mui/icons-material/Download';
-import BrushIcon from '@mui/icons-material/Brush';
-import CropFreeIcon from '@mui/icons-material/CropFree';
-import PrintIcon from '@mui/icons-material/Print';
+import {SetStateAction, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import DownloadIcon from "@mui/icons-material/Download";
+import BrushIcon from "@mui/icons-material/Brush";
+import CropFreeIcon from "@mui/icons-material/CropFree";
+import PrintIcon from "@mui/icons-material/Print";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import dynamic from "next/dynamic";
 
-import {Accordion, AccordionDetails, AccordionSummary} from '../renderers/Renderers';
-
-import {checkForAlpha, convertBase64, downloadAsSVGOrVerify, handleDesignerString} from '../../helpers/qr/helpers';
-import {OptionsType} from './types/types';
-
-import QrGenerator from './QrGenerator';
-import {initialBackground, initialFrame} from '../../helpers/qr/data';
-import Context from '../context/Context';
+import {Accordion, AccordionDetails, AccordionSummary} from "../renderers/Renderers";
+import {checkForAlpha, convertBase64, downloadAsSVGOrVerify, handleDesignerString} from "../../helpers/qr/helpers";
+import {OptionsType} from "./types/types";
+import QrGenerator from "./QrGenerator";
+import {initialBackground, initialFrame} from "../../helpers/qr/data";
+import Context from "../context/Context";
 import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
 import {FRAMES_LENGTH} from "./constants";
 import {GeneratorProps, GenProps} from "./auxFunctions";
 
-const PDFGenDlg = dynamic(() => import('./helperComponents/PDFGenDlg'));
-const RenderDownload = dynamic(() => import('./helperComponents/RenderDownload'));
-const Notifications = dynamic(() => import('../../components/notifications/Notifications'));
-const RenderPreviewButton = dynamic(() => import('./helperComponents/smallpieces/RenderPreviewButton'));
-const RenderPreviewDrawer = dynamic(() => import('./helperComponents/smallpieces/RenderPreviewDrawer'));
-const RenderNoUserWarning = dynamic(() => import('./helperComponents/smallpieces/RenderNoUserWarning'));
-const Code = dynamic(() => import('./sections/Code'));
-const Frames = dynamic(() => import('./sections/Frames'));
-const Logos = dynamic(() => import('./sections/Logos'));
+const PDFGenDlg = dynamic(() => import("./helperComponents/PDFGenDlg"));
+const RenderDownload = dynamic(() => import("./helperComponents/RenderDownload"));
+const Notifications = dynamic(() => import("../../components/notifications/Notifications"));
+const RenderPreviewButton = dynamic(() => import("./helperComponents/smallpieces/RenderPreviewButton"));
+const RenderPreviewDrawer = dynamic(() => import("./helperComponents/smallpieces/RenderPreviewDrawer"));
+const RenderNoUserWarning = dynamic(() => import("./helperComponents/smallpieces/RenderNoUserWarning"));
+const Code = dynamic(() => import("./sections/Code"));
+const Frames = dynamic(() => import("./sections/Frames"));
+const Logos = dynamic(() => import("./sections/Logos"));
+const RenderClaimingInfo = dynamic(() => import("./helperComponents/smallpieces/RenderClaimingInfo"));
 
 const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
   const { options, setOptions, background, setBackground, frame, setFrame, data, selected, userInfo, cornersData,
@@ -304,6 +303,9 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
             <Typography>QR Code appearance settings</Typography>
           </Box>
           <NotifyDynamic styling={{position: 'absolute', right: 0}} isDynamic={Boolean(data.isDynamic)}/>
+          {data.claim !== undefined && (<Box sx={{position: 'absolute', right: '0', top: '20px', textAlign: 'crightenter'}}>
+            <RenderClaimingInfo claim={data.claim} />
+          </Box>)}
         </Box>
         <Box sx={{display: 'flex', m: {sm: 2, xs: 0}}}>
           <Box sx={{ width: '100%', mr: isWideForPreview ? 2 : 0, overflow: 'auto', textAlign: 'left' }}> {/* @ts-ignore */}
