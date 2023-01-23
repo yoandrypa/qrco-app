@@ -65,7 +65,7 @@ async function createCheckoutSession(
   try {
     let lineItem: PriceLineItem = { price: price_id }
     // For metered billing, do not pass quantity
-    if ([pricesList.premium, pricesList.premiumAnnual].includes(price_id)) {
+    if (![pricesList.premium, pricesList.premiumAnnual].includes(price_id)) {
 
       lineItem = { ...lineItem, quantity: 1 }
     }
