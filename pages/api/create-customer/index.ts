@@ -63,12 +63,12 @@ async function createCheckoutSession(
       break;
   }
   try {
-    let lineItem: PriceLineItem = { price: price_id }
+    let lineItem: PriceLineItem = { price: price_id, quantity: 1 }
     // For metered billing, do not pass quantity
-    if ([pricesList.premium, pricesList.premiumAnnual].includes(price_id)) {
+    // if (![pricesList.premium, pricesList.premiumAnnual].includes(price_id)) {
 
-      lineItem = { ...lineItem, quantity: 1 }
-    }
+    //   lineItem = { ...lineItem, quantity: 1 }
+    // }
 
     console.log('session create', {
       mode: 'subscription',
