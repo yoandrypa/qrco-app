@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import {ColorTypes} from "../../types/types";
 
-interface RenderColorPresetProps {
+interface ColorPresetProps {
   handleValue: Function;
   colors: ColorTypes;
   selected?: boolean;
@@ -9,7 +9,7 @@ interface RenderColorPresetProps {
   onlyOne?: boolean;
 }
 
-export default function RenderColorPreset({gradient, handleValue, selected, colors, onlyOne}: RenderColorPresetProps) {
+export default function RenderColorPreset({gradient, handleValue, selected, colors, onlyOne}: ColorPresetProps) {
   return (
     <Box sx={{display: 'inline-flex', mr: '10px'}}>
       <Box
