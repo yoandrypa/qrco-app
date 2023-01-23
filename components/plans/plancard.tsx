@@ -42,14 +42,14 @@ const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
       </Grid>
       <Typography color='gray' textAlign={'center'}> {data.legend}</Typography>
       <Grid sx={{ justifyContent: 'center', alignContent: 'center', display: 'flex', margin: 2 }}>
-        <LoadingButton loading={innerLoading}
+        <LoadingButton loading={innerLoading} disabled={data.plan_type === 'free'}
           onClick={() => {
             setInnerLoading(true)
             clickAction(data.plan_type)
             setInnerLoading(false)
           }}
           variant={data.highlighted ? 'contained' : 'outlined'} >
-          {isCurrentPlan ? 'Review': data.buttonText || 'Buy now'}
+          {isCurrentPlan ? 'Review' : data.buttonText || 'Buy now'}
         </LoadingButton>
       </Grid>
       {data.features?.map((feature, index) => {
