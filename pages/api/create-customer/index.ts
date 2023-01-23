@@ -8,6 +8,10 @@ const stripe = new Stripe(process.env.REACT_STRIPE_SECRET_KEY || 'sk_test_51Ksb3
   apiVersion: '2022-08-01',
 })
 
+type PriceLineItem = {
+  price: string,
+  quantity?: number
+}
 
 async function createCustomerInStripe(email: string): Promise<string | Error> {
   try {
@@ -59,11 +63,11 @@ async function createCheckoutSession(
       break;
   }
   try {
-    let lineItem = { price: price_id }
+    let lineItem: PriceLineItem = { price: price_id }
     // For metered billing, do not pass quantity
     if ([pricesList.premium, pricesList.premiumAnnual].includes(price_id)) {
-      //@ts-ignore
-      lineItem = { ...pricePayload, quantity: 1 }
+
+      lineItem = { price: price_id, quantity: 1 }
     }
     const session = stripe.checkout.sessions.create({
       mode: 'subscription',
@@ -71,6 +75,7 @@ async function createCheckoutSession(
       line_items: [
         lineItem
       ],
+
       success_url: `https://${process.env.REACT_APP_SERVER_BASE_URL}/plans/account?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `https://${process.env.REACT_APP_SERVER_BASE_URL}/plans/`
     })
