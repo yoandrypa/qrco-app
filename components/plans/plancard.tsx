@@ -34,6 +34,11 @@ const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
         {data.description}
       </Typography>
       <Grid container alignContent='center' display='flex' justifyContent={'center'}>
+        <Grid item sx={{ marginTop: 2, justifyContent: 'stretch', alignContent: 'baseline', display: 'flex', color: 'gray' }}>
+          <Typography variant='h6' >
+            (USD)
+          </Typography>
+        </Grid>
         <Grid item sx={{ margin: 1, justifyContent: 'stretch', alignContent: 'center', display: 'flex' }}>
           <Typography variant='h4' >
             {data.priceAmount}
