@@ -161,13 +161,11 @@ const QrWizard = ({ children }: QrWizardProps) => {
         <RenderFloatingButtons
           loading={loading}
           step={currentStep}
-          isDynamic={data?.isDynamic || false}
           isLogged={isLogged}
           qrName={data?.qrName}
           isWrong={isWrong}
           handleBack={handleBack}
           handleNext={handleNext}
-          mode={data?.mode}
           size={size}
           selected={selected}/>
       )}
