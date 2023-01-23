@@ -5,10 +5,9 @@ import Context from "../../components/context/Context";
 import { useRouter } from "next/router";
 import {DEFAULT_DYNAMIC_SELECTED, QR_DESIGN_ROUTE} from "../../components/qr/constants";
 import {DataType} from "../../components/qr/types/types";
-// import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-// export default function QrGen ({ code }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-export default function QrGen() {
+export default function QrGen ({ code }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   // @ts-ignore
   const { selected, setSelected, options, clearData, userInfo, setData } = useContext(Context);
   const router = useRouter();
@@ -36,16 +35,16 @@ export default function QrGen() {
   );
 };
 
-// export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-//   let props = {};
-//   if (query?.address) {
-//     props = {
-//       address: query.address,
-//       isDynamic: true,
-//     };
-//   }
-//
-//   return {
-//     props,
-//   };
-// };
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  let props = {};
+  if (query?.address) {
+    props = {
+      address: query.address,
+      isDynamic: true,
+    };
+  }
+
+  return {
+    props
+  };
+};
