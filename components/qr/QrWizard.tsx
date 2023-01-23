@@ -30,8 +30,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   const [isError, setIsError] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [size, setSize] = useState<number>(0);
-  const [forceDownload, setForceDownload] = useState<{ item: HTMLElement } | undefined>(
-    undefined);
+  const [forceDownload, setForceDownload] = useState<{ item: HTMLElement } | undefined>(undefined);
   const [, setUnusedState] = useState();
 
   // @ts-ignore
@@ -132,9 +131,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
         <RenderBackButton
           loading={loading}
           step={currentStep}
-          isDynamic={data?.isDynamic || false}
           handleBack={handleBack}
-          mode={data?.mode}
           selected={selected}/>
         <Stepper activeStep={currentStep} sx={{ width: "100%", my: 0 }}>
           {steps.map((label: string) => <Step key={label}><StepLabel>{isWide ? label : ""}</StepLabel></Step>)}
