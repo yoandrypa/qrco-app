@@ -67,8 +67,19 @@ async function createCheckoutSession(
     // For metered billing, do not pass quantity
     if ([pricesList.premium, pricesList.premiumAnnual].includes(price_id)) {
 
-      lineItem = { price: price_id, quantity: 1 }
+      lineItem = { ...lineItem, quantity: 1 }
     }
+
+    console.log('session create', {
+      mode: 'subscription',
+      customer: customer_id,
+      line_items: [
+        lineItem
+      ],
+
+      success_url: `https://${process.env.REACT_APP_SERVER_BASE_URL}/plans/account?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `https://${process.env.REACT_APP_SERVER_BASE_URL}/plans/`
+    })
     const session = stripe.checkout.sessions.create({
       mode: 'subscription',
       customer: customer_id,
