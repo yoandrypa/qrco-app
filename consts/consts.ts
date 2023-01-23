@@ -8,20 +8,20 @@ export const MAIN_CONFIG = {
   theme: THEMES_VARIANTS.light
 };
 export const PLAN_TEST_MODE_PRICES = {
-  basic: "price_1MPKgZCHh3XhfaZr0TqlLqG5",
+  basic: "price_1MTXM3CHh3XhfaZrMhHGCiwH",
   business: "price_1MPLAcCHh3XhfaZrawQADusR",
-  premium: "price_1MPLFYCHh3XhfaZrWh5DXZPR",
+  premium: "price_1MTXgACHh3XhfaZruWt2MiiM",
   basicAnnual: "price_1MPL1ZCHh3XhfaZrIS02aX7P",
-  businessAnnual: "price_1MPLAcCHh3XhfaZrF2OFNWnm",
-  premiumAnnual: "price_1MPLFYCHh3XhfaZrHdyDr93R"
+  businessAnnual: "price_1MTXHaCHh3XhfaZrLKixYUQB",
+  premiumAnnual: "price_1MTXgACHh3XhfaZrSRIk99mC"
 };
 export const PLAN_LIVE_MODE_PRICES = {
-  basic: "price_1MPL3lCHh3XhfaZrYpbpbZxn",
+  basic: "price_1MTXQwCHh3XhfaZrhi0si85x",
   business: "price_1MPLBbCHh3XhfaZrkoH8mVtS",
-  premium: "price_1MPLGWCHh3XhfaZrOU7pYjwf",
-  basicAnnual: "price_1MPL3lCHh3XhfaZrXb4Szob3",
+  premium: "price_1MTXgICHh3XhfaZr7x3VO2Rl",
+  basicAnnual: "price_1MTXQwCHh3XhfaZrUV2ru1LG",
   businessAnnual: "price_1MPLBbCHh3XhfaZrroLJFfFP",
-  premiumAnnual: "price_1MPLGWCHh3XhfaZrIFhzO0OO"
+  premiumAnnual: "price_1MTXgICHh3XhfaZrLJdZN2QW"
 };
 export const ALLOWED_FILE_EXTENSIONS = {
   pdf: ".pdf",
