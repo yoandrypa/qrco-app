@@ -82,7 +82,7 @@ const Plans = (props: Props) => {
     priceAmount: "$9.00",
     features: [
       "5 dynamic QR codes",
-      "$0.10 for any aditional Dynamic QR",
+      "$0.10 per aditional Dynamic QR",
       "Unlimited pre-generated QRs",
       "Up to 5 microsites (mobile-friendly landing pages)",
       "Unlimited static QR codes",
@@ -103,7 +103,7 @@ const Plans = (props: Props) => {
     priceAmount: "$90.00",
     features: [
       "5 Dynamic QR codes",
-      "$0.10 for any aditional Dynamic QR",
+      "$0.10 per aditional Dynamic QR",
       "Unlimited pre-generated QRs",
       "Up to 5 microsites (mobile-friendly landing pages)",
       "Unlimited static QR codes",
@@ -125,7 +125,7 @@ const Plans = (props: Props) => {
     priceAmount: "$15.00",
     features: [
       "100 dynamic QR codes",
-      "$0.10 for any aditional Dynamic QR",
+      "$0.10 per aditional Dynamic QR",
       "Unlimited pre-generated QRs",
       "Up to 100 microsites (mobile-friendly landing pages)",
       "Unlimited static QR codes",
@@ -145,7 +145,7 @@ const Plans = (props: Props) => {
     priceAmount: "$135.OO",
     features: [
       "100 dynamic QR codes",
-      "$0.10 for any aditional Dynamic QR",
+      "$0.10 per aditional Dynamic QR",
       "Unlimited pre-generated QRs",
       "Up to 100 microsites (mobile-friendly landing pages)",
       "Unlimited static QR codes",
@@ -168,7 +168,7 @@ const Plans = (props: Props) => {
     priceAmount: "$45.00",
     features: [
       "500 dynamic QR codes",
-      "$0.10 for any aditional Dynamic QR",
+      "$0.10 per aditional Dynamic QR",
       "Unlimited pre-generated QRs",
       "Unlimited microsites (mobile-friendly landing pages)",
       "Unlimited static QR codes",
@@ -188,7 +188,7 @@ const Plans = (props: Props) => {
     priceAmount: "$360.00",
     features: [
       "500 dynamic QR codes",
-      "$0.10 for any aditional Dynamic QR",
+      "$0.10 per aditional Dynamic QR",
       "Unlimited pre-generated QRs",
       "Unlimited microsites (mobile-friendly landing pages)",
       "Unlimited static QR codes",
