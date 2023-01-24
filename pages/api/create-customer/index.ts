@@ -65,10 +65,12 @@ async function createCheckoutSession(
   try {
     let lineItem: PriceLineItem = { price: price_id }
     // For metered billing, do not pass quantity
-    if ([pricesList.premium, pricesList.premiumAnnual].includes(price_id)) {
+    //Legacy Premium plans is flat priced
+    // if (![pricesList.premium, pricesList.premiumAnnual].includes(price_id)) {
 
-      lineItem = { price: price_id, quantity: 1 }
-    }
+    //   lineItem = { ...lineItem, quantity: 1 }
+    // }
+
     const session = stripe.checkout.sessions.create({
       mode: 'subscription',
       customer: customer_id,

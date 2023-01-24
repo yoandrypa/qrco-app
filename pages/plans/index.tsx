@@ -53,7 +53,7 @@ const Plans = (props: Props) => {
   const router = useRouter();
 
   const free = {
-    title: "Free Account",
+    title: "Free",
     description: "Upgrade to a paid plan for additional features and support",
     buttonText: "FREE",
     plan_type: "free",
@@ -62,6 +62,7 @@ const Plans = (props: Props) => {
     priceAmount: "$0",
     features: [
       "1 dynamic QR code",
+      "Unlimited pre-generated QRs",
       "1 microsite (mobile-friendly landing page)",
       "Unlimited static QR codes",
       "Unlimited scans",
@@ -72,7 +73,7 @@ const Plans = (props: Props) => {
 
   };
   const basic = {
-    title: "Basic Account",
+    title: "Basic",
     description: "For small businesses/freelancers at an affordable price",
     buttonText: "SUBSCRIBE",
     plan_type: "basic",
@@ -81,6 +82,8 @@ const Plans = (props: Props) => {
     priceAmount: "$9.00",
     features: [
       "5 dynamic QR codes",
+      "$0.10 per aditional Dynamic QR",
+      "Unlimited pre-generated QRs",
       "Up to 5 microsites (mobile-friendly landing pages)",
       "Unlimited static QR codes",
       "Unlimited scans",
@@ -91,7 +94,7 @@ const Plans = (props: Props) => {
 
   };
   const basicAnnual = {
-    title: "Basic Account",
+    title: "Basic",
     description: "A good choice to get started and save some cash.",
     buttonText: "SUBSCRIBE",
     plan_type: "basicAnnual",
@@ -100,6 +103,8 @@ const Plans = (props: Props) => {
     priceAmount: "$90.00",
     features: [
       "5 Dynamic QR codes",
+      "$0.10 per aditional Dynamic QR",
+      "Unlimited pre-generated QRs",
       "Up to 5 microsites (mobile-friendly landing pages)",
       "Unlimited static QR codes",
       "Unlimited scans",
@@ -111,7 +116,7 @@ const Plans = (props: Props) => {
   };
 
   const business = {
-    title: "Business Account",
+    title: "Business",
     description: "For medium businesses who need a larger solution",
     buttonText: "SUBSCRIBE",
     plan_type: "business",
@@ -120,6 +125,8 @@ const Plans = (props: Props) => {
     priceAmount: "$15.00",
     features: [
       "100 dynamic QR codes",
+      "$0.10 per aditional Dynamic QR",
+      "Unlimited pre-generated QRs",
       "Up to 100 microsites (mobile-friendly landing pages)",
       "Unlimited static QR codes",
       "Unlimited scans",
@@ -129,7 +136,7 @@ const Plans = (props: Props) => {
     ],
   };
   const businessAnnual = {
-    title: "Business Account",
+    title: "Business",
     description: "Receive a fair discount with our annual plan.",
     buttonText: "SUBSCRIBE",
     plan_type: "businessAnnual",
@@ -138,6 +145,8 @@ const Plans = (props: Props) => {
     priceAmount: "$135.OO",
     features: [
       "100 dynamic QR codes",
+      "$0.10 per aditional Dynamic QR",
+      "Unlimited pre-generated QRs",
       "Up to 100 microsites (mobile-friendly landing pages)",
       "Unlimited static QR codes",
       "Unlimited scans",
@@ -150,15 +159,17 @@ const Plans = (props: Props) => {
   };
 
   const premium = {
-    title: "Premium Account",
+    title: "Premium",
     description: "The definitive plan. You're completely covered.",
     buttonText: "SUBSCRIBE",
     plan_type: "premium",
-    legend: "Limitless",
+    legend: "Best price",
     highlighted: true,
     priceAmount: "$45.00",
     features: [
-      "Unlimited dynamic QR codes",
+      "500 dynamic QR codes",
+      "$0.10 per aditional Dynamic QR",
+      "Unlimited pre-generated QRs",
       "Unlimited microsites (mobile-friendly landing pages)",
       "Unlimited static QR codes",
       "Unlimited scans",
@@ -168,7 +179,7 @@ const Plans = (props: Props) => {
     ],
   };
   const premiumAnnual = {
-    title: "Premium Account",
+    title: "Premium",
     description: "Receive a great discount and get completely covered.",
     buttonText: "SUBSCRIBE",
     plan_type: "premiumAnnual",
@@ -176,7 +187,9 @@ const Plans = (props: Props) => {
     highlighted: true,
     priceAmount: "$360.00",
     features: [
-      "Unlimited dynamic QR codes",
+      "500 dynamic QR codes",
+      "$0.10 per aditional Dynamic QR",
+      "Unlimited pre-generated QRs",
       "Unlimited microsites (mobile-friendly landing pages)",
       "Unlimited static QR codes",
       "Unlimited scans",
