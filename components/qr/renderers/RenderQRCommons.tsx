@@ -161,8 +161,8 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
           )}
           {data?.backgroundType === 'gradient' && (
             <RenderGradientSelector
-              colorLeft={data?.backgroundColor || DEFAULT_COLORS.p}
-              colorRight={data?.backgroundColorRight || DEFAULT_COLORS.s}
+              colorLeft={data?.backgroundColor || DEFAULT_COLORS.s}
+              colorRight={data?.backgroundColorRight || DEFAULT_COLORS.p}
               direction={data?.backgroundDirection}
               handleData={handleValue}/>
           )}
