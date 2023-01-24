@@ -1,5 +1,3 @@
-import { ReactNode } from "react";
-
 export type CornersAndDotsType = {
   topL: string;
   topR: string;
@@ -97,6 +95,7 @@ export type DataType = {
   mode?: string;
   prevNetworks?: string[];
   userId?: string;
+  claim?: string;
   id?: string;
   index?: number[];
   custom?: CustomType[];

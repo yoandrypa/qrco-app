@@ -1,24 +1,26 @@
 import {ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
 import Box from "@mui/material/Box";
 import Context from "../context/Context";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import Stepper from "@mui/material/Stepper";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
-import { useRouter } from "next/router";
 
 import { generateId, generateShortLink } from "../../utils";
 import { OptionsType, ProcessHanldlerType } from "./types/types";
 import { QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { getUuid } from "../../helpers/qr/helpers";
-import Notifications from "../notifications/Notifications";
-import ProcessHandler from "./renderers/ProcessHandler";
 import { getStep, saveOrUpdate, steps, StepsProps } from "./auxFunctions";
 import RenderNextButton from "./helperComponents/smallpieces/RenderNextButton";
 import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
-import RenderFloatingButtons from "./helperComponents/smallpieces/RenderFloatingButtons";
-import RenderPreview from "./renderers/RenderPreview";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Stepper from "@mui/material/Stepper";
+
+import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
+
+const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
+const Notifications = dynamic(() => import("../notifications/Notifications"));
+const ProcessHandler = dynamic(() => import("./renderers/ProcessHandler"));
+const RenderPreview = dynamic(() => import("./renderers/RenderPreview"));
 
 interface QrWizardProps {
   children: ReactNode;
@@ -28,8 +30,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   const [isError, setIsError] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [size, setSize] = useState<number>(0);
-  const [forceDownload, setForceDownload] = useState<{ item: HTMLElement } | undefined>(
-    undefined);
+  const [forceDownload, setForceDownload] = useState<{ item: HTMLElement } | undefined>(undefined);
   const [, setUnusedState] = useState();
 
   // @ts-ignore
@@ -130,9 +131,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
         <RenderBackButton
           loading={loading}
           step={currentStep}
-          isDynamic={data?.isDynamic || false}
           handleBack={handleBack}
-          mode={data?.mode}
           selected={selected}/>
         <Stepper activeStep={currentStep} sx={{ width: "100%", my: 0 }}>
           {steps.map((label: string) => <Step key={label}><StepLabel>{isWide ? label : ""}</StepLabel></Step>)}
@@ -162,13 +161,11 @@ const QrWizard = ({ children }: QrWizardProps) => {
         <RenderFloatingButtons
           loading={loading}
           step={currentStep}
-          isDynamic={data?.isDynamic || false}
           isLogged={isLogged}
           qrName={data?.qrName}
           isWrong={isWrong}
           handleBack={handleBack}
           handleNext={handleNext}
-          mode={data?.mode}
           size={size}
           selected={selected}/>
       )}

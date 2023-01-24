@@ -19,6 +19,7 @@ import RenderAddressData from './contents/RenderAddressData';
 import RenderContactForm from '../helperComponents/smallpieces/RenderContactForm';
 //@ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
+import RenderPhones from './contents/RenderPhones';
 
 interface FindMeDataProps {
   data: DataType;
@@ -40,16 +41,16 @@ export default function FindMeData({
   const [expander, setExpander] = useState<string | null>(null);
   const { currentAccount } = session;
   const isDynamic = useMemo(() => Boolean(data?.isDynamic), []) as boolean; // eslint-disable-line react-hooks/exhaustive-deps
-  
-  const renderSelectItem = (item: string, label: string, options: {value: string, label: string}[], whatSave?:'label'|'value' ) => {
+
+  const renderSelectItem = (item: string, label: string, options: { value: string, label: string }[], whatSave?: 'label' | 'value') => {
     let isError = false as boolean;
     // @ts-ignore
     const value = data?.[item] || ('' as string);
 
-    return (<RenderSelectField item={item} label={label} isError={isError} value={value} handleValues={handleValues} options={options} whatSave={whatSave} /> )
+    return (<RenderSelectField item={item} label={label} isError={isError} value={value} handleValues={handleValues} options={options} whatSave={whatSave} />)
   }
 
-  const checkData = () => { 
+  const checkData = () => {
     let band = false;
     if (!data?.firstName?.trim().length)
       band = true;
@@ -71,16 +72,17 @@ export default function FindMeData({
   return (
     <Common msg="Information to make easy to find you">
       <Topics message={'Presentation'} />
-      <Grid container spacing={1} sx={{mt:1}}>
+      <Grid container spacing={1} sx={{ mt: 1 }}>
         <RenderPresentation data={data} handleValues={handleValues} />
+        <RenderPhones data={data} handleValues={handleValues} message="Phones" />
       </Grid>
       <Topics message={'Address'} />
-      <Grid container spacing={1} sx={{mt:1}}>
+      <Grid container item spacing={1} sx={{mt:1}}>
         <RenderAddressData data={data} handleValues={handleValues} />
       </Grid>
-      <Grid container spacing={1}>
-        <Grid item xs={12} sx={{p:1}}>
-          <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
+      <Grid container spacing={1} >
+        <Grid item xs={12} sx={{ml:-1}}>
+          <Paper elevation={2} sx={{ p: 1, mt: 1}}>
             <Expander
               expand={expander}
               setExpand={setExpander}
@@ -89,7 +91,7 @@ export default function FindMeData({
             />
             {expander === 'other' && (
               <Grid container spacing={1}>
-                <Grid item xs={12} sx={{ mt:1 }}>
+                <Grid item xs={12} sx={{ mt: 1 }}>
                   <MultipleField
                     item={{ key: 'otherDetails', label: 'Detail', requireValue: true }}
                   />
@@ -98,7 +100,7 @@ export default function FindMeData({
             )}
           </Paper>
         </Grid>
-        <Grid item xs={12} sx={{p:1}}>
+        <Grid item xs={12} sx={{ml:-1}}>
           <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
             <Expander
               expand={expander}
@@ -117,7 +119,7 @@ export default function FindMeData({
             )}
           </Paper>
         </Grid>
-        <Grid item xs={12} sx={{p:1}}>
+        <Grid item xs={12} sx={{ml:-1}}>
           <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
             <Expander
               expand={expander}
@@ -128,29 +130,29 @@ export default function FindMeData({
             {expander === 'contactForm' && (
               <Grid container spacing={1}>
                 <Grid item xs={12} sx={{ mt: 1 }}>
-                <RenderContactForm
-                  // email={item.email}
-                  title={data.contactForm?.title||''}
-                  buttonText={data.contactForm?.buttonText||''}
-                  messagePlaceholder={data.contactForm?.message||''}
-                  handleChange={(type:string, index:number, value:string) => {
-                    const newData = {...data};
-                    if(!newData.contactForm)
-                      newData.contactForm = {type: 'contact', email: currentAccount.email, [type]: value};
-                    else
-                      newData.contactForm = { ...newData.contactForm, [type]:value }
-                    handlePayload(newData);
+                  <RenderContactForm
+                    setIsWrong={setIsWrong}
+                    email={data.contactForm?.email}
+                    title={data.contactForm?.title || ''}
+                    buttonText={data.contactForm?.buttonText || ''}
+                    messagePlaceholder={data.contactForm?.message || ''}
+                    handleChange={(type: string, index: number, value: string) => {
+                      const newData = { ...data };
+                      if (!newData.contactForm)
+                        newData.contactForm = { type: 'contact', email: data.contactForm?.email || currentAccount.email, [type]: value };
+                      else
+                        newData.contactForm = { ...newData.contactForm, [type]: value }
+                      handlePayload(newData);
                     }}
-                  index={0}
-                />
+                    index={0}
+                  />
                 </Grid>
               </Grid>
             )}
           </Paper>
         </Grid>
         {isDynamic && (
-          <Grid item xs={12} sx={{p:1}}>
-            <Divider sx={{ my: 1 }} />
+          <Grid item xs={12} sx={{ml:-1}}>
             <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
               <Expander
                 expand={expander}
@@ -162,7 +164,6 @@ export default function FindMeData({
                 <RenderSocials data={data} setData={handlePayload} />
               )}
             </Paper>
-            <Divider sx={{ my: 1 }} />
           </Grid>
         )}
       </Grid>

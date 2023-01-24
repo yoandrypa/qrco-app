@@ -8,6 +8,10 @@ const stripe = new Stripe(process.env.REACT_STRIPE_SECRET_KEY || 'sk_test_51Ksb3
   apiVersion: '2022-08-01',
 })
 
+type PriceLineItem = {
+  price: string,
+  quantity?: number
+}
 
 async function createCustomerInStripe(email: string): Promise<string | Error> {
   try {
@@ -24,10 +28,10 @@ async function createCustomerInStripe(email: string): Promise<string | Error> {
 }
 
 function getCurrentPrices() {
-  if (process.env.REACT_APP_MODE != 'PROD') {
+  if (process.env.REACT_NODE_ENV != 'production') {
     return PLAN_TEST_MODE_PRICES
   } else {
-    return PLAN_TEST_MODE_PRICES
+    return PLAN_LIVE_MODE_PRICES
   }
 }
 
@@ -59,18 +63,21 @@ async function createCheckoutSession(
       break;
   }
   try {
-    let lineItem = { price: price_id }
+    let lineItem: PriceLineItem = { price: price_id }
     // For metered billing, do not pass quantity
-    if ([pricesList.premium, pricesList.premiumAnnual].includes(price_id)) {
-      //@ts-ignore
-      lineItem = { ...pricePayload, quantity: 1 }
-    }
+    //Legacy Premium plans is flat priced
+    // if (![pricesList.premium, pricesList.premiumAnnual].includes(price_id)) {
+
+    //   lineItem = { ...lineItem, quantity: 1 }
+    // }
+
     const session = stripe.checkout.sessions.create({
       mode: 'subscription',
       customer: customer_id,
       line_items: [
         lineItem
       ],
+
       success_url: `https://${process.env.REACT_APP_SERVER_BASE_URL}/plans/account?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `https://${process.env.REACT_APP_SERVER_BASE_URL}/plans/`
     })

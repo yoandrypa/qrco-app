@@ -43,7 +43,7 @@ export default function LinkedLabelData({
   handleValues,
   setIsWrong
 }: LinkedLabelDataProps) {
-  const [expander, setExpander] = useState<string | null>(null);
+  const [expander, setExpander] = useState<boolean[]>([]);
   const [galleries, setGalleries] = useState<number>(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -84,10 +84,10 @@ export default function LinkedLabelData({
       tempo.fields?.push({ type: 'text', title: '', text: '' });
       return tempo;
     });
-    setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
+    setExpander([...expander, true]);
   };
 
-  const handleAddMediaField = (type:'media'|'gallery'|'video' = 'media') => {
+  const handleAddMediaField = (type: 'media' | 'gallery' | 'video' = 'media') => {
     setData((prev: DataType) => {
       const tempo = { ...prev };
       if (!tempo.fields) {
@@ -96,7 +96,7 @@ export default function LinkedLabelData({
       tempo.fields?.push({ type: type, files: [] });
       return tempo;
     });
-    setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
+    setExpander([...expander, true]);
   }
 
   const handleAddContactForm = () => {
@@ -108,7 +108,7 @@ export default function LinkedLabelData({
       tempo.fields?.push({ type: 'contact', title: '', message: '', buttonText: '', email: currentAccount.email });
       return tempo;
     });
-    setExpander(data.fields ? (data.fields.length - 1).toString() : '0');
+    setExpander([...expander, true]);
   }
 
   const renderItem = (item: string, label: string, required?: boolean, placeholder?: string) => {
@@ -141,7 +141,7 @@ export default function LinkedLabelData({
             <Grid container key={index}>
               <Grid item xs={12}>
                 <RenderTitleDesc
-                  sx={{ p:1, mt:0}}
+                  sx={{ p: 1, mt: 0 }}
                   title={item.title}
                   description={item.text}
                   header="*At least one field most be filled"
@@ -171,7 +171,8 @@ export default function LinkedLabelData({
       case 'contact':
         return (
           <RenderContactForm
-            // email={item.email}
+            email={item.email}
+            setIsWrong={setIsWrong}
             title={item.title}
             buttonText={item.buttonText}
             messagePlaceholder={item.message}
@@ -182,7 +183,7 @@ export default function LinkedLabelData({
       case 'media':
       case 'gallery':
       case 'video':
-        let accept:string[] = [];
+        let accept: string[] = [];
         if (item.type === 'media') {
           accept = [
             ...ALLOWED_FILE_EXTENSIONS['gallery'],
@@ -236,9 +237,9 @@ export default function LinkedLabelData({
     }
     setIsWrong(isWrong);
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(()=>{
+  useEffect(() => {
     handleAddMediaField('gallery');
-  },[])  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])  // eslint-disable-line react-hooks/exhaustive-deps
   return (
     // smart Label msg
     <Common msg="Smart Label">
@@ -255,6 +256,8 @@ export default function LinkedLabelData({
       <Grid container>
         <Grid item xs={12} md={6}>
           <RenderChipFields
+            label='Tags'
+            placeHolder='Add Tags'
             values={data.categories ? data.categories : []}
             handleValues={handleCategories}
           />
@@ -299,14 +302,14 @@ export default function LinkedLabelData({
               disabled={galleries >= MAX_NUM_GALLERIES}>
               Gallery
             </MenuItem>
-            <MenuItem
+            {/* <MenuItem
               onClick={() => {
                 handleAddMediaField('video');
                 handleCloseAddField();
               }}
               disabled={galleries >= MAX_NUM_GALLERIES}>
               Video
-            </MenuItem>
+            </MenuItem> */}
             <MenuItem
               onClick={() => {
                 handleAddContactForm();
@@ -323,12 +326,12 @@ export default function LinkedLabelData({
         fields={
           data.fields
             ? data.fields.map((field, index) => {
-                return {
-                  ...field,
-                  header: renderLabelTitle(field.type),
-                  component: renderFields(field, index)
-                };
-              })
+              return {
+                ...field,
+                header: renderLabelTitle(field.type),
+                component: renderFields(field, index)
+              };
+            })
             : []
         }
         setData={setData}

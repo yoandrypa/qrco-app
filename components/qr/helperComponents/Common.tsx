@@ -22,10 +22,11 @@ import {handleDesignerString} from "../../../helpers/qr/helpers";
 import {initialData} from "../../../helpers/qr/data";
 
 const Edit = dynamic(() => import("@mui/icons-material/Edit"));
-const Notifications = dynamic(() => import('../../notifications/Notifications'));
-const RenderPreviewDrawer = dynamic(() => import('./smallpieces/RenderPreviewDrawer'));
-const RenderPreviewButton = dynamic(() => import('./smallpieces/RenderPreviewButton'));
-const RenderSamplePreview = dynamic(() => import('./smallpieces/RenderSamplePreview'));
+const Notifications = dynamic(() => import("../../notifications/Notifications"));
+const RenderPreviewDrawer = dynamic(() => import("./smallpieces/RenderPreviewDrawer"));
+const RenderPreviewButton = dynamic(() => import("./smallpieces/RenderPreviewButton"));
+const RenderSamplePreview = dynamic(() => import("./smallpieces/RenderSamplePreview"));
+const RenderClaimingInfo = dynamic(() => import("./smallpieces/RenderClaimingInfo"));
 
 interface CommonProps {
   msg: string;
@@ -240,6 +241,11 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                     <Typography sx={{fontSize: 'small', fontWeight: 'lighter', color: theme => theme.palette.primary.light}}>
                       {`EDIT${isWideForPreview ? ' MODE' : ''}`}
                     </Typography>
+                  </Box>
+                )}
+                {data.claim !== undefined && (
+                  <Box sx={{position: 'absolute', textAlign: 'center', top: '7px', right: 0}}>
+                    <RenderClaimingInfo claim={data.claim} />
                   </Box>
                 )}
                 {tabSelected === 0 ? renderChildren() : (

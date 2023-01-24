@@ -18,6 +18,9 @@ export const PRIVATE_ROUTES = [
   "/auth_callback"
 ];
 
+export const DEFAULT_DYNAMIC_SELECTED = 'vcard+';
+export const DEFAULT_STATIC_SELECTED = 'vcard';
+
 export const PARAM_QR_TEXT = "qr_text" as string;
 
 export const NO_MICROSITE = ["facebook", "twitter", "whatsapp", "paylink", "fundme"];
