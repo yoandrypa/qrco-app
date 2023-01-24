@@ -296,11 +296,11 @@ export type DragField = {
   component?: any// ! react component
 };
 export type ProductField = {
-  title?:string;
-  description?:string;
+  titleAbout?:string;
+  descriptionAbout?:string;
   quantity?:number;
   picture?: File[];
-  sku:string;
+  sku?:string;
 }
 export type Sections = (TextField | MediaField | ContactField);
 
