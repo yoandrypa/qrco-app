@@ -12,10 +12,12 @@ interface RenderTextFieldsProps {
   multiline?: boolean;
   value: string;
   item?: string;
+  sx?: any;
 }
 
-const RenderTextFields = ({value, handleValues, placeholder, label, item, required, isError, multiline}: RenderTextFieldsProps) => (
+const RenderTextFields = ({value, handleValues, placeholder, label, item, required, isError, multiline, sx}: RenderTextFieldsProps) => (
   <TextField
+    sx={{...sx}}
     label={label}
     size="small"
     fullWidth
