@@ -7,8 +7,6 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import {styled} from "@mui/material/styles";
 
-import Link from "next/link";
-
 import {IS_DEV_ENV, MAIN_ORANGE} from "../qr/constants";
 import RenderPreview from "../qr/renderers/RenderPreview";
 import RenderDownloadPrint from "../qr/helperComponents/looseComps/RenderDownloadPrint";
@@ -92,12 +90,6 @@ export default function Claimer({code}: {code: string}) {
         <Paper elevation={2}>
           <RenderPreview override={lynk.current} width="100%" onlyPreview />
         </Paper>
-
-        <Box sx={{width: '100%', textAlign: 'center'}}>
-          <Link href={lynk.current} passHref>
-            <Typography sx={{color: theme => theme.palette.text.disabled}} variant="caption">{lynk.current}</Typography>
-          </Link>
-        </Box>
 
         <Box sx={{mt: '10px'}}>
           <Box sx={{display: 'flex', mt: '-5px', height: '85px'}}>
