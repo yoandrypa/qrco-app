@@ -1,16 +1,15 @@
+import { createTheme, StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
+
 import type { AppProps } from "next/app";
 import { useState } from "react";
-import { createTheme, StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
 import Head from "next/head";
 
+import AppContextProvider from "../components/context/AppContextProvider";
+import MainHandler from "../components/MainHandler";
+import { MAIN_CONFIG } from "../consts";
 import { themeConfig } from "../utils/theme";
 
-import AppContextProvider from "../components/context/AppContextProvider";
-import { MAIN_CONFIG } from "../consts";
-
 import "../styles/globals.css";
-
-import MainHandler from "../components/MainHandler";
 
 const MyApp = ({ Component, pageProps, router }: AppProps) => {
   const [mainConfig] = useState(MAIN_CONFIG);
