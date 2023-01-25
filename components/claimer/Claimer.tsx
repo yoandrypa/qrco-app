@@ -28,7 +28,7 @@ export default function Claimer({code}: {code: string}) {
   const [custom, setCustom] = useState<string>(code || '');
   const [open, setOpen] = useState<HTMLButtonElement | null>(null);
   const [available, setAvailable] = useState<boolean>(true);
-  const [checking, setChecking] = useState<boolean>(false);
+  const [checking, setChecking] = useState<boolean>(true);
 
   const lynk = useRef<string>(`${URL}${custom}`);
 
@@ -61,10 +61,8 @@ export default function Claimer({code}: {code: string}) {
   const isError = !custom.trim().length;
 
   useEffect(() => {
-    if (isError && checking) {
-      setChecking(false);
-    }
-    const checkData = setTimeout(async() => { //this implements a debounce for checking the availability
+    setChecking(true);
+    const checkData = setTimeout(async () => { //this implements a debounce for checking the availability
       if (!isError) {
         setChecking(true);
         const links = await findByAddress({address: {eq: custom}});
