@@ -1,6 +1,6 @@
+import {useContext, useEffect, useState} from "react";
 import QrTypeSelector from "../../components/qr/QrTypeSelector";
 import QrWizard from "../../components/qr/QrWizard";
-import { useContext, useEffect } from "react";
 import Context from "../../components/context/Context";
 import { useRouter } from "next/router";
 import { DEFAULT_DYNAMIC_SELECTED, QR_DESIGN_ROUTE } from "../../components/qr/constants";
@@ -9,7 +9,12 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { findByAddress } from "../../handlers/links";
 import { get } from "../../handlers/preGenerated";
 
+import dynamic from "next/dynamic";
+
+const Notifications = dynamic(() => import("../../components/notifications/Notifications"));
+
 export default function QrGen ({ address, preGenerated, claimable }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const [notClamable, setNotClamable] = useState<boolean>(false);
   // @ts-ignore
   const { selected, setSelected, options, clearData, userInfo, setData } = useContext(Context);
   const router = useRouter();
@@ -18,6 +23,9 @@ export default function QrGen ({ address, preGenerated, claimable }: InferGetSer
     if (address !== undefined) {
       setData((prev: DataType) => ({...prev, claim: address as string, claimable, preGenerated}));
     } else if (!selected) {
+      if (router.query.address !== undefined) {
+        setNotClamable(true);
+      }
       setSelected(DEFAULT_DYNAMIC_SELECTED);
     }
   }, [address]);  // eslint-disable-line react-hooks/exhaustive-deps
@@ -33,6 +41,13 @@ export default function QrGen ({ address, preGenerated, claimable }: InferGetSer
   return (
     <QrWizard>
       <QrTypeSelector/>
+      {notClamable && (
+        <Notifications
+          severity="warning" showProgress
+          message={`The code '${router.query.address}' is already taken.`}
+          onClose={() => setNotClamable(false)}
+        />
+      )}
     </QrWizard>
   );
 };

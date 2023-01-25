@@ -1,4 +1,4 @@
-import {ChangeEvent, KeyboardEvent, MouseEvent, useRef, useState} from "react";
+import React, {ChangeEvent, KeyboardEvent, MouseEvent, useEffect, useRef, useState} from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
@@ -7,12 +7,12 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import {styled} from "@mui/material/styles";
 
-import Link from "next/link";
-
 import {IS_DEV_ENV, MAIN_ORANGE} from "../qr/constants";
 import RenderPreview from "../qr/renderers/RenderPreview";
 import RenderDownloadPrint from "../qr/helperComponents/looseComps/RenderDownloadPrint";
 import {useRouter} from "next/router";
+import {findByAddress} from "../../handlers/links";
+import InputAdornment from "@mui/material/InputAdornment";
 
 const Typo = styled(Typography)(({bold}: {bold?: boolean}) => ({
   display: 'inline',
@@ -25,6 +25,8 @@ const URL = 'https://a-qr.link/';
 export default function Claimer({code}: {code: string}) {
   const [custom, setCustom] = useState<string>(code || '');
   const [open, setOpen] = useState<HTMLButtonElement | null>(null);
+  const [available, setAvailable] = useState<boolean>(true);
+  const [checking, setChecking] = useState<boolean>(true);
 
   const lynk = useRef<string>(`${URL}${custom}`);
 
@@ -56,6 +58,19 @@ export default function Claimer({code}: {code: string}) {
 
   const isError = !custom.trim().length;
 
+  useEffect(() => {
+    setChecking(true);
+    const checkData = setTimeout(async () => { //this implements a debounce for checking the availability
+      if (!isError) {
+        setChecking(true);
+        const links = await findByAddress({address: {eq: custom}});
+        setAvailable(links.length === 0);
+        setChecking(false);
+      }
+    }, 1000);
+    return () => clearTimeout(checkData);
+  }, [custom]);
+
   return (
     <Box sx={{
       position: "absolute",
@@ -69,7 +84,6 @@ export default function Claimer({code}: {code: string}) {
         width: {sm: '400px', xs: '100%'}
       }} elevation={3}>
         <Box sx={{mb: 2, width: '100%', textAlign: 'center'}}>
-          <Typo sx={{mr: '5px'}}>CLAIM YOUR REUSABLE</Typo>
           <Typo bold>QR</Typo>
           <Typo sx={{color: MAIN_ORANGE}} bold>Lynk</Typo>
         </Box>
@@ -78,14 +92,8 @@ export default function Claimer({code}: {code: string}) {
         </Paper>
 
         <Box sx={{mt: '10px'}}>
-          <Box sx={{width: '100%', textAlign: 'center'}}>
-            <Link href={lynk.current} passHref>
-              <Typography color="primary">{lynk.current}</Typography>
-            </Link>
-          </Box>
           <Box sx={{display: 'flex', mt: '-5px', height: '85px'}}>
             <TextField
-              placeholder="Claim your custom name"
               onKeyDown={(evt: KeyboardEvent<HTMLInputElement>) => !/^[a-zA-Z0-9_]+$/.test(evt.key) && evt.preventDefault()}
               label=""
               autoFocus
@@ -93,14 +101,21 @@ export default function Claimer({code}: {code: string}) {
               fullWidth
               margin="dense"
               value={custom}
-              error={isError}
-              helperText={isError ? 'Make sure you entered a code' : ''}
+              error={isError || !available}
+              helperText={isError ? 'Make sure you entered a code' : (available ? '' : 'The entered code is already taken')}
               sx={{'& fieldset': {borderRadius: '5px 0 0 5px'}}}
-              onChange={handleCustom} />
+              onChange={handleCustom}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start" sx={{mr: 0}}>
+                    <Typography sx={{mt: '2px'}}>{URL.slice(8)}</Typography>
+                  </InputAdornment>
+                )
+              }}/>
             <Button
               onClick={handleClaim}
               variant="outlined" sx={{height: '40px', mt: '8px', borderRadius: '0 5px 5px 0'}}
-              disabled={isError}>
+              disabled={isError || !available || checking}>
               <Typography sx={{mx: '5px'}}>{'Claim'}</Typography>
             </Button>
           </Box>
