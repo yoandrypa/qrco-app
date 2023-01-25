@@ -48,6 +48,14 @@ const QrTypeSelector = () => { // @ts-ignore
       originalData.claim = dataComp.claim;
     }
 
+    if (dataComp.claimable !== undefined) { // @ts-ignore
+      originalData.claimable = dataComp.claimable;
+    }
+
+    if (dataComp.preGenerated !== undefined) { // @ts-ignore
+      originalData.preGenerated = dataComp.preGenerated;
+    }
+
     if (!areEquals(dataComp, originalData) || !areEquals(options, compareWith)) {
       setDisplayConfirm(payload);
     } else {

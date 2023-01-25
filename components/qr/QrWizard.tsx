@@ -1,33 +1,27 @@
-import {
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Context from "../context/Context";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import Stepper from "@mui/material/Stepper";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { useRouter } from "next/router";
+import dynamic from "next/dynamic";
 
 import { generateId, generateShortLink } from "../../utils";
 import { OptionsType, ProcessHanldlerType } from "./types/types";
 import { QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { getUuid } from "../../helpers/qr/helpers";
-import Notifications from "../notifications/Notifications";
-import ProcessHandler from "./renderers/ProcessHandler";
+
 import { getStep, saveOrUpdate, steps, StepsProps } from "./auxFunctions";
 import RenderNextButton from "./helperComponents/smallpieces/RenderNextButton";
 import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
-import RenderFloatingButtons
-  from "./helperComponents/smallpieces/RenderFloatingButtons";
-import RenderPreview from "./renderers/RenderPreview";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Stepper from "@mui/material/Stepper";
+
+const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
+const RenderPreview = dynamic(() => import("./renderers/RenderPreview"));
+const Notifications = dynamic(() => import("../notifications/Notifications"));
+const ProcessHandler = dynamic(() => import( "./renderers/ProcessHandler"));
 
 interface QrWizardProps {
   children: ReactNode;
@@ -63,7 +57,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
     setOptions,
     setLoading,
     setRedirecting,
-    clearData,
+    clearData
   }: StepsProps = useContext(Context);
 
   const router = useRouter();
@@ -189,9 +183,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
         <RenderBackButton
           loading={loading}
           step={currentStep}
-          isDynamic={data?.isDynamic || false}
           handleBack={handleBack}
-          mode={data?.mode}
           selected={selected}/>
         <Stepper activeStep={currentStep} sx={{ width: "100%", my: 0 }}>
           {steps.map((label: string) => <Step key={label}>
@@ -211,31 +203,26 @@ const QrWizard = ({ children }: QrWizardProps) => {
       <Box sx={{ minHeight: "calc(100vh - 205}px)" }}>
         {children}
       </Box>
-      {dataInfo.current.length ? <ProcessHandler process={dataInfo.current}
-                                                 handleCommand={
-                                                   (isError?: boolean) => {
-                                                     dataInfo.current = [];
-                                                     if (!isError) { // @ts-ignore
-                                                       setForceDownload({
-                                                         item: document.getElementById(
-                                                           "qrCodeReferenceId"),
-                                                       });
-                                                     } else {
-                                                       forceUpdate();
-                                                     }
-                                                   }
-                                                 }/> : null}
+      {dataInfo.current.length ? <ProcessHandler
+        process={dataInfo.current}
+        handleCommand={(isError?: boolean) => {
+          dataInfo.current = [];
+          if (!isError) { // @ts-ignore
+            setForceDownload({item: document.getElementById("qrCodeReferenceId")});
+          } else {
+            forceUpdate();
+          }
+        }
+      }/> : null}
       {!loading && !visible && (
         <RenderFloatingButtons
           loading={loading}
           step={currentStep}
-          isDynamic={data?.isDynamic || false}
           isLogged={isLogged}
           qrName={data?.qrName}
           isWrong={isWrong}
           handleBack={handleBack}
           handleNext={handleNext}
-          mode={data?.mode}
           size={size}
           selected={selected}/>
       )}
@@ -254,8 +241,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           }}/>
       )}
       {isError &&
-        <Notifications autoHideDuration={3500} message="Error accessing data!"
-                       onClose={() => setIsError(false)} showProgress/>}
+        <Notifications autoHideDuration={3500} message="Error accessing data!" onClose={() => setIsError(false)} showProgress/>}
     </>
   );
 };
