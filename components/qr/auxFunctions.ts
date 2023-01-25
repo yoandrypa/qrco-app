@@ -178,7 +178,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   const dataLength = updatingHandler !== undefined && dataInfo !== undefined && dataInfo > 0;
 
-  if (updatingHandler && ["pdf", "audio", "gallery", "video"].includes(selected)) { //Process assets before saving de QR Data
+  if (updatingHandler && ["pdf", "audio", "gallery", "video", "inventory"].includes(selected)) { //Process assets before saving de QR Data
     updatingHandler("Uploading assets");
     try { // @ts-ignore
       data.files = await StorageHandler.upload(data.files, `${userInfo.cognito_user_id}/${selected}s`);
