@@ -28,6 +28,22 @@ const RenderNewQrButton = dynamic(() => import("../renderers/RenderNewQrButton")
 
 const dateHandler = (date: string): string => `${date.startsWith('Yesterday') || date.startsWith('Today') ? ':' : ' at:'} ${date}`;
 
+const renderStaticDynamic = (is: boolean, avoidIcon?: boolean) => (
+  <Typography variant="caption" style={{ color: "gray" }}>
+    {!avoidIcon ? (is ? <SyncIcon fontSize="inherit" sx={{mr: '5px'}} /> : <SyncDisabledIcon fontSize="inherit" sx={{mr: '5px'}} />) : null}
+    {is ? "Dynamic" : "Static"}
+  </Typography>
+);
+
+const renderQr = (qr: any) => {
+  const options = { ...qr.qrOptionsId };
+  if (!options.image?.trim().length) {
+    options.image = null;
+  }
+  options.data = !qr.isDynamic ? handleDesignerString(qr.qrType, qr) : qr.qrOptionsId.data;
+  return <RenderPreview qrDesign={options} qr={qr} onlyPreview/>;
+};
+
 export default function QrList({ title }: any) {
   const [waiting, setWaiting] = useState<boolean>(true);
   const [confirm, setConfirm] = useState<{createdAt: number; userId: string;} | null>(null);
@@ -36,13 +52,6 @@ export default function QrList({ title }: any) {
   const router = useRouter();
 
   const isWide = useMediaQuery("(min-width:665px)", { noSsr: true });
-
-  const renderStaticDynamic = (is: boolean, avoidIcon?: boolean) => (
-    <Typography variant="caption" style={{ color: "gray" }}>
-      {!avoidIcon ? (is ? <SyncIcon fontSize="inherit" sx={{mr: '5px'}} /> : <SyncDisabledIcon fontSize="inherit" sx={{mr: '5px'}} />) : null}
-      {is ? "Dynamic" : "Static"}
-    </Typography>
-  );
 
   const loadItems = useCallback(() => {
     if (userInfo) {
@@ -56,14 +65,6 @@ export default function QrList({ title }: any) {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const renderQr = (qr: any) => {
-    const options = { ...qr.qrOptionsId };
-    if (!options.image?.trim().length) {
-      options.image = null;
-    }
-    options.data = !qr.isDynamic ? handleDesignerString(qr.qrType, qr) : qr.qrOptionsId.data;
-    return <RenderPreview qrDesign={options} qr={qr} onlyPreview/>;
-  };
 
   const handleEdit = useCallback((qr: QrDataType) => {
     setLoading(true);
