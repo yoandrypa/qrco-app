@@ -1,17 +1,8 @@
 import {GetServerSideProps, InferGetServerSidePropsType} from "next";
 
-import {useRouter} from "next/router";
-
-import Claimer from "../components/claimer/Claimer";
-import {IS_DEV_ENV} from "../components/qr/constants";
+import Claimer from "../../components/claimer/Claimer";
 
 const ClaimEntry = ({code}: InferGetServerSidePropsType<typeof  getServerSideProps>) => {
-  const router = useRouter();
-
-  if (!IS_DEV_ENV) {
-    router.push('/', '/');
-  }
-
   if (code === 'error') {
     return (
       <>
@@ -19,9 +10,7 @@ const ClaimEntry = ({code}: InferGetServerSidePropsType<typeof  getServerSidePro
       </>
     )
   }
-  return (
-    <Claimer code={code} />
-  );
+  return <Claimer code={code} />;
 };
 
 export default ClaimEntry;

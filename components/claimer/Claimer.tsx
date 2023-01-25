@@ -9,9 +9,10 @@ import {styled} from "@mui/material/styles";
 
 import Link from "next/link";
 
-import {MAIN_ORANGE} from "../qr/constants";
+import {IS_DEV_ENV, MAIN_ORANGE} from "../qr/constants";
 import RenderPreview from "../qr/renderers/RenderPreview";
 import RenderDownloadPrint from "../qr/helperComponents/looseComps/RenderDownloadPrint";
+import {useRouter} from "next/router";
 
 const Typo = styled(Typography)(({bold}: {bold?: boolean}) => ({
   display: 'inline',
@@ -26,6 +27,12 @@ export default function Claimer({code}: {code: string}) {
   const [open, setOpen] = useState<HTMLButtonElement | null>(null);
 
   const lynk = useRef<string>(`${URL}${custom}`);
+
+  const router = useRouter();
+
+  if (!IS_DEV_ENV) {
+    router.push('/', '/');
+  }
 
   const handleCustom = (event: ChangeEvent<HTMLInputElement>) => {
     const {value}: {value: string} = event.target;
@@ -47,6 +54,8 @@ export default function Claimer({code}: {code: string}) {
     );
   }
 
+  const isError = !custom.trim().length;
+
   return (
     <Box sx={{
       position: "absolute",
@@ -60,7 +69,7 @@ export default function Claimer({code}: {code: string}) {
         width: {sm: '400px', xs: '100%'}
       }} elevation={3}>
         <Box sx={{mb: 2, width: '100%', textAlign: 'center'}}>
-          <Typo sx={{mr: '5px'}}>CLAIM YOUR FREE/REUSABLE</Typo>
+          <Typo sx={{mr: '5px'}}>CLAIM YOUR REUSABLE</Typo>
           <Typo bold>QR</Typo>
           <Typo sx={{color: MAIN_ORANGE}} bold>Lynk</Typo>
         </Box>
@@ -69,23 +78,29 @@ export default function Claimer({code}: {code: string}) {
         </Paper>
 
         <Box sx={{mt: '10px'}}>
-          <Link href={lynk.current} passHref>{lynk.current}</Link>
-          <Box sx={{display: 'flex', mt: '-5px'}}>
+          <Box sx={{width: '100%', textAlign: 'center'}}>
+            <Link href={lynk.current} passHref>
+              <Typography color="primary">{lynk.current}</Typography>
+            </Link>
+          </Box>
+          <Box sx={{display: 'flex', mt: '-5px', height: '85px'}}>
             <TextField
               placeholder="Claim your custom name"
-              onKeyDown={(evt: KeyboardEvent<HTMLInputElement>) => !/^[a-zA-Z0-9 ]+$/.test(evt.key) && evt.preventDefault()}
+              onKeyDown={(evt: KeyboardEvent<HTMLInputElement>) => !/^[a-zA-Z0-9_]+$/.test(evt.key) && evt.preventDefault()}
               label=""
               autoFocus
               size="small"
               fullWidth
               margin="dense"
               value={custom}
+              error={isError}
+              helperText={isError ? 'Make sure you entered a code' : ''}
               sx={{'& fieldset': {borderRadius: '5px 0 0 5px'}}}
               onChange={handleCustom} />
             <Button
               onClick={handleClaim}
               variant="outlined" sx={{height: '40px', mt: '8px', borderRadius: '0 5px 5px 0'}}
-              disabled={!custom.trim().length}>
+              disabled={isError}>
               <Typography sx={{mx: '5px'}}>{'Claim'}</Typography>
             </Button>
           </Box>
