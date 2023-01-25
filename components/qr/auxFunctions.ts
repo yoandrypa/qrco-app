@@ -305,7 +305,9 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       qrData.shortLinkId = { userId: userInfo.cognito_user_id, createdAt: Date.now() };
       shortLink = {
         target: generateShortLink(`qr/${qrId}`),
-        address: options.shortCode || await generateId(), // @ts-ignore
+        address: data.address || options.shortCode || await generateId(), // @ts-ignore
+        claimable: data.claimable, // @ts-ignore
+        preGenerated: data.preGenerated, // @ts-ignore
         ...qrData.shortLinkId
       };
 

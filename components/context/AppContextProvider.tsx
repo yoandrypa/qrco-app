@@ -54,7 +54,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     setSelected(data?.isDynamic ? DEFAULT_DYNAMIC_SELECTED : DEFAULT_STATIC_SELECTED);
   }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const clearData = useCallback((keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean, claim?: string) => {
+  const clearData = useCallback((keepType?: boolean, doNot?: boolean, takeAwaySelection?: boolean, claim?: string, claimable?: boolean, preGenerated?: boolean) => {
     if (!keepType || doNot || takeAwaySelection) {
       resetSelected();
     }
@@ -73,17 +73,25 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       newData = {};
     }
 
-    if (claim) {
+    if (claim !== undefined) {
       newData.claim = claim;
     }
 
+    if (claimable !== undefined) {
+      newData.claimable = claimable;
+    }
+
+    if (preGenerated !== undefined) {
+      newData.preGenerated = preGenerated;
+    }
+
     setData(newData);
-  }, [data?.isDynamic, data?.mode, data?.claim]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data?.isDynamic, data?.mode, data?.claim, data?.claimable, data.preGenerated]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (doneInitialRender.current && options.mode === undefined) {
       if (!forbidClear.current) {
-        clearData(true, false,  false, data.claim);
+        clearData(true, false,  false, data.claim, data.claimable, data.preGenerated);
       } else {
         forbidClear.current = false;
       }

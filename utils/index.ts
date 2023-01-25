@@ -9,16 +9,16 @@ import { EMAIL, PHONE, ZIP } from "../components/qr/constants";
 
 export const generateShortLink = (id: string | undefined, customDomain?: string | null): string => {
   const protocol =
-    process.env.REACT_APP_CUSTOM_DOMAIN_USE_HTTPS === "true" || customDomain ? "https://" : "http://";
+    process.env.REACT_APP_CUSTOM_DOMAIN_USE_HTTPS === "true" || customDomain ? "https://" : "";
   const domain = process.env.REACT_APP_SERVER_BASE_URL;
   return `${protocol}${customDomain || domain}/${id}`;
 };
 
 // @ts-ignore
-export const generateId = async (domainId: {userId: string, createdAt: number} | null = "") => {
+export const generateId = async (domainId: {userId: string, createdAt: number} | null = "", codeLenght: number = process.env.REACT_APP_LINK_LENGTH) => {
   try {
     const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
-      parseInt(`${process.env.REACT_APP_LINK_LENGTH}`));
+      parseInt(`${codeLenght}`));
 
     const address = nanoid();
     const link = await LinkHandler.findByAddress({

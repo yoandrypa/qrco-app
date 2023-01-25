@@ -5,12 +5,14 @@ import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
 import Box from "@mui/material/Box";
 import DoneIcon from "@mui/icons-material/Done";
-
-import QrGenerator from "../QrGenerator";
-import {BackgroundType, CornersAndDotsType, FramesType, OptionsType} from "../types/types";
+import PrintIcon from "@mui/icons-material/Print";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import CircularProgress from "@mui/material/CircularProgress";
 import DownloadIcon from "@mui/icons-material/Download";
 import Button from "@mui/material/Button";
+
+import QrGenerator from "../QrGenerator";
+import {BackgroundType, CornersAndDotsType, FramesType, OptionsType} from "../types/types";
 import PDFGenDlg from "../helperComponents/PDFGenDlg";
 import RenderDownload from "../helperComponents/RenderDownload";
 import {
@@ -21,8 +23,6 @@ import {
   handleInitialData
 } from "../../../helpers/qr/helpers";
 import {initialBackground} from "../../../helpers/qr/data";
-import PrintIcon from "@mui/icons-material/Print";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
 // noinspection JSDeprecatedSymbols
 const QRRender = ({qrData, width, alt}: {qrData: string; width: number | string; alt: string;}) =>

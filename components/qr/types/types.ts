@@ -98,6 +98,8 @@ export type DataType = {
   claim?: string;
   id?: string;
   index?: number[];
+  claimable?: boolean;
+  preGenerated?: boolean;
   custom?: CustomType[];
   qrName?: string;
   number?: string;
