@@ -6,10 +6,11 @@ interface TopicProps {
   notBold?: boolean;
   top?: string;
   secMessage?: string;
+  sx?:object;
 }
 
-const Topics = ({message, notBold, top, secMessage}: TopicProps) => (
-  <Box sx={{ display: 'flex', mt: top || 0, mb: '3px' }}>
+const Topics = ({message, notBold, top, secMessage, sx}: TopicProps) => (
+  <Box sx={{ display: 'flex', mt: top || 0, mb: '3px' , ...sx}}>
     <Typography sx={{fontWeight: !notBold ? 'bold' : 'normal'}}>
       {message}
     </Typography>

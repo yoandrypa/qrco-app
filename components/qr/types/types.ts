@@ -98,6 +98,8 @@ export type DataType = {
   claim?: string;
   id?: string;
   index?: number[];
+  claimable?: boolean;
+  preGenerated?: boolean;
   custom?: CustomType[];
   qrName?: string;
   number?: string;
@@ -226,6 +228,7 @@ export type DataType = {
   description?: string;
   categories?: string[];
   contactForm?:ContactField;
+  product?:ProductField;
 
 };
 export type validTypes = 'text' | 'email' | 'phone' | 'web' | 'number' | 'date' | 'fax' | 'url' | 'string';
@@ -293,7 +296,13 @@ export type DragField = {
   header?: string;
   component?: any// ! react component
 };
-
+export type ProductField = {
+  titleAbout?:string;
+  descriptionAbout?:string;
+  quantity?:number;
+  picture?: File[];
+  sku?:string;
+}
 export type Sections = (TextField | MediaField | ContactField);
 
 export type DragFields = Sections[];

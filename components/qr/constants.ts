@@ -26,7 +26,7 @@ export const PARAM_QR_TEXT = "qr_text" as string;
 export const NO_MICROSITE = ["facebook", "twitter", "whatsapp", "paylink", "fundme"];
 export const ONLY_QR = ["fundme", "paylink"];
 
-export const PROFILE_IMAGE = ['vcard+', 'link', 'business', 'social', 'donations', 'petId', 'linkedLabel', 'custom', 'findMe'];
+export const PROFILE_IMAGE = ['vcard+', 'link', 'business', 'social', 'donation', 'petId', 'linkedLabel', 'custom', 'findMe'];
 
 export const EMAIL = new RegExp("^\\w+(\\.\\w+)*(\\+\\w+(\\.\\w+)*)?@\\w+(\\.\\w+)+$", "i");
 export const PHONE = new RegExp("^(\\+\\d{1,3}\\s?)?((\\(\\d{1,3}\\))|\\d{1,3})(\\s|\\-)?(\\d+((\\s|\\-)\\d+)*)$");
@@ -69,6 +69,8 @@ export const DAYS = {
 } as object;
 
 export const FRAMES_LENGTH = 10 as number;
+
+export const MAIN_ORANGE = '#fc4c02';
 
 export const DEFAULT_COLORS = { p: '#0f4d8c', s: '#99c4f0' } as ColorTypes;
 
