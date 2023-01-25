@@ -52,7 +52,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
             props: {
               address: query.address,
               preGenerated: true,
-              claimable: true
+              claimable: false
             }
           };
         } else {
@@ -60,7 +60,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
             props: {
               address: query.address,
               preGenerated: false,
-              claimable: true
+              claimable: false
             }
           };
         }
@@ -69,7 +69,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
           props: {
             address: query.address,
             preGenerated: false,
-            claimable: true
+            claimable: false
           }
         };
       }
@@ -78,8 +78,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
       return {
         props: {
           address: query.address,
-          preGenerated: false,
-          claimable: true
+          preGenerated: link[0].preGenerated,
+          claimable: false
         }
       };
     }
