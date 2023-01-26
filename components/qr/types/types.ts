@@ -96,6 +96,7 @@ export type DataType = {
   prevNetworks?: string[];
   userId?: string;
   claim?: string;
+  shortDateFormat?: boolean;
   id?: string;
   index?: number[];
   claimable?: boolean;

@@ -152,7 +152,7 @@ export default function LinkedLabelData({
                         typeof payload !== 'string'
                           ? payload.target.value
                           : payload;
-                      const itemParsed = item === 'title' ? 'title' : 'text';
+                      const itemParsed = item === 'titleAbout' ? 'title' : 'text';
                       if (value.length) {
                         handleChangeText(itemParsed, index, value);
                       } else {

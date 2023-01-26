@@ -20,7 +20,7 @@ import {handleDesignerString, handleInitialData, qrNameDisplayer} from "../../he
 import {list, pauseQRLink, remove} from "../../handlers/qrs";
 import RenderQrListOptions from "./helperComponents/smallpieces/RenderQrListOptions";
 import dynamic from "next/dynamic";
-import {QR_CONTENT_ROUTE} from "./constants";
+import {QR_CONTENT_ROUTE, QR_DESIGN_ROUTE} from "./constants";
 import pluralize from "pluralize";
 
 const RenderConfirmDlg = dynamic(() => import("../renderers/RenderConfirmDlg"));
@@ -65,11 +65,11 @@ export default function QrList({ title }: any) {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-
   const handleEdit = useCallback((qr: QrDataType) => {
     setLoading(true);
     setOptions({...qr.qrOptionsId, ...qr, mode: "edit"});
-    router.push(QR_CONTENT_ROUTE, undefined, {shallow: true}).then(() => setLoading(false));
+    router.push(qr.isDynamic ? QR_CONTENT_ROUTE : QR_DESIGN_ROUTE, undefined, {shallow: true})
+      .then(() => setLoading(false));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handlePauseQrLink = useCallback((shortLinkId: LinkType) => {
@@ -107,6 +107,8 @@ export default function QrList({ title }: any) {
             if (qr.qrOptionsId?.background?.file === "") {
               qr.qrOptionsId.background.file = null;
             }
+
+            console.log(qr)
             return (
               <Paper sx={{width: "100%", overflow: "hidden", '&:hover': {boxShadow: '0 0 3px 2px #849abb'}}} elevation={3} key={qr.createdAt}>
                 <Stack spacing={2} direction="row" justifyContent="space-between" sx={{minHeight: '85px'}}>
