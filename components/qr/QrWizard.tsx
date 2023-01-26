@@ -184,6 +184,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           loading={loading}
           step={currentStep}
           handleBack={handleBack}
+          editingStatic={!data.isDynamic && options.mode === 'edit'}
           selected={selected}/>
         <Stepper activeStep={currentStep} sx={{ width: "100%", my: 0 }}>
           {steps.map((label: string) => <Step key={label}>
@@ -221,6 +222,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           isLogged={isLogged}
           qrName={data?.qrName}
           isWrong={isWrong}
+          editingStatic={!data.isDynamic && options.mode === 'edit'}
           handleBack={handleBack}
           handleNext={handleNext}
           size={size}

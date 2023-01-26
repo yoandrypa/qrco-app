@@ -54,7 +54,11 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
       if (!newData.custom) { newData.custom = []; } // @ts-ignore
       const component = item || emptyValue;
       newData.custom.push({component});
-      setExpander([...expander, component]);
+      setExpander((prev: string[]) => {
+        const newExpander = [...prev];
+        newExpander.push(component);
+        return newExpander;
+      });
       if (openEmpty) { handleCloseDlg(); }
       return newData;
     });
@@ -160,7 +164,7 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
                             {expanded !== undefined && (<>
                               {component === components[0].type && <RenderAddressData data={data} handleValues={handleValues}/>}
                               {component === components[1].type && <RenderCompanyData data={data} handleValues={handleValues}/>}
-                              {component === components[2].type && <RenderDateSelector data={data} setData={setData} label="Date"/>}
+                              {component === components[2].type && <RenderDateSelector data={data} handleValues={handleValues} label="Date"/>}
                               {component === components[3].type && <RenderEmailWeb data={data} handleValues={handleValues}/>}
                               {component === components[4].type && <RenderEasiness data={data} setData={setData}/>}
                               {component === components[5].type && <RenderLinks data={data} setData={setData}/>}
