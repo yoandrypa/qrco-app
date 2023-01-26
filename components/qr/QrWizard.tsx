@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 
 import { generateId, generateShortLink } from "../../utils";
-import { OptionsType, ProcessHanldlerType } from "./types/types";
+import {DataType, OptionsType, ProcessHanldlerType} from "./types/types";
 import { QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { getUuid } from "../../helpers/qr/helpers";
 
@@ -31,8 +31,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   const [isError, setIsError] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [size, setSize] = useState<number>(0);
-  const [forceDownload, setForceDownload] = useState<{ item: HTMLElement } | undefined>(
-    undefined);
+  const [forceDownload, setForceDownload] = useState<{ item: HTMLElement } | undefined>(undefined);
   const [, setUnusedState] = useState();
 
   // @ts-ignore
@@ -46,6 +45,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   const {
     selected,
     data,
+    setData,
     userInfo,
     options,
     frame,
@@ -92,39 +92,27 @@ const QrWizard = ({ children }: QrWizardProps) => {
         then(() => setLoading(false));
     }
   };
+
+  const handleSuccess = () => {
+    if (data.claim !== undefined) {
+      setData((prev: DataType) => {
+        delete prev.claim;
+        return data;
+      });
+    }
+  }
+
   const handleNext = async () => {
     setLoading(true);
     if ([QR_TYPE_ROUTE, "/"].includes(router.pathname)) {
       if (data.isDynamic && !isLogged) {
-        let query = { selected };
-        if (data.address) {
-          // @ts-ignore
-          query = {...query, address: data.address, claimable: data.claimable, preGenerated: data.preGenerated,
-          };
-        }
-        router.push({
-          pathname: QR_CONTENT_ROUTE,
-          query,
-        }).then(() => setLoading(false));
+        router.push({ pathname: QR_CONTENT_ROUTE, query: {selected}}).then(() => setLoading(false));
       } else {
-        let query = {};
-        if (data.claim) {
-          query = {
-            address: data.claim,
-            claimable: data.claimable,
-            preGenerated: data.preGenerated,
-          };
-        }
-        router.push({
-          pathname: QR_CONTENT_ROUTE,
-          query,
-        }, undefined, { shallow: true }).
-          then(() => setLoading(false));
+        router.push(QR_CONTENT_ROUTE, undefined, {shallow: true}).then(() => setLoading(false));
       }
     } else if (router.pathname === QR_DESIGN_ROUTE && isLogged) {
-      await saveOrUpdate(data, userInfo, options, frame, background,
-        cornersData, dotsData, selected, setLoading, setIsError,
-        undefined, router, lastStep, dataInfo.current.length, updatingHandler);
+      await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setIsError,
+        handleSuccess, router, lastStep, dataInfo.current.length, updatingHandler);
     } else if (router.pathname === QR_DESIGN_ROUTE && !isLogged) {
       lastStep(false);
     } else {
@@ -158,10 +146,9 @@ const QrWizard = ({ children }: QrWizardProps) => {
           ...prev,
           id,
           shortCode,
-          claimable: router.query?.claimable || false,
-          preGenerated: router.query?.preGenerated || false,
-          data: generateShortLink(shortCode,
-            process.env.REACT_APP_SHORT_URL_DOMAIN),
+          claimable: data?.claimable || false,
+          preGenerated: data?.preGenerated || false,
+          data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN)
         }));
       };
       genShortLinkAndId();
