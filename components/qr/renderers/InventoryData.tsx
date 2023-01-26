@@ -1,20 +1,9 @@
-import { useMemo, useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import Grid from '@mui/material/Grid';
-import Divider from '@mui/material/Divider';
-import Paper from '@mui/material/Paper';
-
 import Common from '../helperComponents/Common';
-
-import RenderSocials from './contents/RenderSocials';
-import Expander from './helpers/Expander';
 import { DataType } from '../types/types';
 import Topics from './helpers/Topics';
-import socialsAreValid from './validator';
 import MultipleField from '../helperComponents/MultipleField';
-import RenderSelectField from './helpers/RenderSelectField';
-import RenderPresentation from './contents/RenderPresentation';
-import RenderAddressData from './contents/RenderAddressData';
-import RenderContactForm from '../helperComponents/smallpieces/RenderContactForm';
 //@ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import RenderProduct from './contents/RenderProduct';
@@ -36,18 +25,7 @@ export default function InventoryData({
   handleValues,
   setIsWrong
 }: InventoryDataProps) {
-  // const [expander, setExpander] = useState<string | null>(null);
-  // const { currentAccount } = session;
-  // const isDynamic = useMemo(() => Boolean(data?.isDynamic), []) as boolean; // eslint-disable-line react-hooks/exhaustive-deps
-  
-  // const renderSelectItem = (item: string, label: string, options: {value: string, label: string}[], whatSave?:'label'|'value' ) => {
-  //   let isError = false as boolean;
-  //   // @ts-ignore
-  //   const value = data?.[item] || ('' as string);
-
-  //   return (<RenderSelectField item={item} label={label} isError={isError} value={value} handleValues={handleValues} options={options} whatSave={whatSave} /> )
-  // }
-
+  const dataRef = useRef<DataType>(data);
   const checkData = () => { 
     let band = false;
     if (!data?.firstName?.trim().length)
@@ -57,6 +35,7 @@ export default function InventoryData({
   };
   useEffect(() => {
     let errors = false;
+    dataRef.current = {...data, ...dataRef.current};
     // if (checkData()) {
     //   errors = true;
     // } else if (isDynamic) {
@@ -69,8 +48,7 @@ export default function InventoryData({
     <Common msg="Inventory tracking information">
       <Topics message={'Product Details'} />
       <Grid container spacing={1} sx={{mt:1}}>
-        <RenderProduct data={data} handleValues={handlePayload} />
-        {/* <RenderPresentation data={data} handleValues={handleValues} /> */}
+        <RenderProduct dataRef={dataRef} handleValues={handlePayload} />
       </Grid>
       <Topics message={'Location'} />
       <Grid container spacing={1} sx={{mt:1}}>
