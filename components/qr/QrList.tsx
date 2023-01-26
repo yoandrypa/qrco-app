@@ -108,7 +108,6 @@ export default function QrList({ title }: any) {
               qr.qrOptionsId.background.file = null;
             }
 
-            console.log(qr)
             return (
               <Paper sx={{width: "100%", overflow: "hidden", '&:hover': {boxShadow: '0 0 3px 2px #849abb'}}} elevation={3} key={qr.createdAt}>
                 <Stack spacing={2} direction="row" justifyContent="space-between" sx={{minHeight: '85px'}}>

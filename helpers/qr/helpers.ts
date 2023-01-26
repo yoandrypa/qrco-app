@@ -351,20 +351,20 @@ const clearItem = (item: string): string => {
 export const cleanSelectionForMicrositeURL = (item: string, isDynamic: boolean, forSrc?: boolean): string => {
   if (item === 'web') { return 'https://a-qr.link/zDexu6'; }
 
-  if (!forSrc) {
-    switch (item) {
-      case 'business' : { return 'https://a-qr.link/uLDANI'; }
-      case 'vcard+' : { return 'https://a-qr.link/OPLGC3'; }
-      case'social' : { return 'https://a-qr.link/nIF867'; }
-      case 'link' : { return 'https://a-qr.link/DOBwac'; }
-      case 'coupon' : { return 'https://a-qr.link/jaJws0'; }
-      case 'donation' : { return 'https://a-qr.link/KiajsU'; }
-      case 'pdf' : { return 'https://a-qr.link/5iuiJf'; }
-      case 'audio' : { return 'https://a-qr.link/ao4ZUe'; }
-      case 'gallery' : { return 'https://a-qr.link/DyhL4H'; }
-      case 'video' : { return 'https://a-qr.link/AD3yLH'; }
-    }
-  }
+  // if (!forSrc) {
+  //   switch (item) {
+  //     case 'business' : { return 'https://a-qr.link/uLDANI'; }
+  //     case 'vcard+' : { return 'https://a-qr.link/OPLGC3'; }
+  //     case 'social' : { return 'https://a-qr.link/nIF867'; }
+  //     case 'link' : { return 'https://a-qr.link/DOBwac'; }
+  //     case 'coupon' : { return 'https://a-qr.link/jaJws0'; }
+  //     case 'donation' : { return 'https://a-qr.link/KiajsU'; }
+  //     case 'pdf' : { return 'https://a-qr.link/5iuiJf'; }
+  //     case 'audio' : { return 'https://a-qr.link/ao4ZUe'; }
+  //     case 'gallery' : { return 'https://a-qr.link/DyhL4H'; }
+  //     case 'video' : { return 'https://a-qr.link/AD3yLH'; }
+  //   }
+  // }
 
   if (isDynamic) {
     return `${process.env.REACT_MICROSITES_ROUTE}/sample/${clearItem(item)}`;

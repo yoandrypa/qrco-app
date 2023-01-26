@@ -22,9 +22,9 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
   'primary', 'secondary', 'backgndImg', 'foregndImg', 'foregndImgType', 'globalFont', 'buttonsFont', 'titlesFont',
   'messagesFont', 'titlesFontSize', 'messagesFontSize', 'buttonsFontSize', 'subtitlesFontSize', 'subtitlesFont',
   'titlesFontStyle', 'subtitlesFontStyle', 'messagesFontStyle', 'buttonsFontStyle', 'globalFontColor', 'buttonShape',
-  'buttonBack', 'buttonBackColor', 'buttonBorders', 'layout', 'index'];
+  'buttonBack', 'buttonBackColor', 'buttonBorders', 'layout', 'index', 'shortDateFormat'];
 
-  Object.keys(data).forEach(x => {  // @ts-ignore    
+  Object.keys(data).forEach(x => {  // @ts-ignore
     if (items.some((item: string) => x === item)) { sum += 1; }
   });
 
@@ -257,7 +257,7 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
           "value": "nosostos",
           "network": "telegram"
         }
-      ]);  
+      ]);
     }else if ( selected ==='linkedLabel'){
       cleanAssets();
       populate("qrName", "Label Kitchen Items 1");

@@ -30,7 +30,7 @@ const RenderDateSelector = ({label, data, handleValues}: DateSelProps) => {
           renderInput={(params) => <TextField {...params} size="small" fullWidth margin="dense"/>}
         />
       </LocalizationProvider>
-      <FormControlLabel sx={{width: '170px', ml: {sm: '10px', xs: 0}}} label="Long date" control={
+      <FormControlLabel sx={{width: '210px', ml: {sm: '10px', xs: 0}}} label="Long date" control={
         <Switch checked={data?.shortDateFormat === undefined ? true : !data.shortDateFormat} inputProps={{'aria-label': 'isAutoOpen'}}
                 onChange={(event: ChangeEvent<HTMLInputElement>) => setValue('shortDateFormat', event.target.checked)}/>}
       />
