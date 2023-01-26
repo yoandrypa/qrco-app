@@ -27,8 +27,8 @@ import session from "@ebanux/ebanux-utils/sessionStorage"; // @ts-ignore
 import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
 import { list } from '../handlers/qrs'
 
-const MenuList = dynamic(() => import("@mui/material/MenuList"));
 const Popover = dynamic(() => import("@mui/material/Popover"));
+const MenuList = dynamic(() => import("@mui/material/MenuList"));
 const MenuIcon = dynamic(() => import("@mui/icons-material/Menu"));
 const Menu = dynamic(() => import( "@mui/material/Menu"));
 const MenuItem = dynamic(() => import("@mui/material/MenuItem"));
@@ -36,7 +36,6 @@ const Divider = dynamic(() => import("@mui/material/Divider"));
 const RenderConfirmDlg = dynamic(() => import("./renderers/RenderConfirmDlg"));
 const CountDown = dynamic(() => import("./countdown/CountDown"));
 const EmailIcon = dynamic(() => import("@mui/icons-material/Email"));
-const ListItem = dynamic(() => import("@mui/material/ListItem"));
 
 interface Props {
   window?: () => Window;
@@ -220,20 +219,20 @@ export default function AppWrapper(props: AppWrapperProps) {
                     >
                       {!userInfo && (
                         <MenuItem key="loginMenuItem" onClick={handleLogin}>
-                          <LoginIcon />
+                          <LoginIcon color="primary" />
                           <Typography textAlign="center">{"Login"}</Typography>
                         </MenuItem>
                       )}
                       {userInfo && (
                         <MenuItem key="navigateMenuItem" onClick={handleNavigation}>
-                          {router.pathname === "/" ? <QrCodeIcon /> : <FirstPageIcon />}
+                          {router.pathname === "/" ? <QrCodeIcon color="primary" /> : <FirstPageIcon color="primary" />}
                           <Typography textAlign="center">{router.pathname === "/" ? "Create QR Link" : "My QR Links"}</Typography>
                         </MenuItem>
                       )}
                       {userInfo && <Divider />}
                       {userInfo && (
                         <MenuItem key="logoutMenuItem" onClick={beforeLogout}>
-                          <LogoutIcon />
+                          <LogoutIcon color="primary" />
                           <Typography textAlign="center">{"Logout"}</Typography>
                         </MenuItem>
                       )}
@@ -295,23 +294,23 @@ export default function AppWrapper(props: AppWrapperProps) {
         open
         anchorEl={anchorSupport}
         onClose={() => setAnchorSupport(null)}
-        anchorOrigin={{vertical: 'top', horizontal: 'right'}}
-        transformOrigin={{vertical: 'top', horizontal: 'right'}}
+        anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
+        transformOrigin={{vertical: 'bottom', horizontal: 'left'}}
       >
-        <MenuList>
-          <ListItem key="help" onClick={() => setAnchorSupport(null)} // @ts-ignore
-                    href="https://docs.theqr.link/" button component="a"
-                    target="_blank" rel="noopener noreferrer">
-            <ContactSupportIcon color="primary"/>
-            <Typography>{"Help and documentation"}</Typography>
-          </ListItem>
-          <ListItem key="emailSupport"  onClick={() => setAnchorSupport(null)} // @ts-ignore
-                    href="mailto:info@ebanux.com" button component="a"
-                    target="_blank" rel="noopener noreferrer">
-            <EmailIcon color="primary" />
-            <Typography>{"Email support"}</Typography>
-          </ListItem>
-        </MenuList>
+        <Box sx={{width: '235px', height: '88px'}}>
+          <MenuList>
+            <MenuItem key="help" onClick={() => setAnchorSupport(null)} // @ts-ignore
+                      href="https://docs.theqr.link/" button component="a" target="_blank" rel="noopener noreferrer">
+              <ContactSupportIcon color="primary"/>
+              <Typography>{"Help"}</Typography>
+            </MenuItem>
+            <MenuItem key="emailSupport"  onClick={() => setAnchorSupport(null)} // @ts-ignore
+                      href="mailto:info@ebanux.com" button component="a" target="_blank" rel="noopener noreferrer">
+              <EmailIcon color="primary" />
+              <Typography>{"Email to support"}</Typography>
+            </MenuItem>
+          </MenuList>
+        </Box>
       </Popover>)}
     </>
   );

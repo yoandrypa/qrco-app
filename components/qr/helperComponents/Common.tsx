@@ -21,7 +21,7 @@ import {saveOrUpdate} from "../auxFunctions";
 import {handleDesignerString} from "../../../helpers/qr/helpers";
 import {initialData} from "../../../helpers/qr/data";
 
-const Edit = dynamic(() => import("@mui/icons-material/Edit"));
+const RenderEditMode = dynamic(() => import("./looseComps/RenderEditMode"));
 const Notifications = dynamic(() => import("../../notifications/Notifications"));
 const RenderPreviewDrawer = dynamic(() => import("./smallpieces/RenderPreviewDrawer"));
 const RenderPreviewButton = dynamic(() => import("./smallpieces/RenderPreviewButton"));
@@ -239,14 +239,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                   <Tab label="Content" icon={<ArticleIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
                   <Tab label="Design" icon={<DesignServicesIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
                 </Tabs>
-                {data.mode === 'edit' && (
-                  <Box sx={{position: 'absolute', right: '5px', top: '15px', display: 'flex'}}>
-                    <Edit fontSize="small" sx={{mt: '-3px', transform: 'rotate(-10deg)', color: theme => theme.palette.primary.light}} />
-                    <Typography sx={{fontSize: 'small', fontWeight: 'lighter', color: theme => theme.palette.primary.light}}>
-                      {`EDIT${isWideForPreview ? ' MODE' : ''}`}
-                    </Typography>
-                  </Box>
-                )}
+                {data.mode === 'edit' && <RenderEditMode isWide={isWideForPreview} />}
                 {data.claim !== undefined && (
                   <Box sx={{position: 'absolute', textAlign: 'center', top: '7px', right: 0}}>
                     <RenderClaimingInfo claim={data.claim} />

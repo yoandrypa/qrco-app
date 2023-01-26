@@ -21,6 +21,7 @@ import {areEquals} from "../../helpers/generalFunctions";
 import initialOptions, {initialData} from "../../../helpers/qr/data";
 
 import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
+import RenderEditMode from "./looseComps/RenderEditMode";
 
 const RenderClaimingInfo = dynamic(() => import("./smallpieces/RenderClaimingInfo"));
 const RenderLoseDataConfirm = dynamic(() => import('./smallpieces/RenderLoseDataConfirm'));
@@ -122,6 +123,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
             {data.claim !== undefined && (<Box sx={{position: 'absolute', textAlign: 'center', top: '7px', right: 0}}>
               <RenderClaimingInfo claim={data.claim} />
             </Box>)}
+            {data.mode === 'edit' && <RenderEditMode isWide={isWide} sx={{top: '17px'}} />}
           </Box>
         </Grid>
         {renderTypeSelector("web",  isDynamic ? "Transform a long URL in a shortened link" : "Link to any page on the web", true)}
