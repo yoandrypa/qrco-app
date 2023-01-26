@@ -172,6 +172,9 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setError, (creationDate?: string) => {
       if (data.mode === undefined) {
         setData((prev: DataType) => {
+          if (prev.claim) {
+            delete prev.claim;
+          }
           const newData = {...prev, mode: 'edit'};
           if (creationDate) { // @ts-ignore
             newData.createdAt = creationDate;

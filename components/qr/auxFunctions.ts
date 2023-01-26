@@ -33,17 +33,10 @@ interface UserInfoProps {
   }
 }
 
-interface currentAccount {
-  account: {
-    id: string;
-    email: string;
-  }
-
-}
-
 export interface StepsProps {
   step: number;
   setStep: Function;
+  setData: Function;
   clearData: Function;
   selected: string;
   data: DataType;
