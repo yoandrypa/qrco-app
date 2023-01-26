@@ -143,7 +143,7 @@ const CouponData = ({data, setData, handleValues, setIsWrong}: CouponProps) => {
                               {renderItem('name', 'Coupon code', true)}
                             </Grid>
                             <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-                              <RenderDateSelector data={data} setData={setData} label="Valid until" />
+                              <RenderDateSelector data={data} handleValues={handleValues} label="Valid until" />
                             </Grid>
                             <Grid item xs={12} style={{paddingTop: 0}}>
                               {renderItem('text', 'Terms and conditions')}

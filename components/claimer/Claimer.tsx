@@ -69,7 +69,7 @@ export default function Claimer({code}: {code: string}) {
       }
     }, 1000);
     return () => clearTimeout(checkData);
-  }, [custom]);
+  }, [custom]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Box sx={{

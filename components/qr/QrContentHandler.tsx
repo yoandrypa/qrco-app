@@ -51,8 +51,9 @@ const QrContentHandler = () => { // @ts-ignore
     const value = typeof payload === 'string' || typeof payload === 'boolean' ? payload : payload.target.value;
 
     if ((typeof value === "string" && value.length) || payload) {
-      setData((prev: DataType) => ({ ...prev, [item]: value })); // @ts-ignore
-    } else if (data[item]) {
+      setData((prev: DataType) => ({ ...prev, [item]: value }));
+    } // @ts-ignore
+    else if (data[item]) {
       setData((prev: DataType) => {
         const temp = { ...prev }; // @ts-ignore
         delete temp[item];

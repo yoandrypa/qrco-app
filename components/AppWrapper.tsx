@@ -1,12 +1,4 @@
-import {
-  ReactElement,
-  ReactNode,
-  cloneElement,
-  useCallback,
-  useState,
-  MouseEvent,
-  useEffect
-} from "react";
+import { ReactElement, ReactNode, cloneElement, useCallback, useState, MouseEvent, useEffect } from "react";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -22,22 +14,29 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Divider from "@mui/material/Divider";
-import RenderConfirmDlg from "./renderers/RenderConfirmDlg";
+import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
 import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
 import RenderNewQrButton from "./renderers/RenderNewQrButton";
-import CountDown from "./countdown/CountDown";
 import { get as getUser } from "../handlers/users"; // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage"; // @ts-ignore
 import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
 import { list } from '../handlers/qrs'
+
+const MenuList = dynamic(() => import("@mui/material/MenuList"));
+const Popover = dynamic(() => import("@mui/material/Popover"));
+const MenuIcon = dynamic(() => import("@mui/icons-material/Menu"));
+const Menu = dynamic(() => import( "@mui/material/Menu"));
+const MenuItem = dynamic(() => import("@mui/material/MenuItem"));
+const Divider = dynamic(() => import("@mui/material/Divider"));
+const RenderConfirmDlg = dynamic(() => import("./renderers/RenderConfirmDlg"));
+const CountDown = dynamic(() => import("./countdown/CountDown"));
+const EmailIcon = dynamic(() => import("@mui/icons-material/Email"));
+const ListItem = dynamic(() => import("@mui/material/ListItem"));
 
 interface Props {
   window?: () => Window;
@@ -73,12 +72,14 @@ export default function AppWrapper(props: AppWrapperProps) {
   } = props;
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const [anchorSupport, setAnchorSupport] = useState<null | HTMLElement>(null);
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
   const [freeLimitReached, setFreeLimitReached] = useState<boolean>(false)
   const [showLimitDlg, setShowLimitDlg] = useState<boolean>(false)
-  const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
+
+  const handleOpenNavMenu = useCallback((event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
-  };
+  }, []);
 
   const handleCloseNavMenu = useCallback(() => {
     setAnchorElNav(null);
@@ -131,6 +132,10 @@ export default function AppWrapper(props: AppWrapperProps) {
         if (setRedirecting) { setRedirecting(false); }
       });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSupportMenuAnchor = useCallback((event: MouseEvent<HTMLElement>) => {
+    setAnchorSupport(event.currentTarget);
+  }, []);
 
   useEffect(() => {
     if (userInfo) {
@@ -281,8 +286,33 @@ export default function AppWrapper(props: AppWrapperProps) {
                 <AccountBoxIcon sx={{ mt: "-1px" }} />
               </Typography>
             )}
+            <IconButton sx={{mr: '-11px'}} onClick={handleSupportMenuAnchor}>
+              <ContactSupportIcon color="primary" />
+            </IconButton>
           </Box>)}
       </Container>
+      {anchorSupport && (<Popover
+        open
+        anchorEl={anchorSupport}
+        onClose={() => setAnchorSupport(null)}
+        anchorOrigin={{vertical: 'top', horizontal: 'right'}}
+        transformOrigin={{vertical: 'top', horizontal: 'right'}}
+      >
+        <MenuList>
+          <ListItem key="help" onClick={() => setAnchorSupport(null)} // @ts-ignore
+                    href="https://docs.theqr.link/" button component="a"
+                    target="_blank" rel="noopener noreferrer">
+            <ContactSupportIcon color="primary"/>
+            <Typography>{"Help and documentation"}</Typography>
+          </ListItem>
+          <ListItem key="emailSupport"  onClick={() => setAnchorSupport(null)} // @ts-ignore
+                    href="mailto:info@ebanux.com" button component="a"
+                    target="_blank" rel="noopener noreferrer">
+            <EmailIcon color="primary" />
+            <Typography>{"Email support"}</Typography>
+          </ListItem>
+        </MenuList>
+      </Popover>)}
     </>
   );
 }
