@@ -15,11 +15,11 @@ import { get as getUser } from "../../handlers/users";
 import { list } from "../../handlers/qrs"
 import RenderNextButton from "./helperComponents/smallpieces/RenderNextButton";
 import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
-import RenderConfirmDlg from "../renderers/RenderConfirmDlg";
 
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
+const RenderConfirmDlg = dynamic(() => import("../renderers/RenderConfirmDlg"));
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
 const Notifications = dynamic(() => import("../notifications/Notifications"));
 const ProcessHandler = dynamic(() => import("./renderers/ProcessHandler"));
@@ -38,8 +38,10 @@ const QrWizard = ({ children }: QrWizardProps) => {
   const [showLimitDlg, setShowLimitDlg] = useState<boolean>(false)
   const [limitReached, setLimitReached] = useState<boolean>(false)
   const [isFreeMode, setIsFreeMode] = useState<boolean>(false)
+
   // @ts-ignore
   const forceUpdate = useCallback(() => setUnusedState({}), []);
+
   const dataInfo = useRef<ProcessHanldlerType[]>([]);
   const btnRef = useRef<any>(null);
   const sizeRef = useRef<any>(null);
@@ -79,11 +81,13 @@ const QrWizard = ({ children }: QrWizardProps) => {
         .then(() => setLoading(false));
     }
   };
+
   const handleNext = async () => {
     if (data.isDynamic && limitReached) {
       setShowLimitDlg(true)
       return;
     }
+
     setLoading(true); // @ts-ignore
     if ([QR_TYPE_ROUTE, "/"].includes(router.pathname)) {
       if (data.isDynamic && !isLogged) {
@@ -103,6 +107,12 @@ const QrWizard = ({ children }: QrWizardProps) => {
         .then(() => setLoading(false));
     }
   };
+
+  useEffect(() => {
+    if (router.pathname === QR_CONTENT_ROUTE && data.isDynamic && limitReached) {
+      setShowLimitDlg(true)
+    }
+  }, [router.pathname, limitReached]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -128,12 +138,12 @@ const QrWizard = ({ children }: QrWizardProps) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (userInfo) {
+    if (userInfo && process.env.REACT_APP_STATUS !== 'develop') {
       const fetchUser = async () => {
         return await getUser(userInfo.cognito_user_id);
       };
       fetchUser().then(profile => {
-        if (profile?.subscriptionData?.status != 'active') {
+        if (profile?.subscriptionData?.status !== 'active') {
           setIsFreeMode(true);
           list({ userId: userInfo.cognito_user_id }).then(qrs => { // @ts-ignore
             if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) {
@@ -148,8 +158,6 @@ const QrWizard = ({ children }: QrWizardProps) => {
     }
   }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
-
-
   return (
     <>
       {showLimitDlg &&
@@ -157,10 +165,18 @@ const QrWizard = ({ children }: QrWizardProps) => {
           title="Ops"
           message="Your free account only allows for one Dynamic QR. Upgrade to a paid plan to add more QRs. Click here to upgrade now."
           handleOk={() => {
-            router.push('/plans')
-            setShowLimitDlg(false)
+            router.push('/plans');
+            setShowLimitDlg(false);
           }}
-          handleCancel={() => setShowLimitDlg(false)}
+          handleCancel={() => {
+            if (router.pathname === QR_CONTENT_ROUTE) {
+              setRedirecting(true);
+              const query = {}; // @ts-ignore
+              if (router.query.address !== undefined) { query.address = router.query.address; }
+              router.push({pathname: QR_TYPE_ROUTE, query}, QR_TYPE_ROUTE);
+            }
+            setShowLimitDlg(false);
+          }}
           yesMsg='Upgrade'
         />}
       <Box ref={sizeRef} sx={{

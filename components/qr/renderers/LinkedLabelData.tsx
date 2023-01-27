@@ -58,7 +58,6 @@ export default function LinkedLabelData({
     setAnchorEl(null);
   };
   const handleCategories = (payload: string[]) => {
-    console.log({ payload });
     setData((prev: DataType) => {
       const tempo = { ...prev };
       tempo.categories = payload;

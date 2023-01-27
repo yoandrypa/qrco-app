@@ -119,6 +119,21 @@ export default function FindMeData({
             )}
           </Paper>
         </Grid>
+        {isDynamic && (
+          <Grid item xs={12} sx={{ml:-1}}>
+            <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
+              <Expander
+                expand={expander}
+                setExpand={setExpander}
+                item="socials"
+                title="Social information"
+              />
+              {expander === 'socials' && (
+                <RenderSocials data={data} setData={handlePayload} />
+              )}
+            </Paper>
+          </Grid>
+        )}
         <Grid item xs={12} sx={{ml:-1}}>
           <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
             <Expander
@@ -151,21 +166,6 @@ export default function FindMeData({
             )}
           </Paper>
         </Grid>
-        {isDynamic && (
-          <Grid item xs={12} sx={{ml:-1}}>
-            <Paper elevation={2} sx={{ p: 1, mt: 1 }}>
-              <Expander
-                expand={expander}
-                setExpand={setExpander}
-                item="socials"
-                title="Social information"
-              />
-              {expander === 'socials' && (
-                <RenderSocials data={data} setData={handlePayload} />
-              )}
-            </Paper>
-          </Grid>
-        )}
       </Grid>
     </Common>
   );
