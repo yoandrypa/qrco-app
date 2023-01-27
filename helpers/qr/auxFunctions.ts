@@ -2,18 +2,19 @@ import {DataType} from "../../components/qr/types/types";
 import {bannerImg, mainImg} from "./previewFiles";
 
 const empty = (obj: any) => {
+  let band = true;
   Object.keys(obj).forEach(x => {
     if(Array.isArray(obj[x]) && obj[x].length > 0){
-      return false;
+      band = false;
     }
     if (typeof obj[x] === 'object' && obj[x] !== null) {
-      return empty(obj[x]);
+      band = empty(obj[x]);
     }
     if (obj[x] !== undefined && obj[x] !== '') {
-      return false;
+      band = false;
     }
   });
-  return true;
+  return band;
 };
 
 const onlyOneGallery = (data:DataType) =>{
