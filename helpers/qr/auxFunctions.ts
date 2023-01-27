@@ -95,6 +95,7 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
       populate('fax', '+1234567890');
       populate('organization', 'Sample Organization');
       populate('position', 'Position at Sample Organization');
+      populate('socialsOnlyIcons', true);
       genAddress();
       populate('email', 'myemail@email.com');
       populate('web', 'https://www.example.com');
@@ -115,6 +116,7 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
         {label: 'My website', link: 'https://www.example.com'}, {label: 'My blog', link: 'https://www.example.com'},
         {label: 'My portfolio', link: 'https://www.example.com'}
       ]);
+      populate('socialsOnlyIcons', true);
       genSocials();
     } else if (selected === 'coupon') {
       populate('company', 'Sample Company');
@@ -240,6 +242,7 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
       populate("qrName", "Find");
       populate("qrType", "findMe");
       populate("state", "San Fransisca");
+      populate('socialsOnlyIcons', true);
       populate("socials", [
         {
           "value": "yo",

@@ -97,6 +97,7 @@ export type DataType = {
   userId?: string;
   claim?: string;
   shortDateFormat?: boolean;
+  socialsOnlyIcons?: boolean;
   id?: string;
   index?: number[];
   claimable?: boolean;
