@@ -1,6 +1,21 @@
 import {DataType} from "../../components/qr/types/types";
 import {bannerImg, mainImg} from "./previewFiles";
 
+const empty = (obj: any) => {
+  Object.keys(obj).forEach(x => {
+    if(Array.isArray(obj[x]) && obj[x].length > 0){
+      return false;
+    }
+    if (typeof obj[x] === 'object' && obj[x] !== null) {
+      return empty(obj[x]);
+    }
+    if (obj[x] !== undefined && obj[x] !== '') {
+      return false;
+    }
+  });
+  return true;
+};
+
 const onlyOneGallery = (data:DataType) =>{
   if (data.fields !== undefined) {
     const fields = data.fields;
@@ -31,10 +46,13 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
   if (data.files !== undefined && data.files.length === 0) { sum += 1; }
   if (data.fields !== undefined && (data.fields.length === 0|| onlyOneGallery(data))) { sum += 1; }
   if (data.socials !== undefined && data.socials.length === 0) { sum += 1; }
+  if (data.otherDetails !== undefined && data.otherDetails.items.length <= 0 && data.otherDetails.heading==='') { sum += 1; }
+  if (data.product !== undefined && empty(data.product)) { sum += 1; }
   if (selected === 'link' && data.links) { sum += 1; }
 
   const obj = {...data, qrType: selected};
-
+  console.log({length:Object.keys(data).length ,sum});
+  console.log(data);
   if (Object.keys(data).length <= sum) {
     const populate = (item: string, value: any): void => { // @ts-ignore
       if (obj[item] === undefined) { // @ts-ignore
@@ -336,6 +354,33 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
           ]
         }
       ];
+    } else if( selected === 'inventory'){
+      cleanAssets();
+      populate("qrName", "Coffee");
+      populate("qrType", "inventory");
+      obj['product'] = undefined;
+      populate("product", {
+        "titleAbout": "Joel's Coffee",
+        "descriptionAbout": "The Mayor favorite coffee",
+        "sku": "COF1234EA",
+        "quantity": 7
+      });
+      populate("files", [
+        {
+          "name": "9.jpeg",
+          "Key": "linkedLabels/9.jpeg"
+        }]
+      );
+      obj['otherDetails'] = undefined;
+      populate("otherDetails", {
+        "heading": "Location",
+        "items": [
+          {
+              "value": "Row 5 Shelf A23"
+          }
+      ]
+      });
+      console.log({obj});
     }
   }
 

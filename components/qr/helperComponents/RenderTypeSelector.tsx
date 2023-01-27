@@ -145,9 +145,9 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
             {renderTypeSelector("donation", "Get donations from your supporters worldwide", true)}
             {renderTypeSelector("petId", "Share your pet's information", true)}
             {renderTypeSelector("custom", "Custom QR link from scratch using predefined sections", true)}
-            {IS_DEV_ENV && renderTypeSelector("findMe", "Place a QR link on your stuff to make easy to find you", true)}
-            {IS_DEV_ENV && renderTypeSelector("inventory", "Tag your products to make easy to find them", true)}
-            {IS_DEV_ENV && renderTypeSelector("linkedLabel", "Share your product's information", true)}
+            {renderTypeSelector("findMe", "Place a QR link on your stuff to make easy to find you", true)}
+            {renderTypeSelector("linkedLabel", "Share your product's information", true)}
+            {renderTypeSelector("inventory", "Tag your products to make easy to find them", true)}
             {IS_DEV_ENV && renderTypeSelector("fundme", "Start your own charity or fundraising campaign", true)}
             {IS_DEV_ENV && renderTypeSelector("paylink", "Receive payments worldwide", true)}
           </>)
