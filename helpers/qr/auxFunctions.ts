@@ -52,8 +52,6 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
   if (selected === 'link' && data.links) { sum += 1; }
 
   const obj = {...data, qrType: selected};
-  console.log({length:Object.keys(data).length ,sum});
-  console.log(data);
   if (Object.keys(data).length <= sum) {
     const populate = (item: string, value: any): void => { // @ts-ignore
       if (obj[item] === undefined) { // @ts-ignore
@@ -381,7 +379,6 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
           }
       ]
       });
-      console.log({obj});
     }
   }
 
