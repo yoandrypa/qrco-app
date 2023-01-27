@@ -30,7 +30,7 @@ import { list } from '../handlers/qrs'
 const Popover = dynamic(() => import("@mui/material/Popover"));
 const MenuList = dynamic(() => import("@mui/material/MenuList"));
 const MenuIcon = dynamic(() => import("@mui/icons-material/Menu"));
-const Menu = dynamic(() => import( "@mui/material/Menu"));
+const Menu = dynamic(() => import("@mui/material/Menu"));
 const MenuItem = dynamic(() => import("@mui/material/MenuItem"));
 const Divider = dynamic(() => import("@mui/material/Divider"));
 const RenderConfirmDlg = dynamic(() => import("./renderers/RenderConfirmDlg"));
@@ -112,11 +112,6 @@ export default function AppWrapper(props: AppWrapperProps) {
     const isEdit = !isInListView && mode === "edit";
 
     setAnchorElNav(null);
-    if (freeLimitReached && !isEdit) {
-      setShowLimitDlg(true);
-      return;
-    }
-
     if (setRedirecting && !isInListView) { setRedirecting(true); }
     if (clearData !== undefined) { clearData(false, isEdit || !isInListView); }
     handleLoading();
@@ -240,17 +235,7 @@ export default function AppWrapper(props: AppWrapperProps) {
                   </>)}
                 </>)}
                 {isFreeMode && <CountDown />}
-                {showLimitDlg &&
-                  <RenderConfirmDlg
-                    title="Ops"
-                    message="Your free account only allows for one Dynamic QR. Upgrade to a paid plan to add more QRs. Click here to upgrade now."
-                    handleOk={() => {
-                      router.push('/plans')
-                      setShowLimitDlg(false)
-                    }}
-                    handleCancel={() => setShowLimitDlg(false)}
-                    yesMsg='Upgrade'
-                  />}
+
               </Box>
             </Toolbar>
             {/*{isTrialMode && startTrialDate && <CountDown startDate={startTrialDate} />}*/}
@@ -285,7 +270,7 @@ export default function AppWrapper(props: AppWrapperProps) {
                 <AccountBoxIcon sx={{ mt: "-1px" }} />
               </Typography>
             )}
-            <IconButton sx={{mr: '-11px'}} onClick={handleSupportMenuAnchor}>
+            <IconButton sx={{ mr: '-11px' }} onClick={handleSupportMenuAnchor}>
               <ContactSupportIcon color="primary" />
             </IconButton>
           </Box>)}
@@ -294,18 +279,18 @@ export default function AppWrapper(props: AppWrapperProps) {
         open
         anchorEl={anchorSupport}
         onClose={() => setAnchorSupport(null)}
-        anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
-        transformOrigin={{vertical: 'bottom', horizontal: 'left'}}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
-        <Box sx={{width: '235px', height: '88px'}}>
+        <Box sx={{ width: '235px', height: '88px' }}>
           <MenuList>
             <MenuItem key="help" onClick={() => setAnchorSupport(null)} // @ts-ignore
-                      href="https://docs.theqr.link/" button component="a" target="_blank" rel="noopener noreferrer">
-              <ContactSupportIcon color="primary"/>
+              href="https://docs.theqr.link/" button component="a" target="_blank" rel="noopener noreferrer">
+              <ContactSupportIcon color="primary" />
               <Typography>{"Help"}</Typography>
             </MenuItem>
-            <MenuItem key="emailSupport"  onClick={() => setAnchorSupport(null)} // @ts-ignore
-                      href="mailto:info@ebanux.com" button component="a" target="_blank" rel="noopener noreferrer">
+            <MenuItem key="emailSupport" onClick={() => setAnchorSupport(null)} // @ts-ignore
+              href="mailto:info@ebanux.com" button component="a" target="_blank" rel="noopener noreferrer">
               <EmailIcon color="primary" />
               <Typography>{"Email to support"}</Typography>
             </MenuItem>
