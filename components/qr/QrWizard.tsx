@@ -81,7 +81,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
     }
   };
   const handleNext = async () => {
-    if (data.isDynamic) {
+    if (data.isDynamic && limitReached) {
       setShowLimitDlg(true)
       return;
     }
