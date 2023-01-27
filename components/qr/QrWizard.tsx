@@ -15,11 +15,11 @@ import { get as getUser } from "../../handlers/users";
 import { list } from "../../handlers/qrs"
 import RenderNextButton from "./helperComponents/smallpieces/RenderNextButton";
 import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
-import RenderConfirmDlg from "../renderers/RenderConfirmDlg";
 
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 
+const RenderConfirmDlg = dynamic(() => import("../renderers/RenderConfirmDlg"));
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
 const Notifications = dynamic(() => import("../notifications/Notifications"));
 const ProcessHandler = dynamic(() => import("./renderers/ProcessHandler"));
@@ -128,7 +128,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (userInfo) {
+    if (userInfo && process.env.REACT_APP_STATUS !== 'develop') {
       const fetchUser = async () => {
         return await getUser(userInfo.cognito_user_id);
       };

@@ -16,6 +16,8 @@ import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 
 import dynamic from "next/dynamic";
 
+const Switch = dynamic(() => import("@mui/material/Switch"));
+const FormControlLabel = dynamic(() => import("@mui/material/FormControlLabel"));
 const RenderTitleDesc = dynamic(() => import("./RenderTitleDesc"));
 
 interface RenderSocialsProps {
@@ -30,7 +32,6 @@ const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) =>
   const handleValues = (item: SocialsType) => (event: ChangeEvent<HTMLInputElement>) => {
     setData((prev: DataType) => {
       const tempo = {...prev};
-      // data.about aims to the description for reusing the same predefined type
 
       if (['title', 'descriptionAbout'].includes(item)) { // @ts-ignore
         tempo[item] = event.target.value;
@@ -88,6 +89,12 @@ const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) =>
       } else {
         const index = temp.socials.findIndex((x: SocialNetworksType) => x.network === item);
         temp.socials.splice(index, 1);
+        if (temp.socials.length === 0) {
+          delete temp.socials;
+          if (temp.socialsOnlyIcons !== undefined) {
+            delete temp.socialsOnlyIcons;
+          }
+        }
       }
       return temp;
     });
@@ -107,6 +114,18 @@ const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) =>
 
       tempo.socials = newSocials;
       return tempo;
+    });
+  }
+
+  const handleOnlyIcons = (onlyIcons: boolean) => {
+    setData((prev: DataType) => {
+      const newData = {...prev};
+      if (onlyIcons) {
+        newData.socialsOnlyIcons = true;
+      } else {
+        delete newData.socialsOnlyIcons;
+      }
+      return newData;
     });
   }
 
@@ -152,7 +171,7 @@ const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) =>
       <Grid item xs={12} sx={{pl: '12px'}}>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
-            {(provided, snapshot) => (
+            {(provided) => (
               <Box {...provided.droppableProps} ref={provided.innerRef} sx={{width: '100%'}}>
                 {data?.socials?.map((x: SocialNetworksType, index: number) => {
                   const itemId = `item${x.network}`
@@ -171,6 +190,12 @@ const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) =>
             )}
           </Droppable>
         </DragDropContext>
+        {data?.socials !== undefined && data?.socials?.length !== 0 && (
+          <FormControlLabel label="Only icons" control={
+            <Switch checked={data?.socialsOnlyIcons || false} inputProps={{'aria-label': 'onlyIcons'}}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => handleOnlyIcons(event.target.checked)} />}
+          />
+        )}
       </Grid>
     </Grid>
   );
