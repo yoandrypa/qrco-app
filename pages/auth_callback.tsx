@@ -5,7 +5,7 @@ import {useContext, useEffect} from "react";
 
 const Auth_Callback = () => {
   // @ts-ignore
-  const { setLoading } = useContext(Context);
+  const {setLoading} = useContext(Context);
   const router = useRouter();
 
   useEffect(() => {
@@ -13,11 +13,16 @@ const Auth_Callback = () => {
     // @ts-ignore
     const route = JSON.parse(getCookie("final_callback_path")) || '/';
 
+    if (route.query?.address?.length === 0) {
+      delete route.query.address;
+    }
+
     router.push(route, route.pathname || '/').then(() => {
       deleteCookie("final_callback_path");
       setLoading(false);
     });
-  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return <div />;
 };
