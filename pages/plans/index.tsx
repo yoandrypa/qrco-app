@@ -82,10 +82,10 @@ const Plans = (props: Props) => {
     highlighted: false,
     priceAmount: "$9.00",
     features: [
-      "Up to 5 dynamic QR codes",
+      "Up to 50 dynamic QR codes",
       "$1 per aditional Dynamic QR",
       "Unlimited pre-generated QRs",
-      "Up to 5 microsites (mobile-friendly landing pages)",
+      "Up to 50 microsites (mobile-friendly landing pages)",
       "Unlimited static QR codes",
       "Unlimited scans",
       "QR codes design customization and edition",
