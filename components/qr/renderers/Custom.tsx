@@ -195,6 +195,7 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
           handleClose={() => setOpen(null)}
           anchor={open.anchor}
           value={open.item}
+          current={open.name}
           handleOk={(value: string) => handleAccept(value, open.index, open.item)}
         />
       )}
