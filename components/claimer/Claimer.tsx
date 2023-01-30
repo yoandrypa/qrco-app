@@ -22,7 +22,12 @@ const Typo = styled(Typography)(({bold}: {bold?: boolean}) => ({
 
 const URL = 'https://a-qr.link/';
 
-export default function Claimer({code}: {code: string}) {
+interface ClaimerProps {
+  code: string;
+  embedded?: boolean;
+}
+
+export default function Claimer({code, embedded}: ClaimerProps) {
   const [custom, setCustom] = useState<string>(code || '');
   const [open, setOpen] = useState<HTMLButtonElement | null>(null);
   const [available, setAvailable] = useState<boolean>(true);
@@ -43,7 +48,13 @@ export default function Claimer({code}: {code: string}) {
   }
 
   const handleClaim = (event: MouseEvent<HTMLButtonElement>) => {
-    setOpen(event.currentTarget);
+    if (!embedded) {
+      setOpen(event.currentTarget);
+    } else if (window && window.top) {
+      window.top.postMessage( // @ts-ignore
+        JSON.stringify({ custom }), '*'
+      );
+    }
   }
 
   const renderOptions = () => {
@@ -71,6 +82,57 @@ export default function Claimer({code}: {code: string}) {
     return () => clearTimeout(checkData);
   }, [custom]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const renderClaimer = () => (
+    <Paper sx={{
+      p: 2,
+      mx: 'auto',
+      mt: !embedded ? 0 : '5px',
+      width: !embedded ? {sm: '400px', xs: '100%'} : '350px'
+    }} elevation={3}>
+      <Box sx={{mb: 2, width: '100%', textAlign: 'center'}}>
+        <Typo bold>QR</Typo>
+        <Typo sx={{color: MAIN_ORANGE}} bold>Lynk</Typo>
+      </Box>
+      <Paper elevation={2}>
+        <RenderPreview override={lynk.current} width="100%" onlyPreview />
+      </Paper>
+
+      <Box sx={{mt: '10px'}}>
+        <Box sx={{display: 'flex', mt: '-5px', height: !embedded ? '85px' : 'unset'}}>
+          <TextField
+            onKeyDown={(evt: KeyboardEvent<HTMLInputElement>) => !/^[a-zA-Z0-9_]+$/.test(evt.key) && evt.preventDefault()}
+            label=""
+            autoFocus
+            size="small"
+            fullWidth
+            margin="dense"
+            value={custom}
+            error={isError || !available}
+            helperText={isError ? 'Make sure you entered a code' : (available ? '' : 'The entered code is already taken')}
+            sx={{'& fieldset': {borderRadius: '5px 0 0 5px'}}}
+            onChange={handleCustom}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start" sx={{mr: 0}}>
+                  <Typography sx={{mt: '2px'}}>{URL.slice(8)}</Typography>
+                </InputAdornment>
+              )
+            }}/>
+          <Button
+            onClick={handleClaim}
+            variant="outlined" sx={{height: '40px', mt: '8px', borderRadius: '0 5px 5px 0'}}
+            disabled={isError || !available || checking}>
+            <Typography sx={{mx: '5px'}}>{'Claim'}</Typography>
+          </Button>
+        </Box>
+      </Box>
+    </Paper>
+  );
+
+  if (embedded) {
+    return renderClaimer();
+  }
+
   return (
     <Box sx={{
       position: "absolute",
@@ -78,50 +140,7 @@ export default function Claimer({code}: {code: string}) {
       left: "50%",
       transform: "translate(-50%, -50%)"
     }}>
-      <Paper sx={{
-        p: 2,
-        mx: 'auto',
-        width: {sm: '400px', xs: '100%'}
-      }} elevation={3}>
-        <Box sx={{mb: 2, width: '100%', textAlign: 'center'}}>
-          <Typo bold>QR</Typo>
-          <Typo sx={{color: MAIN_ORANGE}} bold>Lynk</Typo>
-        </Box>
-        <Paper elevation={2}>
-          <RenderPreview override={lynk.current} width="100%" onlyPreview />
-        </Paper>
-
-        <Box sx={{mt: '10px'}}>
-          <Box sx={{display: 'flex', mt: '-5px', height: '85px'}}>
-            <TextField
-              onKeyDown={(evt: KeyboardEvent<HTMLInputElement>) => !/^[a-zA-Z0-9_]+$/.test(evt.key) && evt.preventDefault()}
-              label=""
-              autoFocus
-              size="small"
-              fullWidth
-              margin="dense"
-              value={custom}
-              error={isError || !available}
-              helperText={isError ? 'Make sure you entered a code' : (available ? '' : 'The entered code is already taken')}
-              sx={{'& fieldset': {borderRadius: '5px 0 0 5px'}}}
-              onChange={handleCustom}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start" sx={{mr: 0}}>
-                    <Typography sx={{mt: '2px'}}>{URL.slice(8)}</Typography>
-                  </InputAdornment>
-                )
-              }}/>
-            <Button
-              onClick={handleClaim}
-              variant="outlined" sx={{height: '40px', mt: '8px', borderRadius: '0 5px 5px 0'}}
-              disabled={isError || !available || checking}>
-              <Typography sx={{mx: '5px'}}>{'Claim'}</Typography>
-            </Button>
-          </Box>
-        </Box>
-      </Paper>
-
+      {renderClaimer()}
       {open && (
         <Popover
           open
