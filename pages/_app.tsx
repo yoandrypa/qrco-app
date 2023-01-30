@@ -38,6 +38,8 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
     return <Claimer code="" embedded />;
   }
 
+  console.log('*-*-*-*-*-*-', isEmbedded);
+
   return (
     <>
       <Head>
