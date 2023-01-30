@@ -12,8 +12,10 @@ import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import dynamic from "next/dynamic";
 import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
 import {cleaner, components, CustomEditProps, CustomProps, getNameStr, validator} from "./custom/helperFuncs";
-import CustomNewSection from "./custom/CustomNewSection";
+import RenderGallerySection from "../helperComponents/smallpieces/RenderGallerySection";
+import RenderAssetsData from "./RenderAssetsData";
 
+const CustomNewSection = dynamic(() => import("./custom/CustomNewSection"));
 const CustomEditSection = dynamic(() => import("./custom/CustomEditSection"));
 const RenderLinks = dynamic(() => import("./contents/RenderLinks"));
 const RenderTitleDesc = dynamic(() => import("./contents/RenderTitleDesc"));
@@ -170,10 +172,11 @@ export default function Custom({data, setData, handleValues, setIsWrong}: Custom
                               {component === components[5].type && <RenderLinks data={data} setData={setData}/>}
                               {component === components[6].type && <RenderOrganization data={data} handleValues={handleValues}/>}
                               {component === components[7].type && <RenderPhones data={data} handleValues={handleValues}/>}
-                              {component === components[8].type && <RenderPresentation data={data} handleValues={handleValues}/>}
-                              {component === components[9].type && <RenderOpeningTime data={data} setData={setData}/>}
-                              {component === components[10].type && <RenderSocials data={data} setData={setData}/>}
-                              {component === components[11].type && (
+                              {component === components[8].type && <RenderAssetsData data={data} setData={setData} type="gallery" totalFiles={10} displayUpto />}
+                              {component === components[9].type && <RenderPresentation data={data} handleValues={handleValues}/>}
+                              {component === components[10].type && <RenderOpeningTime data={data} setData={setData}/>}
+                              {component === components[11].type && <RenderSocials data={data} setData={setData}/>}
+                              {component === components[12].type && (
                                 <RenderTitleDesc handleValues={handleValues} title={data.titleAbout} noHeader noPaper
                                                  description={data.descriptionAbout} sx={{mt: '5px'}}/>
                               )}
