@@ -100,6 +100,7 @@ export type DataType = {
   socialsOnlyIcons?: boolean;
   id?: string;
   index?: number[];
+  includeDescription?: boolean;
   claimable?: boolean;
   preGenerated?: boolean;
   custom?: CustomType[];
