@@ -26,19 +26,18 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
   useEffect(() => {
     if (window.top !== window) {
       setIsEmbedded(true);
+    } else {
+      setDone(true);
     }
-    setDone(true);
   }, []);
-
-  if (!done) {
-    return <PleaseWait />;
-  }
 
   if (isEmbedded) {
     return <Claimer code="" embedded />;
   }
 
-  console.log('*-*-*-*-*-*-', isEmbedded);
+  if (!done) {
+    return <PleaseWait />;
+  }
 
   return (
     <>
