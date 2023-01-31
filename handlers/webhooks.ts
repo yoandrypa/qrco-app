@@ -41,22 +41,28 @@ async function setUserSubscription(
   try {
     let plan: string;
     switch (subscription.priceId) {
-      case PLAN_LIVE_MODE_PRICES.basic || PLAN_TEST_MODE_PRICES.basic:
+      case PLAN_LIVE_MODE_PRICES.basic:
+      case PLAN_TEST_MODE_PRICES.basic:
         plan = 'basic'
         break;
-      case PLAN_LIVE_MODE_PRICES.basicAnnual || PLAN_TEST_MODE_PRICES.basicAnnual:
+      case PLAN_LIVE_MODE_PRICES.basicAnnual:
+      case PLAN_TEST_MODE_PRICES.basicAnnual:
         plan = 'basicAnnual'
         break;
-      case PLAN_LIVE_MODE_PRICES.business || PLAN_TEST_MODE_PRICES.business:
+      case PLAN_LIVE_MODE_PRICES.business:
+      case PLAN_TEST_MODE_PRICES.business:
         plan = 'business'
         break;
-      case PLAN_LIVE_MODE_PRICES.businessAnnual || PLAN_TEST_MODE_PRICES.businessAnnual:
+      case PLAN_LIVE_MODE_PRICES.businessAnnual:
+      case PLAN_TEST_MODE_PRICES.businessAnnual:
         plan = 'businessAnnual'
         break;
-      case PLAN_LIVE_MODE_PRICES.premium || PLAN_TEST_MODE_PRICES.premium:
+      case PLAN_LIVE_MODE_PRICES.premium:
+      case PLAN_TEST_MODE_PRICES.premium:
         plan = 'premium'
         break;
-      case PLAN_LIVE_MODE_PRICES.premiumAnnual || PLAN_TEST_MODE_PRICES.premiumAnnual:
+      case PLAN_LIVE_MODE_PRICES.premiumAnnual:
+      case PLAN_TEST_MODE_PRICES.premiumAnnual:
         plan = 'premiumAnnual'
         break;
       default:
