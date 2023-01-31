@@ -14,6 +14,7 @@ import { create, get } from "../../handlers/users";
 
 // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
+import { logout } from '@ebanux/ebanux-utils/auth';
 // @ts-ignore
 import cookies from "@ebanux/ebanux-utils/cookiesStorage";
 
@@ -152,18 +153,6 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     }
     doneInitialRender.current = true;
   }, []);
-
-  const logout = useCallback(async () => {
-    setLoading(true);
-    const params = { logout_uri: session.appBaseUrl, client_id: session.appClientId };
-    const queryString = Object.keys(params).map((key) => { // @ts-ignore
-      return `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`;
-    }).join("&");
-    session.del("credentials");
-    session.del("account");
-    cookies.del("account");
-    window.location.href = `${process.env.REACT_APP_OAUTH_LOGOUT_URL || ""}?${queryString}`;
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (router.pathname.startsWith("/qr") && ![QR_TYPE_ROUTE, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE]
     .includes(router.pathname)) {

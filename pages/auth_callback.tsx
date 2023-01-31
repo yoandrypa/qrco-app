@@ -1,9 +1,9 @@
 import {useRouter} from "next/router";
-import {deleteCookie, getCookie} from "cookies-next";
+import session from "@ebanux/ebanux-utils/sessionStorage";
 import Context from "../components/context/Context";
 import {useContext, useEffect} from "react";
 
-const Auth_Callback = () => {
+const AuthCallback = () => {
   // @ts-ignore
   const {setLoading} = useContext(Context);
   const router = useRouter();
@@ -11,14 +11,14 @@ const Auth_Callback = () => {
   useEffect(() => {
     setLoading(true);
     // @ts-ignore
-    const route = JSON.parse(getCookie("final_callback_path")) || '/';
+    const route = session.get('CALLBACK_ROUTER', '/');
 
     if (route.query?.address?.length === 0) {
       delete route.query.address;
     }
 
     router.push(route, route.pathname || '/').then(() => {
-      deleteCookie("final_callback_path");
+      session.del('CALLBACK_ROUTER');
       setLoading(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -27,4 +27,4 @@ const Auth_Callback = () => {
   return <div />;
 };
 
-export default Auth_Callback;
+export default AuthCallback;
