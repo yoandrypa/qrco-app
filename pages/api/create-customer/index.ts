@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import Stripe from 'stripe'
 import { update, get, create } from '../../../handlers/users'
-import { PLAN_TEST_MODE_PRICES, PLAN_LIVE_MODE_PRICES } from '../../../consts'
+import { PLAN_TEST_MODE_PRICES, PLAN_LIVE_MODE_PRICES, PLAN_LIVE_METERED_PRICES, PLAN_TEST_METERED_PRICES } from '../../../consts'
 //init stripe
 const stripe = new Stripe(process.env.REACT_STRIPE_SECRET_KEY || 'sk_test_51Ksb3LCHh3XhfaZr2tgzaQKAQtuTF9vRtgdXBS7X2rAaPC6FNoLQ3hyPFVmlnRhsif0FDdbi5cdgEh7Y1Wt9Umo900w9YPUGo6', {
   // https://github.com/stripe/stripe-node#configuration
@@ -34,49 +34,57 @@ function getCurrentPrices() {
     return PLAN_LIVE_MODE_PRICES
   }
 }
+function getCurrentMeteredPrices() {
+  if (process.env.REACT_NODE_ENV != 'production') {
+    return PLAN_TEST_METERED_PRICES
+  } else {
+    return PLAN_LIVE_METERED_PRICES
+  }
+}
 
 async function createCheckoutSession(
   { customer_id, plan_type, email }: { customer_id: string; plan_type: PlanType, email: string }) {
   const pricesList = getCurrentPrices()
+  const priceMetered = getCurrentMeteredPrices();
   let price_id;
+  let metered_price_id;
   switch (plan_type) {
     case 'basic':
       price_id = pricesList.basic
+      metered_price_id = priceMetered.basic
       break;
     case 'basicAnnual':
       price_id = pricesList.basicAnnual
+      metered_price_id = priceMetered.basicAnnual
       break;
     case 'business':
       price_id = pricesList.business
+      metered_price_id = priceMetered.business
       break;
     case 'businessAnnual':
       price_id = pricesList.businessAnnual
+      metered_price_id = priceMetered.businessAnnual
       break;
     case 'premium':
       price_id = pricesList.premium
+      metered_price_id = priceMetered.premium
       break;
     case 'premiumAnnual':
       price_id = pricesList.premiumAnnual
+      metered_price_id = priceMetered.premiumAnnual
       break;
     default:
       price_id = "unknown"
+      metered_price_id = "unknown"
       break;
   }
   try {
-    let lineItem: PriceLineItem = { price: price_id }
-    // For metered billing, do not pass quantity
-    //Legacy Premium plans is flat priced
-    // if (![pricesList.premium, pricesList.premiumAnnual].includes(price_id)) {
-
-    //   lineItem = { ...lineItem, quantity: 1 }
-    // }
+    let lineItems: PriceLineItem[] = [{ price: price_id, quantity: 1 }, { price: metered_price_id }]
 
     const session = stripe.checkout.sessions.create({
       mode: 'subscription',
       customer: customer_id,
-      line_items: [
-        lineItem
-      ],
+      line_items: lineItems,
 
       success_url: `https://${process.env.REACT_APP_SERVER_BASE_URL}/plans/account?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `https://${process.env.REACT_APP_SERVER_BASE_URL}/plans/`
