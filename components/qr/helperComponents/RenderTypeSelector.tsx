@@ -15,14 +15,13 @@ import dynamic from "next/dynamic";
 import {IS_DEV_ENV, ONLY_QR} from "../constants";
 import RenderProDesc from "./smallpieces/RenderProDesc";
 import RenderFreeDesc from "./smallpieces/RenderFreeDesc";
+import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
 import TypeSelector from "./TypeSelector";
 import {MyBadge} from "./looseComps/StyledComponents";
 import {areEquals} from "../../helpers/generalFunctions";
 import initialOptions, {initialData} from "../../../helpers/qr/data";
 
-import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
-import RenderEditMode from "./looseComps/RenderEditMode";
-
+const RenderMode = dynamic(() => import("./looseComps/RenderMode"));
 const RenderClaimingInfo = dynamic(() => import("./smallpieces/RenderClaimingInfo"));
 const RenderLoseDataConfirm = dynamic(() => import('./smallpieces/RenderLoseDataConfirm'));
 const RenderPreviewDrawer = dynamic(() => import('./smallpieces/RenderPreviewDrawer'));
@@ -126,7 +125,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
             {data.claim !== undefined && (<Box sx={{position: 'absolute', textAlign: 'center', top: '7px', right: 0}}>
               <RenderClaimingInfo claim={data.claim} />
             </Box>)}
-            {data.mode === 'edit' && <RenderEditMode isWide={isWide} sx={{top: '17px'}} />}
+            {data.mode && <RenderMode isWide={isWide} sx={{top: '17px'}} mode={data.mode} />}
           </Box>
         </Grid>
         {renderTypeSelector("web",  isDynamic ? "Transform a long URL in a shortened link" : "Link to any page on the web", true)}
