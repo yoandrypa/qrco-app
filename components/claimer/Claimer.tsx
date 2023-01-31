@@ -51,9 +51,7 @@ export default function Claimer({code, embedded}: ClaimerProps) {
     if (!embedded) {
       setOpen(event.currentTarget);
     } else if (window && window.top) {
-      window.top.postMessage( // @ts-ignore
-        JSON.stringify({ custom }), '*'
-      );
+      window.top.location.href = `${window.location.origin}/qr/type?address=${custom}`;
     }
   }
 
