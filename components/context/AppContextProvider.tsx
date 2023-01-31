@@ -20,6 +20,8 @@ import { create, get } from "../../handlers/users";
 import session from "@ebanux/ebanux-utils/sessionStorage";
 // @ts-ignore
 import { logout } from '@ebanux/ebanux-utils/auth';
+import PleaseWait from "../PleaseWait";
+import Claimer from "../claimer/Claimer";
 
 const Loading = dynamic(() => import("../Loading"));
 const Generator = dynamic(() => import("../qr/Generator"));
