@@ -3,33 +3,39 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import EditOutlined from "@mui/icons-material/EditOutlined";
-import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
-import PauseCircleOutlineIcon from "@mui/icons-material/PauseCircleOutline";
 import DeleteOutlineRounded from "@mui/icons-material/DeleteOutlineRounded";
-import DashboardIcon from "@mui/icons-material/Dashboard";
+
 import Stack from "@mui/material/Stack";
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import QrCodeIcon from '@mui/icons-material/QrCode';
 import Typography from "@mui/material/Typography";
+
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import useMediaQuery from "@mui/material/useMediaQuery";
+
+import dynamic from "next/dynamic";
+import {useRouter} from "next/router";
 
 import Context from "../../../context/Context";
 import {IS_DEV_ENV} from "../../constants";
-
-import {useRouter} from "next/router";
-import RenderPreview from "../../renderers/RenderPreview";
 import {handleDesignerString} from "../../../../helpers/qr/helpers";
+
+const RenderPreview = dynamic(() => import("../../renderers/RenderPreview"));
+const DynamicFeedIcon = dynamic(() => import("@mui/icons-material/DynamicFeed"));
+const DashboardIcon = dynamic(() => import("@mui/icons-material/Dashboard"));
+const PlayCircleOutlineIcon = dynamic(() => import("@mui/icons-material/PlayCircleOutline"));
+const PauseCircleOutlineIcon = dynamic(() => import("@mui/icons-material/PauseCircleOutline"));
 
 interface RenderQrOptsProps {
   qr: any;
   handleEdit: (edit: QrDataType) => void;
+  handleClone: (clone: QrDataType) => void;
   setConfirm: (conf: { createdAt: number; userId: string; }) => void;
   handlePauseQrLink: (id: LinkType) => void;
 }
 
-export default function RenderQrListOptions({qr, handleEdit, setConfirm, handlePauseQrLink}: RenderQrOptsProps) {
+export default function RenderQrListOptions({qr, handleEdit, setConfirm, handlePauseQrLink, handleClone}: RenderQrOptsProps) {
   const router = useRouter();
   // @ts-ignore
   const {loading, setLoading} = useContext(Context);
@@ -45,7 +51,7 @@ export default function RenderQrListOptions({qr, handleEdit, setConfirm, handleP
   const handleDetails = () => {
     setLoading(true);
     router.push("/qr/" + (new Date(qr.createdAt)).getTime() + "/details").then(() => setLoading(false));
-  }
+  };
 
   const handlePreview = () => {
     const options = { ...qr.qrOptionsId };
@@ -54,6 +60,14 @@ export default function RenderQrListOptions({qr, handleEdit, setConfirm, handleP
     }
     options.data = !qr.isDynamic ? handleDesignerString(qr.qrType, qr) : qr.qrOptionsId.data;
     setPreview(options);
+  };
+
+  const beforeEdit = () => {
+    handleEdit(qr);
+  };
+
+  const beforeDelete = () => {
+    setConfirm({userId: qr.userId, createdAt: qr.createdAt})
   }
 
   useEffect(() => {
@@ -74,17 +88,17 @@ export default function RenderQrListOptions({qr, handleEdit, setConfirm, handleP
         {isWide && (
           <>
             <Tooltip title="Details">
-              <IconButton color="primary" disabled={loading} onClick={() => handleDetails()}>
+              <IconButton color="primary" disabled={loading} onClick={handleDetails}>
                 <InfoOutlinedIcon/>
               </IconButton>
             </Tooltip>
             <Tooltip title="Edit">
-              <IconButton color="primary" disabled={loading} onClick={() => handleEdit(qr)}>
+              <IconButton color="primary" disabled={loading} onClick={beforeEdit}>
                 <EditOutlined/>
               </IconButton>
             </Tooltip>
             <Tooltip title="Delete">
-              <IconButton color="error" disabled={loading} onClick={() => setConfirm({userId: qr.userId, createdAt: qr.createdAt})}>
+              <IconButton color="error" disabled={loading} onClick={beforeDelete}>
                 <DeleteOutlineRounded/>
               </IconButton>
             </Tooltip>
@@ -103,13 +117,13 @@ export default function RenderQrListOptions({qr, handleEdit, setConfirm, handleP
             open onClose={() => setAnchor(null)}
           >
             {!isWide && (
-              <MenuItem key="editMenuItem" onClick={() => handleEdit(qr)}>
+              <MenuItem key="editMenuItem" onClick={beforeEdit}>
                 <EditOutlined color="primary"/>
                 <Typography sx={{ml: '5px'}}>{'Edit'}</Typography>
               </MenuItem>
             )}
             {!isWide && (
-              <MenuItem key="detailsMenuItem" onClick={() => handleDetails()}>
+              <MenuItem key="detailsMenuItem" onClick={handleDetails}>
                 <InfoOutlinedIcon color="primary"/>
                 <Typography sx={{ml: '5px'}}>{'Details'}</Typography>
               </MenuItem>
@@ -120,6 +134,10 @@ export default function RenderQrListOptions({qr, handleEdit, setConfirm, handleP
                 <Typography sx={{ml: '5px'}}>{qr.shortLinkId.paused ? "Activate" : "Pause"}</Typography>
               </MenuItem>
             )}
+            <MenuItem key="cloneMenuItem" onClick={() => handleClone(qr)}>
+              <DynamicFeedIcon color="primary"/>
+              <Typography sx={{ml: '5px'}}>{'Clone'}</Typography>
+            </MenuItem>
             <MenuItem key="previewMenuItem" onClick={handlePreview}>
               <QrCodeIcon color="primary"/>
               <Typography sx={{ml: '5px'}}>{'Preview'}</Typography>
@@ -132,7 +150,7 @@ export default function RenderQrListOptions({qr, handleEdit, setConfirm, handleP
               </MenuItem>
             )}
             {!isWide && (
-              <MenuItem key="deleteMenuItem" onClick={() => setConfirm({userId: qr.userId, createdAt: qr.createdAt})}>
+              <MenuItem key="deleteMenuItem" onClick={beforeDelete}>
                 <DeleteOutlineRounded color="error"/>
                 <Typography sx={{ml: '5px'}}>{'Delete'}</Typography>
               </MenuItem>

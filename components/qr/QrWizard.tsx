@@ -139,7 +139,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
     const getWidth = () => { setSize(sizeRef.current.offsetWidth); };
     window.addEventListener("resize", getWidth);
 
-    if (router.pathname === QR_CONTENT_ROUTE && isLogged && data?.isDynamic && !Boolean(options.id) && options.mode === undefined) {
+    if (router.pathname === QR_CONTENT_ROUTE && isLogged && data?.isDynamic && (!Boolean(options.id) || options.mode !== 'edit')) {
       const genShortLinkAndId = async () => {
         const id = getUuid();
         const shortCode = data.claim || await generateId(); // @ts-ignore
@@ -206,6 +206,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           step={currentStep}
           handleBack={handleBack}
           editingStatic={!data.isDynamic && options.mode === 'edit'}
+          cloneMode={data.mode === 'clone'}
           selected={selected} />
         <Stepper activeStep={currentStep} sx={{ width: "100%", my: 0 }}>
           {steps.map((label: string) => <Step key={label}><StepLabel>{isWide ? label : ""}</StepLabel></Step>)}
@@ -239,6 +240,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           qrName={data?.qrName}
           isWrong={isWrong}
           editingStatic={!data.isDynamic && options.mode === 'edit'}
+          cloneMode={options.mode === 'clone'}
           handleBack={handleBack}
           handleNext={handleNext}
           size={size}

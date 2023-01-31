@@ -81,6 +81,8 @@ const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame: Frame
 
   if (!areEquals(background, initialBackground)) {
     qrDesign.background = background;
+    if (qrDesign.background.file === null) { qrDesign.background.file = ''; }
+    if (qrDesign.background.backColor === null) { qrDesign.background.backColor = '#fff'; }
   } else if (edit) { // @ts-ignore
     qrDesign.background = initialBackground;
   }
@@ -288,7 +290,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
   const qrData = { ...data, qrType: selected };
   const qrDesign = { ...options };
 
-  if (data.mode === undefined) {
+  if (data.mode !== 'edit') {
     const qrDesignId = getUuid();
     const qrId = options.id || getUuid(); // @ts-ignore
     qrData.qrOptionsId = qrDesignId;
@@ -325,7 +327,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   try {
     let edition = false;
-    if (data.mode === undefined) {
+    if (data.mode !== 'edit') {
       if (dataLength) {
         prevUpdatingHandler("Saving QR Code data");
       }

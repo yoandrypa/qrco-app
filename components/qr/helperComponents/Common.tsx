@@ -21,7 +21,7 @@ import {saveOrUpdate} from "../auxFunctions";
 import {handleDesignerString} from "../../../helpers/qr/helpers";
 import {initialData} from "../../../helpers/qr/data";
 
-const RenderEditMode = dynamic(() => import("./looseComps/RenderEditMode"));
+const RenderMode = dynamic(() => import("./looseComps/RenderMode"));
 const Notifications = dynamic(() => import("../../notifications/Notifications"));
 const RenderPreviewDrawer = dynamic(() => import("./smallpieces/RenderPreviewDrawer"));
 const RenderPreviewButton = dynamic(() => import("./smallpieces/RenderPreviewButton"));
@@ -138,8 +138,10 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const isEditOrClone = useMemo(() => data.mode === 'edit' || data.mode === 'clone', [data?.mode]);
+
   useEffect(() => {
-    if (data.mode === 'edit') {
+    if (isEditOrClone) {
       if (data.backgndImg) {
         setLocalLoading(true);
         getFiles(data.backgndImg[0].Key, 'backgndImg');
@@ -170,7 +172,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     lastAction.current = 'saving the data';
     setLoading(true);
     await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setError, (creationDate?: string) => {
-      if (data.mode === undefined) {
+      if (data.mode !== 'edit') {
         setData((prev: DataType) => {
           const newData = {...prev, mode: 'edit'};
           if (newData.claim !== undefined) {
@@ -245,7 +247,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                   <Tab label="Content" icon={<ArticleIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
                   <Tab label="Design" icon={<DesignServicesIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
                 </Tabs>
-                {data.mode === 'edit' && <RenderEditMode isWide={isWideForPreview} />}
+                {data.mode && <RenderMode isWide={isWideForPreview} mode={data.mode} />}
                 {data.claim !== undefined && (
                   <Box sx={{position: 'absolute', textAlign: 'center', top: '7px', right: 0}}>
                     <RenderClaimingInfo claim={data.claim} />
@@ -256,8 +258,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                     isWideForPreview={isWideForPreview}
                     handleValue={handleValue}
                     omitPrimaryImg={omitProfileImg}
-                    backgndImg={data.mode === 'edit' ? (Array.isArray(data?.backgndImg) ? backImg || undefined : data?.backgndImg) : data?.backgndImg}
-                    foregndImg={data.mode === 'edit' ? (Array.isArray(data?.foregndImg) ? foreImg || undefined : data?.foregndImg) : data?.foregndImg}
+                    backgndImg={isEditOrClone ? (Array.isArray(data?.backgndImg) ? backImg || undefined : data?.backgndImg) : data?.backgndImg}
+                    foregndImg={isEditOrClone ? (Array.isArray(data?.foregndImg) ? foreImg || undefined : data?.foregndImg) : data?.foregndImg}
                     loading={loading}
                     foreError={foreImg === null}
                     backError={backImg === null}
@@ -270,10 +272,10 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
             <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
                                  save={handleSave} style={{mt: 1, ml: '15px', position: 'sticky', top: '120px'}}
                                  saveDisabled={isWrong || !data.qrName?.trim().length} shareLink={options?.data}
-                                 qrOptions={optionsForPreview()} step={1} mainImg={data.mode === 'edit' ? foreImg : undefined}
+                                 qrOptions={optionsForPreview()} step={1} mainImg={isEditOrClone ? foreImg : undefined}
                                  data={previewQRGenerator(data, selected, omitProfileImg)}
                                  onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
-                                 backImg={data.mode === 'edit' ? backImg : undefined}
+                                 backImg={isEditOrClone ? backImg : undefined}
             />
           )}
         </Box>
@@ -285,8 +287,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                                save={handleSave} saveDisabled={isWrong || !data.qrName?.trim().length} style={{mt: '-15px'}}
                                data={previewQRGenerator(data, selected, omitProfileImg)} step={1} isDrawed
                                onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
-                               shareLink={options?.data} backImg={data.mode === 'edit' ? backImg : undefined}
-                               mainImg={data.mode === 'edit' ? foreImg : undefined} qrOptions={optionsForPreview()} />
+                               shareLink={options?.data} backImg={isEditOrClone ? backImg : undefined}
+                               mainImg={isEditOrClone ? foreImg : undefined} qrOptions={optionsForPreview()} />
         </RenderPreviewDrawer>
       )}
     </>
