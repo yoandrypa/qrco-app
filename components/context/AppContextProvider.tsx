@@ -16,9 +16,8 @@ import { create, get } from "../../handlers/users";
 import session from "@ebanux/ebanux-utils/sessionStorage";
 // @ts-ignore
 import cookies from "@ebanux/ebanux-utils/cookiesStorage";
-import CssBaseline from "@mui/material/CssBaseline";
-import Claimer from "../claimer/Claimer";
 
+const Claimer = dynamic(() => import("../claimer/Claimer"));
 const Loading = dynamic(() => import("../Loading"));
 const PleaseWait = dynamic(() => import("../PleaseWait"));
 const Generator = dynamic(() => import("../qr/Generator"));
