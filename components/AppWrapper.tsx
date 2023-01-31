@@ -18,11 +18,12 @@ import {get as getUser} from "../handlers/users"; // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage"; // @ts-ignore
 import {startAuthorizationFlow} from "@ebanux/ebanux-utils/auth";
 import {list} from '../handlers/qrs'
-import RenderButton from "./wrapper/RenderButton";
-import RenderMenu from "./wrapper/RenderMenu";
+
 import RenderSupport from "./wrapper/RenderSupport";
 
 const CountDown = dynamic(() => import("./countdown/CountDown"));
+const RenderButton = dynamic(() => import("./wrapper/RenderButton"));
+const RenderMenu = dynamic(() => import("./wrapper/RenderMenu"));
 
 interface Props {
   window?: () => Window;
