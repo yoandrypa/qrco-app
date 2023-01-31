@@ -78,16 +78,6 @@ export default function AppWrapper(props: AppWrapperProps) {
     setAnchorElNav(event.currentTarget);
   }, []);
 
-  const beforeLogout = () => {
-    if (handleLogout) {
-      if (setIsFreeMode) {
-        setIsFreeMode(false);
-      }
-      setStartTrialDate(null);
-      handleLogout();
-    }
-  };
-
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
   const router = useRouter();
 
@@ -96,6 +86,15 @@ export default function AppWrapper(props: AppWrapperProps) {
       setLoading(loading !== undefined ? loading : true);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const beforeLogout = () => {
+    if (handleLogout) {
+      setIsFreeMode && setIsFreeMode(false);
+      setStartTrialDate(null);
+      handleLoading(true);
+      handleLogout();
+    }
+  };
 
   const handleLogin = useCallback(() => {
     startAuthorizationFlow();
