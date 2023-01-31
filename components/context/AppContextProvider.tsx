@@ -6,10 +6,14 @@ import dynamic from "next/dynamic";
 import Context from "./Context";
 import { initialBackground, initialData, initialFrame } from "../../helpers/qr/data";
 import { BackgroundType, CornersAndDotsType, DataType, FramesType, OptionsType } from "../qr/types/types";
-import { DEFAULT_DYNAMIC_SELECTED, DEFAULT_STATIC_SELECTED, PARAM_QR_TEXT, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE,
-  QR_DETAILS_ROUTE, QR_TYPE_ROUTE } from "../qr/constants";
+import {
+  DEFAULT_DYNAMIC_SELECTED, DEFAULT_STATIC_SELECTED, PARAM_QR_TEXT, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE,
+  QR_DETAILS_ROUTE, QR_TYPE_ROUTE
+} from "../qr/constants";
 import AppWrapper from "../AppWrapper";
-import { dataCleaner, getBackgroundObject, getCornersAndDotsObject, getFrameObject, handleInitialData } from "../../helpers/qr/helpers";
+import {
+  dataCleaner, getBackgroundObject, getCornersAndDotsObject, getFrameObject, handleInitialData
+} from "../../helpers/qr/helpers";
 import { create, get } from "../../handlers/users";
 
 // @ts-ignore
@@ -17,9 +21,7 @@ import session from "@ebanux/ebanux-utils/sessionStorage";
 // @ts-ignore
 import { logout } from '@ebanux/ebanux-utils/auth';
 
-const Claimer = dynamic(() => import("../claimer/Claimer"));
 const Loading = dynamic(() => import("../Loading"));
-const PleaseWait = dynamic(() => import("../PleaseWait"));
 const Generator = dynamic(() => import("../qr/Generator"));
 
 const AppContextProvider = ({ children }: { children: ReactNode }) => {
@@ -169,6 +171,14 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     doneInitialRender.current = true;
   }, []);
 
+  if (isEmbedded) {
+    return <Claimer code="" embedded />;
+  }
+
+  if (verifying || !done) {
+    return <PleaseWait />
+  }
+
   if (router.pathname.startsWith("/qr") && ![QR_TYPE_ROUTE, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE]
     .includes(router.pathname)) {
     return <>{children}</>;
@@ -194,16 +204,6 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       );
     }
   };
-
-  if (isEmbedded) {
-    return (
-      <Claimer code="" embedded />
-    );
-  }
-
-  if (verifying || !done) {
-    return <PleaseWait />
-  }
 
   return (
     <Context.Provider value={{
