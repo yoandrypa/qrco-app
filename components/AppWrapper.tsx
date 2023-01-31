@@ -101,7 +101,7 @@ export default function AppWrapper(props: AppWrapperProps) {
     startAuthorizationFlow();
   }, []);
 
-  const handleNavigation = () => {
+  const handleNavigation = useCallback(() => {
     const isInListView = router.pathname === "/";
     const isEdit = !isInListView && mode === "edit";
 
@@ -121,7 +121,7 @@ export default function AppWrapper(props: AppWrapperProps) {
         handleLoading(false);
         if (setRedirecting) { setRedirecting(false); }
       });
-  };
+  }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSupportMenuAnchor = useCallback((event: MouseEvent<HTMLElement>) => {
     setAnchorSupport(event.currentTarget);
