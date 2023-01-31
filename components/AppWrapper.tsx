@@ -63,13 +63,12 @@ export default function AppWrapper(props: AppWrapperProps) {
 
   const beforeLogout = () => {
     if (handleLogout) {
-      if (setIsFreeMode) {
-        setIsFreeMode(false);
-      }
+      setIsFreeMode && setIsFreeMode(false);
       setStartTrialDate(null);
+      handleLoading(true);
       handleLogout();
     }
-  };
+  }
 
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
   const router = useRouter();
