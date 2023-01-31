@@ -33,7 +33,6 @@ const MenuIcon = dynamic(() => import("@mui/icons-material/Menu"));
 const Menu = dynamic(() => import("@mui/material/Menu"));
 const MenuItem = dynamic(() => import("@mui/material/MenuItem"));
 const Divider = dynamic(() => import("@mui/material/Divider"));
-const RenderConfirmDlg = dynamic(() => import("./renderers/RenderConfirmDlg"));
 const CountDown = dynamic(() => import("./countdown/CountDown"));
 const EmailIcon = dynamic(() => import("@mui/icons-material/Email"));
 
@@ -74,15 +73,20 @@ export default function AppWrapper(props: AppWrapperProps) {
   const [anchorSupport, setAnchorSupport] = useState<null | HTMLElement>(null);
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
   const [freeLimitReached, setFreeLimitReached] = useState<boolean>(false)
-  const [showLimitDlg, setShowLimitDlg] = useState<boolean>(false)
 
   const handleOpenNavMenu = useCallback((event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   }, []);
 
-  const handleCloseNavMenu = useCallback(() => {
-    setAnchorElNav(null);
-  }, []);
+  const beforeLogout = () => {
+    if (handleLogout) {
+      if (setIsFreeMode) {
+        setIsFreeMode(false);
+      }
+      setStartTrialDate(null);
+      handleLogout();
+    }
+  };
 
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
   const router = useRouter();
@@ -92,15 +96,6 @@ export default function AppWrapper(props: AppWrapperProps) {
       setLoading(loading !== undefined ? loading : true);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const beforeLogout = () => {
-    if (handleLogout) {
-      setIsFreeMode && setIsFreeMode(false);
-      setStartTrialDate(null);
-      handleLoading(true);
-      handleLogout();
-    }
-  };
 
   const handleLogin = useCallback(() => {
     startAuthorizationFlow();
@@ -112,7 +107,9 @@ export default function AppWrapper(props: AppWrapperProps) {
 
     setAnchorElNav(null);
     if (setRedirecting && !isInListView) { setRedirecting(true); }
-    if (clearData !== undefined) { clearData(false, isEdit || !isInListView); }
+    if (clearData !== undefined) {
+      clearData(false, isEdit || !isInListView);
+    }
     handleLoading();
     const navigationOptions = { pathname: !isEdit && isInListView ? QR_TYPE_ROUTE : "/", query: {} };
     if (isEdit) { //@ts-ignore
@@ -121,9 +118,9 @@ export default function AppWrapper(props: AppWrapperProps) {
 
     router.push(navigationOptions, isInListView ? QR_TYPE_ROUTE : "/",
       { shallow: true }).then(() => {
-        handleLoading(false);
-        if (setRedirecting) { setRedirecting(false); }
-      });
+      handleLoading(false);
+      if (setRedirecting) { setRedirecting(false); }
+    });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSupportMenuAnchor = useCallback((event: MouseEvent<HTMLElement>) => {
@@ -156,12 +153,6 @@ export default function AppWrapper(props: AppWrapperProps) {
       }).catch(console.error);
     }
   }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  if (router.pathname === "/auth_callback") return (
-    <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
-      {children}
-    </Box>
-  )
 
   return (
     <>
@@ -214,7 +205,7 @@ export default function AppWrapper(props: AppWrapperProps) {
                       keepMounted
                       transformOrigin={{ vertical: "top", horizontal: "left" }}
                       open={anchorElNav !== null}
-                      onClose={handleCloseNavMenu}
+                      onClose={() => setAnchorElNav(null)}
                       sx={{ display: { xs: "block", md: "none" } }}
                     >
                       {!userInfo && (
@@ -290,12 +281,12 @@ export default function AppWrapper(props: AppWrapperProps) {
         <Box sx={{ width: '235px', height: '88px' }}>
           <MenuList>
             <MenuItem key="help" onClick={() => setAnchorSupport(null)} // @ts-ignore
-              href="https://docs.theqr.link/" button component="a" target="_blank" rel="noopener noreferrer">
+                      href="https://docs.theqr.link/" button component="a" target="_blank" rel="noopener noreferrer">
               <ContactSupportIcon color="primary" />
               <Typography>{"Help"}</Typography>
             </MenuItem>
             <MenuItem key="emailSupport" onClick={() => setAnchorSupport(null)} // @ts-ignore
-              href="mailto:info@ebanux.com" button component="a" target="_blank" rel="noopener noreferrer">
+                      href="mailto:info@ebanux.com" button component="a" target="_blank" rel="noopener noreferrer">
               <EmailIcon color="primary" />
               <Typography>{"Email to support"}</Typography>
             </MenuItem>

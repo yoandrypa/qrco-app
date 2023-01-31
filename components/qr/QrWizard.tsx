@@ -7,7 +7,7 @@ import Stepper from "@mui/material/Stepper";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { generateId, generateShortLink } from "../../utils";
-import { OptionsType, ProcessHanldlerType } from "./types/types";
+import {DataType, OptionsType, ProcessHanldlerType} from "./types/types";
 import { QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { getUuid } from "../../helpers/qr/helpers";
 import { getStep, saveOrUpdate, steps, StepsProps } from "./auxFunctions";
@@ -49,7 +49,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
 
   // @ts-ignore
   const { selected, data, userInfo, options, frame, background, cornersData, dotsData, isWrong, loading, setOptions,
-    setLoading, setRedirecting, clearData }: StepsProps = useContext(Context);
+    setLoading, setRedirecting, clearData, setData }: StepsProps = useContext(Context);
 
   const router = useRouter();
 
@@ -91,15 +91,29 @@ const QrWizard = ({ children }: QrWizardProps) => {
     setLoading(true); // @ts-ignore
     if ([QR_TYPE_ROUTE, "/"].includes(router.pathname)) {
       if (data.isDynamic && !isLogged) {
-        router.push({ pathname: QR_CONTENT_ROUTE, query: { selected, address: router.query.address } })
+        router.push({ pathname: QR_CONTENT_ROUTE, query: { selected } })
           .then(() => setLoading(false));
       } else {
-        router.push({ pathname: QR_CONTENT_ROUTE, query: { address: router.query.address } }, undefined, { shallow: true })
+        router.push(QR_CONTENT_ROUTE, undefined, { shallow: true })
           .then(() => setLoading(false));
       }
     } else if (router.pathname === QR_DESIGN_ROUTE && isLogged) {
       await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setIsError,
-        undefined, router, lastStep, dataInfo.current.length, updatingHandler);
+        () => {
+        setData((prev: DataType) => {
+          const newData = {...data};
+          if (newData.claim !== undefined) {
+            delete newData.claim;
+          }
+          if (newData.preGenerated !== undefined) {
+            delete newData.preGenerated;
+          }
+          if (newData.claimable !== undefined) {
+            delete newData.claimable;
+          }
+          return prev;
+        })
+        }, router, lastStep, dataInfo.current.length, updatingHandler);
     } else if (router.pathname === QR_DESIGN_ROUTE && !isLogged) {
       lastStep(false);
     } else {
@@ -128,7 +142,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
     if (router.pathname === QR_CONTENT_ROUTE && isLogged && data?.isDynamic && !Boolean(options.id) && options.mode === undefined) {
       const genShortLinkAndId = async () => {
         const id = getUuid();
-        const shortCode = router.query?.address || await generateId(); // @ts-ignore
+        const shortCode = data.claim || await generateId(); // @ts-ignore
         setOptions((prev: OptionsType) => ({ ...prev, id, shortCode, data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN) }));
       };
       genShortLinkAndId();

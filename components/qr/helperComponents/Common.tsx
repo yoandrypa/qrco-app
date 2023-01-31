@@ -172,10 +172,16 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setError, (creationDate?: string) => {
       if (data.mode === undefined) {
         setData((prev: DataType) => {
-          if (prev.claim) {
-            delete prev.claim;
-          }
           const newData = {...prev, mode: 'edit'};
+          if (newData.claim !== undefined) {
+            delete newData.claim;
+          }
+          if (newData.preGenerated !== undefined) {
+            delete newData.preGenerated;
+          }
+          if (newData.claimable !== undefined) {
+            delete newData.claimable;
+          }
           if (creationDate) { // @ts-ignore
             newData.createdAt = creationDate;
           }
@@ -189,7 +195,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   const optionsForPreview = useCallback(() => {
     const opts = {...options, background, frame, corners: cornersData, cornersDot: dotsData};
     if (!data?.isDynamic) {
-      opts.data = handleDesignerString(selected, data || initialData);
+      opts.data = handleDesignerString(selected, data || {...initialData});
       if (!opts.data.length) {
         opts.data = selected === 'web' ? 'https://www.example.com' : 'Example';
       }
