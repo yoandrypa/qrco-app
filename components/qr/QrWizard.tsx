@@ -176,7 +176,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
     <>
       {showLimitDlg &&
         <RenderConfirmDlg
-          title="Ops"
+          title="Oops"
           message="You have reached the limit of Dynamic QRs for this account. Upgrade to a paid plan to add more QRs. Click here to upgrade now."
           handleOk={() => {
             router.push('/plans');
