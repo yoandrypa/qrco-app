@@ -255,10 +255,10 @@ const Plans = (props: Props) => {
         spacing: 3,
         justifyContent: "center",
       }}>
-        <Tabs value={activeTab} onChange={handleTabChange}>
+        {/* <Tabs value={activeTab} onChange={handleTabChange}>
           <Tab label="Monthly Plan" />
           <Tab label="Annual Plan" />
-        </Tabs>
+        </Tabs> */}
       </Box>
       <Grid container marginTop={2} alignContent="center" display="flex"
         spacing={1} justifyContent={"center"}>
@@ -279,12 +279,12 @@ const Plans = (props: Props) => {
             clickAction={handleClick} />
         </Grid>
         <Grid item xs={12} sm={6} md={3} lg={3}>
-          <PlanCard data={activeTab == 0 ? business : businessAnnual}
+          <PlanCard data={business}
             isCurrentPlan={false}
             clickAction={handleClick} />
         </Grid>
         <Grid item xs={12} sm={3} md={3} lg={3}>
-          <PlanCard data={activeTab == 0 ? premium : premiumAnnual}
+          <PlanCard data={premium}
             isCurrentPlan={false}
             clickAction={handleClick} />
         </Grid>
