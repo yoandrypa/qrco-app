@@ -304,7 +304,7 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
             <Typography>QR Code appearance settings</Typography>
           </Box>
           <NotifyDynamic styling={{position: 'absolute', right: 0}} isDynamic={Boolean(data.isDynamic)}/>
-          {data.claim !== undefined && (<Box sx={{position: 'absolute', right: '0', top: '20px', textAlign: 'crightenter'}}>
+          {data.claim !== undefined && (<Box sx={{position: 'absolute', right: 0, top: '20px', textAlign: 'center'}}>
             <RenderClaimingInfo claim={data.claim} />
           </Box>)}
           {data.mode === 'edit' && <RenderEditMode isWide={isWideForPreview} sx={{top: '24px'}} />}
