@@ -66,30 +66,33 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     setLoading(false);
     setOptions(handleInitialData("Ebanux"));
 
-    let newData: DataType;
-    if (!keepType || data?.isDynamic) {
-      newData = initialData;
-    } else {
-      newData = {};
-    }
+    setData(() => {
+      let newData:DataType;
 
-    if (claim !== undefined) {
-      newData.claim = claim;
-    }
+      if (!keepType || data?.isDynamic) {
+        newData = {...initialData};
+      } else {
+        newData = {};
+      }
 
-    if (claimable !== undefined) {
-      newData.claimable = claimable;
-    }
+      if (claim !== undefined) {
+        newData.claim = claim;
+      }
 
-    if (preGenerated !== undefined) {
-      newData.preGenerated = preGenerated;
-    }
+      if (claimable !== undefined) {
+        newData.claimable = claimable;
+      }
 
-    setData(newData);
-  }, [data?.isDynamic, data?.mode, data?.claim, data?.claimable, data.preGenerated]); // eslint-disable-line react-hooks/exhaustive-deps
+      if (preGenerated !== undefined) {
+        newData.preGenerated = preGenerated;
+      }
+
+      return newData;
+    });
+  }, [data?.isDynamic, data?.mode, data?.claim, data?.claimable, data?.preGenerated]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (doneInitialRender.current && options.mode === undefined) {
+    if (doneInitialRender.current && options.mode === undefined && router.pathname === QR_TYPE_ROUTE) {
       if (!forbidClear.current) {
         clearData(true, false,  false, data.claim, data.claimable, data.preGenerated);
       } else {
@@ -107,6 +110,9 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (loading) { setLoading(false); }
     if (redirecting) { setRedirecting(false); }
+    if (router.pathname === '/') {
+      clearData(true);
+    }
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {

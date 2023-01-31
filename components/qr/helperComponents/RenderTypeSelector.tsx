@@ -69,11 +69,14 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
     if (options.id) { compareWith.id = options.id; } // @ts-ignore
     if (options.shortCode) { compareWith.shortCode = options.shortCode; }
     const dataComp = {...data};
-    if (initialData.isDynamic !== undefined) {
-      dataComp.isDynamic = initialData.isDynamic;
+
+    const initialDataCpy = {...initialData};
+
+    if (initialDataCpy.isDynamic !== undefined) {
+      dataComp.isDynamic = initialDataCpy.isDynamic;
     }
 
-    if (!areEquals(dataComp, initialData) || !areEquals(options, compareWith)) {
+    if (!areEquals(dataComp, initialDataCpy) || !areEquals(options, compareWith)) {
       setDisplayConfirm({select: selection});
     } else {
       proceed(selection);
