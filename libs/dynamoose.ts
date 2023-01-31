@@ -1,16 +1,16 @@
 import * as dynamoose from "dynamoose";
-import { DynamoDBClientConfig } from "@aws-sdk/client-dynamodb";
 
-const configuration: DynamoDBClientConfig = {
+const configuration = {
   region: <string>process.env.REACT_AWS_REGION,
   credentials: {
     accessKeyId: <string>process.env.REACT_AWS_ACCESS_KEY_ID,
-    secretAccessKey: <string>process.env.REACT_AWS_SECRET_ACCESS_KEY
+    secretAccessKey: <string>process.env.REACT_AWS_SECRET_ACCESS_KEY,
   }
 };
 
 if (process.env.REACT_AWS_DYNAMODB_URL) {
-  configuration.endpoint = process.env.REACT_AWS_DYNAMODB_URL;
+  // @ts-ignore
+  configuration.endpoint = <string>process.env.REACT_AWS_DYNAMODB_URL;
 }
 
 // Create new DynamoDB instance
@@ -24,7 +24,7 @@ dynamoose.Table.defaults.set({
   prefix: process.env.REACT_NODE_ENV === "production" ? "prd_" : "dev_",
   suffix: "",
   waitForActive: process.env.REACT_NODE_ENV !== "production",
-  update: false
+  update: false,
 });
 
 export default dynamoose;
