@@ -1,4 +1,5 @@
 import {useRouter} from "next/router";
+// @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import Context from "../components/context/Context";
 import {useContext, useEffect} from "react";

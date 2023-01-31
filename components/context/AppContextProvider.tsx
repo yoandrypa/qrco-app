@@ -14,9 +14,8 @@ import { create, get } from "../../handlers/users";
 
 // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
-import { logout } from '@ebanux/ebanux-utils/auth';
 // @ts-ignore
-import cookies from "@ebanux/ebanux-utils/cookiesStorage";
+import { logout } from '@ebanux/ebanux-utils/auth';
 
 const Loading = dynamic(() => import("../Loading"));
 const PleaseWait = dynamic(() => import("../PleaseWait"));
