@@ -1,6 +1,5 @@
-// @ts-ignore
-import { Authenticator } from "@ebanux/ebanux-utils/auth";
-import session from "@ebanux/ebanux-utils/sessionStorage";
+import { Authenticator } from "@ebanux/ebanux-utils/auth"; // @ts-ignore
+import session from "@ebanux/ebanux-utils/sessionStorage"; // @ts-ignore
 import "@ebanux/ebanux-utils/styles/spinner.css";
 import { useRouter } from "next/router";
 import { PRIVATE_ROUTES } from "./qr/constants";
