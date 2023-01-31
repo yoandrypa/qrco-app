@@ -33,7 +33,6 @@ const MenuIcon = dynamic(() => import("@mui/icons-material/Menu"));
 const Menu = dynamic(() => import("@mui/material/Menu"));
 const MenuItem = dynamic(() => import("@mui/material/MenuItem"));
 const Divider = dynamic(() => import("@mui/material/Divider"));
-const RenderConfirmDlg = dynamic(() => import("./renderers/RenderConfirmDlg"));
 const CountDown = dynamic(() => import("./countdown/CountDown"));
 const EmailIcon = dynamic(() => import("@mui/icons-material/Email"));
 
@@ -74,14 +73,9 @@ export default function AppWrapper(props: AppWrapperProps) {
   const [anchorSupport, setAnchorSupport] = useState<null | HTMLElement>(null);
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
   const [freeLimitReached, setFreeLimitReached] = useState<boolean>(false)
-  const [showLimitDlg, setShowLimitDlg] = useState<boolean>(false)
 
   const handleOpenNavMenu = useCallback((event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
-  }, []);
-
-  const handleCloseNavMenu = useCallback(() => {
-    setAnchorElNav(null);
   }, []);
 
   const beforeLogout = () => {
@@ -113,7 +107,9 @@ export default function AppWrapper(props: AppWrapperProps) {
 
     setAnchorElNav(null);
     if (setRedirecting && !isInListView) { setRedirecting(true); }
-    if (clearData !== undefined) { clearData(false, isEdit || !isInListView); }
+    if (clearData !== undefined) {
+      clearData(false, isEdit || !isInListView);
+    }
     handleLoading();
     const navigationOptions = { pathname: !isEdit && isInListView ? QR_TYPE_ROUTE : "/", query: {} };
     if (isEdit) { //@ts-ignore
@@ -209,7 +205,7 @@ export default function AppWrapper(props: AppWrapperProps) {
                       keepMounted
                       transformOrigin={{ vertical: "top", horizontal: "left" }}
                       open={anchorElNav !== null}
-                      onClose={handleCloseNavMenu}
+                      onClose={() => setAnchorElNav(null)}
                       sx={{ display: { xs: "block", md: "none" } }}
                     >
                       {!userInfo && (
