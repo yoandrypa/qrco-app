@@ -22,6 +22,8 @@ import Link from "next/link";
 
 import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
 import RenderNewQrButton from "./renderers/RenderNewQrButton";
+import PleaseWait from "./PleaseWait";
+import Claimer from "./claimer/Claimer";
 import { get as getUser } from "../handlers/users"; // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage"; // @ts-ignore
 import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
@@ -68,6 +70,9 @@ export default function AppWrapper(props: AppWrapperProps) {
   const {
     children, userInfo, handleLogout, clearData, setLoading, setIsFreeMode: setIsFreeMode, mode, isTrialMode: isFreeMode, setRedirecting
   } = props;
+
+  const [isEmbedded, setIsEmbedded] = useState<boolean>(false);
+  const [done, setDone] = useState<boolean>(false);
 
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorSupport, setAnchorSupport] = useState<null | HTMLElement>(null);
@@ -128,6 +133,14 @@ export default function AppWrapper(props: AppWrapperProps) {
   }, []);
 
   useEffect(() => {
+    if (window.top !== window) {
+      setIsEmbedded(true);
+    } else {
+      setDone(true);
+    }
+  }, []);
+
+  useEffect(() => {
     if (userInfo) {
       const fetchUser = async () => {
         return await getUser(userInfo.cognito_user_id);
@@ -153,6 +166,15 @@ export default function AppWrapper(props: AppWrapperProps) {
       }).catch(console.error);
     }
   }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (isEmbedded || !done) {
+    return (
+      <>
+        <CssBaseline />
+        {isEmbedded ? <Claimer code="" embedded /> : <PleaseWait />}
+      </>
+    );
+  }
 
   return (
     <>
