@@ -133,11 +133,7 @@ export default function Claimer({code, embedded}: ClaimerProps) {
       left: "50%",
       transform: "translate(-50%, -50%)"
     }}>
-      <Paper sx={{
-        p: 2,
-        mx: 'auto',
-        width: !embedded ? {sm: '400px', xs: '100%'} : '350px'
-      }} elevation={3}>
+      <Paper sx={{ p: 2, mx: 'auto', width: !embedded ? {sm: '400px', xs: '100%'} : '350px' }} elevation={3}>
         {render()}
       </Paper>
       {open && (
