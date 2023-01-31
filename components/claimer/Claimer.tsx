@@ -80,13 +80,8 @@ export default function Claimer({code, embedded}: ClaimerProps) {
     return () => clearTimeout(checkData);
   }, [custom]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const renderClaimer = () => (
-    <Paper sx={{
-      p: 2,
-      mx: 'auto',
-      mt: !embedded ? 0 : '5px',
-      width: !embedded ? {sm: '400px', xs: '100%'} : '350px'
-    }} elevation={3}>
+  const render = () => (
+    <>
       <Box sx={{mb: 2, width: '100%', textAlign: 'center'}}>
         <Typo bold>QR</Typo>
         <Typo sx={{color: MAIN_ORANGE}} bold>Lynk</Typo>
@@ -124,11 +119,11 @@ export default function Claimer({code, embedded}: ClaimerProps) {
           </Button>
         </Box>
       </Box>
-    </Paper>
+    </>
   );
 
   if (embedded) {
-    return renderClaimer();
+    return <Box sx={{p: '1px'}}>{render()}</Box>;
   }
 
   return (
@@ -138,7 +133,9 @@ export default function Claimer({code, embedded}: ClaimerProps) {
       left: "50%",
       transform: "translate(-50%, -50%)"
     }}>
-      {renderClaimer()}
+      <Paper sx={{ p: 2, mx: 'auto', width: !embedded ? {sm: '400px', xs: '100%'} : '350px' }} elevation={3}>
+        {render()}
+      </Paper>
       {open && (
         <Popover
           open
