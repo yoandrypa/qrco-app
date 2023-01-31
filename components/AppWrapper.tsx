@@ -1,42 +1,28 @@
-import { ReactElement, ReactNode, cloneElement, useCallback, useState, MouseEvent, useEffect } from "react";
+import {cloneElement, ReactElement, ReactNode, useCallback, useEffect, useState} from "react";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import LoginIcon from "@mui/icons-material/Login";
-import LogoutIcon from "@mui/icons-material/Logout";
-import QrCodeIcon from "@mui/icons-material/QrCode";
-import FirstPageIcon from "@mui/icons-material/FirstPage";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import IconButton from "@mui/material/IconButton";
-import ContactSupportIcon from '@mui/icons-material/ContactSupport';
 
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import Link from "next/link";
 
-import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
-import RenderNewQrButton from "./renderers/RenderNewQrButton";
-import PleaseWait from "./PleaseWait";
-import Claimer from "./claimer/Claimer";
-import { get as getUser } from "../handlers/users"; // @ts-ignore
+import {PARAM_QR_TEXT, QR_TYPE_ROUTE} from "./qr/constants";
+import {get as getUser} from "../handlers/users"; // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage"; // @ts-ignore
-import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
-import { list } from '../handlers/qrs'
+import {startAuthorizationFlow} from "@ebanux/ebanux-utils/auth";
+import {list} from '../handlers/qrs'
+import RenderButton from "./wrapper/RenderButton";
+import RenderMenu from "./wrapper/RenderMenu";
+import RenderSupport from "./wrapper/RenderSupport";
 
-const Popover = dynamic(() => import("@mui/material/Popover"));
-const MenuList = dynamic(() => import("@mui/material/MenuList"));
-const MenuIcon = dynamic(() => import("@mui/icons-material/Menu"));
-const Menu = dynamic(() => import("@mui/material/Menu"));
-const MenuItem = dynamic(() => import("@mui/material/MenuItem"));
-const Divider = dynamic(() => import("@mui/material/Divider"));
 const CountDown = dynamic(() => import("./countdown/CountDown"));
-const EmailIcon = dynamic(() => import("@mui/icons-material/Email"));
 
 interface Props {
   window?: () => Window;
@@ -71,17 +57,8 @@ export default function AppWrapper(props: AppWrapperProps) {
     children, userInfo, handleLogout, clearData, setLoading, setIsFreeMode: setIsFreeMode, mode, isTrialMode: isFreeMode, setRedirecting
   } = props;
 
-  const [isEmbedded, setIsEmbedded] = useState<boolean>(false);
-  const [done, setDone] = useState<boolean>(false);
-
-  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-  const [anchorSupport, setAnchorSupport] = useState<null | HTMLElement>(null);
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
   const [freeLimitReached, setFreeLimitReached] = useState<boolean>(false)
-
-  const handleOpenNavMenu = useCallback((event: MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  }, []);
 
   const beforeLogout = () => {
     if (handleLogout) {
@@ -110,7 +87,6 @@ export default function AppWrapper(props: AppWrapperProps) {
     const isInListView = router.pathname === "/";
     const isEdit = !isInListView && mode === "edit";
 
-    setAnchorElNav(null);
     if (setRedirecting && !isInListView) { setRedirecting(true); }
     if (clearData !== undefined) {
       clearData(false, isEdit || !isInListView);
@@ -127,18 +103,6 @@ export default function AppWrapper(props: AppWrapperProps) {
         if (setRedirecting) { setRedirecting(false); }
       });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleSupportMenuAnchor = useCallback((event: MouseEvent<HTMLElement>) => {
-    setAnchorSupport(event.currentTarget);
-  }, []);
-
-  useEffect(() => {
-    if (window.top !== window) {
-      setIsEmbedded(true);
-    } else {
-      setDone(true);
-    }
-  }, []);
 
   useEffect(() => {
     if (userInfo) {
@@ -167,15 +131,6 @@ export default function AppWrapper(props: AppWrapperProps) {
     }
   }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (isEmbedded || !done) {
-    return (
-      <>
-        <CssBaseline />
-        {isEmbedded ? <Claimer code="" embedded /> : <PleaseWait />}
-      </>
-    );
-  }
-
   return (
     <>
       <CssBaseline />
@@ -188,72 +143,21 @@ export default function AppWrapper(props: AppWrapperProps) {
               </Link>
               <Box sx={{ display: "flex" }}>
                 {router.query[PARAM_QR_TEXT] === undefined && (<>
-                  {isWide ? (<>
-                    {!userInfo ? (
-                      <Button
-                        startIcon={<LoginIcon />}
-                        onClick={handleLogin}
-                        variant="contained"
-                        sx={{ height: "28px", mr: "5px", my: "auto" }}>
-                        {"Login"}
-                      </Button>
-                    ) : (
-                      <Box sx={{ display: "flex" }}>
-                        <RenderNewQrButton pathname={router.pathname} handleNavigation={handleNavigation} />
-                        <Button
-                          startIcon={<LogoutIcon />}
-                          onClick={beforeLogout}
-                          variant="contained"
-                          sx={{ height: "28px", ml: "10px", my: "auto" }}>
-                          {"Logout"}
-                        </Button>
-                      </Box>
-                    )}
-                  </>) : (<>
-                    <IconButton
-                      size="large"
-                      aria-label="responsive-user-menu"
-                      aria-controls="menu-appbar"
-                      aria-haspopup="true"
-                      onClick={handleOpenNavMenu}
-                      color="inherit"
-                    >
-                      <MenuIcon />
-                    </IconButton>
-                    <Menu
-                      id="menu-appbar"
-                      anchorEl={anchorElNav}
-                      anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-                      keepMounted
-                      transformOrigin={{ vertical: "top", horizontal: "left" }}
-                      open={anchorElNav !== null}
-                      onClose={() => setAnchorElNav(null)}
-                      sx={{ display: { xs: "block", md: "none" } }}
-                    >
-                      {!userInfo && (
-                        <MenuItem key="loginMenuItem" onClick={handleLogin}>
-                          <LoginIcon color="primary" />
-                          <Typography textAlign="center">{"Login"}</Typography>
-                        </MenuItem>
-                      )}
-                      {userInfo && (
-                        <MenuItem key="navigateMenuItem" onClick={handleNavigation}>
-                          {router.pathname === "/" ? <QrCodeIcon color="primary" /> : <FirstPageIcon color="primary" />}
-                          <Typography textAlign="center">{router.pathname === "/" ? "Create QR Link" : "My QR Links"}</Typography>
-                        </MenuItem>
-                      )}
-                      {userInfo && <Divider />}
-                      {userInfo && (
-                        <MenuItem key="logoutMenuItem" onClick={beforeLogout}>
-                          <LogoutIcon color="primary" />
-                          <Typography textAlign="center">{"Logout"}</Typography>
-                        </MenuItem>
-                      )}
-                    </Menu>
-                  </>)}
+                  {isWide ? (
+                    <RenderButton
+                      handleNavigation={handleNavigation}
+                      userInfo={userInfo}
+                      handleLogout={beforeLogout}
+                      handleLogin={handleLogin} />
+                  ) : (
+                    <RenderMenu
+                      handleLogin={handleLogin}
+                      handleNavigation={handleNavigation}
+                      handleLogout={beforeLogout}
+                      userInfo={userInfo} />
+                  )}
                 </>)}
                 {isFreeMode && <CountDown />}
-
               </Box>
             </Toolbar>
             {/*{isTrialMode && startTrialDate && <CountDown startDate={startTrialDate} />}*/}
@@ -288,33 +192,9 @@ export default function AppWrapper(props: AppWrapperProps) {
                 <AccountBoxIcon sx={{ mt: "-1px" }} />
               </Typography>
             )}
-            <IconButton sx={{ mr: '-11px' }} onClick={handleSupportMenuAnchor}>
-              <ContactSupportIcon color="primary" />
-            </IconButton>
+            <RenderSupport />
           </Box>)}
       </Container>
-      {anchorSupport && (<Popover
-        open
-        anchorEl={anchorSupport}
-        onClose={() => setAnchorSupport(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-      >
-        <Box sx={{ width: '235px', height: '88px' }}>
-          <MenuList>
-            <MenuItem key="help" onClick={() => setAnchorSupport(null)} // @ts-ignore
-              href="https://docs.theqr.link/" button component="a" target="_blank" rel="noopener noreferrer">
-              <ContactSupportIcon color="primary" />
-              <Typography>{"Help"}</Typography>
-            </MenuItem>
-            <MenuItem key="emailSupport" onClick={() => setAnchorSupport(null)} // @ts-ignore
-              href="mailto:info@ebanux.com" button component="a" target="_blank" rel="noopener noreferrer">
-              <EmailIcon color="primary" />
-              <Typography>{"Email to support"}</Typography>
-            </MenuItem>
-          </MenuList>
-        </Box>
-      </Popover>)}
     </>
   );
 }

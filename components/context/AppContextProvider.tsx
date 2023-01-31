@@ -16,6 +16,8 @@ import { create, get } from "../../handlers/users";
 import session from "@ebanux/ebanux-utils/sessionStorage";
 // @ts-ignore
 import cookies from "@ebanux/ebanux-utils/cookiesStorage";
+import CssBaseline from "@mui/material/CssBaseline";
+import Claimer from "../claimer/Claimer";
 
 const Loading = dynamic(() => import("../Loading"));
 const PleaseWait = dynamic(() => import("../PleaseWait"));
@@ -29,6 +31,9 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [frame, setFrame] = useState<FramesType>(initialFrame);
   const [data, setData] = useState<DataType>(initialData);
   const [isTrialMode, setIsTrialMode] = useState<boolean>(false);
+
+  const [isEmbedded, setIsEmbedded] = useState<boolean>(false);
+  const [done, setDone] = useState<boolean>(false);
 
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -134,6 +139,12 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, [options.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    if (window.top !== window) {
+      setIsEmbedded(true);
+    } else {
+      setDone(true);
+    }
+
     const userCreation = async (id: string) => {
       try {
         const user = await get(id);
@@ -197,7 +208,13 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  if (verifying) {
+  if (isEmbedded) {
+    return (
+      <Claimer code="" embedded />
+    );
+  }
+
+  if (verifying || !done) {
     return <PleaseWait />
   }
 
