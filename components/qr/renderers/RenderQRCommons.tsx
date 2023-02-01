@@ -17,7 +17,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import dynamic from "next/dynamic";
 import {DataType} from "../types/types";
-import {DEFAULT_COLORS, IS_DEV_ENV} from "../constants";
+import {DEFAULT_COLORS} from "../constants";
 import RenderGradientSelector from "./helpers/RenderGradientSelector";
 import Expander from "./helpers/Expander";
 import Context from "../../context/Context";
@@ -175,10 +175,10 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
           <Expander expand={expander} setExpand={handleExpander} item="buttons" title="Buttons" bold/>
           {expander === 'buttons' && <RenderButtonsHandler handleValue={handleValue} data={data}/>}
         </Paper>)}
-        {IS_DEV_ENV && <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="layout" title="Layout" bold/>
           {expander === 'layout' && <RenderLayoutHandler handleValue={handleValue} data={data} omitPrimary={omitPrimaryImg}/>}
-        </Paper>}
+        </Paper>
       </Box>
       {selectFile !== null && (
         <RenderImagePicker
