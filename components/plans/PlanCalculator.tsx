@@ -32,7 +32,6 @@ function PlanCalculator() {
     const handleChange = (event: SelectChangeEvent) => {
         setPlan(event.target.value);
 
-
     };
 
     function CalculateTotal(plan: string, qrAmount: number) {
@@ -69,8 +68,6 @@ function PlanCalculator() {
         }
         if (extraQR > 0) return basePrice + (extraQR * EXTRA_QR_PRICE)
         return basePrice;
-
-
     }
 
     useEffect(() => {
@@ -107,18 +104,18 @@ function PlanCalculator() {
                             onChange={handleChange}
                             size='small'
                         >
-                            <MenuItem value="" disabled>
+                            {/* <MenuItem value="" disabled>
                                 <em>Monthly Plans</em>
-                            </MenuItem>
+                            </MenuItem> */}
                             <MenuItem value='basic'>Basic</MenuItem>
                             <MenuItem value='business'>Business</MenuItem>
                             <MenuItem value='premium'>Premium</MenuItem>
-                            <MenuItem value="" disabled>
-                                <em>Yearly Plans</em>
+                            {/* <MenuItem value="" disabled> */}
+                            {/* <em>Yearly Plans</em>
                             </MenuItem>
                             <MenuItem value='basic-annual'>Basic (17% off)</MenuItem>
                             <MenuItem value='business-annual'>Business (25% off)</MenuItem>
-                            <MenuItem value='premium-annual'>Premium (34% off)</MenuItem>
+                            <MenuItem value='premium-annual'>Premium (34% off)</MenuItem> */}
                         </Select>
                         {discount > 0 && <FormHelperText>{discount}% Discount</FormHelperText>}
                     </FormControl>

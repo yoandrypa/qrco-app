@@ -7,7 +7,7 @@ import Stepper from "@mui/material/Stepper";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { generateId, generateShortLink } from "../../utils";
-import {DataType, OptionsType, ProcessHanldlerType} from "./types/types";
+import { DataType, OptionsType, ProcessHanldlerType } from "./types/types";
 import { QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { getUuid } from "../../helpers/qr/helpers";
 import { getStep, saveOrUpdate, steps, StepsProps } from "./auxFunctions";
@@ -100,19 +100,19 @@ const QrWizard = ({ children }: QrWizardProps) => {
     } else if (router.pathname === QR_DESIGN_ROUTE && isLogged) {
       await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setIsError,
         () => {
-        setData((prev: DataType) => {
-          const newData = {...data};
-          if (newData.claim !== undefined) {
-            delete newData.claim;
-          }
-          if (newData.preGenerated !== undefined) {
-            delete newData.preGenerated;
-          }
-          if (newData.claimable !== undefined) {
-            delete newData.claimable;
-          }
-          return prev;
-        })
+          setData((prev: DataType) => {
+            const newData = { ...data };
+            if (newData.claim !== undefined) {
+              delete newData.claim;
+            }
+            if (newData.preGenerated !== undefined) {
+              delete newData.preGenerated;
+            }
+            if (newData.claimable !== undefined) {
+              delete newData.claimable;
+            }
+            return prev;
+          })
         }, router, lastStep, dataInfo.current.length, updatingHandler);
     } else if (router.pathname === QR_DESIGN_ROUTE && !isLogged) {
       lastStep(false);
@@ -176,8 +176,8 @@ const QrWizard = ({ children }: QrWizardProps) => {
     <>
       {showLimitDlg &&
         <RenderConfirmDlg
-          title="Ops"
-          message="Your free account only allows for one Dynamic QR. Upgrade to a paid plan to add more QRs. Click here to upgrade now."
+          title="Oops"
+          message="You have reached the limit of Dynamic QRs for this account. Upgrade to a paid plan to add more QRs. Click here to upgrade now."
           handleOk={() => {
             router.push('/plans');
             setShowLimitDlg(false);
@@ -187,7 +187,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
               setRedirecting(true);
               const query = {}; // @ts-ignore
               if (router.query.address !== undefined) { query.address = router.query.address; }
-              router.push({pathname: QR_TYPE_ROUTE, query}, QR_TYPE_ROUTE);
+              router.push({ pathname: QR_TYPE_ROUTE, query }, QR_TYPE_ROUTE);
             }
             setShowLimitDlg(false);
           }}
