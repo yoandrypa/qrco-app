@@ -35,21 +35,24 @@ function PlanCalculator() {
     };
 
     function CalculateTotal(plan: string, qrAmount: number) {
-        const EXTRA_QR_PRICE = 0.12;
+        let extraQrPrice = 0.12;
         let extraQR = 0;
         let basePrice = 0;
         switch (plan) {
             case 'basic':
                 extraQR = qrAmount - QRCODE_PLANS.BASIC.DYNAMIC_QR_LIMIT;
                 basePrice = QRCODE_PLANS.BASIC.MONTHLY_PRICE;
+                extraQrPrice = QRCODE_PLANS.BASIC.EXTRA_QR_PRICE
                 break;
             case 'business':
                 extraQR = qrAmount - QRCODE_PLANS.BUSINESS.DYNAMIC_QR_LIMIT;
                 basePrice = QRCODE_PLANS.BUSINESS.MONTHLY_PRICE;
+                extraQrPrice = QRCODE_PLANS.BUSINESS.EXTRA_QR_PRICE;
                 break;
             case 'premium':
-                extraQR = qrAmount - QRCODE_PLANS.BASIC.DYNAMIC_QR_LIMIT
+                extraQR = qrAmount - QRCODE_PLANS.PREMIUM.DYNAMIC_QR_LIMIT
                 basePrice = QRCODE_PLANS.PREMIUM.MONTHLY_PRICE;
+                extraQrPrice = QRCODE_PLANS.PREMIUM.EXTRA_QR_PRICE;
                 break;
             case 'basic-annual':
                 extraQR = qrAmount - QRCODE_PLANS.BASIC.DYNAMIC_QR_LIMIT
@@ -66,7 +69,7 @@ function PlanCalculator() {
             default:
                 break;
         }
-        if (extraQR > 0) return basePrice + (extraQR * EXTRA_QR_PRICE)
+        if (extraQR > 0) return basePrice + (extraQR * extraQrPrice)
         return basePrice;
     }
 
@@ -127,13 +130,11 @@ function PlanCalculator() {
                     <TextField
                         inputProps={{ inputMode: 'numeric', step: "1", min: 1, pattern: ' ^[-,0-9]+$' }}
                         type='number'
-                        // label='Coffee Price'
                         sx={{ width: 120 }}
                         placeholder='10'
                         size='small'
                         value={qrAmount}
                         onChange={handleInputChange}
-                    // error={isError}
                     />
 
                 </Grid>
