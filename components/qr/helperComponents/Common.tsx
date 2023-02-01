@@ -172,24 +172,22 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     lastAction.current = 'saving the data';
     setLoading(true);
     await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setError, (creationDate?: string) => {
-      if (data.mode !== 'edit') {
-        setData((prev: DataType) => {
-          const newData = {...prev, mode: 'edit'};
-          if (newData.claim !== undefined) {
-            delete newData.claim;
-          }
-          if (newData.preGenerated !== undefined) {
-            delete newData.preGenerated;
-          }
-          if (newData.claimable !== undefined) {
-            delete newData.claimable;
-          }
-          if (creationDate) { // @ts-ignore
-            newData.createdAt = creationDate;
-          }
-          return newData;
-        });
-      }
+      setData((prev: DataType) => {
+        const newData = {...prev, mode: 'edit'};
+        if (newData.claim !== undefined) {
+          delete newData.claim;
+        }
+        if (newData.preGenerated !== undefined) {
+          delete newData.preGenerated;
+        }
+        if (newData.claimable !== undefined) {
+          delete newData.claimable;
+        }
+        if (creationDate) { // @ts-ignore
+          newData.createdAt = creationDate;
+        }
+        return newData;
+      });
       setLoading(false);
     });
   };
