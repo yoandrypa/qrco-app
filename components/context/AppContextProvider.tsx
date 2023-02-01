@@ -110,7 +110,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, [selected]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (doneInitialRender.current && options?.mode !== "edit") {
+    if (doneInitialRender.current && !["edit", "clone"].includes(options?.mode || '')) {
       resetSelected();
     }
   }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -130,7 +130,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, [isUserInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (options.mode === "edit") {
+    if (["edit", "clone"].includes(options?.mode || '')) {
       setCornersData(getCornersAndDotsObject(options, "corners"));
       setDotsData(getCornersAndDotsObject(options, "cornersDot"));
       setBackground(getBackgroundObject(options) || initialBackground);

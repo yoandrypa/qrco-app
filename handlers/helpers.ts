@@ -19,7 +19,7 @@ export const query = async (req, res, next) => {
 export const handleFetchResponse = async (fetchResponse: Response): Promise<any | Error> => {
   if (!fetchResponse.ok) {
     if (!fetchResponse.status) {
-      return new Error('Ops, something went wrong. Check your Internet connection.')
+      return new Error('Oops, something went wrong. Check your Internet connection.')
     }
     let result: Error;
     switch (fetchResponse.status) {
@@ -30,7 +30,7 @@ export const handleFetchResponse = async (fetchResponse: Response): Promise<any 
       case 500:
       case 400:
       case 502:
-        result = new Error('Ops, something went wrong. Don\'t worry, our team is working on it.')
+        result = new Error('Oops, something went wrong. Don\'t worry, our team is working on it.')
         break;
       default:
         result = new Error(`Error ${fetchResponse.status} ${fetchResponse?.statusText}`)
@@ -47,12 +47,12 @@ export const handleFetchResponse = async (fetchResponse: Response): Promise<any 
 }
 
 export const handleVerifier = (router: any, isDynamic: boolean, userLogged: boolean, selected: string | null,
-                               setLoading: (loading: boolean) => {}) => {
+  setLoading: (loading: boolean) => {}) => {
   if ((isDynamic && !userLogged) || !selected) {
-    const path = {pathname: '/'};
+    const path = { pathname: '/' };
 
     if (isDynamic && !userLogged) { // @ts-ignore
-      path.query = {login: true};
+      path.query = { login: true };
     }
 
     router.push(path, "/")
