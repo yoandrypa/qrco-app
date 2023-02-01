@@ -18,7 +18,7 @@ import {download} from "../../../handlers/storage";
 import {DataType} from "../types/types";
 import {previewQRGenerator} from "../../../helpers/qr/auxFunctions";
 import {saveOrUpdate} from "../auxFunctions";
-import {handleDesignerString} from "../../../helpers/qr/helpers";
+import {blobUrlToFile, handleDesignerString} from "../../../helpers/qr/helpers";
 import {initialData} from "../../../helpers/qr/data";
 
 const RenderMode = dynamic(() => import("./looseComps/RenderMode"));
@@ -123,10 +123,23 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     try {
       lastAction.current = 'loading the background/main images';
       const fileData = await download(key);
-      if (item === 'backgndImg') { // @ts-ignore
-        setBackImg(fileData.content);
-      } else { // @ts-ignore
-        setForeImg(fileData.content);
+
+      if (options.mode === 'edit') {
+        if (item === 'backgndImg') { // @ts-ignore
+          setBackImg(fileData.content);
+        } else { // @ts-ignore
+          setForeImg(fileData.content);
+        }
+      } else if (options.mode === 'clone') {
+        if (item === 'backgndImg') {
+          const {name}: {name: string} = data.backgndImg[0]; // @ts-ignore
+          const file = await blobUrlToFile(fileData.content, `clonedBanner${name.slice(name.lastIndexOf('.'))}`);
+          setData((prev: DataType) => ({...prev, backgndImg: file}))
+        } else {
+          const {name}: {name: string} = data.foregndImg[0]; // @ts-ignore
+          const file = await blobUrlToFile(fileData.content, `clonedProfile${name.slice(name.lastIndexOf('.'))}`);
+          setData((prev: DataType) => ({...prev, foregndImg: file}))
+        }
       }
     } catch {
       if (item === 'backgndImg') {

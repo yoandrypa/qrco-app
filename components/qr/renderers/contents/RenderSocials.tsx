@@ -33,7 +33,7 @@ const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) =>
     setData((prev: DataType) => {
       const tempo = {...prev};
 
-      if (['title', 'descriptionAbout'].includes(item)) { // @ts-ignore
+      if (['titleAbout', 'descriptionAbout'].includes(item)) { // @ts-ignore
         tempo[item] = event.target.value;
       }
       if (tempo.socials) {

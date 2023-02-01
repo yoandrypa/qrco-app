@@ -151,8 +151,8 @@ const QrWizard = ({ children }: QrWizardProps) => {
     return () => window.removeEventListener("resize", getWidth);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    if (userInfo && options.mode !== 'edit') {
+  useEffect(() => { // REACT_APP_STATUS will forbid the checking on develop
+    if (userInfo && options.mode !== 'edit' && process.env.REACT_APP_STATUS !== 'develop') {
       const fetchUser = async () => {
         return await getUser(userInfo.cognito_user_id);
       };
