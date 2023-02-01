@@ -95,6 +95,18 @@ export const convertBase64 = (file: Blob | File): object => {
   });
 };
 
+export const blobUrlToFile = (url: string, name: string) => {
+  return new Promise((resolve, reject) => {
+    fetch(url)
+      .then(response => response.blob())
+      .then(blob => {
+        const file = new File([blob], name);
+        resolve(file);
+      })
+      .catch(e => reject(e));
+  })
+};
+
 export const checkForAlpha = (file: Blob): Promise<{ depth: number; type: string; buffer: ArrayBuffer; hasAlpha: boolean; } | null> => {
   return new Promise((resolve, reject) => {
     const fileReader = new FileReader();

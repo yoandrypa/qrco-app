@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import {DataType} from "./qr/types/types";
-import {convertBase64} from "../helpers/qr/helpers";
+import {convertBase64, getBase64FromUrl} from "../helpers/qr/helpers";
 import CircularProgress from "@mui/material/CircularProgress";
 import { MEDIA } from "../consts";
 
@@ -38,7 +38,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
 
   useEffect(() => {
     if (data && isReady) {
-      const isInEdition = data.mode === 'edit';
+      const isInEdition = data.mode === 'edit' || data.mode === 'clone';
       setTimeout(async () => {
         const previewData = {...data}; // @ts-ignore
         if (shareLink && data.shortlinkurl === undefined) { // @ts-ignore
@@ -47,12 +47,14 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
 
         if ((!isInEdition && data.backgndImg) || backImg) { // @ts-ignore
           previewData.backgndImg = !isInEdition ? ( // @ts-ignore
-            typeof data.backgndImg !== 'string' ? await convertBase64(data.backgndImg) : data.backgndImg
+            typeof data.backgndImg !== 'string' ? await convertBase64(data.backgndImg) :
+              (data.backgndImg.startsWith('blob:http') ? await getBase64FromUrl(data.backgndImg) : data.backgndImg)
           ) : backImg;
         }
         if ((!isInEdition && data.foregndImg) || mainImg) { // @ts-ignore
           previewData.foregndImg = !isInEdition ? ( // @ts-ignore
-            typeof data.foregndImg !== 'string' ? await convertBase64(data.foregndImg) : data.foregndImg
+            typeof data.foregndImg !== 'string' ? await convertBase64(data.foregndImg) : (
+              data.foregndImg.startsWith('blob:http') ? await getBase64FromUrl(data.foregndImg) : data.foregndImg)
           ) : mainImg;
         } // @ts-ignore
         if (data.files) {
