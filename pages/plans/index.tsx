@@ -3,15 +3,14 @@ import { useState, useEffect, useContext } from "react";
 import PlanCard from "../../components/plans/plancard";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import Tab from "@mui/material/Tab";
-import Tabs from "@mui/material/Tabs";
 import Box from "@mui/material/Box";
 import { useRouter } from "next/router";
-import Context from "../../components/context/Context";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import BillingPortal from "../../components/billing/BillingPortal";
 import { get } from "../../handlers/users";
+import { handleFetchResponse } from "../../handlers/helpers";
+import PlanCalculator from "../../components/plans/PlanCalculator";
 // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
 
@@ -255,10 +254,7 @@ const Plans = (props: Props) => {
         spacing: 3,
         justifyContent: "center",
       }}>
-        {/* <Tabs value={activeTab} onChange={handleTabChange}>
-          <Tab label="Monthly Plan" />
-          <Tab label="Annual Plan" />
-        </Tabs> */}
+
       </Box>
       <Grid container marginTop={2} alignContent="center" display="flex"
         spacing={1} justifyContent={"center"}>
@@ -292,57 +288,5 @@ const Plans = (props: Props) => {
     </>
   );
 };
-
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
-//import { GetServerSideProps } from "next";
-import { handleFetchResponse } from "../../handlers/helpers";
-import PlanCalculator from "../../components/plans/PlanCalculator";
-import { QR_PLAN_ROUTE } from "../../components/qr/constants";
-
-/*export const getServerSideProps: GetServerSideProps = async ({
-  query,
-  req,
-  res,
-}) => {
-
-  const getUserInfo = async (): Promise<CognitoUserData | null> => {
-    try {
-      let userInfo = {};
-      for (const [key, value] of Object.entries(req.cookies)) {
-        // @ts-ignore
-        userInfo[key.split(".").pop()] = value;
-      }
-      // @ts-ignore
-      if (!userInfo.userData) {
-        return null;
-      }
-      //@ts-ignore
-      return userInfo;
-    } catch (e) {
-      return null;
-    }
-  };
-
-  const userInfo = await getUserInfo();
-  if (!userInfo?.userData) {
-    return {
-      props: {
-        logged: false,
-      },
-    };
-  } else {
-    //@ts-ignore
-    const userData = JSON.parse(userInfo.userData as string);
-    const userId = userData.UserAttributes[0].Value;
-    const data: object = await get(userId);
-    return {
-      props: {
-        logged: true,
-        profile: JSON.parse(JSON.stringify(data)),
-      },
-    };
-  }
-};*/
 
 export default Plans;
