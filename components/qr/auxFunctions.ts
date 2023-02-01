@@ -9,15 +9,14 @@ import {
 } from "./types/types";
 import { areEquals } from "../helpers/generalFunctions";
 import { initialBackground, initialFrame } from "../../helpers/qr/data";
-import * as StorageHandler from "../../handlers/storage";
-import * as EbanuxHandler from "../../handlers/ebanux";
+import { upload, remove } from "../../handlers/storage";
+import { updateEbanuxDonationPrice, createEbanuxDonationPrice } from "../../handlers/ebanux";
 import { getUuid } from "../../helpers/qr/helpers";
 import { generateId, generateShortLink } from "../../utils";
-import * as QrHandler from "../../handlers/qrs";
+import { create, edit as qrEdit } from "../../handlers/qrs";
 import { QR_CONTENT_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { get as getUser } from "../../handlers/users"; // @ts-ignore
-import { recordPlanUsage, recordUsage, saveUsage } from "../../handlers/usage";
-//@ts-ignore
+import { recordPlanUsage, recordUsage, saveUsage } from "../../handlers/usage"; //@ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
 
 interface UserInfoProps {
@@ -153,12 +152,11 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
  * @param updatingHandler
  */
 export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps, options: OptionsType, frame: FramesType,
-  background: BackgroundType, cornersData: CornersAndDotsType,
-  dotsData: CornersAndDotsType, selected: string,
+  background: BackgroundType, cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string,
   setLoading: (loading: boolean) => void, setIsError: (isError: boolean) => void,
-  success?: (creationData?: string) => void, router?: any,
-  lastStep?: (go: boolean) => void, dataInfo?: number,
+  success: (creationData?: string) => void, router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
   updatingHandler?: (value: string | null, status?: boolean) => void) => {
+
   const prevUpdatingHandler = (value: string | null, status?: boolean) => {
     if (updatingHandler) {
       updatingHandler(value, status);
@@ -173,26 +171,29 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   const dataLength = updatingHandler !== undefined && dataInfo !== undefined && dataInfo > 0;
 
-  if (updatingHandler && ["pdf", "audio", "gallery", "video", "inventory"].includes(selected)) { //Process assets before saving de QR Data
-    updatingHandler("Uploading assets");
+  //Process assets before saving de QR Data
+  if (["pdf", "audio", "gallery", "video", "inventory"].includes(selected) || (selected === 'custom' && data.files && data.files.length)) {
+    prevUpdatingHandler("Uploading assets");
     try { // @ts-ignore
-      data.files = await StorageHandler.upload(data.files, `${userInfo.cognito_user_id}/${selected}s`);
-      updatingHandler(null, true);
+      data.files = await upload(data.files, `${userInfo.cognito_user_id}/${selected}s`);
+      prevUpdatingHandler(null, true);
     } catch {
-      updatingHandler(null, false);
+      prevUpdatingHandler(null, false);
+      setIsError(true);
     }
   }
 
-  if (updatingHandler && selected === "linkedLabel" && data.fields) {
-    updatingHandler("Uploading assets");
+  if (selected === "linkedLabel" && data.fields) {
+    prevUpdatingHandler("Uploading assets");
     for (let index = 0; index < data.fields?.length; index++) {
       try {
         if (['media', 'gallery', 'video'].includes(data.fields[index].type)) {//@ts-ignore
-          data.fields[index].files = await StorageHandler.upload(data.fields[index].files, `${userInfo.cognito_user_id}/${selected}s`);
-          updatingHandler(null, true);
+          data.fields[index].files = await upload(data.fields[index].files, `${userInfo.cognito_user_id}/${selected}s`);
+          prevUpdatingHandler(null, true);
         }
       } catch {
-        updatingHandler(null, false);
+        prevUpdatingHandler(null, false);
+        setIsError(true);
       }
     }
   }
@@ -201,10 +202,11 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     if (!Array.isArray(data.backgndImg)) {
       prevUpdatingHandler("Uploading background image");
       try { // @ts-ignore
-        data.backgndImg = await StorageHandler.upload([data.backgndImg], `${userInfo.cognito_user_id}/${selected}s/design`);
+        data.backgndImg = await upload([data.backgndImg], `${userInfo.cognito_user_id}/${selected}s/design`);
         prevUpdatingHandler(null, true);
       } catch {
         prevUpdatingHandler(null, false);
+        setIsError(true);
       }
     } else {
       delete data.backgndImg;
@@ -213,11 +215,12 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
   if (data.prevBackImg !== undefined) {
     prevUpdatingHandler("Removing previous background image");
     try {
-      await StorageHandler.remove([{ Key: data.prevBackImg }]);
+      await remove([{ Key: data.prevBackImg }]);
       delete data.prevBackImg;
       prevUpdatingHandler(null, true);
     } catch {
       prevUpdatingHandler(null, false);
+      setIsError(true);
     }
   }
 
@@ -225,10 +228,11 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     if (!Array.isArray(data.foregndImg)) {
       prevUpdatingHandler("Uploading main image");
       try { // @ts-ignore
-        data.foregndImg = await StorageHandler.upload([data.foregndImg], `${userInfo.cognito_user_id}/${selected}s/design`);
+        data.foregndImg = await upload([data.foregndImg], `${userInfo.cognito_user_id}/${selected}s/design`);
         prevUpdatingHandler(null, true);
       } catch {
         prevUpdatingHandler(null, false);
+        setIsError(true);
       }
     } else {
       delete data.foregndImg;
@@ -237,11 +241,12 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
   if (data.prevForeImg !== undefined) {
     prevUpdatingHandler("Deleting previous main image");
     try {
-      await StorageHandler.remove([{ Key: data.prevForeImg }]);
+      await remove([{ Key: data.prevForeImg }]);
       delete data.prevForeImg;
       prevUpdatingHandler(null, true);
     } catch {
       prevUpdatingHandler(null, false);
+      setIsError(true);
     }
   }
 
@@ -256,7 +261,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     if (data["donationPriceId"]) {
       try {
         prevUpdatingHandler("Updating donation microsite");
-        const updatedPrice = await EbanuxHandler.updateEbanuxDonationPrice(
+        const updatedPrice = await updateEbanuxDonationPrice(
           userInfo.cognito_user_id,
           data["donationPriceId"],
           priceData);
@@ -270,8 +275,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     } else {
       try {
         prevUpdatingHandler("Creating Donation microsite");
-        const price = await EbanuxHandler.createEbanuxDonationPrice(userInfo.cognito_user_id,
-          priceData);
+        const price = await createEbanuxDonationPrice(userInfo.cognito_user_id, priceData);
         console.log("the price is")
         //@ts-ignore
         data["donationPriceId"] = price.result.price.id;
@@ -313,7 +317,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
           try {
             const currentUsage = !user.planUsage ? 0 : user.planUsage;
             console.log('add 1 to current usage ', currentUsage);
-            const result = await recordPlanUsage(1, user.subscriptionData.id, userInfo.cognito_user_id)
+            const result = await recordPlanUsage(1, user.subscriptionData.id, userInfo.cognito_user_id);
           } catch (error) {
             console.error('unable to report usage', error)
           }
@@ -331,7 +335,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       if (dataLength) {
         prevUpdatingHandler("Saving QR Code data");
       }
-      const response = await QrHandler.create({ shortLink, qrDesign, qrData });
+      const response = await create({ shortLink, qrDesign, qrData });
       if (success && response?.creationDate) { success(response.creationDate); }
     } else {
       edition = true;
@@ -345,7 +349,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
         objToEdit.userId = userInfo.cognito_user_id;
       }
 
-      await QrHandler.edit(objToEdit);
+      await qrEdit(objToEdit);
       if (success) { success(); }
     }
     if (dataLength) {
