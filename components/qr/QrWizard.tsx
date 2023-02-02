@@ -168,7 +168,6 @@ const QrWizard = ({ children }: QrWizardProps) => {
           setIsFreeMode(true);
         } else {
           setIsFreeMode(false);
-          if (profile?.subscriptionData.status != 'active') setLimitReached(true)
           //TODO handle plan limits
           //per diferent plans
         }
@@ -178,7 +177,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
 
   return (
     <>
-      {console.log('hook', plans.limitReached, plans.isFreeMode)}
+
       {showLimitDlg &&
         <RenderConfirmDlg
           title="Oops"
