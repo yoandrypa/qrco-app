@@ -11,7 +11,7 @@ import { areEquals } from "../helpers/generalFunctions";
 import { initialBackground, initialFrame } from "../../helpers/qr/data";
 import { upload, remove } from "../../handlers/storage";
 import { updateEbanuxDonationPrice, createEbanuxDonationPrice } from "../../handlers/ebanux";
-import { getUuid } from "../../helpers/qr/helpers";
+import {convertBase64, getBase64FromUrl, getUuid} from "../../helpers/qr/helpers";
 import { generateId, generateShortLink } from "../../utils";
 import { create, edit as qrEdit } from "../../handlers/qrs";
 import { QR_CONTENT_ROUTE, QR_TYPE_ROUTE } from "./constants";
