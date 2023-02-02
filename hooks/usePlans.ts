@@ -27,6 +27,7 @@ function usePlans(mode: string, userInfo: any) {
                         if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) setLimitReached(true);
                     } else {
                         setIsFreeMode(false);
+                        if (profile?.subscriptionData?.status != 'active') setLimitReached(true)
                         //TODO handle plan limits
                     }
                 });

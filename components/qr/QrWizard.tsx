@@ -125,7 +125,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
   };
 
   useEffect(() => {
-    if (router.pathname === QR_CONTENT_ROUTE && data.isDynamic && limitReached) {
+    if (router.pathname === QR_CONTENT_ROUTE && data.isDynamic && plans.limitReached) {
       setShowLimitDlg(true)
     }
   }, [router.pathname, limitReached]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -153,28 +153,28 @@ const QrWizard = ({ children }: QrWizardProps) => {
     return () => window.removeEventListener("resize", getWidth);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => { // REACT_APP_STATUS will forbid the checking on develop
-    if (userInfo && options.mode !== 'edit' && process.env.REACT_APP_STATUS !== 'develop') {
-      const fetchUser = async () => {
-        return await getUser(userInfo.cognito_user_id);
-      };
-      fetchUser().then(profile => {
-        list({ userId: userInfo.cognito_user_id }).then(qrs => { // @ts-ignore
-          if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) {
-            setLimitReached(true);
-          }
-        });
-        if (!profile?.subscriptionData) {
-          setIsFreeMode(true);
-        } else {
-          setIsFreeMode(false);
-          profile?.subscriptionData.status != 'active' && setLimitReached(true)
-          //TODO handle plan limits
-          //per diferent plans
-        }
-      }).catch(console.error);
-    }
-  }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
+  // useEffect(() => { // REACT_APP_STATUS will forbid the checking on develop
+  //   if (userInfo && options.mode !== 'edit' && process.env.REACT_APP_STATUS !== 'develop') {
+  //     const fetchUser = async () => {
+  //       return await getUser(userInfo.cognito_user_id);
+  //     };
+  //     fetchUser().then(profile => {
+  //       list({ userId: userInfo.cognito_user_id }).then(qrs => { // @ts-ignore
+  //         if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) {
+  //           setLimitReached(true);
+  //         }
+  //       });
+  //       if (!profile?.subscriptionData) {
+  //         setIsFreeMode(true);
+  //       } else {
+  //         setIsFreeMode(false);
+  //         profile?.subscriptionData.status != 'active' && setLimitReached(true)
+  //         //TODO handle plan limits
+  //         //per diferent plans
+  //       }
+  //     }).catch(console.error);
+  //   }
+  // }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
