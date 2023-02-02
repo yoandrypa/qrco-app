@@ -28,6 +28,16 @@ const style = {
   textAlign: 'center'
 };
 
+const getImageAsString = async (imageData?: File | string) => {
+  if (!imageData) {
+    return undefined;
+  }
+  if (typeof imageData === 'string') {
+    return imageData.startsWith('blob:http') ? await getBase64FromUrl(imageData) : imageData
+  }
+  return convertBase64(imageData);
+};
+
 const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, shareLink}: IframeProps) => {
   const [whatToRender, setWhatToRender] = useState<string | null>(null);
   const [error, setError] = useState<boolean>(false);
@@ -44,19 +54,14 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
         if (shareLink && data.shortlinkurl === undefined) { // @ts-ignore
           previewData.shortlinkurl = shareLink;
         }
-
         if ((!isInEdition && data.backgndImg) || backImg) { // @ts-ignore
-          previewData.backgndImg = !isInEdition ? ( // @ts-ignore
-            typeof data.backgndImg !== 'string' ? await convertBase64(data.backgndImg) :
-              (data.backgndImg.startsWith('blob:http') ? await getBase64FromUrl(data.backgndImg) : data.backgndImg)
-          ) : backImg;
+          previewData.backgndImg = !isInEdition ? await getImageAsString(data.backgndImg) : await getImageAsString(backImg);
         }
         if ((!isInEdition && data.foregndImg) || mainImg) { // @ts-ignore
-          previewData.foregndImg = !isInEdition ? ( // @ts-ignore
-            typeof data.foregndImg !== 'string' ? await convertBase64(data.foregndImg) : (
-              data.foregndImg.startsWith('blob:http') ? await getBase64FromUrl(data.foregndImg) : data.foregndImg)
-          ) : mainImg;
-        } // @ts-ignore
+          previewData.foregndImg = !isInEdition ? await getImageAsString(data.foregndImg) : await getImageAsString(mainImg);
+        }
+
+        // @ts-ignore
         if (data.files) {
           let files: string[] = []; // @ts-ignore
           if (!data.isSample) {
@@ -73,6 +78,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
           } // @ts-ignore
           previewData.files = files;
         }
+
         if(data.fields) { // convert images on media fields to base64
           let fields: any[] = []; // @ts-ignore
           if (!data.isSample) {

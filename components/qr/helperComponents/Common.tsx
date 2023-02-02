@@ -20,6 +20,7 @@ import {previewQRGenerator} from "../../../helpers/qr/auxFunctions";
 import {saveOrUpdate} from "../auxFunctions";
 import {blobUrlToFile, handleDesignerString} from "../../../helpers/qr/helpers";
 import {initialData} from "../../../helpers/qr/data";
+import {generateUUID} from "listr2/dist/utils/uuid";
 
 const RenderMode = dynamic(() => import("./looseComps/RenderMode"));
 const Notifications = dynamic(() => import("../../notifications/Notifications"));
@@ -52,6 +53,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   }
 
   const handleValue = useCallback((prop: string) => (payload: any) => {
+    debugger;
+
     if (payload === undefined) {
       setData((prev: any) => {
         const tempo = {...prev};
@@ -133,11 +136,11 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       } else if (options.mode === 'clone') {
         if (item === 'backgndImg') {
           const {name}: {name: string} = data.backgndImg[0]; // @ts-ignore
-          const file = await blobUrlToFile(fileData.content, `clonedBanner${name.slice(name.lastIndexOf('.'))}`);
+          const file = await blobUrlToFile(fileData.content, `${generateUUID()}${name.slice(name.lastIndexOf('.'))}`);
           setData((prev: DataType) => ({...prev, backgndImg: file}))
         } else {
           const {name}: {name: string} = data.foregndImg[0]; // @ts-ignore
-          const file = await blobUrlToFile(fileData.content, `clonedProfile${name.slice(name.lastIndexOf('.'))}`);
+          const file = await blobUrlToFile(fileData.content, `${generateUUID()}${name.slice(name.lastIndexOf('.'))}`);
           setData((prev: DataType) => ({...prev, foregndImg: file}))
         }
       }
