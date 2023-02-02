@@ -44,6 +44,7 @@ export const PLAN_LIVE_METERED_PRICES = {
 export const ALLOWED_FILE_EXTENSIONS = {
   pdf: ".pdf",
   gallery: [".jpg", ".jpeg", ".png", ".svg", ".gif"],
+  images: [".jpg", ".jpeg", ".png"],
   audio: ".mp3",
   video: ".mp4"
 };
