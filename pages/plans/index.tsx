@@ -246,8 +246,7 @@ const Plans = (props: Props) => {
       </Snackbar>
       <Typography variant="h6" color="blue" textAlign={"center"}
         marginBottom={3} marginTop={2}>PRICING PLANS</Typography>
-      <Typography variant="h4" textAlign={"center"} marginBottom={3}>Save money
-        with our annual plans</Typography>
+      <Typography variant="h4" textAlign={"center"} marginBottom={3}>Choose a monthly plan & pay for any additional QR code</Typography>
       <Box sx={{
         alignContent: "center",
         display: "flex",
