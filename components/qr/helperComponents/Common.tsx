@@ -156,16 +156,16 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
 
   useEffect(() => {
     if (isEditOrClone) {
-      if (data.backgndImg) {
+      if (data?.backgndImg?.[0]?.Key) {
         setLocalLoading(true);
         getFiles(data.backgndImg[0].Key, 'backgndImg');
       }
-      if (data.foregndImg) {
+      if (data?.foregndImg?.[0]?.Key) {
         setLocalLoading(true);
         getFiles(data.foregndImg[0].Key, 'foregndImg');
       }
     }
-  }, [data?.mode]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if ((backImg !== undefined && !data.foregndImg) || (foreImg !== undefined && !data.backgndImg) || (foreImg !== undefined && backImg !== undefined)) {

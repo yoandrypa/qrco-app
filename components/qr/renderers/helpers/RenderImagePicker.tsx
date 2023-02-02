@@ -11,6 +11,7 @@ import PhotoIcon from '@mui/icons-material/Photo';
 import FileUpload from "react-material-file-upload";
 import {ALLOWED_FILE_EXTENSIONS} from "../../../../consts";
 import Notifications from "../../../notifications/Notifications";
+import {checkForAlpha} from "../../../../helpers/qr/helpers";
 
 interface RenderImageProps {
   handleClose: () => void;
@@ -20,15 +21,25 @@ interface RenderImageProps {
   wasError?: boolean;
 }
 
-export default function RenderImagePicker({title, kind, handleClose, handleAcept, wasError}: RenderImageProps) {
-  const [error, setError] = useState<boolean>(false);
+interface ErrorProps {
+  msg: string;
+  title: string;
+}
 
-  const handleLoadedImage = (f: File[]) => {
+export default function RenderImagePicker({title, kind, handleClose, handleAcept, wasError}: RenderImageProps) {
+  const [error, setError] = useState<ErrorProps | null>(null);
+
+  const handleLoadedImage = async (f: File[]) => {
     if (f.length) {
       if (f[0].size <= 1000000) {
-        handleAcept(f[0], kind);
+        const result = await checkForAlpha(f[0]);
+        if (!result || !result.hasAlpha) {
+          handleAcept(f[0], kind);
+        } else {
+          setError({msg: 'The selected image file contains transparency. Select another.', title: 'Not allowed transparency'})
+        }
       } else {
-        setError(true);
+        setError({msg: 'The selected file is larger than 1 megabyte.', title: 'Too heavy'});
       }
     }
   }
@@ -58,7 +69,7 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
             onChange={handleLoadedImage}
             multiple={false}
             maxFiles={1}
-            accept={ALLOWED_FILE_EXTENSIONS.gallery}
+            accept={ALLOWED_FILE_EXTENSIONS.images}
             title="Select an image by hitting 'Upload' button or drag and drop it here"
           />
         </Paper>
@@ -68,10 +79,11 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
       </DialogActions>
       {error && (
         <Notifications
-          onClose={() => setError(false)}
-          title="Too heavy"
+          onClose={() => setError(null)}
+          title={error.title}
           vertical="bottom"
-          message="The selected file is larger than 1 megabyte." />
+          showProgress
+          message={error.msg} />
       )}
   </Dialog>
   );
