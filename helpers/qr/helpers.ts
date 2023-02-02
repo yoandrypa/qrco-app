@@ -117,7 +117,7 @@ export const getImageAsString = async (imageData?: File | string) => {
   return await convertBase64(imageData);
 };
 
-export const checkForAlpha = (file: Blob): Promise<{ depth: number; type: string; buffer: ArrayBuffer; hasAlpha: boolean; } | null> => {
+export const checkForAlpha = (file: Blob | File): Promise<{ depth: number; type: string; buffer: ArrayBuffer; hasAlpha: boolean; } | null> => {
   return new Promise((resolve, reject) => {
     const fileReader = new FileReader();
     fileReader.readAsArrayBuffer(file);
