@@ -53,8 +53,6 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   }
 
   const handleValue = useCallback((prop: string) => (payload: any) => {
-    debugger;
-
     if (payload === undefined) {
       setData((prev: any) => {
         const tempo = {...prev};
@@ -283,26 +281,28 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
             ) : renderChildren()}
           </Box>
           {isWideForPreview && (
-            <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
-                                 save={handleSave} style={{mt: 1, ml: '15px', position: 'sticky', top: '120px'}}
-                                 saveDisabled={isWrong || !data.qrName?.trim().length} shareLink={options?.data}
-                                 qrOptions={optionsForPreview()} step={1} mainImg={isEditOrClone ? foreImg : undefined}
-                                 data={previewQRGenerator(data, selected, omitProfileImg)}
-                                 onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
-                                 backImg={isEditOrClone ? backImg : undefined}
-            />
+            <RenderSamplePreview
+              code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
+              save={handleSave} style={{mt: 1, ml: '15px', position: 'sticky', top: '120px'}}
+              saveDisabled={isWrong || !data.qrName?.trim().length} shareLink={options?.data}
+              qrOptions={optionsForPreview()} step={1} data={previewQRGenerator(data, selected, omitProfileImg)}
+              onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
+              backImg={isEditOrClone && backImg ? backImg : undefined}
+              mainImg={isEditOrClone && foreImg ? foreImg : undefined} />
           )}
         </Box>
       ) : renderChildren()}
       {!openPreview && !isWideForPreview  && <RenderPreviewButton setOpenPreview={setOpenPreview} message="Preview" />}
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={selected === 'web' || !data.isDynamic ? 400 : 700} border={35}>
-          <RenderSamplePreview code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
-                               save={handleSave} saveDisabled={isWrong || !data.qrName?.trim().length} style={{mt: '-15px'}}
-                               data={previewQRGenerator(data, selected, omitProfileImg)} step={1} isDrawed
-                               onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
-                               shareLink={options?.data} backImg={isEditOrClone ? backImg : undefined}
-                               mainImg={isEditOrClone ? foreImg : undefined} qrOptions={optionsForPreview()} />
+          <RenderSamplePreview
+            code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
+            save={handleSave} saveDisabled={isWrong || !data.qrName?.trim().length} style={{mt: '-15px'}}
+            data={previewQRGenerator(data, selected, omitProfileImg)} step={1} isDrawed
+            onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
+            shareLink={options?.data} qrOptions={optionsForPreview()}
+            backImg={isEditOrClone && backImg ? backImg : undefined}
+            mainImg={isEditOrClone && foreImg ? foreImg : undefined} />
         </RenderPreviewDrawer>
       )}
     </>

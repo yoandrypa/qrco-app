@@ -107,6 +107,16 @@ export const blobUrlToFile = (url: string, name: string) => {
   })
 };
 
+export const getImageAsString = async (imageData?: File | string) => {
+  if (!imageData) {
+    return undefined;
+  }
+  if (typeof imageData === 'string') {
+    return imageData.startsWith('blob:http') ? await getBase64FromUrl(imageData) : imageData
+  }
+  return await convertBase64(imageData);
+};
+
 export const checkForAlpha = (file: Blob): Promise<{ depth: number; type: string; buffer: ArrayBuffer; hasAlpha: boolean; } | null> => {
   return new Promise((resolve, reject) => {
     const fileReader = new FileReader();
