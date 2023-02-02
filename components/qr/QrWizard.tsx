@@ -18,6 +18,7 @@ import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
 
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
+import usePlans from "../../hooks/usePlans";
 
 const RenderConfirmDlg = dynamic(() => import("../renderers/RenderConfirmDlg"));
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
@@ -52,6 +53,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
     setLoading, setRedirecting, clearData, setData }: StepsProps = useContext(Context);
 
   const router = useRouter();
+  const plans = usePlans(options.mode || 'edit', userInfo);
 
   const handleBack = () => {
     router.push(router.pathname === QR_DESIGN_ROUTE ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE,
@@ -157,13 +159,14 @@ const QrWizard = ({ children }: QrWizardProps) => {
         return await getUser(userInfo.cognito_user_id);
       };
       fetchUser().then(profile => {
-        if (profile?.subscriptionData?.status !== 'active') {
+        list({ userId: userInfo.cognito_user_id }).then(qrs => { // @ts-ignore
+          if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) {
+            setLimitReached(true);
+          }
+        });
+        if (!profile?.subscriptionData) {
           setIsFreeMode(true);
-          list({ userId: userInfo.cognito_user_id }).then(qrs => { // @ts-ignore
-            if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) {
-              setLimitReached(true);
-            }
-          });
+
         } else {
           setIsFreeMode(false);
           //TODO handle plan limits
@@ -174,6 +177,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
 
   return (
     <>
+      {console.log('hook', plans.limitReached, plans.isFreeMode)}
       {showLimitDlg &&
         <RenderConfirmDlg
           title="Oops"
