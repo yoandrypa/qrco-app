@@ -36,7 +36,7 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
         if (!result || !result.hasAlpha) {
           handleAcept(f[0], kind);
         } else {
-          setError({msg: 'The selected image file contains transparency. Select another.', title: 'Not allowed transparency'})
+          setError({msg: 'The selected image file contains alpha channels. Please, select any image with no alpha channels.', title: 'No alpha channel'})
         }
       } else {
         setError({msg: 'The selected file is larger than 1 megabyte.', title: 'Too heavy'});
@@ -81,6 +81,7 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
         <Notifications
           onClose={() => setError(null)}
           title={error.title}
+          autoHideDuration={7500}
           vertical="bottom"
           showProgress
           message={error.msg} />
