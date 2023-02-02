@@ -166,10 +166,11 @@ const QrWizard = ({ children }: QrWizardProps) => {
         });
         if (!profile?.subscriptionData) {
           setIsFreeMode(true);
-
         } else {
           setIsFreeMode(false);
+          profile?.subscriptionData.status != 'active' && setLimitReached(true)
           //TODO handle plan limits
+          //per diferent plans
         }
       }).catch(console.error);
     }
