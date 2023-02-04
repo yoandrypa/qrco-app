@@ -5,7 +5,6 @@ import * as DomainHandler from "../../handlers/domains";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
 import LinkHome from "../../components/link/LinkHome";
-import "@aws-amplify/ui-react/styles.css";
 import React from "react";
 
 export default function Index ({
