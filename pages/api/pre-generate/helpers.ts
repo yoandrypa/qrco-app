@@ -51,7 +51,9 @@ export async function geneNewCodes(size: number, count: number, owner: string = 
 
   await dynamoose.transaction(transactions);
 
-  return getPreGenCodes(owner);
+  const codes = await getPreGenCodes(owner);
+
+  return { codes, collisions };
 }
 
 /**
@@ -63,10 +65,5 @@ export async function getPreGenCodes(owner: string = 'any') {
 
   const codes = await PreGeneratedModel.query({ owner }).exec();
 
-  return codes.map(({ code, owner, ...others }: any) => ({
-      code,
-      url: `${MICRO_SITES_ROUTE}/${code}`,
-      owner, ...others
-    })
-  );
+  return codes.map((item) => ({ ...item, url: `${MICRO_SITES_ROUTE}/${item.code}` }));
 }
