@@ -17,7 +17,7 @@ program
     const axios = require('axios');
     const headers = { 'Content-type': 'application/json; charset=UTF-8' };
 
-    axios.post(`${baseUrl}/api/pre-generate`, data, { headers }).then((response) => {
+    axios.post(`${baseUrl}/api/pre-codes`, data, { headers }).then((response) => {
       console.log(response.data);
     }).catch((err, response) => {
       console.error(err.message);
@@ -33,7 +33,7 @@ program
   .action(({ baseUrl, owner }) => {
     const axios = require('axios');
 
-    axios.get(`${baseUrl}/api/pre-generate?owner=${owner}`).then((response) => {
+    axios.get(`${baseUrl}/api/pre-codes?owner=${owner}`).then((response) => {
       console.log(response.data);
     }).catch((err, response) => {
       console.error(err.message);
