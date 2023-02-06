@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "gen-pre-codes": "node scripts/generate pre-codes"
+    "pre-codes": "node scripts/pre-codes"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.259.0",
