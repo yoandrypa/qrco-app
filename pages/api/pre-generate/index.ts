@@ -1,12 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getPreGenCodes, geneNewCodes } from "./helpers";
+import { getPreGenCodes, geneNewCodes, parseFromPostRequest } from "./helpers";
+import { respondWithException } from "../../../libs/exceptions";
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   let codes;
 
   try {
     if (req.method == 'POST') {
-      const { size, count, owner } = req.body;
+      const { size, count, owner } = parseFromPostRequest(req);
       codes = await geneNewCodes(size, count, owner);
     } else if (req.method == 'GET') {
       codes = await getPreGenCodes(<string>req.query.owner);
@@ -15,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     res.status(200).json(codes);
-  } catch (e: any) {
-    return res.status(500).json({ error: e.message });
+  } catch (ex: any) {
+    respondWithException(res, ex);
   }
 }

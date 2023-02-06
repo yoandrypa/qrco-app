@@ -1,10 +1,23 @@
+import Joi from "joi";
 import dynamoose from "../../../libs/dynamoose";
+
 import { customAlphabet } from "nanoid";
 import { LinkModel, PreGeneratedModel } from "../../../models/link";
+import { NextApiRequest } from "next";
 
 const MICRO_SITES_ROUTE = process.env.REACT_MICROSITES_ROUTE || 'https://dev.a-qr.link';
 const LINK_CODE_ALPHABET = process.env.LINK_CODE_ALPHABET || 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 const MAX_ALLOW_COLLISIONS = parseInt(process.env.MAX_ALLOW_COLLISIONS || '25', 10);
+
+export function parseFromPostRequest(req: NextApiRequest) {
+  const schema = Joi.object({
+    size: Joi.number().min(4).max(32),
+    count: Joi.number().min(1).max(10),
+    owner: Joi.string(),
+  });
+
+  return Joi.attempt(req.body, schema, { abortEarly: false });
+}
 
 /**
  * Return true if the code already exists as qr-link or qr-pre-generated item.
@@ -53,7 +66,7 @@ export async function geneNewCodes(size: number, count: number, owner: string = 
 
   const codes = await getPreGenCodes(owner);
 
-  return { codes, collisions };
+  return { ...codes, collisions };
 }
 
 /**
@@ -65,5 +78,8 @@ export async function getPreGenCodes(owner: string = 'any') {
 
   const codes = await PreGeneratedModel.query({ owner }).exec();
 
-  return codes.map((item) => ({ ...item, url: `${MICRO_SITES_ROUTE}/${item.code}` }));
+  return {
+    codes: codes.map((item) => ({ ...item, url: `${MICRO_SITES_ROUTE}/${item.code}` })),
+    count: codes.length,
+  };
 }
