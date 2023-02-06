@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import {DataType} from "./qr/types/types";
-import {convertBase64} from "../helpers/qr/helpers";
+import {convertBase64, getImageAsString} from "../helpers/qr/helpers";
 import CircularProgress from "@mui/material/CircularProgress";
 import { MEDIA } from "../consts";
 
@@ -28,6 +28,13 @@ const style = {
   textAlign: 'center'
 };
 
+const proceed = (plain?: any, imgData?: any) => {
+  if (plain !== undefined) {
+    return false;
+  }
+  return imgData !== undefined && (imgData instanceof File || imgData instanceof Blob);
+}
+
 const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, shareLink}: IframeProps) => {
   const [whatToRender, setWhatToRender] = useState<string | null>(null);
   const [error, setError] = useState<boolean>(false);
@@ -38,23 +45,23 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
 
   useEffect(() => {
     if (data && isReady) {
-      const isInEdition = data.mode === 'edit';
+      const isInEdition = data.mode === 'edit' || data.mode === 'clone';
+
       setTimeout(async () => {
         const previewData = {...data}; // @ts-ignore
         if (shareLink && data.shortlinkurl === undefined) { // @ts-ignore
           previewData.shortlinkurl = shareLink;
         }
-
-        if ((!isInEdition && data.backgndImg) || backImg) { // @ts-ignore
-          previewData.backgndImg = !isInEdition ? ( // @ts-ignore
-            typeof data.backgndImg !== 'string' ? await convertBase64(data.backgndImg) : data.backgndImg
-          ) : backImg;
+        if (data.backgndImg || backImg) { // @ts-ignore
+          previewData.backgndImg = !isInEdition || proceed(backImg, data.backgndImg) ?
+            await getImageAsString(data.backgndImg) : await getImageAsString(backImg);
         }
-        if ((!isInEdition && data.foregndImg) || mainImg) { // @ts-ignore
-          previewData.foregndImg = !isInEdition ? ( // @ts-ignore
-            typeof data.foregndImg !== 'string' ? await convertBase64(data.foregndImg) : data.foregndImg
-          ) : mainImg;
-        } // @ts-ignore
+        if (data.foregndImg || mainImg) { // @ts-ignore
+          previewData.foregndImg = !isInEdition || proceed(mainImg, data.foregndImg) ?
+            await getImageAsString(data.foregndImg) : await getImageAsString(mainImg);
+        }
+
+        // @ts-ignore
         if (data.files) {
           let files: string[] = []; // @ts-ignore
           if (!data.isSample) {
@@ -71,6 +78,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
           } // @ts-ignore
           previewData.files = files;
         }
+
         if(data.fields) { // convert images on media fields to base64
           let fields: any[] = []; // @ts-ignore
           if (!data.isSample) {

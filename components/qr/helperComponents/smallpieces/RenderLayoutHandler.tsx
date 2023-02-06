@@ -56,7 +56,8 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderLayout = (kind: string, noMore?: boolean) => {
-    const selected = (!data?.layout && kind.startsWith('default')) || data?.layout === kind;
+    const selected = (data?.layout || 'default').startsWith(kind);
+
     const inverse = kind.toLowerCase().includes('inverse');
     return (
       <Box
@@ -110,7 +111,7 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
       {renderLayout('default')}
       {renderLayout('soft')}
       {renderLayout('inverse')}
-      {renderLayout('sections')}
+      {renderLayout('sectionsSingle')}
       {renderLayout('sectionsSoft')}
       {renderLayout('sectionsInverse', true)}
       <Box sx={{width: '100%', display: 'flex'}}>

@@ -1,4 +1,4 @@
-const EBANUX_API = process.env.REACT_EBANUX_API || 'https://dev.ebanux.link';
+const EBANUX_API = process.env.REACT_NODE_ENV == 'production' ? 'https://ebanux.link' : 'https://dev.ebanux.link';
 import { EbanuxDonationPriceData, EbanuxSimplePaymentLinkData } from '../components/qr/types/types';
 
 //@ts-ignore

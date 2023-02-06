@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useState} from "react";
+import {useCallback, useContext, useEffect, useState} from "react";
 import InfoIcon from '@mui/icons-material/Info';
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -9,17 +9,19 @@ import Edit from "@mui/icons-material/Edit";
 import SyncIcon from "@mui/icons-material/Sync";
 import SyncDisabledIcon from "@mui/icons-material/SyncDisabled";
 import Public from "@mui/icons-material/Public";
-import {sanitize} from "../../utils";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
 import Link from "next/link";
 import {useRouter} from "next/router";
+import dynamic from "next/dynamic";
+
+import RenderQrListOptions from "./helperComponents/smallpieces/RenderQrListOptions";
 import Context from "../context/Context";
+import {sanitize} from "../../utils";
 import RenderPreview from "./renderers/RenderPreview";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import {humanDate} from "../helpers/generalFunctions";
 import {handleDesignerString, handleInitialData, qrNameDisplayer} from "../../helpers/qr/helpers";
 import {list, pauseQRLink, remove} from "../../handlers/qrs";
-import RenderQrListOptions from "./helperComponents/smallpieces/RenderQrListOptions";
-import dynamic from "next/dynamic";
 import {QR_CONTENT_ROUTE, QR_DESIGN_ROUTE} from "./constants";
 import pluralize from "pluralize";
 
@@ -63,6 +65,12 @@ export default function QrList({ title }: any) {
         }
       });
     }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleClone = useCallback((qr: QrDataType) => {
+    setLoading(true);
+    setOptions({...qr.qrOptionsId, ...qr, mode: "clone"});
+    router.push(QR_CONTENT_ROUTE, undefined, {shallow: true}).then(() => setLoading(false));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleEdit = useCallback((qr: QrDataType) => {
@@ -134,7 +142,7 @@ export default function QrList({ title }: any) {
                     </Box>
                   </Box>
                   {!isWide && (<Box sx={{display: 'grid', textAlign: 'right'}}>
-                    <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink} setConfirm={setConfirm} />
+                    <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink} setConfirm={setConfirm} handleClone={handleClone} />
                     <Box sx={{display: 'grid', mr: '10px'}}>
                       {renderStaticDynamic(qr.isDynamic, true)}
                       <Typography variant="caption" style={{color: "gray"}}>{pluralize('visit', qrLink.visitCount || 0, true)}</Typography>
@@ -169,7 +177,7 @@ export default function QrList({ title }: any) {
                           </Typography>
                         </Stack>
                       ) : <div/>}
-                      <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink} setConfirm={setConfirm} />
+                      <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink} setConfirm={setConfirm} handleClone={handleClone}/>
                     </Box>
                   )}
                 </Stack>

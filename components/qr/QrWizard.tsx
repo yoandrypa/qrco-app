@@ -7,7 +7,7 @@ import Stepper from "@mui/material/Stepper";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { generateId, generateShortLink } from "../../utils";
-import {DataType, OptionsType, ProcessHanldlerType} from "./types/types";
+import { DataType, OptionsType, ProcessHanldlerType } from "./types/types";
 import { QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { getUuid } from "../../helpers/qr/helpers";
 import { getStep, saveOrUpdate, steps, StepsProps } from "./auxFunctions";
@@ -18,6 +18,7 @@ import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
 
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
+import usePlans from "../../hooks/usePlans";
 
 const RenderConfirmDlg = dynamic(() => import("../renderers/RenderConfirmDlg"));
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
@@ -52,6 +53,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
     setLoading, setRedirecting, clearData, setData }: StepsProps = useContext(Context);
 
   const router = useRouter();
+  const plans = usePlans(options.mode || 'edit', userInfo);
 
   const handleBack = () => {
     router.push(router.pathname === QR_DESIGN_ROUTE ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE,
@@ -100,19 +102,19 @@ const QrWizard = ({ children }: QrWizardProps) => {
     } else if (router.pathname === QR_DESIGN_ROUTE && isLogged) {
       await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setIsError,
         () => {
-        setData((prev: DataType) => {
-          const newData = {...data};
-          if (newData.claim !== undefined) {
-            delete newData.claim;
-          }
-          if (newData.preGenerated !== undefined) {
-            delete newData.preGenerated;
-          }
-          if (newData.claimable !== undefined) {
-            delete newData.claimable;
-          }
-          return prev;
-        })
+          setData((prev: DataType) => {
+            const newData = { ...data };
+            if (newData.claim !== undefined) {
+              delete newData.claim;
+            }
+            if (newData.preGenerated !== undefined) {
+              delete newData.preGenerated;
+            }
+            if (newData.claimable !== undefined) {
+              delete newData.claimable;
+            }
+            return prev;
+          })
         }, router, lastStep, dataInfo.current.length, updatingHandler);
     } else if (router.pathname === QR_DESIGN_ROUTE && !isLogged) {
       lastStep(false);
@@ -139,7 +141,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
     const getWidth = () => { setSize(sizeRef.current.offsetWidth); };
     window.addEventListener("resize", getWidth);
 
-    if (router.pathname === QR_CONTENT_ROUTE && isLogged && data?.isDynamic && !Boolean(options.id) && options.mode === undefined) {
+    if (router.pathname === QR_CONTENT_ROUTE && isLogged && data?.isDynamic && (!Boolean(options.id) || options.mode !== 'edit')) {
       const genShortLinkAndId = async () => {
         const id = getUuid();
         const shortCode = data.claim || await generateId(); // @ts-ignore
@@ -151,22 +153,23 @@ const QrWizard = ({ children }: QrWizardProps) => {
     return () => window.removeEventListener("resize", getWidth);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    if (userInfo && process.env.REACT_APP_STATUS !== 'develop') {
+  useEffect(() => { // REACT_APP_STATUS will forbid the checking on develop
+    if (userInfo && options.mode !== 'edit' && process.env.REACT_APP_STATUS !== 'develop') {
       const fetchUser = async () => {
         return await getUser(userInfo.cognito_user_id);
       };
       fetchUser().then(profile => {
-        if (profile?.subscriptionData?.status !== 'active') {
+        list({ userId: userInfo.cognito_user_id }).then(qrs => { // @ts-ignore
+          if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) {
+            setLimitReached(true);
+          }
+        });
+        if (!profile?.subscriptionData) {
           setIsFreeMode(true);
-          list({ userId: userInfo.cognito_user_id }).then(qrs => { // @ts-ignore
-            if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) {
-              setLimitReached(true);
-            }
-          });
         } else {
           setIsFreeMode(false);
           //TODO handle plan limits
+          //per diferent plans
         }
       }).catch(console.error);
     }
@@ -174,10 +177,11 @@ const QrWizard = ({ children }: QrWizardProps) => {
 
   return (
     <>
+
       {showLimitDlg &&
         <RenderConfirmDlg
-          title="Ops"
-          message="Your free account only allows for one Dynamic QR. Upgrade to a paid plan to add more QRs. Click here to upgrade now."
+          title="Oops"
+          message="You have reached the limit of Dynamic QRs for this account. Upgrade to a paid plan to add more QRs. Click here to upgrade now."
           handleOk={() => {
             router.push('/plans');
             setShowLimitDlg(false);
@@ -187,7 +191,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
               setRedirecting(true);
               const query = {}; // @ts-ignore
               if (router.query.address !== undefined) { query.address = router.query.address; }
-              router.push({pathname: QR_TYPE_ROUTE, query}, QR_TYPE_ROUTE);
+              router.push({ pathname: QR_TYPE_ROUTE, query }, QR_TYPE_ROUTE);
             }
             setShowLimitDlg(false);
           }}
@@ -206,6 +210,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           step={currentStep}
           handleBack={handleBack}
           editingStatic={!data.isDynamic && options.mode === 'edit'}
+          cloneMode={data.mode === 'clone'}
           selected={selected} />
         <Stepper activeStep={currentStep} sx={{ width: "100%", my: 0 }}>
           {steps.map((label: string) => <Step key={label}><StepLabel>{isWide ? label : ""}</StepLabel></Step>)}
@@ -239,6 +244,7 @@ const QrWizard = ({ children }: QrWizardProps) => {
           qrName={data?.qrName}
           isWrong={isWrong}
           editingStatic={!data.isDynamic && options.mode === 'edit'}
+          cloneMode={options.mode === 'clone'}
           handleBack={handleBack}
           handleNext={handleNext}
           size={size}

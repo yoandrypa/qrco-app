@@ -20,7 +20,7 @@ import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
 import {FRAMES_LENGTH} from "./constants";
 import {GeneratorProps, GenProps} from "./auxFunctions";
 
-const RenderEditMode = dynamic(() => import("./helperComponents/looseComps/RenderEditMode"));
+const RenderMode = dynamic(() => import("./helperComponents/looseComps/RenderMode"));
 const PDFGenDlg = dynamic(() => import("./helperComponents/PDFGenDlg"));
 const RenderDownload = dynamic(() => import("./helperComponents/RenderDownload"));
 const Notifications = dynamic(() => import("../../components/notifications/Notifications"));
@@ -307,7 +307,7 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
           {data.claim !== undefined && (<Box sx={{position: 'absolute', right: 0, top: '20px', textAlign: 'center'}}>
             <RenderClaimingInfo claim={data.claim} />
           </Box>)}
-          {data.mode === 'edit' && <RenderEditMode isWide={isWideForPreview} sx={{top: '24px'}} />}
+          {data.mode && <RenderMode isWide={isWideForPreview} sx={{top: '24px'}} mode={data.mode} />}
         </Box>
         <Box sx={{display: 'flex', m: {sm: 2, xs: 0}}}>
           <Box sx={{ width: '100%', mr: isWideForPreview ? 2 : 0, overflow: 'auto', textAlign: 'left' }}> {/* @ts-ignore */}
