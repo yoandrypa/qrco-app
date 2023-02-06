@@ -12,9 +12,8 @@ import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import dynamic from "next/dynamic";
 import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
 import {cleaner, components, CustomEditProps, CustomProps, getNameStr, validator} from "./custom/helperFuncs";
-import RenderGallerySection from "../helperComponents/smallpieces/RenderGallerySection";
-import RenderAssetsData from "./RenderAssetsData";
 
+const RenderAssetsData = dynamic(() => import("./RenderAssetsData"));
 const CustomNewSection = dynamic(() => import("./custom/CustomNewSection"));
 const CustomEditSection = dynamic(() => import("./custom/CustomEditSection"));
 const RenderLinks = dynamic(() => import("./contents/RenderLinks"));

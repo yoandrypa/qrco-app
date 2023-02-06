@@ -69,11 +69,11 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
     });
   };
 
-  const renderZero = () => <DragPaper elevation={2} sx={{p: 1}}>
+  const renderCompanyData = () => <DragPaper elevation={2} sx={{p: 1}}>
     <RenderCompanyData data={data} handleValues={handleValues} message="Business info" />
   </DragPaper>;
 
-  const renderOne = () => <DragPaper elevation={2} sx={{p: 1}}>
+  const renderActionButton = () => <DragPaper elevation={2} sx={{p: 1}}>
     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
       <Typography sx={{ my: 'auto' }}>{'Action button'}</Typography>
       <Button sx={{ mb: '5px' }} variant="outlined" color={data.urlOptionLabel === undefined ? 'primary' : 'error'} onClick={handleOptionButton}>
@@ -92,22 +92,22 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
     )}
   </DragPaper>;
 
-  const renderTwo = () => <DragPaper elevation={2} sx={{p: 1}}>
+  const renderAddressData = () => <DragPaper elevation={2} sx={{p: 1}}>
     <Expander expand={expander} setExpand={setExpander} item="address" title="Address" />
     {expander === "address" && <RenderAddressData data={data} handleValues={handleValues} />}
   </DragPaper>;
 
-  const renderThree = () => <DragPaper elevation={2} sx={{p: 1}}>
+  const renderOpening = () => <DragPaper elevation={2} sx={{p: 1}}>
     <Expander expand={expander} setExpand={setExpander} item="opening" title="Opening time" />
     {expander === "opening" && <RenderOpeningTime data={data} setData={setData} />}
   </DragPaper>;
 
-  const renderFour = () => <DragPaper elevation={2} sx={{p: 1}}>
+  const renderEasiness = () => <DragPaper elevation={2} sx={{p: 1}}>
     <Expander expand={expander} setExpand={setExpander} item="easiness" title="Business easiness" />
     {expander === "easiness" && <RenderEasiness data={data} setData={setData} />}
   </DragPaper>;
 
-  const renderFive = () => <DragPaper elevation={2} sx={{p: 1}}>
+  const renderSocials = () => <DragPaper elevation={2} sx={{p: 1}}>
     <Expander expand={expander} setExpand={setExpander} item="socials" title="Social networks" />
     {expander === "socials" && <RenderSocials data={data} setData={setData} />}
   </DragPaper>;
@@ -166,12 +166,12 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
                   {(provided: any, snapshot: any) => (
                     <Box ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}
                          sx={{...getItemStyle(snapshot.isDragging, provided.draggableProps.style), my: 4, width: '100%'}}>
-                      {x === 0 && renderZero()}
-                      {x === 1 && renderOne()}
-                      {x === 2 && renderTwo()}
-                      {x === 3 && renderThree()}
-                      {x === 4 && renderFour()}
-                      {x === 5 && renderFive()}
+                      {x === 0 && renderCompanyData()}
+                      {x === 1 && renderActionButton()}
+                      {x === 2 && renderAddressData()}
+                      {x === 3 && renderOpening()}
+                      {x === 4 && renderEasiness()}
+                      {x === 5 && renderSocials()}
                     </Box>
                   )}
                 </Draggable>
