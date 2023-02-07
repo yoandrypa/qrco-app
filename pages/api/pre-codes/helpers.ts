@@ -9,10 +9,27 @@ const MICRO_SITES_ROUTE = process.env.REACT_MICROSITES_ROUTE || 'https://dev.a-q
 const LINK_CODE_ALPHABET = process.env.LINK_CODE_ALPHABET || 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 const MAX_ALLOW_COLLISIONS = parseInt(process.env.MAX_ALLOW_COLLISIONS || '25', 10);
 
+/**
+ * Parse and validate the request via POST
+ * @param req
+ */
 export function parseFromPostRequest(req: NextApiRequest) {
   const schema = Joi.object({
     size: Joi.number().min(4).max(32),
     count: Joi.number().min(1).max(10),
+    owner: Joi.string(),
+  });
+
+  return Joi.attempt(req.body, schema, { abortEarly: false });
+}
+
+/**
+ * Parse and validate the request via PUT
+ * @param req
+ */
+export function parseFromPutsRequest(req: NextApiRequest) {
+  const schema = Joi.object({
+    codes: Joi.array().items(Joi.string()).min(1),
     owner: Joi.string(),
   });
 
@@ -38,7 +55,7 @@ async function exists(code: string) {
  * @param count
  * @param owner
  */
-export async function geneNewCodes(size: number, count: number, owner: string = 'any') {
+export async function genNewCodes(size: number, count: number, owner: string = 'any') {
   owner ||= 'any';
 
   const nanoId = customAlphabet(LINK_CODE_ALPHABET, size);
@@ -63,6 +80,35 @@ export async function geneNewCodes(size: number, count: number, owner: string = 
   }
 
   await dynamoose.transaction(transactions);
+
+  const codes = await getPreGenCodes(owner);
+
+  return { ...codes, collisions };
+}
+
+/**
+ * Load new codes available to be claimed.
+ * @param codes
+ * @param owner
+ */
+export async function loadNewCodes(items: string[], owner: string = 'any') {
+  owner ||= 'any';
+
+  const transactions = [];
+
+  let collisions = 0;
+
+  for (const code of items) {
+    const alreadyExists = await exists(code);
+
+    if (!alreadyExists) {
+      transactions.push(PreGeneratedModel.transaction.create({ code, owner }));
+    } else {
+      collisions++;
+    }
+  }
+
+  if (transactions.length > 0) await dynamoose.transaction(transactions);
 
   const codes = await getPreGenCodes(owner);
 
