@@ -59,6 +59,7 @@ const Plans = (props: Props) => {
 
     try {
       const payload = {
+        // TODO: This is incorrect, the user identification must not be sent in the request, this information must be obtained in the backend from the token or the active session.
         id: user.cognito_user_id,
         email: user.email,
         plan_type: plan,
