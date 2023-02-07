@@ -58,7 +58,7 @@ program
       items = items.filter((item) => !!item);
 
       while (items.length !== 0) {
-        const codes = items.splice(0, 10);
+        const codes = items.splice(0, 50);
 
         try {
           console.log(`SENDING BLOCK OF ${codes.length} QR-Codes`);
