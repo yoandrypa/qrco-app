@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from "react";
+import { useContext, useEffect, useState } from "react";
 import QrTypeSelector from "../../components/qr/QrTypeSelector";
 import QrWizard from "../../components/qr/QrWizard";
 import Context from "../../components/context/Context";
@@ -7,13 +7,13 @@ import { DEFAULT_DYNAMIC_SELECTED, QR_DESIGN_ROUTE } from "../../components/qr/c
 import { DataType } from "../../components/qr/types/types";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { findByAddress } from "../../handlers/links";
-import { get } from "../../handlers/preGenerated";
+import { get as getPreGenerated } from "../../handlers/preGenerated";
 
 import dynamic from "next/dynamic";
 
 const Notifications = dynamic(() => import("../../components/notifications/Notifications"));
 
-export default function QrGen ({ address, preGenerated, claimable }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function QrGen({ address, preGenerated, claimable }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [notClamable, setNotClamable] = useState<boolean>(false);
   // @ts-ignore
   const { selected, setSelected, options, clearData, userInfo, setData } = useContext(Context);
@@ -21,7 +21,7 @@ export default function QrGen ({ address, preGenerated, claimable }: InferGetSer
 
   useEffect(() => {
     if (address !== undefined) {
-      setData((prev: DataType) => ({...prev, claim: address as string, claimable, preGenerated}));
+      setData((prev: DataType) => ({ ...prev, claim: address as string, claimable, preGenerated }));
     } else if (!selected) {
       if (router.query.address !== undefined) {
         setNotClamable(true);
@@ -40,7 +40,7 @@ export default function QrGen ({ address, preGenerated, claimable }: InferGetSer
 
   return (
     <QrWizard>
-      <QrTypeSelector/>
+      <QrTypeSelector />
       {notClamable && (
         <Notifications
           severity="warning" showProgress
@@ -61,7 +61,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
       //Check if the address is pre-generated
       try {
         // @ts-ignore
-        link = await get(query.address);
+        link = await getPreGenerated(query.address as string);
         if (link) {
           return {
             props: {

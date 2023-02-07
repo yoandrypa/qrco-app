@@ -1,5 +1,4 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import "@aws-amplify/ui-react/styles.css";
 import QrDetails from "../../../components/qr/QrDetails";
 import * as VisitHandler from "../../../handlers/visit";
 import * as QrHandler from "../../../handlers/qrs";

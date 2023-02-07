@@ -1,5 +1,3 @@
-import "@aws-amplify/ui-react/styles.css";
-
 import QrGen from "./qr/type";
 import {useContext, useEffect} from "react";
 import Context from "../components/context/Context";
