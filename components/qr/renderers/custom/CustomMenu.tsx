@@ -1,10 +1,8 @@
-// import {components, getName, getNameStr} from "./helperFuncs";
 import {components} from "./helperFuncs";
 import React, {ChangeEvent, useState} from "react";
 import MenuList from "@mui/material/MenuList";
 import {MenuItem, TextField} from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
-// import Typography from "@mui/material/Typography";
 import Popover from "@mui/material/Popover";
 
 import {DataType} from "../../types/types";
@@ -31,10 +29,10 @@ export default function CustomMenu({data, handle, showOptions, setShowOptions}: 
   const render = () => {
     const list = components.filter(x => x.name.toUpperCase().includes(filter.toUpperCase()));
     return list.map(x => {
-      if ((!data.custom || !data.custom.some(cust => cust.component === x.type))) {
-        return <MenuItem onClick={handle(x.type)}><ListItemText>{x.name}</ListItemText></MenuItem>;
-      }
-      return null;
+      // if ((!data.custom || !data.custom.some(cust => cust.component === x.type))) {
+      return <MenuItem onClick={handle(x.type)} key={x.type}><ListItemText>{x.name}</ListItemText></MenuItem>;
+      // }
+      // return null;
     })
   }
 
@@ -71,11 +69,6 @@ export default function CustomMenu({data, handle, showOptions, setShowOptions}: 
         }}
         onChange={(event: ChangeEvent<HTMLInputElement>) => setFilter(event.target.value)}/>
       <MenuList sx={{maxHeight: '255px', overflowY: 'auto', overflowX: 'hidden'}}>
-        {/*{'EMPTY SELECTION'.includes(filter.toUpperCase()) && (<MenuItem onClick={handle('empty')}>*/}
-        {/*  <ListItemText>*/}
-        {/*    <Typography sx={{color: theme => theme.palette.text.disabled}}>{'Empty section...'}</Typography>*/}
-        {/*  </ListItemText>*/}
-        {/*</MenuItem>)}*/}
         {render()}
       </MenuList>
     </Popover>

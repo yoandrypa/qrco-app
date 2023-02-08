@@ -59,8 +59,8 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
   return (
     <Common msg="Add at least one link to your websites.">
       <Topics message="Main info" top="3px"/>
-      <RenderTitleDesc handleValues={handleValues} title={data.titleAbout} description={data.descriptionAbout} header="Title and description" sx={{mt: 0}} />
-      <RenderLinks data={data} setData={setData} topics="Links" />
+      <RenderTitleDesc handleValues={handleValues} title={data.titleAbout} description={data.descriptionAbout} header="Title and description" sx={{mt: 0}} index={-1} />
+      <RenderLinks data={data} setData={setData} topics="Links" index={-1} />
       <Grid item xs={12}>
         <Divider sx={{my: 1}}/>
         <Paper elevation={2} sx={{p: 1, mt: 1}}>
@@ -96,7 +96,7 @@ export default function LinksData({data, setData, handleValues, setIsWrong}: Lin
                   </FormControl>
                 </Box>
               )}
-              <RenderSocials data={data} setData={setData}/>
+              <RenderSocials data={data} setData={setData} index={-1}/>
             </>
           )}
         </Paper>

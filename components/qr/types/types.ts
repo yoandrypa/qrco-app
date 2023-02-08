@@ -88,7 +88,92 @@ export type SocialProps = {
 
 export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram' | 'title' | 'about';
 export type SocialNetworksType = { network: SocialsType, value?: string };
-export type CustomType = { component: string, name?: string };
+
+export type Type = {
+  includeTextDescription?: boolean;
+  prevNetworks?: string[];
+  shortDateFormat?: boolean;
+  hideDateLegend?: boolean;
+  socialsOnlyIcons?: boolean;
+  includeDescription?: boolean;
+  number?: string;
+  message?: string;
+  subject?: string;
+  body?: string;
+  email?: string;
+  name?: string;
+  password?: string;
+  encription?: string;
+  hidden?: string;
+  prefix?: string;
+  lastName?: string;
+  firstName?: string;
+  cell?: string;
+  phone?: string;
+  fax?: string;
+  organization?: string;
+  position?: string;
+  address?: string;
+  address2?: string;
+  city?: string;
+  zip?: string;
+  state?: string;
+  country?: string;
+  company?: string;
+  contact?: string;
+  about?: string;
+  title?: string;
+  titleAbout?: string;
+  autoOpen?: boolean;
+  descriptionAbout?: string;
+  titleText?: string;
+  subtitle?: string;
+  companyWebSite?: string;
+  companyEmail?: string;
+  companyPhone?: string;
+  companyCell?: string;
+  companyFax?: string;
+  web?: string;
+  website?: string;
+  url?: string;
+  via?: string;
+  hashtags?: string;
+  text?: string;
+  socials?: SocialNetworksType[];
+  value?: string;
+  is12hours?: boolean;
+  openingTime?: OpeningType;
+  urlOptionLabel?: string;
+  urlOptionLink?: string;
+  links?: LinkType[];
+  easiness?: {
+    accessible?: boolean;
+    toilet?: boolean;
+    seat?: boolean;
+    child?: boolean;
+    pets?: boolean;
+    park?: boolean;
+    restaurant?: boolean;
+    cafe?: boolean;
+    bar?: boolean;
+    shower?: boolean;
+    health?: boolean;
+    fastfood?: boolean;
+    bed?: boolean;
+    gym?: boolean;
+    smoking?: boolean;
+    climate?: boolean;
+    training?: boolean;
+    parking?: boolean;
+    train?: boolean;
+    bus?: boolean;
+    taxi?: boolean;
+    wifi?: boolean;
+  } | undefined;
+  files?: File[];
+};
+
+export type CustomType = { component: string, name?: string, data?: Type; expand: string; };
 
 export type DataType = {
   qrType?: string;
@@ -230,11 +315,12 @@ export type DataType = {
   fields?: DragFields;
   description?: string;
   categories?: string[];
-  contactForm?:ContactField;
-  product?:ProductField;
-
+  contactForm?: ContactField;
+  product?: ProductField;
 };
+
 export type validTypes = 'text' | 'email' | 'phone' | 'web' | 'number' | 'date' | 'fax' | 'url' | 'string';
+
 export type HeadAndItemsType = {
   heading: string;
   items: [{
@@ -300,11 +386,11 @@ export type DragField = {
   component?: any// ! react component
 };
 export type ProductField = {
-  titleAbout?:string;
-  descriptionAbout?:string;
-  quantity?:number;
+  titleAbout?: string;
+  descriptionAbout?: string;
+  quantity?: number;
   picture?: File[];
-  sku?:string;
+  sku?: string;
 }
 export type Sections = (TextField | MediaField | ContactField);
 
@@ -315,7 +401,6 @@ export type ContactField = DragField & {
   message?: string;
   buttonText?: string;
   email: string;
-
 };
 
 export type TextField = DragField & {

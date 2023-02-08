@@ -5,7 +5,7 @@ import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import {DataType, LinkType} from "../../types/types";
+import {DataType, LinkType, Type} from "../../types/types";
 import TableRow from "@mui/material/TableRow";
 import {getItemStyle} from "../../helperComponents/looseComps/StyledComponents";
 import TableCell from "@mui/material/TableCell";
@@ -20,80 +20,103 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {ChangeEvent, useCallback, useEffect} from "react";
 
 interface RenderLinksProps {
-  data: DataType;
+  index: number;
+  data?: Type;
   setData: Function;
   topics?: string;
 }
 
-export default function RenderLinks({data, setData, topics}: RenderLinksProps) {
+export default function RenderLinks({data, setData, topics, index}: RenderLinksProps) {
   const onDragEnd = (result: any) => {
     if (!result?.destination) {
       return null;
     }
 
     setData((prev: DataType) => {
-      const tempo = {...prev};
-
-      const newLinks = Array.from(tempo.links || []);
+      const newData = {...prev}; // @ts-ignore
+      const newLinks = Array.from((index === -1 ? newData.links : newData.custom[index].data.links) || []);
       const [removed] = newLinks.splice(result.source.index, 1);
       newLinks.splice(result.destination.index, 0, removed);
-
-      tempo.links = newLinks;
-      return tempo;
+      if (index === -1) {
+        newData.links = newLinks;
+      } else { // @ts-ignore
+        newData.custom[index].data.links = newLinks;
+      }
+      return newData;
     });
-  }
+  };
 
   const add = useCallback(() => {
     setData((prev: DataType) => {
-      const tempo = {...prev};
-      tempo.links?.push({label: '', link: ''});
-      return tempo;
-    });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const remove = useCallback((index: number) => () => {
-    setData((prev: DataType) => {
-      const tempo = {...prev};
-      tempo.links?.splice(index, 1);
-      if (tempo.links?.length === 1 && data?.position === 'middle') {
-        delete data.position; // under by default
+      const newData = {...prev};
+      if (index === -1) { // @ts-ignore
+        newData.links?.push({label: '', link: ''});
+      } else { // @ts-ignore
+        newData.custom[index].data.links.push({label: '', link: ''});
       }
-      return tempo;
+      return newData;
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleChangeValue = useCallback((item: string, index: number) => (payload: ChangeEvent<HTMLInputElement> | string) => {
+  const remove = useCallback((idx: number) => () => {
     setData((prev: DataType) => {
-      const tempo = {...prev};
-      // @ts-ignore
-      tempo.links[index][item] = payload.target?.value !== undefined ? payload.target.value : payload;
-      return tempo;
+      const newData = {...prev};
+      if (index === -1) {
+        newData.links?.splice(idx, 1);
+        if (newData.links?.length === 1 && newData?.position === 'middle') { delete newData.position; }
+      } else { // @ts-ignore
+        newData.custom[index].data.links.splice(idx, 1); // @ts-ignore
+        if (newData.custom[index].data.links.length === 1 && newData.custom[index].data.position === 'middle') { // @ts-ignore
+          delete newData.custom[index].data.position;
+        }
+      }
+      return newData;
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleChangeValue = useCallback((item: string, idx: number) => (payload: ChangeEvent<HTMLInputElement> | string) => { // @ts-ignore
+    const value = payload.target?.value !== undefined ? payload.target.value : payload;
+    setData((prev: DataType) => {
+      const newData = {...prev};
+      if (index === -1) { // @ts-ignore
+        newData.links[idx][item] = value;
+      } else { // @ts-ignore
+        newData.custom[index].data.links[idx][item] = value;
+      }
+      return newData;
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!data.links?.length) {
+    if (index !== -1) {
+      setData((prev: DataType) => {
+        const newData = {...prev}; // @ts-ignore
+        if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
+        if (!newData.custom[index].data.links?.length) { newData.custom[index].data.links = [{label: '', link: ''}]; }
+        return newData;
+      });
+    } else if (index === -1 && !data?.links?.length) {
       setData((prev: DataType) => ({...prev, links: [{label: '', link: ''}]}));
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Box sx={{width: '100%'}}>
-      {topics && <Topics message={topics} top="3px" secMessage={data.links && `(${pluralize('link', data.links.length, true)})`}/>}
+      {topics && <Topics message={topics} top="3px" secMessage={data?.links && `(${pluralize('link', data.links?.length || 0, true)})`}/>}
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
           {(provided: any) => (
             <TableContainer sx={{mt: '-8px'}}>
               <Table size="small">
                 <TableBody {...provided.droppableProps} ref={provided.innerRef}>
-                  {data.links?.length && data.links.map((x: LinkType, index: number) => {
-                    const itemId = `item${index}`;
+                  {data?.links?.length && data.links.map((x: LinkType, idx: number) => {
+                    const itemId = `item${idx}`;
                     return ( // @ts-ignore
-                      <Draggable key={itemId} draggableId={itemId} index={index} isDragDisabled={data.links.length === 1}>
+                      <Draggable key={itemId} draggableId={itemId} index={idx} isDragDisabled={data.links.length === 1}>
                         {(provided: any, snapshot: any) => (
                           <TableRow
                             sx={{p: 0, width: '100%'}}
-                            key={`trow${index}`}
+                            key={`trow${idx}`}
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
@@ -109,7 +132,7 @@ export default function RenderLinks({data, setData, topics}: RenderLinksProps) {
                                 options={['My website', 'My youtube channel', 'My blog', 'My portfolio', 'My podcast', 'My store']}
                                 placeholder="Label here"
                                 value={x.label}
-                                handleValues={handleChangeValue('label', index)}
+                                handleValues={handleChangeValue('label', idx)}
                               />
                             </TableCell>
                             <TableCell sx={{p: 0, width: '50%', borderBottom: 'none'}}>
@@ -117,18 +140,18 @@ export default function RenderLinks({data, setData, topics}: RenderLinksProps) {
                                 required
                                 placeholder="URL here"
                                 value={x.link}
-                                handleValues={handleChangeValue('link', index)}
+                                handleValues={handleChangeValue('link', idx)}
                                 isError={x.link.trim().length > 0 && !isValidUrl(x.link)}
                               />
                             </TableCell>
                             <TableCell sx={{p: 0, borderBottom: 'none'}} align="right">
-                              {index + 1 === (data.links?.length || 0) ? (
+                              {idx + 1 === (data?.links?.length || 0) ? (
                                 <Tooltip title={'Add a link'}>
                                   <IconButton onClick={add}><AddBoxIcon color="primary"/></IconButton>
                                 </Tooltip>
                               ) : (
                                 <Tooltip title={'Remove link'}>
-                                  <IconButton onClick={remove(index)}><DeleteIcon color="error"/></IconButton>
+                                  <IconButton onClick={remove(idx)}><DeleteIcon color="error"/></IconButton>
                                 </Tooltip>
                               )}
                             </TableCell>

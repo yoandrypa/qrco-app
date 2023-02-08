@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import Context from "../../context/Context";
 import Common from "../helperComponents/Common";
 import RenderTitleDesc from "./contents/RenderTitleDesc";
-import RenderAssetsData from "./RenderAssetsData";
+import RenderAssetsData from "./contents/RenderAssetsData";
 import {FILE_LIMITS} from "../../../consts";
 import {conjunctMethods, formatBytes} from "../../../utils";
 
@@ -71,7 +71,7 @@ const AssetData = ({ type, data, setData, handleValues }: AssetDataProps) => {
           <RenderTitleDesc handleValues={handleValues} title={data.titleAbout} description={data.descriptionAbout} />
         </Grid>
         <Grid item xs={12}>
-          <RenderAssetsData setData={setData} data={data} type={type} totalFiles={totalFiles} />
+          <RenderAssetsData setData={setData} data={data} type={type} totalFiles={totalFiles} index={-1} />
         </Grid>
         {type === 'pdf' && data?.files?.length === 1 && (
           <Grid item xs={12}>

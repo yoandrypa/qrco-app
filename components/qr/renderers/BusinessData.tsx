@@ -1,29 +1,30 @@
-import {useEffect, useState} from "react";
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-
-import Common from '../helperComponents/Common';
-import Expander from "./helpers/Expander";
+// import {useEffect, useState} from "react";
+// import Typography from "@mui/material/Typography";
+// import Grid from "@mui/material/Grid";
+// import Box from "@mui/material/Box";
+// import Button from "@mui/material/Button";
+//
+// import Common from '../helperComponents/Common';
+// import Expander from "./helpers/Expander";
 
 import {DataType} from "../types/types";
-import {isValidUrl} from "../../../utils";
-import socialsAreValid from "./validator";
-import RenderTextFields from "./helpers/RenderTextFields";
+// import {isValidUrl} from "../../../utils";
+// import socialsAreValid from "./validator";
+// import RenderTextFields from "./helpers/RenderTextFields";
+//
+// import dynamic from "next/dynamic";
+// import RenderProposalsTextFields from "./helpers/RenderProposalsTextFields";
+// import RenderCompanyData from "./contents/RenderCompanyData";
+// import RenderAddressData from "./contents/RenderAddressData";
+// import {EMAIL, PHONE, ZIP} from "../constants";
+// import DragPaper from "../helperComponents/looseComps/DragPaper";
+// import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+// import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
+import Custom from "./Custom";
 
-import dynamic from "next/dynamic";
-import RenderProposalsTextFields from "./helpers/RenderProposalsTextFields";
-import RenderCompanyData from "./contents/RenderCompanyData";
-import RenderAddressData from "./contents/RenderAddressData";
-import {EMAIL, PHONE, ZIP} from "../constants";
-import DragPaper from "../helperComponents/looseComps/DragPaper";
-import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
-import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
-
-const RenderEasiness = dynamic(() => import("./contents/RenderEasiness"));
-const RenderSocials = dynamic(() => import("./contents/RenderSocials"));
-const RenderOpeningTime = dynamic(() => import("./contents/RenderOpeningTime"));
+// const RenderEasiness = dynamic(() => import("./contents/RenderEasiness"));
+// const RenderSocials = dynamic(() => import("./contents/RenderSocials"));
+// const RenderOpeningTime = dynamic(() => import("./contents/RenderOpeningTime"));
 
 interface BusinessProps {
   data: DataType;
@@ -33,7 +34,18 @@ interface BusinessProps {
 }
 
 export default function BusinessData({data, setData, handleValues, setIsWrong}: BusinessProps) {
-  const [expander, setExpander] = useState<string | null>(null);
+  return <Custom
+    data={data}
+    setData={setData}
+    handleValues={handleValues}
+    setIsWrong={setIsWrong}
+    tip="Your business or company details. Users can contact your business or company right away."
+    predefined={
+      ['company', 'action', 'address', 'opening', 'easiness', 'socials']
+    }
+  />
+
+  /*const [expander, setExpander] = useState<string | null>(null);
 
   const renderItem = (item: string, label: string, required?: boolean) => {
     let isError = false as boolean; // @ts-ignore
@@ -70,7 +82,7 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
   };
 
   const renderCompanyData = () => <DragPaper elevation={2} sx={{p: 1}}>
-    <RenderCompanyData data={data} handleValues={handleValues} message="Business info" />
+    <RenderCompanyData data={data} handleValues={handleValues} message="Business info" index={-1} />
   </DragPaper>;
 
   const renderActionButton = () => <DragPaper elevation={2} sx={{p: 1}}>
@@ -94,22 +106,22 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
 
   const renderAddressData = () => <DragPaper elevation={2} sx={{p: 1}}>
     <Expander expand={expander} setExpand={setExpander} item="address" title="Address" />
-    {expander === "address" && <RenderAddressData data={data} handleValues={handleValues} />}
+    {expander === "address" && <RenderAddressData data={data} handleValues={handleValues} index={-1} />}
   </DragPaper>;
 
   const renderOpening = () => <DragPaper elevation={2} sx={{p: 1}}>
     <Expander expand={expander} setExpand={setExpander} item="opening" title="Opening time" />
-    {expander === "opening" && <RenderOpeningTime data={data} setData={setData} />}
+    {expander === "opening" && <RenderOpeningTime data={data} setData={setData} index={-1} />}
   </DragPaper>;
 
   const renderEasiness = () => <DragPaper elevation={2} sx={{p: 1}}>
     <Expander expand={expander} setExpand={setExpander} item="easiness" title="Business easiness" />
-    {expander === "easiness" && <RenderEasiness data={data} setData={setData} />}
+    {expander === "easiness" && <RenderEasiness data={data} handleValues={handleValues} index={-1} />}
   </DragPaper>;
 
   const renderSocials = () => <DragPaper elevation={2} sx={{p: 1}}>
     <Expander expand={expander} setExpand={setExpander} item="socials" title="Social networks" />
-    {expander === "socials" && <RenderSocials data={data} setData={setData} />}
+    {expander === "socials" && <RenderSocials data={data} setData={setData} index={-1} />}
   </DragPaper>;
 
   useEffect(() => {
@@ -181,5 +193,5 @@ export default function BusinessData({data, setData, handleValues, setIsWrong}: 
         </Droppable>
       </DragDropContext>
     </Common>
-  );
+  );*/
 }

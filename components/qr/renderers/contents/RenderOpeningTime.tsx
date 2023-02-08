@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 
-import {CardDataProps, DataType, OpeningDaysType, OpeningType} from "../../types/types";
+import {DataType, OpeningDaysType, OpeningType} from "../../types/types";
 import {DAYS} from "../../constants";
 import RenderTimeSelector from "../helpers/RenderTimeSelector";
 import IconButton from "@mui/material/IconButton";
@@ -15,51 +15,84 @@ import {getHM} from "../../../helpers/generalFunctions";
 
 const getInitial = () => ({ini: getHM(new Date()), end: getHM(new Date())});
 
-export default function RenderOpeningTime({data, setData}: CardDataProps) {
+interface OpeningTimeProps {
+  index: number;
+  data?: DataType;
+  setData: Function;
+}
+
+export default function RenderOpeningTime({data, setData, index}: OpeningTimeProps) {
   const handleFormat = (is: boolean) => () => {
-    if (is) {
-      setData((prev: DataType) => ({...prev, is12hours: is}));
-    } else if (data.is12hours !== undefined) {
-      setData((prev: DataType) => {
-        const dt = {...prev};
-        delete dt.is12hours;
-        return dt;
-      });
-    }
+    setData((prev: DataType) => {
+      const newData = {...prev};
+      if (is) {
+        if (index === -1) {
+          newData.is12hours = is;
+        } else { // @ts-ignore
+          if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
+          newData.custom[index].data.is12hours = is;
+        }
+      } else if (data?.is12hours !== undefined) {
+        if (index === -1) {
+          delete newData.is12hours;
+        } else { // @ts-ignore
+          delete newData.custom[index].data.is12hours;
+        }
+      }
+      return newData;
+    });
   }
 
   const handleWorkingDay = (day: string) => () => {
     setData((prev: DataType) => {
-      const dt = {...prev};
-      if (!dt.openingTime) {
-        dt.openingTime = {};
-      } // @ts-ignore
-      if (!dt.openingTime[day]) { // @ts-ignore
-        dt.openingTime[day] = [getInitial()];
+      const newData = {...prev};
+      if (index === -1) {
+        if (!newData.openingTime) { newData.openingTime = {}; } // @ts-ignore
+        if (!newData.openingTime[day]) { // @ts-ignore
+          newData.openingTime[day] = [getInitial()];
+        } else { // @ts-ignore
+          delete newData.openingTime[day];
+        }
       } else { // @ts-ignore
-        delete dt.openingTime[day];
+        if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
+        if (!newData.custom[index].data.openingTime) { newData.custom[index].data.openingTime = {}; } // @ts-ignore
+        if (!newData.custom[index].data.openingTime[day]) { // @ts-ignore
+          newData.custom[index].data.openingTime[day] = [getInitial()];
+        } else { // @ts-ignore
+          delete newData.custom[index].data.openingTime[day];
+        }
       }
-      return dt;
+      return newData;
     });
   }
 
-  const renderWorkingDay = (day: string) => { // @ts-ignore
-    const selected = data.openingTime?.[day] !== undefined as boolean;
-    return (<Button key={`btn${day}`} sx={{minWidth: '38px'}} onClick={handleWorkingDay(day)}
-                    variant={selected ? 'contained' : 'outlined'}>{day}</Button>);
+  const handleOption = (x: string, idx: number) => () => { // idx = 0 aims to add
+    setData((prev: DataType) => {
+      const newData = {...prev};
+      if (index === -1) {
+        if (idx === 0) { // @ts-ignore
+          newData.openingTime[x].push(getInitial());
+        } else { // @ts-ignore
+          newData.openingTime[x].splice(idx, 1);
+        }
+      } else {
+        if (idx === 0) { // @ts-ignore
+          newData.custom[index].data.openingTime[x].push(getInitial());
+        } else { // @ts-ignore
+          newData.custom[index].data.openingTime[x].splice(idx, 1);
+        }
+      }
+      return newData;
+    })
   }
 
-  const handleOption = (x: string, index: number) => () => {
-    setData((prev: DataType) => {
-      const d = {...prev};
-      if (index === 0) { //aims to add
-        // @ts-ignore
-        d.openingTime[x].push(getInitial());
-      } else { // @ts-ignore
-        d.openingTime[x].splice(index, 1);
-      }
-      return d;
-    })
+  const renderWorkingDay = (day: string) => { // @ts-ignore
+    const selected = data?.openingTime?.[day] !== undefined as boolean;
+    return (<Button
+      key={`btn${day}`}
+      sx={{minWidth: '38px'}}
+      onClick={handleWorkingDay(day)}
+      variant={selected ? 'contained' : 'outlined'}>{day}</Button>);
   }
 
   return (
@@ -68,10 +101,10 @@ export default function RenderOpeningTime({data, setData}: CardDataProps) {
         <Typography>{'Format'}</Typography>
         <ButtonGroup size="small" aria-label="timing" disableElevation fullWidth>
           {[
-            <Button onClick={handleFormat(true)} key="twelve" variant={data.is12hours ? 'contained' : 'outlined'}>
+            <Button onClick={handleFormat(true)} key="twelve" variant={data?.is12hours ? 'contained' : 'outlined'}>
               {'12hrs'}
             </Button>,
-            <Button onClick={handleFormat(false)} key="twentyfour" variant={!data.is12hours ? 'contained' : 'outlined'}>
+            <Button onClick={handleFormat(false)} key="twentyfour" variant={!data?.is12hours ? 'contained' : 'outlined'}>
               {'24hrs'}
             </Button>
           ]}
@@ -85,38 +118,37 @@ export default function RenderOpeningTime({data, setData}: CardDataProps) {
             renderWorkingDay('sat')]}
         </ButtonGroup>
       </Grid>
-      {Object.keys(data.openingTime || {}).length ? (
+      {Object.keys(data?.openingTime || {}).length ? (
         <Grid item xs={12}>
           <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%'}}>
-          {['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map((x: string) => { // @ts-ignore
-            if (!data.openingTime[x]) { return null; } // @ts-ignore
-            const values = data.openingTime?.[x] || [] as OpeningType; // @ts-ignore
-            const day = DAYS[x];
-            return (
-              <Paper elevation={2} sx={{mr: '10px', mb: '5px', p: 1, minWidth: '318px', maxWidth: 'calc(50% - 15px)'}} key={`day${day}`}>
-                <Typography sx={{fontWeight: 'bold'}}>{day}</Typography>
-                {values.map((timing: OpeningDaysType, index: number) => {
-                  const disabled = index === 0 && values.length === 2;
-                  return (
-                    <Box sx={{width: '100%', display: 'flex'}} key={`item${day}`}>
-                      <Box sx={{width: 'calc(50% - 20px)'}}>
-                        <RenderTimeSelector data={data} setData={setData} day={x} ini index={index}/>
+            {['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map((x: string) => { // @ts-ignore
+              if (!data.openingTime[x]) { return null; } // @ts-ignore
+              const values = data.openingTime?.[x] || [] as OpeningType; // @ts-ignore
+              const day = DAYS[x];
+              return (
+                <Paper elevation={2} sx={{mr: '10px', mb: '5px', p: 1, minWidth: '318px', maxWidth: 'calc(50% - 15px)'}} key={`day${day}`}>
+                  <Typography sx={{fontWeight: 'bold'}}>{day}</Typography>
+                  {values.map((timing: OpeningDaysType, idx: number) => {
+                    const disabled = idx === 0 && values.length === 2;
+                    return (
+                      <Box sx={{width: '100%', display: 'flex'}} key={`item${day}`}>
+                        <Box sx={{width: 'calc(50% - 20px)'}}>
+                          <RenderTimeSelector data={data} setData={setData} day={x} ini index={idx}/>
+                        </Box>
+                        <Box sx={{width: 'calc(50% - 20px)', ml: '5px'}}>
+                          <RenderTimeSelector data={data} setData={setData} day={x} ini={false} index={idx}/>
+                        </Box>
+                        <Box sx={{width: '30px', ml: '5px'}}>
+                          <IconButton disabled={disabled} onClick={handleOption(x, idx)} sx={{mt: '5px'}}>
+                            {idx === 0 ? <AddIcon color={!disabled ? "primary" : "disabled"}/> : <DeleteIcon color="error"/>}
+                          </IconButton>
+                        </Box>
                       </Box>
-                      <Box sx={{width: 'calc(50% - 20px)', ml: '5px'}}>
-                        <RenderTimeSelector data={data} setData={setData} day={x} ini={false} index={index}/>
-                      </Box>
-                      <Box sx={{width: '30px', ml: '5px'}}>
-                        <IconButton disabled={disabled} onClick={handleOption(x, index)} sx={{mt: '5px'}}>
-                          {index === 0 ? <AddIcon color={!disabled ? "primary" : "disabled"}/> :
-                            <DeleteIcon color="error"/>}
-                        </IconButton>
-                      </Box>
-                    </Box>
-                  );
-                })}
-              </Paper>
-            );
-          })}
+                    );
+                  })}
+                </Paper>
+              );
+            })}
           </Box>
         </Grid>
       ) : null}

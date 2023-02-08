@@ -1,19 +1,21 @@
 import Box from "@mui/material/Box";
 import Topics from "../helpers/Topics";
 import Grid from "@mui/material/Grid";
-import {DataType} from "../../types/types";
-import {EMAIL, PHONE} from "../../constants";
+import {Type} from "../../types/types";
+import {EMAIL} from "../../constants";
 import RenderTextFields from "../helpers/RenderTextFields";
 import {isValidUrl} from "../../../../utils";
+import {ChangeEvent} from "react";
 
 interface RenderEmailWebProps {
-  data: DataType;
+  index: number;
+  data?: Type;
   sx?: Object;
   handleValues: Function;
   message?: string;
 }
 
-export default function RenderEmailWeb({data, handleValues, message, sx}: RenderEmailWebProps) {
+export default function RenderEmailWeb({data, handleValues, message, sx, index}: RenderEmailWebProps) {
   const renderItem = (item: string, label: string) => {
     let isError = false as boolean; // @ts-ignore
     const value = data?.[item] || '' as string;
@@ -26,7 +28,11 @@ export default function RenderEmailWeb({data, handleValues, message, sx}: Render
       }
     }
 
-    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={handleValues}/>;
+    const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
+      handleValues(item, index)(payload);
+    }
+
+    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={beforeSend}/>;
   };
 
   return (

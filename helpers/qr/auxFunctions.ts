@@ -38,14 +38,15 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
   'primary', 'secondary', 'backgndImg', 'foregndImg', 'foregndImgType', 'globalFont', 'buttonsFont', 'titlesFont',
   'messagesFont', 'titlesFontSize', 'messagesFontSize', 'buttonsFontSize', 'subtitlesFontSize', 'subtitlesFont',
   'titlesFontStyle', 'subtitlesFontStyle', 'messagesFontStyle', 'buttonsFontStyle', 'globalFontColor', 'buttonShape',
-  'buttonBack', 'buttonBackColor', 'buttonBorders', 'layout', 'index', 'shortDateFormat'];
+  'buttonBack', 'buttonBackColor', 'buttonBorders', 'layout', 'index', 'shortDateFormat', 'hideDateLegend'];
 
   Object.keys(data).forEach(x => {  // @ts-ignore
     if (items.some((item: string) => x === item)) { sum += 1; }
   });
 
+  if (data.custom !== undefined && !data.custom.some(x => Object.keys(x).length !== 2)) { sum += 1}
   if (data.files !== undefined && data.files.length === 0) { sum += 1; }
-  if (data.fields !== undefined && (data.fields.length === 0|| onlyOneGallery(data))) { sum += 1; }
+  if (data.fields !== undefined && (data.fields.length === 0 || onlyOneGallery(data))) { sum += 1; }
   if (data.socials !== undefined && data.socials.length === 0) { sum += 1; }
   if (data.otherDetails !== undefined && data.otherDetails.items.length <= 0 && data.otherDetails.heading==='') { sum += 1; }
   if (data.product !== undefined && empty(data.product)) { sum += 1; }

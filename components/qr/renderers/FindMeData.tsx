@@ -73,12 +73,12 @@ export default function FindMeData({
     <Common msg="Information to make easy to find you">
       <Topics message={'Presentation'} />
       <Grid container spacing={1} sx={{ mt: 1 }}>
-        <RenderPresentation data={data} handleValues={handleValues} />
-        <RenderPhones data={data} handleValues={handleValues} message="Phones" />
+        <RenderPresentation data={data} handleValues={handleValues} index={-1} />
+        <RenderPhones data={data} handleValues={handleValues} message="Phones" index={-1}/>
       </Grid>
       <Topics message={'Address'} />
       <Grid container item spacing={1} sx={{mt:1}}>
-        <RenderAddressData data={data} handleValues={handleValues} />
+        <RenderAddressData data={data} handleValues={handleValues} index={-1}/>
       </Grid>
       <Grid container spacing={1} >
         <Grid item xs={12} sx={{ml:-1}}>
@@ -129,7 +129,7 @@ export default function FindMeData({
                 title="Social information"
               />
               {expander === 'socials' && (
-                <RenderSocials data={data} setData={handlePayload} />
+                <RenderSocials data={data} setData={handlePayload} index={-1} />
               )}
             </Paper>
           </Grid>
@@ -159,7 +159,7 @@ export default function FindMeData({
                         newData.contactForm = { ...newData.contactForm, [type]: value }
                       handlePayload(newData);
                     }}
-                    index={0}
+                    index={-1}
                   />
                 </Grid>
               </Grid>

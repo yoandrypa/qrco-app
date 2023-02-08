@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 
 import RenderIcon from './helperComponents/smallpieces/RenderIcon';
 import Context from '../context/Context';
-import { DataType, SocialProps } from './types/types';
+import { DataType, SocialProps, Type } from './types/types';
 
 import dynamic from "next/dynamic";
 
@@ -47,19 +47,46 @@ type QrContentHandlerProps = {
 const QrContentHandler = () => { // @ts-ignore
   const { data, setData, selected, setIsWrong, userInfo }: QrContentHandlerProps = useContext(Context);
 
-  const handleValues = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
+  const handleValues = (item: string, index?: number) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
     const value = typeof payload === 'string' || typeof payload === 'boolean' ? payload : payload.target.value;
+    setData((prev: DataType) => {
+      const newData = {...prev};
+      if (index !== undefined && index !== -1) { // @ts-ignore
+        const element = newData.custom[index];
 
-    if ((typeof value === "string" && value.length) || payload) {
-      setData((prev: DataType) => ({ ...prev, [item]: value }));
-    } // @ts-ignore
-    else if (data[item]) {
-      setData((prev: DataType) => {
-        const temp = { ...prev }; // @ts-ignore
-        delete temp[item];
-        return temp;
-      });
-    }
+        if (!element.data) { element.data = {}; }
+        const elementData = element.data as Type;
+
+        if (item === 'easiness') {
+          if (!elementData.easiness) { elementData.easiness = {}; } // @ts-ignore
+          if (!elementData.easiness[payload]) { // @ts-ignore
+            elementData.easiness[payload] = true;
+          } else { // @ts-ignore
+            delete elementData.easiness[payload];
+            if (!Object.keys(elementData.easiness).length) { delete elementData.easiness; }
+          }
+        } else if ((typeof value === "string" && value.length) || payload) { // @ts-ignore
+          elementData[item] = value; // @ts-ignore
+        } else if (elementData[item]) { // @ts-ignore
+          delete elementData[item];
+        }
+      } else {
+        if (item === 'easiness') {
+          if (!newData.easiness) { newData.easiness = {}; } // @ts-ignore
+          if (!newData.easiness[payload]) { // @ts-ignore
+            newData.easiness[payload] = true;
+          } else { // @ts-ignore
+            delete newData.easiness[payload];
+            if (!Object.keys(newData.easiness).length) { delete newData.easiness; }
+          }
+        } else if ((typeof value === "string" && value.length) || payload) { // @ts-ignore
+          newData[item] = value;// @ts-ignore
+        } else if (data[item]) { // @ts-ignore
+          delete newData[item];
+        }
+      }
+      return newData;
+    });
   };
 
   const handlePayload = (payload: DataType | SocialProps) => {
@@ -67,9 +94,7 @@ const QrContentHandler = () => { // @ts-ignore
   };
 
   const renderSel = () => {
-    if (!selected) {
-      return null;
-    }
+    if (!selected) { return null; }
     switch (selected) {
       case 'web': {
         return (<SingleData
@@ -153,7 +178,7 @@ const QrContentHandler = () => { // @ts-ignore
         return <InventoryData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
       }
       default: {
-        return <NetworksData data={data} setData={handlePayload} setIsWrong={setIsWrong} />
+        return <NetworksData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
       }
     }
   };
@@ -163,15 +188,11 @@ const QrContentHandler = () => { // @ts-ignore
       {selected ? (
         <>
           {!Boolean(userInfo) && <Box sx={{ mb: '10px' }}><RenderNoUserWarning /></Box>}
-          <Box sx={{ display: 'inline' }}>
-            <RenderIcon icon={selected} enabled adjust />
-          </Box>
+          <Box sx={{ display: 'inline' }}><RenderIcon icon={selected} enabled adjust /></Box>
           <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{qrNameDisplayer(selected || '', data?.isDynamic || false)}</Typography>
           <Typography sx={{ display: { xs: 'none', sm: 'inline' } }}>: Enter the content</Typography>
           <NotifyDynamic isDynamic={data?.isDynamic || false} />
-          <Box sx={{ textAlign: 'left', width: '100%' }}>
-            {renderSel()}
-          </Box>
+          <Box sx={{ textAlign: 'left', width: '100%' }}>{renderSel()}</Box>
         </>
       ) : (
         <PleaseWait redirecting hidePleaseWait />

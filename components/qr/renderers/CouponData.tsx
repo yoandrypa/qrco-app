@@ -139,11 +139,11 @@ const CouponData = ({data, setData, handleValues, setIsWrong}: CouponProps) => {
                         <Expander expand={expander} setExpand={setExpander} item="coupon" title="Coupon data *" required={!data?.name?.length} />
                         {expander === "coupon" && (
                           <Grid container spacing={1}>
-                            <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
+                            <Grid item xs={12} style={{paddingTop: 0}}>
                               {renderItem('name', 'Coupon code', true)}
                             </Grid>
-                            <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
-                              <RenderDateSelector data={data} handleValues={handleValues} label="Valid until" />
+                            <Grid item xs={12} style={{paddingTop: 0}}>
+                              <RenderDateSelector data={data} handleValues={handleValues} label="Valid until" index={-1} />
                             </Grid>
                             <Grid item xs={12} style={{paddingTop: 0}}>
                               {renderItem('text', 'Terms and conditions')}
@@ -153,7 +153,7 @@ const CouponData = ({data, setData, handleValues, setIsWrong}: CouponProps) => {
                       </DragPaper>)}
                       {x === 2 && (<DragPaper elevation={2} sx={{ p: 1 }}>
                         <Expander expand={expander} setExpand={setExpander} item="address" title="Address" />
-                        {expander === "address" && <RenderAddressData data={data} handleValues={handleValues} />}
+                        {expander === "address" && <RenderAddressData data={data} handleValues={handleValues} index={-1} />}
                       </DragPaper>)}
                     </Box>
                   )}

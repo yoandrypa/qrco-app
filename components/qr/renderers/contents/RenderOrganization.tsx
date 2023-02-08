@@ -1,18 +1,24 @@
 import Box from "@mui/material/Box";
 import Topics from "../helpers/Topics";
 import Grid from "@mui/material/Grid";
-import {DataType} from "../../types/types";
+import {Type} from "../../types/types";
 import RenderTextFields from "../helpers/RenderTextFields";
+import {ChangeEvent} from "react";
 
 interface RenderOrganizationProps {
-  data: DataType;
+  index: number;
+  data?: Type;
   handleValues: Function;
   message?: string;
 }
 
-export default function RenderOrganization({data, handleValues, message}: RenderOrganizationProps) {
+export default function RenderOrganization({data, handleValues, message, index}: RenderOrganizationProps) {
+  const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
+    handleValues(item, index)(payload);
+  };
+
   const renderItem = (item: string, label: string) => ( // @ts-ignore
-    <RenderTextFields item={item} label={label} value={data?.[item] || ''} handleValues={handleValues}/>
+    <RenderTextFields item={item} label={label} value={data?.[item] || ''} handleValues={beforeSend}/>
   );
 
   return (

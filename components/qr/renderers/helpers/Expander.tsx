@@ -5,6 +5,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
 import IconButton from '@mui/material/IconButton';
 import { Delete } from "@mui/icons-material";
+import {memo} from "react";
 
 interface ExpanderProps {
   multi?: boolean;
@@ -58,4 +59,5 @@ const Expander = ({expand, setExpand, item, title, bold, required, deleteButton,
   );
 }
 
-export default Expander;
+export default memo(Expander, (current: ExpanderProps, next: ExpanderProps) =>
+  current.expand === next.expand && current.required === next.required);

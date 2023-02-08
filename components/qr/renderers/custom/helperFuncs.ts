@@ -1,16 +1,16 @@
-import {DataType, LinkType} from "../../types/types";
+import {CustomType, DataType, LinkType, Type} from "../../types/types";
 import {EMAIL, PHONE, ZIP} from "../../constants";
 import {isValidUrl} from "../../../../utils";
 import socialsAreValid from "../validator";
 
 export const components = [
-  /*{type: 'gallery', name: 'Gallery'},*/
   {type: 'address', name: 'Address'}, {type: 'company', name: 'Company'},
   {type: 'date', name: 'Date'}, {type: 'email', name: 'Email and web'}, {type: 'easiness', name: 'Easiness'},
   {type: 'links', name: 'Links'}, {type: 'organization', name: 'Organization'},
   {type: 'phones', name: 'Phones and cells'}, {type: 'photos', name: 'Photos'},
   {type: 'presentation', name: 'Presentation'}, {type: 'opening', name: 'Opening time'},
-  {type: 'socials', name: 'Social networks'}, {type: 'title', name: 'Title and description'}
+  {type: 'socials', name: 'Social networks'}, {type: 'title', name: 'Title and description'},
+  {type: 'action', name: 'Action button'}, {type: 'single', name: 'Single text'}
 ];
 
 export const getName = (index: number) => {
@@ -23,6 +23,8 @@ export const getNameStr = (type: string): string => {
 }
 
 export interface CustomProps {
+  predefined?: string[];
+  tip?: string;
   data: DataType;
   setData: Function;
   handleValues: Function;
@@ -36,41 +38,61 @@ export interface CustomEditProps {
   name?: string;
 }
 
-export const validator = (data: DataType, sections: any[]): boolean => {
-  if (!sections.length || !socialsAreValid(data)) {
+export const isRequired = (component: string, dataInfo?: Type) =>
+  (component === 'action' && (!dataInfo?.urlOptionLabel?.trim().length || !dataInfo?.urlOptionLink?.trim().length || !isValidUrl(dataInfo.urlOptionLink))) ||
+  (component === 'company' && !dataInfo?.company?.trim().length) || (component === 'presentation' && !dataInfo?.firstName?.trim().length);
+
+export const validator = (dataToCheck: DataType): boolean => {
+  if (!dataToCheck.custom?.length) {
     return true;
   }
 
   let errors = false;
 
-  if (!errors && sections.includes('company') && (!data.company?.trim().length || (
-    (data.companyPhone?.trim().length && !PHONE.test(data.companyPhone)) ||
-    (data.companyCell?.trim().length && !PHONE.test(data.companyCell)) ||
-    (data.companyFax?.trim().length && !PHONE.test(data.companyFax)) ||
-    (data.companyWebSite?.trim().length && !isValidUrl(data.companyWebSite)) ||
-    (data.companyEmail?.trim().length && !EMAIL.test(data.companyEmail))
-  ))) {
-    errors = true;
-  } else if (sections.includes('address') && data.zip?.trim().length && !ZIP.test(data.zip)) {
-    errors = true;
-  } else if (sections.includes('email') && data.email?.trim().length && !EMAIL.test(data.email)) {
-    errors = true;
-  } else if (sections.includes('links') && data?.links?.some((x: LinkType) =>
-      (!x.label.trim().length || !x.link.trim().length || !isValidUrl(x.link)))) {
-    errors = true;
-  } else if (sections.includes('phones') && ((data.phone?.trim().length && !PHONE.test(data.phone)) ||
-    (data.cell?.trim().length && !PHONE.test(data.cell)) || (data.fax?.trim().length && !PHONE.test(data.fax)))) {
-    errors = true;
-  } else if (sections.includes('presentation') && !data.firstName?.trim().length) {
-    errors = true;
-  } else if (sections.includes('email') && (data.web?.trim().length && !isValidUrl(data.web)) ||
-    (data.email?.trim().length && !EMAIL.test(data.email))) {
-    errors = true;
-  } else if (data.urlOptionLabel !== undefined && data.urlOptionLink !== undefined) {
-    if (!data.urlOptionLabel.trim().length || !data.urlOptionLink.trim().length || !isValidUrl(data.urlOptionLink)) {
+  dataToCheck.custom.every((custom: CustomType) => {
+    const {data} = custom;
+    if (!data || !socialsAreValid(data)) { return true; }
+
+    const {component} = custom;
+    if (component === 'company' && (!data.company?.trim().length || (
+      (data.companyPhone?.trim().length && !PHONE.test(data.companyPhone)) ||
+      (data.companyCell?.trim().length && !PHONE.test(data.companyCell)) ||
+      (data.companyFax?.trim().length && !PHONE.test(data.companyFax)) ||
+      (data.companyWebSite?.trim().length && !isValidUrl(data.companyWebSite)) ||
+      (data.companyEmail?.trim().length && !EMAIL.test(data.companyEmail))
+    ))) {
       errors = true;
+      return false;
     }
-  }
+    if (component === 'address' && data.zip?.trim().length && !ZIP.test(data.zip)) {
+      errors = true;
+      return false;
+    }
+    if (component === 'email' && (data.email?.trim().length && !EMAIL.test(data.email)) ||
+      (data.web?.trim().length && !isValidUrl(data.web))) {
+      errors = true;
+      return false;
+    }
+    if (component === 'links' && data?.links?.some((x: LinkType) =>
+      (!x.label.trim().length || !x.link.trim().length || !isValidUrl(x.link)))) {
+      errors = true;
+      return false;
+    }
+    if (component === 'phones' && ((data.phone?.trim().length && !PHONE.test(data.phone)) ||
+      (data.cell?.trim().length && !PHONE.test(data.cell)) || (data.fax?.trim().length && !PHONE.test(data.fax)))) {
+      errors = true;
+      return false;
+    }
+    if (component === 'presentation' && !data.firstName?.trim().length) {
+      errors = true;
+      return false;
+    }
+    if (component === 'action' && data.urlOptionLabel !== undefined && data.urlOptionLink !== undefined &&
+      (!data.urlOptionLabel.trim().length || !data.urlOptionLink.trim().length || !isValidUrl(data.urlOptionLink))) {
+        errors = true;
+        return false;
+    }
+  });
 
   return errors;
 }

@@ -1,23 +1,29 @@
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 
-import {DataType} from "../../types/types";
+import {Type} from "../../types/types";
 import {ZIP} from "../../constants";
 import RenderTextFields from "../helpers/RenderTextFields";
 import Topics from "../helpers/Topics";
+import {ChangeEvent} from "react";
 
 interface AddressProps {
-  data: DataType;
+  index: number;
+  data?: Type;
   message?: string;
   handleValues: Function;
 }
 
-export default function RenderAddressData({data, handleValues, message}: AddressProps) {
+export default function RenderAddressData({data, handleValues, message, index}: AddressProps) {
+  const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
+    handleValues(item, index)(payload);
+  }
+
   const renderItem = (item: string, label: string) => { // @ts-ignore
     const value = data?.[item] || '' as string;
     return (
       <RenderTextFields item={item} label={label} isError={item === 'zip' && value.length && !ZIP.test(value)}
-                        value={value} handleValues={handleValues} />
+                        value={value} handleValues={beforeSend} />
     );
   };
 
