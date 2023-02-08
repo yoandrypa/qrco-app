@@ -157,7 +157,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
     } else {
       doneFirst.current = true;
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setIsWrong(validator(data));
@@ -181,7 +181,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                         <Box sx={{my: 4, width: '100%', ...getItemStyle(snap.isDragging, prov.draggableProps.style)}}
                              ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
                           <DragPaper elevation={2} sx={{p: 1}} avoidIcon={data.custom?.length === 1} removeFunc={handleRemove(index, component)}
-                                     editFunc={!['title', 'action'].includes(component) ? handleEdit(index, component, x.name) : undefined}>
+                                     editFunc={predefined === undefined && !['title', 'action'].includes(component) ? handleEdit(index, component, x.name) : undefined}>
                             {/* @ts-ignore */}
                             <Expander expand={expanded || null} setExpand={handleExpander} item={x.expand} title={x.name || getNameStr(component)} multi bold={Boolean(x.name)} required={isRequired(component, dataInfo)} />
                             {expanded !== undefined && (<>

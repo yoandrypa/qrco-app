@@ -60,4 +60,4 @@ const Expander = ({expand, setExpand, item, title, bold, required, deleteButton,
 }
 
 export default memo(Expander, (current: ExpanderProps, next: ExpanderProps) =>
-  current.expand === next.expand && current.required === next.required);
+  current.expand === next.expand && current.required === next.required && current.title === next.title);

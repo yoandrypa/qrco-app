@@ -69,7 +69,7 @@ export default function RenderActionButton({data, setData, handleValues, index}:
     if (index !== undefined && index !== -1) {
       handleOptionButton()
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

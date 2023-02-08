@@ -165,7 +165,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   const data = {...dataSource};
   if (data.custom?.length) {
-    data.custom.forEach(x => {
+    data.custom.forEach(x => { // @ts-ignore
       if (x.expand !== undefined) { delete x.expand; }
     });
   }
