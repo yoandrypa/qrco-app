@@ -44,7 +44,9 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
     if (items.some((item: string) => x === item)) { sum += 1; }
   });
 
-  if (data.custom !== undefined && !data.custom.some(x => Object.keys(x).length !== 2)) { sum += 1}
+  debugger;
+
+  if (data.custom !== undefined && !data.custom.some(x => Object.keys(x).length <= 2)) { sum += 1}
   if (data.files !== undefined && data.files.length === 0) { sum += 1; }
   if (data.fields !== undefined && (data.fields.length === 0 || onlyOneGallery(data))) { sum += 1; }
   if (data.socials !== undefined && data.socials.length === 0) { sum += 1; }
@@ -149,22 +151,39 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
       genAddress();
     } else if (selected === 'custom') {
       populate('custom', [
-        {component: 'title'}, {component: 'presentation', name: 'Custom section name'}, {component: 'phones'}, {component: 'socials'}
+        {
+          component: 'title',
+          data: {
+            titleAbout: 'This is the sample title',
+            descriptionAbout: 'This is the sample description'
+          }
+        },
+        {
+          component: 'presentation', name: 'Custom section name',
+          data: {
+            prefix: 'Sir',
+            firstName: 'Name',
+            lastName: 'Lastname'
+          }
+        },
+        {
+          component: 'phones',
+          data: {
+            cell: '+1234567890',
+            phone: '+1234567890',
+            fax: '+1234567890'
+          }
+        },
+        {
+          component: 'socials',
+          data: {
+             socials: [
+               {network: 'twitter', value: 'twitter_account'},
+               {network: 'facebook', value: 'facebook_account'}
+            ]
+          }
+        }
       ]);
-      populate('titleAbout', 'This is the sample title');
-      populate('descriptionAbout', 'This is the sample description');
-      populate('prefix', 'Sir');
-      populate('firstName', 'Name');
-      populate('lastName', 'Lastname');
-      populate('cell', '+1234567890');
-      populate('phone', '+1234567890');
-      populate('fax', '+1234567890');
-      populate('organization', 'Sample Organization');
-      populate('position', 'Position at Sample Organization');
-      genAddress();
-      populate('email', 'myemail@email.com');
-      populate('web', 'https://www.example.com');
-      genSocials();
     } else if (selected === 'gallery') {
       cleanAssets();
       populate('titleAbout', 'Title of the Gallery');

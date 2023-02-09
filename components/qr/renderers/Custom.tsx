@@ -37,39 +37,40 @@ const RenderPresentation = dynamic(() => import("./contents/RenderPresentation")
 const Button = dynamic(() => import("@mui/material/Button"));
 const RenderCouponData = dynamic(() => import("./contents/RenderCouponData"));
 const RenderCouponInfo = dynamic(() => import("./contents/RenderCouponInfo"));
+const ArrowCircleUpIcon = dynamic(() => import("@mui/icons-material/ArrowCircleUpTwoTone"));
+const IconButton = dynamic(() => import("@mui/material/IconButton"));
 
 export default function Custom({data, setData, handleValues, setIsWrong, predefined, tip}: CustomProps) {
   const [showOptions, setShowOptions] = useState<HTMLButtonElement | null>(null);
   const [expander, setExpander] = useState<string[]>([]);
   const [confirm, setConfirm] = useState<{ index: number, item: string } | undefined>(undefined);
+  const [isVisible, setIsVisible] = useState<boolean>(true);
   const [open, setOpen] = useState<CustomEditProps | null>(null); // aims to editor
 
   const doneFirst = useRef<boolean>(false);
+  const topElement = useRef<HTMLDivElement | null>(null);
 
   const handleOptions = useCallback((e: MouseEvent<HTMLButtonElement>) => {
     setShowOptions(e.currentTarget);
   }, []);
 
   const handleAdd = useCallback((item: string) => {
-    if (doneFirst.current) {
-      setData((prev: DataType) => {
-        const newData = {...prev};
-        if (!newData.custom) { newData.custom = []; } // @ts-ignore
-        const expand = getUuid();
-        newData.custom.push({component: item, expand});
-        setExpander((prev: string[]) => {
-          const newExpander = [...prev];
-          newExpander.push(expand);
-          return newExpander;
-        });
-        return newData;
+    doneFirst.current = true;
+    setData((prev: DataType) => {
+      const newData = {...prev};
+      if (!newData.custom) { newData.custom = []; } // @ts-ignore
+      const expand = getUuid();
+      newData.custom.push({component: item, expand});
+      setExpander((prev: string[]) => {
+        const newExpander = [...prev];
+        newExpander.push(expand);
+        return newExpander;
       });
-    } else {
-      doneFirst.current = true;
-    }
-  }, [data.custom?.length, expander]);  // eslint-disable-line react-hooks/exhaustive-deps
+      return newData;
+    });
+  }, [data.custom?.length, expander]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleDelete = (index: number, item: string) => {
+  const handleDelete = useCallback((index: number, item: string) => {
     setConfirm(undefined);
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
@@ -78,7 +79,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
       cleaner(newData, item);
       return newData;
     });
-  }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleRemove = useCallback((index: number, item: string) => () => {
     setConfirm({index, item});
@@ -120,7 +121,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
     setShowOptions(null);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = useCallback((result: any) => {
     if (!result?.destination) { return null; }
     setData((prev: DataType) => {
       const tempo = {...prev};
@@ -130,7 +131,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
       tempo.custom = newPositions;
       return tempo;
     });
-  };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (predefined) {
@@ -144,10 +145,22 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
         return newData;
       });
       setExpander(expand);
-    } else {
-      doneFirst.current = true;
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const observer = new IntersectionObserver(
+      (payload: IntersectionObserverEntry[]) => {
+        setIsVisible(payload[0].isIntersecting || false);
+      }, { root: document.querySelector("#scrollArea"), rootMargin: "0px", threshold: [0.3] });
+
+      // @ts-ignore
+    observer.observe(topElement.current);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (data?.custom?.length && doneFirst.current) {
+      setTimeout(() => window.scrollTo({behavior: 'smooth', top: document.documentElement.scrollHeight}), 100);
+    }
+  }, [data?.custom?.length]);
 
   useEffect(() => {
     setIsWrong(validator(data));
@@ -157,6 +170,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
     <Common msg={tip || "Create a custom QR Link on your own, using the predefined sections."}>
       <Box sx={{mt: 1, width: '100%'}}>
         <Button startIcon={<AddIcon />} variant="outlined" onClick={handleOptions}>{'Sections...'}</Button>
+        <div ref={topElement} style={{ height: '20px', width: '1px', display: 'inline-flex'}} />
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided: any) => (
@@ -173,7 +187,8 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                           <DragPaper elevation={2} sx={{p: 1}} avoidIcon={data.custom?.length === 1} removeFunc={handleRemove(index, component)}
                                      editFunc={predefined === undefined && !['title', 'action'].includes(component) ? handleEdit(index, component, x.name) : undefined}>
                             {/* @ts-ignore */}
-                            <Expander expand={expanded || null} setExpand={handleExpander} item={x.expand} title={x.name || getNameStr(component)} multi bold={Boolean(x.name)} required={isRequired(component, dataInfo)} />
+                            <Expander expand={expanded || null} setExpand={handleExpander} item={x.expand} multi
+                                      title={x.name || getNameStr(component)} bold={Boolean(x.name)} required={isRequired(component, dataInfo)} />
                             {expanded !== undefined && (<>
                               {component === components[0].type && <RenderAddressData data={dataInfo} handleValues={handleValues} index={index}/>}
                               {component === components[1].type && <RenderCompanyData data={dataInfo} handleValues={handleValues} index={index}/>}
@@ -238,6 +253,11 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
           handleCancel={() => setConfirm(undefined)} handleOk={() => handleDelete(confirm.index, confirm.item)}
           title="Confirm" noMsg="No" yesMsg="Yes" message="You are going to remove the selected section."
           confirmationMsg="Are you sure?" />
+      )}
+      {!isVisible && (
+        <IconButton color="primary" sx={{position: 'fixed', left: '10px', bottom: '25px'}} size="large" onClick={() => window.scrollTo({behavior: 'smooth', top: 0})}>
+          <ArrowCircleUpIcon fontSize="large"/>
+        </IconButton>
       )}
     </Common>
   );

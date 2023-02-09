@@ -91,7 +91,7 @@ export default function RenderLinks({data, setData, topics, index}: RenderLinksP
     if (index !== -1) {
       setData((prev: DataType) => {
         const newData = {...prev}; // @ts-ignore
-        if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
+        if (!newData?.custom?.[index]?.data) { newData.custom[index].data = {}; } // @ts-ignore
         if (!newData.custom[index].data.links?.length) { newData.custom[index].data.links = [{label: '', link: ''}]; }
         return newData;
       });

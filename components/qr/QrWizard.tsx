@@ -26,11 +26,7 @@ const Notifications = dynamic(() => import("../notifications/Notifications"));
 const ProcessHandler = dynamic(() => import("./renderers/ProcessHandler"));
 const RenderPreview = dynamic(() => import("./renderers/RenderPreview"));
 
-interface QrWizardProps {
-  children: ReactNode;
-}
-
-const QrWizard = ({ children }: QrWizardProps) => {
+const QrWizard = ({ children }: { children: ReactNode; }) => {
   const [isError, setIsError] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [size, setSize] = useState<number>(0);
@@ -177,7 +173,6 @@ const QrWizard = ({ children }: QrWizardProps) => {
 
   return (
     <>
-
       {showLimitDlg &&
         <RenderConfirmDlg
           title="Oops"
