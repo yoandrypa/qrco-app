@@ -44,8 +44,6 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
     if (items.some((item: string) => x === item)) { sum += 1; }
   });
 
-  debugger;
-
   if (data.custom !== undefined && !data.custom.some(x => Object.keys(x).length <= 2)) { sum += 1}
   if (data.files !== undefined && data.files.length === 0) { sum += 1; }
   if (data.fields !== undefined && (data.fields.length === 0 || onlyOneGallery(data))) { sum += 1; }
@@ -153,34 +151,24 @@ export const previewQRGenerator = (data: DataType, selected: string, omit?: bool
       populate('custom', [
         {
           component: 'title',
-          data: {
-            titleAbout: 'This is the sample title',
-            descriptionAbout: 'This is the sample description'
-          }
+          data: {titleAbout: 'This is the sample title', descriptionAbout: 'This is the sample description'}
         },
         {
           component: 'presentation', name: 'Custom section name',
-          data: {
-            prefix: 'Sir',
-            firstName: 'Name',
-            lastName: 'Lastname'
-          }
+          data: {prefix: 'Sir', firstName: 'Name', lastName: 'Lastname'}
+        },
+        {
+          component: 'address', name: 'A custom address info',
+          data: {address: 'Our Address ST 12345', city: 'Our City', zip: '12345', state: 'Our State', country: 'Our Country'}
         },
         {
           component: 'phones',
-          data: {
-            cell: '+1234567890',
-            phone: '+1234567890',
-            fax: '+1234567890'
-          }
+          data: {cell: '+1234567890', phone: '+1234567890', fax: '+1234567890'}
         },
         {
           component: 'socials',
           data: {
-             socials: [
-               {network: 'twitter', value: 'twitter_account'},
-               {network: 'facebook', value: 'facebook_account'}
-            ]
+             socials: [{network: 'twitter', value: 'twitter_account'}, {network: 'facebook', value: 'facebook_account'}]
           }
         }
       ]);
