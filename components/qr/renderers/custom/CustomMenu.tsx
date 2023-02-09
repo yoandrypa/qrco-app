@@ -12,7 +12,7 @@ import SearchIcon from '@mui/icons-material/Search';
 
 interface CustomImageProps {
   handle: (item: string) => () => void;
-  showOptions: HTMLButtonElement;
+  showOptions: HTMLElement;
   setShowOptions: Function;
 }
 

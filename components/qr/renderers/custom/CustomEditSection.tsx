@@ -15,7 +15,7 @@ interface CustomEditProps {
   handleClose: () => void;
   handleOk: (value: string) => void;
   value: string;
-  anchor: HTMLButtonElement;
+  anchor: HTMLElement;
   current?: string;
 }
 

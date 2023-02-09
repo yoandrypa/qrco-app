@@ -34,7 +34,7 @@ export interface CustomProps {
 }
 
 export interface CustomEditProps {
-  anchor: HTMLButtonElement;
+  anchor: HTMLElement;
   index: number;
   item: string;
   name?: string;

@@ -41,7 +41,7 @@ const ArrowCircleUpIcon = dynamic(() => import("@mui/icons-material/ArrowCircleU
 const IconButton = dynamic(() => import("@mui/material/IconButton"));
 
 export default function Custom({data, setData, handleValues, setIsWrong, predefined, tip}: CustomProps) {
-  const [showOptions, setShowOptions] = useState<HTMLButtonElement | null>(null);
+  const [showOptions, setShowOptions] = useState<HTMLElement | null>(null);
   const [expander, setExpander] = useState<string[]>([]);
   const [confirm, setConfirm] = useState<{ index: number, item: string } | undefined>(undefined);
   const [isVisible, setIsVisible] = useState<boolean>(true);
@@ -50,7 +50,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
   const doneFirst = useRef<boolean>(false);
   const topElement = useRef<HTMLDivElement | null>(null);
 
-  const handleOptions = useCallback((e: MouseEvent<HTMLButtonElement>) => {
+  const handleOptions = useCallback((e: MouseEvent<HTMLElement>) => {
     setShowOptions(e.currentTarget);
   }, []);
 
@@ -112,7 +112,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleEdit = useCallback((index: number, item: string, name?: string) => (event: MouseEvent<HTMLButtonElement>) => {
+  const handleEdit = useCallback((index: number, item: string, name?: string) => (event: MouseEvent<HTMLElement>) => {
     setOpen({item, index, name, anchor: event.currentTarget});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -188,7 +188,8 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                                      editFunc={predefined === undefined && !['title', 'action'].includes(component) ? handleEdit(index, component, x.name) : undefined}>
                             {/* @ts-ignore */}
                             <Expander expand={expanded || null} setExpand={handleExpander} item={x.expand} multi
-                                      title={x.name || getNameStr(component)} bold={Boolean(x.name)} required={isRequired(component, dataInfo)} />
+                                      title={x.name || getNameStr(component)} bold={Boolean(x.name)} required={isRequired(component, dataInfo)}
+                                      editFunc={predefined === undefined && !['title', 'action'].includes(component) ? handleEdit(index, component, x.name) : undefined}/>
                             {expanded !== undefined && (<>
                               {component === components[0].type && <RenderAddressData data={dataInfo} handleValues={handleValues} index={index}/>}
                               {component === components[1].type && <RenderCompanyData data={dataInfo} handleValues={handleValues} index={index}/>}

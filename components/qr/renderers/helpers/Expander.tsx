@@ -4,8 +4,8 @@ import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
 import IconButton from '@mui/material/IconButton';
-import { Delete } from "@mui/icons-material";
-import {memo} from "react";
+import Delete from "@mui/icons-material/Delete";
+import {memo, MouseEvent} from "react";
 
 interface ExpanderProps {
   multi?: boolean;
@@ -17,14 +17,23 @@ interface ExpanderProps {
   required?: boolean;
   deleteButton?: boolean;
   handleDelete?: () => void;
+  editFunc?: (event: MouseEvent<HTMLElement>) => void;
 }
 
-const Expander = ({expand, setExpand, item, title, bold, required, deleteButton, handleDelete, multi}: ExpanderProps) => {
-  const handleExpand = () => {
-    if (multi === undefined && expand === item) {
-      setExpand(null);
-    } else {
-      setExpand(item);
+const Expander = ({expand, setExpand, editFunc, item, title, bold, required, deleteButton, handleDelete, multi}: ExpanderProps) => {
+  const handleExpand = (event: MouseEvent<HTMLElement>) => { // @ts-ignore
+    if (event.target.tagName !== 'P') {
+      if (multi === undefined && expand === item) {
+        setExpand(null);
+      } else {
+        setExpand(item);
+      }
+    }
+  }
+
+  const handleEdit = (event: MouseEvent<HTMLElement>) => {
+    if (editFunc !== undefined) {
+      editFunc(event);
     }
   }
 
@@ -37,12 +46,16 @@ const Expander = ({expand, setExpand, item, title, bold, required, deleteButton,
         cursor: 'pointer'
       }}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }} onClick={handleExpand}>
-        <Typography sx={{fontWeight: bold ? 'bold' : 'normal'}}>{title}</Typography>
-        {required && !expand && <Typography sx={{ mt: '3px'}} color="error">{'REQUIRED'}</Typography>}
+      <Box sx={{display: 'flex', justifyContent: 'space-between', width: '100%'}} onClick={handleExpand}>
+        <Tooltip title="Edit section name" disableHoverListener={editFunc === undefined}>
+          <Typography
+            sx={{fontWeight: bold ? 'bold' : 'normal', display: 'inline-flex'}}
+            onClick={handleEdit}>{title}</Typography>
+        </Tooltip>
+        {required && !expand && <Typography sx={{mt: '3px'}} color="error">{'REQUIRED'}</Typography>}
       </Box>
-      <Box sx={{display:'flex'}}>
-        {deleteButton&&
+      <Box sx={{display: 'flex'}}>
+        {deleteButton &&
           <Tooltip title="Delete">
             <IconButton size="small" onClick={handleDelete}>
               <Delete fontSize="small" color="error"/>
