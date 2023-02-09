@@ -7,10 +7,12 @@ export const components = [
   {type: 'address', name: 'Address'}, {type: 'company', name: 'Company'},
   {type: 'date', name: 'Date'}, {type: 'email', name: 'Email and web'}, {type: 'easiness', name: 'Easiness'},
   {type: 'links', name: 'Links'}, {type: 'organization', name: 'Organization'},
-  {type: 'phones', name: 'Phones and cells'}, {type: 'photos', name: 'Photos'},
+  {type: 'phones', name: 'Phones and cells'}, {type: 'gallery', name: 'Photos'},
   {type: 'presentation', name: 'Presentation'}, {type: 'opening', name: 'Opening time'},
   {type: 'socials', name: 'Social networks'}, {type: 'title', name: 'Title and description'},
-  {type: 'action', name: 'Action button'}, {type: 'single', name: 'Single text'}
+  {type: 'action', name: 'Action button'}, {type: 'single', name: 'Single text'},
+  {type: 'pdf', name: 'PDF file'}, {type: 'audio', name: 'Audio files'}, {type: 'video', name: 'Video files'},
+  {type: 'couponInfo', name: 'Promotion info', notInMenu: true}, {type: 'couponData', name: 'Coupon data', notInMenu: true}
 ];
 
 export const getName = (index: number) => {
@@ -36,6 +38,12 @@ export interface CustomEditProps {
   index: number;
   item: string;
   name?: string;
+}
+
+export interface ContentProps {
+  index: number;
+  data?: Type;
+  handleValues: Function;
 }
 
 export const isRequired = (component: string, dataInfo?: Type) =>
@@ -91,6 +99,10 @@ export const validator = (dataToCheck: DataType): boolean => {
       (!data.urlOptionLabel.trim().length || !data.urlOptionLink.trim().length || !isValidUrl(data.urlOptionLink))) {
         errors = true;
         return false;
+    }
+    if (component === 'photos' && !data.files?.length) {
+      errors = true;
+      return false;
     }
   });
 

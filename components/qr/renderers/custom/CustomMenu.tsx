@@ -4,8 +4,6 @@ import MenuList from "@mui/material/MenuList";
 import {MenuItem, TextField} from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
 import Popover from "@mui/material/Popover";
-
-import {DataType} from "../../types/types";
 import InputAdornment from "@mui/material/InputAdornment";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -13,13 +11,12 @@ import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
 
 interface CustomImageProps {
-  data: DataType;
   handle: (item: string) => () => void;
   showOptions: HTMLButtonElement;
   setShowOptions: Function;
 }
 
-export default function CustomMenu({data, handle, showOptions, setShowOptions}: CustomImageProps) {
+export default function CustomMenu({handle, showOptions, setShowOptions}: CustomImageProps) {
   const [filter, setFilter] = useState<string>('');
 
   const clearFilter = () => {
@@ -29,10 +26,11 @@ export default function CustomMenu({data, handle, showOptions, setShowOptions}: 
   const render = () => {
     const list = components.filter(x => x.name.toUpperCase().includes(filter.toUpperCase()));
     return list.map(x => {
-      // if ((!data.custom || !data.custom.some(cust => cust.component === x.type))) {
-      return <MenuItem onClick={handle(x.type)} key={x.type}><ListItemText>{x.name}</ListItemText></MenuItem>;
-      // }
-      // return null;
+      return !x.notInMenu ? (
+        <MenuItem onClick={handle(x.type)} key={x.type}>
+          <ListItemText>{x.name}</ListItemText>
+        </MenuItem>
+      ) : null;
     })
   }
 

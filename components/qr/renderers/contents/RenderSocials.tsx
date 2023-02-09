@@ -18,16 +18,14 @@ import dynamic from "next/dynamic";
 
 const Switch = dynamic(() => import("@mui/material/Switch"));
 const FormControlLabel = dynamic(() => import("@mui/material/FormControlLabel"));
-const RenderTitleDesc = dynamic(() => import("./RenderTitleDesc"));
 
 interface RenderSocialsProps {
   index: number;
   data?: Type;
   setData: Function;
-  showTitleAndDesc?: boolean;
 }
 
-const RenderSocials = ({data, setData, showTitleAndDesc, index}: RenderSocialsProps) => {
+const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
   const selection = useRef<SocialsType | null>(null);
 
   const handleValues = (item: SocialsType) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -162,11 +160,6 @@ const RenderSocials = ({data, setData, showTitleAndDesc, index}: RenderSocialsPr
 
   return (
     <Grid container spacing={1}>
-      {showTitleAndDesc && (
-        <Grid item xs={12}>
-          <RenderTitleDesc handleValues={handleValues} title={data?.titleAbout} description={data?.descriptionAbout} index={index} />
-        </Grid>
-      )}
       <Grid item xs={12}>
         <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: 'fit-content', margin: '0 auto'}}>
           <SectionSelector

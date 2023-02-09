@@ -43,7 +43,7 @@ export default function RenderActionButton({data, setData, handleValues, index}:
 
   const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
     handleValues(item, index)(payload);
-  }
+  };
 
   const renderItem = (item: string, label: string, required?: boolean) => {
     let isError = false as boolean; // @ts-ignore
@@ -66,17 +66,19 @@ export default function RenderActionButton({data, setData, handleValues, index}:
   };
 
   useEffect(() => {
-    if (index !== undefined && index !== -1) {
-      handleOptionButton()
-    }
+    if (index !== undefined && index !== -1) { handleOptionButton(); }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
       {(index === undefined || index === -1) && (<Box sx={{display: 'flex', justifyContent: 'space-between'}}>
         <Typography sx={{my: 'auto'}}>{'Action button'}</Typography>
-        <Button sx={{mb: '5px'}} variant="outlined" color={data?.urlOptionLabel === undefined ? 'primary' : 'error'}
-                onClick={handleOptionButton}>
+        <Button
+          sx={{mb: '5px'}}
+          variant="outlined"
+          color={data?.urlOptionLabel === undefined ? 'primary' : 'error'}
+          onClick={handleOptionButton}
+        >
           {data?.urlOptionLabel === undefined ? 'Add action button' : 'Remove action button'}
         </Button>
       </Box>)}

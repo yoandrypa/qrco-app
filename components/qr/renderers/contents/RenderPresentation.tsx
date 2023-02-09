@@ -1,18 +1,15 @@
 import Box from "@mui/material/Box";
 import Topics from "../helpers/Topics";
 import Grid from "@mui/material/Grid";
-import {Type} from "../../types/types";
 import RenderTextFields from "../helpers/RenderTextFields";
 import {ChangeEvent} from "react";
+import {ContentProps} from "../custom/helperFuncs";
 
-interface RenderPersonPresentarionProps {
-  index: number;
-  data?: Type;
-  handleValues: Function;
+interface PresentationProps extends ContentProps {
   message?: string;
 }
 
-export default function RenderPresentation({data, handleValues, message, index}: RenderPersonPresentarionProps) {
+export default function RenderPresentation({data, handleValues, message, index}: PresentationProps) {
   const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
     handleValues(item, index)(payload);
   };

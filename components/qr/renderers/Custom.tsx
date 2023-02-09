@@ -1,4 +1,4 @@
-import {MouseEvent, SetStateAction, useCallback, useEffect, useRef, useState} from "react";
+import {MouseEvent, useCallback, useEffect, useRef, useState} from "react";
 import AddIcon from '@mui/icons-material/Add';
 import Box from "@mui/material/Box";
 
@@ -9,18 +9,12 @@ import {CustomType, DataType} from "../types/types";
 
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 
-import dynamic from "next/dynamic";
 import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
-import {
-  cleaner,
-  components,
-  CustomEditProps,
-  CustomProps,
-  getNameStr,
-  isRequired,
-  validator
-} from "./custom/helperFuncs";
-import {generateUUID} from "listr2/dist/utils/uuid";
+import {cleaner, components, CustomEditProps, CustomProps, getNameStr, isRequired, validator} from "./custom/helperFuncs";
+import {getUuid} from "../../../helpers/qr/helpers";
+import {FILE_LIMITS} from "../../../consts";
+
+import dynamic from "next/dynamic";
 
 const RenderActionButton = dynamic(() => import("./contents/RenderActionButton"));
 const RenderSingleText = dynamic(() => import("./contents/RenderSingleText"));
@@ -41,6 +35,8 @@ const RenderOrganization = dynamic(() => import("./contents/RenderOrganization")
 const RenderPhones = dynamic(() => import("./contents/RenderPhones"));
 const RenderPresentation = dynamic(() => import("./contents/RenderPresentation"));
 const Button = dynamic(() => import("@mui/material/Button"));
+const RenderCouponData = dynamic(() => import("./contents/RenderCouponData"));
+const RenderCouponInfo = dynamic(() => import("./contents/RenderCouponInfo"));
 
 export default function Custom({data, setData, handleValues, setIsWrong, predefined, tip}: CustomProps) {
   const [showOptions, setShowOptions] = useState<HTMLButtonElement | null>(null);
@@ -58,10 +54,8 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
     if (doneFirst.current) {
       setData((prev: DataType) => {
         const newData = {...prev};
-        if (!newData.custom) {
-          newData.custom = [];
-        } // @ts-ignore
-        const expand = generateUUID();
+        if (!newData.custom) { newData.custom = []; } // @ts-ignore
+        const expand = getUuid();
         newData.custom.push({component: item, expand});
         setExpander((prev: string[]) => {
           const newExpander = [...prev];
@@ -80,9 +74,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
       newData.custom.splice(index, 1); // @ts-ignore
-      if (!newData.custom.length) {
-        delete newData.custom;
-      }
+      if (!newData.custom.length) { delete newData.custom; }
       cleaner(newData, item);
       return newData;
     });
@@ -103,7 +95,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
       }
       return newExpander;
     });
-  }, [expander]);  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [expander]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleAccept = useCallback((value: string, index: number, item: string) => {
     setOpen(null);
@@ -129,9 +121,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onDragEnd = (result: any) => {
-    if (!result?.destination) {
-      return null;
-    }
+    if (!result?.destination) { return null; }
     setData((prev: DataType) => {
       const tempo = {...prev};
       const newPositions = prev.custom || [];
@@ -140,7 +130,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
       tempo.custom = newPositions;
       return tempo;
     });
-  }
+  };
 
   useEffect(() => {
     if (predefined) {
@@ -148,7 +138,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
       setData((prev: DataType) => {
         const newData = {...prev, custom: []};
         predefined.forEach((item, index) => { // @ts-ignore
-          newData.custom.push({component: item, expand: generateUUID()}); // @ts-ignore
+          newData.custom.push({component: item, expand: getUuid()}); // @ts-ignore
           if (index === 0) { expand.push(newData.custom[0].expand); }
         })
         return newData;
@@ -194,7 +184,8 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                               {component === components[6].type && <RenderOrganization data={dataInfo} handleValues={handleValues} index={index}/>}
                               {component === components[7].type && <RenderPhones data={dataInfo} handleValues={handleValues} index={index}/>}
                               {component === components[8].type && (
-                                <RenderAssetsData data={dataInfo} setData={setData} type="gallery" totalFiles={3} displayUpto index={index}/>
+                                <RenderAssetsData data={dataInfo} setData={setData} type="gallery" hideInclude={predefined !== undefined}
+                                                  index={index} totalFiles={predefined === undefined ? 3 : FILE_LIMITS['gallery'].totalFiles}/>
                               )}
                               {component === components[9].type && <RenderPresentation data={dataInfo} handleValues={handleValues} index={index}/>}
                               {component === components[10].type && <RenderOpeningTime data={dataInfo} setData={setData} index={index}/>}
@@ -210,6 +201,20 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                                 <RenderSingleText text={dataInfo?.text || ''} index={index} handleValues={handleValues}
                                                   includeTextDescription={dataInfo?.includeTextDescription || false} />
                               )}
+                              {component === components[15].type && (
+                                <RenderAssetsData data={dataInfo} setData={setData} type="pdf" hideInclude={predefined !== undefined}
+                                                  totalFiles={predefined === undefined ? 1 : FILE_LIMITS['pdf'].totalFiles} index={index}/>
+                              )}
+                              {component === components[16].type && (
+                                <RenderAssetsData data={dataInfo} setData={setData} type="audio" hideInclude={predefined !== undefined} index={index}
+                                                  totalFiles={predefined === undefined ? 1 : FILE_LIMITS['audio'].totalFiles}/>
+                              )}
+                              {component === components[17].type && (
+                                <RenderAssetsData data={dataInfo} setData={setData} type="video" hideInclude={predefined !== undefined} index={index}
+                                                  totalFiles={predefined === undefined ? 1 : FILE_LIMITS['video'].totalFiles}/>
+                              )}
+                              {component === components[18].type && <RenderCouponData index={index} handleValues={handleValues} data={data} />}
+                              {component === components[19].type && <RenderCouponInfo index={index} handleValues={handleValues} data={data} />}
                             </>)}
                           </DragPaper>
                         </Box>
@@ -222,24 +227,17 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
           </Droppable>
         </DragDropContext>
       </Box>
-      {showOptions && <CustomMenu handle={handle} data={data} showOptions={showOptions} setShowOptions={setShowOptions} />}
+      {showOptions && <CustomMenu handle={handle} showOptions={showOptions} setShowOptions={setShowOptions} />}
       {open && (
         <CustomEditSection
-          handleClose={() => setOpen(null)}
-          anchor={open.anchor}
-          value={open.item}
-          current={open.name}
-          handleOk={(value: string) => handleAccept(value, open.index, open.item)}
-        />
+          handleClose={() => setOpen(null)} anchor={open.anchor} value={open.item}
+          current={open.name} handleOk={(value: string) => handleAccept(value, open.index, open.item)} />
       )}
       {confirm !== undefined && (
         <RenderConfirmDlg
-          handleCancel={() => setConfirm(undefined)}
-          handleOk={() => handleDelete(confirm.index, confirm.item)}
-          title="Confirm" noMsg="No" yesMsg="Yes"
-          message="You are going to remove the selected section."
-          confirmationMsg="Are you sure?"
-        />
+          handleCancel={() => setConfirm(undefined)} handleOk={() => handleDelete(confirm.index, confirm.item)}
+          title="Confirm" noMsg="No" yesMsg="Yes" message="You are going to remove the selected section."
+          confirmationMsg="Are you sure?" />
       )}
     </Common>
   );

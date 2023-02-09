@@ -96,6 +96,7 @@ export type Type = {
   hideDateLegend?: boolean;
   socialsOnlyIcons?: boolean;
   includeDescription?: boolean;
+  badge?: string;
   number?: string;
   message?: string;
   subject?: string;

@@ -1,21 +1,16 @@
 import Box from "@mui/material/Box";
-import Topics from "../helpers/Topics";
 import Grid from "@mui/material/Grid";
-import {Type} from "../../types/types";
 import {EMAIL} from "../../constants";
 import RenderTextFields from "../helpers/RenderTextFields";
 import {isValidUrl} from "../../../../utils";
 import {ChangeEvent} from "react";
+import {ContentProps} from "../custom/helperFuncs";
 
-interface RenderEmailWebProps {
-  index: number;
-  data?: Type;
+interface RenderEmailWebProps extends ContentProps {
   sx?: Object;
-  handleValues: Function;
-  message?: string;
 }
 
-export default function RenderEmailWeb({data, handleValues, message, sx, index}: RenderEmailWebProps) {
+export default function RenderEmailWeb({data, handleValues, sx, index}: RenderEmailWebProps) {
   const renderItem = (item: string, label: string) => {
     let isError = false as boolean; // @ts-ignore
     const value = data?.[item] || '' as string;
@@ -37,7 +32,6 @@ export default function RenderEmailWeb({data, handleValues, message, sx, index}:
 
   return (
     <Box sx={{width: '100%', ...sx}}>
-      {message && <Topics message={message}/>}
       <Grid container spacing={1}>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
           {renderItem('email', 'Email')}

@@ -1,20 +1,12 @@
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 
-import {Type} from "../../types/types";
 import {ZIP} from "../../constants";
 import RenderTextFields from "../helpers/RenderTextFields";
-import Topics from "../helpers/Topics";
 import {ChangeEvent} from "react";
+import {ContentProps} from "../custom/helperFuncs";
 
-interface AddressProps {
-  index: number;
-  data?: Type;
-  message?: string;
-  handleValues: Function;
-}
-
-export default function RenderAddressData({data, handleValues, message, index}: AddressProps) {
+export default function RenderAddressData({data, handleValues, index}: ContentProps) {
   const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
     handleValues(item, index)(payload);
   }
@@ -29,7 +21,6 @@ export default function RenderAddressData({data, handleValues, message, index}: 
 
   return (
     <Box sx={{width: '100%'}}>
-      {message && <Topics message={message}/>}
       <Grid container spacing={1}>
         <Grid item xs={12} style={{paddingTop: 0}}>
           {renderItem('address', 'Address')}

@@ -1,18 +1,15 @@
 import Box from "@mui/material/Box";
-import Topics from "../helpers/Topics";
 import Grid from "@mui/material/Grid";
-import {Type} from "../../types/types";
 import RenderTextFields from "../helpers/RenderTextFields";
 import {ChangeEvent} from "react";
+import {ContentProps} from "../custom/helperFuncs";
+import Topics from "../helpers/Topics";
 
-interface RenderOrganizationProps {
-  index: number;
-  data?: Type;
-  handleValues: Function;
+interface OrganizationProps extends ContentProps {
   message?: string;
 }
 
-export default function RenderOrganization({data, handleValues, message, index}: RenderOrganizationProps) {
+export default function RenderOrganization({data, handleValues, index, message}: OrganizationProps) {
   const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
     handleValues(item, index)(payload);
   };

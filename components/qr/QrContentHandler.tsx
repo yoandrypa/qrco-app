@@ -12,24 +12,20 @@ import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
 import DonationsData, { DonationsProps } from './renderers/DonationsData';
 import { qrNameDisplayer } from "../../helpers/qr/helpers";
 
+const CardDataStatic = dynamic(() => import("./renderers/custom/CardDataStatic"));
 const Custom = dynamic(() => import("./renderers/Custom"));
 const SingleData = dynamic(() => import('./renderers/SingleData'));
 const WhatsAppData = dynamic(() => import('./renderers/WhatsAppData'));
 const FacebookData = dynamic(() => import('./renderers/FacebookData'));
 const WifiData = dynamic(() => import('./renderers/WifiData'));
-const CardData = dynamic(() => import('./renderers/CardData'));
 const EmailData = dynamic(() => import('./renderers/EmailData'));
 const SMSData = dynamic(() => import('./renderers/SMSData'));
 const TwitterData = dynamic(() => import('./renderers/TwitterData'));
 const AssetData = dynamic(() => import('./renderers/AssetData'));
-const BusinessData = dynamic(() => import('./renderers/BusinessData'));
 const PetIdData = dynamic(() => import('./renderers/PetIdData'));
-const NetworksData = dynamic(() => import('./renderers/NetworksData'));
-const CouponData = dynamic(() => import('./renderers/CouponData'));
 const CryptoData = dynamic(() => import('./renderers/CryptoData'));
 const SendMeMoneyData = dynamic(() => import('./renderers/SendMeMoneyData'));
 const FundMe = dynamic(() => import('./renderers/FundMeData'));
-const LinksData = dynamic(() => import('./renderers/LinksData'));
 const PleaseWait = dynamic(() => import('../PleaseWait'));
 const RenderNoUserWarning = dynamic(() => import('./helperComponents/smallpieces/RenderNoUserWarning'));
 const LinkedLabelData = dynamic(() => import('./renderers/LinkedLabelData'));
@@ -97,21 +93,19 @@ const QrContentHandler = () => { // @ts-ignore
     if (!selected) { return null; }
     switch (selected) {
       case 'web': {
-        return (<SingleData
+        return <SingleData
           setIsWrong={setIsWrong}
           label="Website"
           msg="Type in the website to link the QR Code."
-          data={data} setData={handlePayload}
-        />);
+          data={data} setData={handlePayload} />;
       }
       case 'text': {
-        return (<SingleData
+        return <SingleData
           setIsWrong={setIsWrong}
           label="Message"
           limit={300}
           msg="Type any message up to 300 characters."
-          data={data} setData={handlePayload}
-        />);
+          data={data} setData={handlePayload} />;
       }
       case 'whatsapp': {
         return <WhatsAppData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
@@ -127,16 +121,24 @@ const QrContentHandler = () => { // @ts-ignore
       }
       case 'vcard+':
       case 'vcard': {
-        return <CardData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />;
+        return Boolean(data.isDynamic) ? <Custom
+          data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
+          tip="Your contact details. Users can store your info or contact you right away."
+          predefined={['presentation', 'phones', 'organization', 'address', 'email']} /> :
+          <CardDataStatic data={data} handleValues={handleValues} setIsWrong={setIsWrong} />;
       }
       case 'link': {
-        return <LinksData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />;
+        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
+          tip="Add at least one link to your websites." predefined={['title', 'links', 'socials']}/>;
       }
       case 'coupon': {
-        return <CouponData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />;
+        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
+          tip="Share a coupon for promotion." predefined={['couponInfo', 'couponData', 'address']}/>;
       }
       case 'business': {
-        return <BusinessData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />;
+        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
+          tip="Your business or company details. Users can contact your business or company right away."
+          predefined={['company', 'action', 'address', 'opening', 'easiness', 'socials']}/>;
       }
       case 'email': {
         return <EmailData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
@@ -151,7 +153,7 @@ const QrContentHandler = () => { // @ts-ignore
       case 'pdf':
       case 'audio':
       case 'video': {
-        return <AssetData type={selected} data={data} setData={handlePayload} handleValues={handleValues} />;
+        return <AssetData type={selected} data={data} setData={handlePayload} handleValues={handleValues} setIsWrong={setIsWrong} />;
       }
       case 'donation': {
         return <DonationsData data={data} handleValues={handleValues} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong} />
@@ -178,7 +180,8 @@ const QrContentHandler = () => { // @ts-ignore
         return <InventoryData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
       }
       default: {
-        return <NetworksData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
+        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
+          tip="Your social networks. Users can reach you using the social networks." predefined={['title', 'socials']}/>
       }
     }
   };
