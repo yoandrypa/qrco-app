@@ -1,0 +1,33 @@
+import { NextApiRequest, NextApiResponse } from 'next';
+import {
+  NotFound,
+  respondWithException,
+  withSessionRoute,
+  checkAuthorization,
+  parseFromPostRequest,
+  createCheckoutSession,
+} from './helpers';
+
+async function handler(req: NextApiRequest, res: NextApiResponse) {
+  let result;
+
+  try {
+    await checkAuthorization(req);
+
+    const { currentUser } = req.session;
+
+    if (req.method === 'POST') {
+      const { planType } = parseFromPostRequest(req);
+      result = await createCheckoutSession(currentUser, planType);
+    } else {
+      throw new NotFound;
+    }
+
+    res.status(200).json(result);
+  } catch (ex: any) {
+    respondWithException(res, ex);
+  }
+}
+
+export default withSessionRoute(handler);
+
