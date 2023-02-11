@@ -1,4 +1,4 @@
-import { getAdminProvider, getUserProvider } from './base';
+import { getAdminProvider, getUserProvider } from './index';
 import { StandardError } from '../../exceptions';
 
 const UserPoolId = process.env.AWS_COGNITO_USER_POOL_ID || 'undefined';

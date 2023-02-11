@@ -3,8 +3,9 @@ import Joi from 'joi';
 import CognitoExpress from 'cognito-express';
 
 import { NextApiRequest } from "next";
+import { setCurrentToken } from './index';
 import { getUserAttrs } from './users';
-import { setCurrentToken } from './base';
+import * as Users from "../../../handlers/users";
 
 const region = process.env.AWS_REGION || 'us-east-1';
 const cognitoUserPoolId = process.env.AWS_COGNITO_USER_POOL_ID || 'undefined';
@@ -27,13 +28,12 @@ const parseCurrentUserFromValidateTokenResponse = async (user: any) => {
       .map((r: string) => r.split(/\//)[1]),
     client_id: aud,
     custom: {},
+    localRecord: await Users.getOrCreate(sub),
   };
 
   Object.entries(attrs).forEach(([k, v]) => {
     if (k.match(/^custom:/)) currentUser.custom[k.replace(/^custom:/, '')] = v;
   });
-
-  console.log(currentUser);
 
   return currentUser;
   /* eslint-enable camelcase */
@@ -62,9 +62,6 @@ export const checkAuthorization = async (request: NextApiRequest) => {
     session.currentToken = token;
     session.currentUser = await parseCurrentUserFromValidateTokenResponse(cognitoUser);
   }
-
-  //@ts-ignore
-  request.currentUser = session.currentUser;
 };
 
 export const getCurrentUser = () => currentUser;
