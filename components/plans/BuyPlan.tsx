@@ -50,7 +50,7 @@ function BuyPlan ({ plan }: Props) {
           },
           body: JSON.stringify(payload),
         };
-        const response = await fetch(`/api/create-customer`, options);
+        const response = await fetch(`/api/subscriptions`, options);
         const data = await handleFetchResponse(response);
         if (data instanceof Error) throw data;
         setIsLoading(false);

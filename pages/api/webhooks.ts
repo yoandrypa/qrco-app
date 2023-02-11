@@ -2,7 +2,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import Stripe from 'stripe'
 import getRawBody from 'raw-body';
-import { onCheckoutCompleted ,onDeleteSubscription, onSubscriptionUpdated } from '../../handlers/webhooks';
+import { onCheckoutCompleted, onDeleteSubscription, onSubscriptionUpdated } from '../../handlers/webhooks';
+import { stripe } from "../../libs/gateways/stripe";
 
 // disable body parser to receive the raw body string. The raw body
 // is fundamental to verify that the request is genuine
@@ -12,17 +13,9 @@ export const config = {
   },
 };
 
+type ResponseData = {}
 
-const stripe = new Stripe(process.env.REACT_STRIPE_SECRET_KEY || 'sk_test_51Ksb3LCHh3XhfaZr2tgzaQKAQtuTF9vRtgdXBS7X2rAaPC6FNoLQ3hyPFVmlnRhsif0FDdbi5cdgEh7Y1Wt9Umo900w9YPUGo6', {
-  // https://github.com/stripe/stripe-node#configuration
-  apiVersion: '2022-08-01',
-})
-
-type ResponseData = {
-
-}
-
-const webhookSecret: string = process.env.REACT_STRIPE_WEBHOOK_SECRET!
+const webhookSecret: string = process.env.STRIPE_EVENTS_SECRET!
 
 export enum StripeWebhooks {
   AsyncPaymentSuccess = 'checkout.session.async_payment_succeeded',
@@ -41,8 +34,8 @@ export default async function handler(
     const sig = req.headers['stripe-signature']!
     let event: Stripe.Event
 
-    if (!process.env.REACT_STRIPE_WEBHOOK_SECRET){
-     return res.status(500).send('No secret webhook key is available')
+    if (!process.env.STRIPE_EVENTS_SECRET) {
+      return res.status(500).send('No secret webhook key is available')
     }
 
     try {
@@ -62,22 +55,22 @@ export default async function handler(
     switch (event.type) {
       case StripeWebhooks.Completed: {
         const session = event.data.object as Stripe.Checkout.Session;
-        if (session.subscription == null ){
-          console.error('Error - Susbcription id is null',session);          
-          return res.status(500).json({error: 'No subscription Id retrieved', subscription: session.subscription})
+        if (session.subscription == null) {
+          console.error('Error - Susbcription id is null', session);
+          return res.status(500).json({ error: 'No subscription Id retrieved', subscription: session.subscription })
         } else {
           const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
           try {
             const result = onCheckoutCompleted(session, subscription);
-            if (result instanceof Error){
+            if (result instanceof Error) {
               res.status(500).send(`Error saving checkout without exception ${result}`)
-          }
+            }
           } catch (error) {
             res.status(500).send('error saving checkout')
           }
         }
-        
-        
+
+
         break;
       }
 
@@ -101,13 +94,13 @@ export default async function handler(
       case StripeWebhooks.SubscriptionUpdated: {
         const subscription = event.data.object as Stripe.Subscription;
         try {
-        const result = await onSubscriptionUpdated(subscription);
-          if (result instanceof Error){
-                res.status(500).send(`Error saving subscription update without exception ${result}`)
-            }
-          
+          const result = await onSubscriptionUpdated(subscription);
+          if (result instanceof Error) {
+            res.status(500).send(`Error saving subscription update without exception ${result}`)
+          }
+
         } catch (error) {
-          res.status(500).json({error})
+          res.status(500).json({ error })
         }
 
         break;
@@ -117,12 +110,11 @@ export default async function handler(
         const session = event.data.object as Stripe.Checkout.Session;
 
         // TODO: handle this properly
-       // onPaymentFailed(session);
+        // onPaymentFailed(session);
 
         break;
       }
     }
-
 
     // Return a response to acknowledge receipt of the event.
     res.status(200).json({ success: true, message: "Payload decoded successfully", payload: event })

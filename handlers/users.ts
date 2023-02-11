@@ -40,3 +40,12 @@ export const deleteUserSubscription = async (customerId: Match<UserType>) => {
     throw new CustomError(e.message, 500, e);
   }
 };
+
+export const getOrCreate = async (id: string) => {
+  let record;
+
+  record = await get(id);
+  record ||= await create({ id });
+
+  return record;
+}

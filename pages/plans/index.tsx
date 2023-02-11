@@ -8,17 +8,20 @@ import Typography from "@mui/material/Typography";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 
+import Context from "../../components/context/Context";
 import PlanCard from "../../components/plans/plancard";
 import BillingPortal from "../../components/billing/BillingPortal";
 import PlanCalculator from "../../components/plans/PlanCalculator";
 
-import { get } from "../../handlers/users";
-import { handleFetchResponse } from "../../handlers/helpers";
+import { parseErrorMessage } from "../../libs/exceptions";
+import * as Users from "../../handlers/users";
 
 import * as plans from "./plans";
 
 // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
+// @ts-ignore
+import { request } from "@ebanux/ebanux-utils/request";
 
 type Props = {
   logged: boolean,
@@ -36,16 +39,12 @@ const Plans = (props: Props) => {
   const user = session.currentAccount;
   const [error, setError] = useState<string | null>(null);
 
+  const { setLoading } = React.useContext(Context);
+
   useEffect(() => {
     if (session.isAuthenticated) {
-      get(user.cognito_user_id).then(profile => {
-        //@ts-ignore
-        if (profile?.createdAt != null && !profile?.customerId) {
-          //@ts-ignore
-        }
-        console.log(profile);
-        if (profile?.subscriptionData != null &&
-          profile?.customerId != null) {
+      Users.get(user.cognito_user_id).then((profile) => {
+        if (profile?.subscriptionData != null && profile?.customerId != null) {
           <BillingPortal customerId={profile?.customerId} />;
         }
 
@@ -55,32 +54,27 @@ const Plans = (props: Props) => {
   }, [user]);
 
   const handleClick = async (plan: string) => {
-    if (!user) return router.push("/plans/buy/" + plan);
+    if (!session.isAuthenticated) return router.push("/plans/buy/" + plan);
 
     try {
-      const payload = {
-        // TODO: This is incorrect, the user identification must not be sent in the request, this information must be obtained in the backend from the token or the active session.
-        id: user.cognito_user_id,
-        email: user.email,
-        plan_type: plan,
-      };
+      setLoading(true);
+
       const options = {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
+        url: 'subscriptions',
+        method: "POST",
+        data: {
+          planType: plan,
         },
-        body: JSON.stringify(payload),
       };
-      const response = await fetch(`/api/create-customer`, options);
-      const data = await handleFetchResponse(response);
-      if (data instanceof Error) throw data;
-      //@ts-ignore
-      window.location.href = data.result?.url;
-    } catch (error) {
-      const errorMessage = error instanceof Error
-        ? error.message
-        : "Something went wrong. We are working on it.";
-      setError(errorMessage);
+
+      const response = await request(options);
+      console.log(response);
+      window.open(response.result.url, '_blank')
+      // window.location.href = response.result.url;
+    } catch (ex) {
+      setError(parseErrorMessage(ex));
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -53,3 +53,10 @@ export const respondWithException = (response: NextApiResponse, ex: any) => {
 
   response.status(code).json({ success: false, message });
 };
+
+export const parseErrorMessage = (err: any) => {
+  if (typeof err === 'string') return err;
+  if (err.response && err.response.data.message) return err.response.data.message;
+
+  return err.message || 'Something went wrong. We are working on it.';
+};
