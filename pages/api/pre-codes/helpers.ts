@@ -5,6 +5,8 @@ import { customAlphabet } from "nanoid";
 import { LinkModel, PreGeneratedModel } from "../../../models/link";
 import { NextApiRequest } from "next";
 
+export { respondWithException } from "../../../libs/exceptions";
+
 const MICRO_SITES_ROUTE = process.env.REACT_MICROSITES_ROUTE || 'https://dev.a-qr.link';
 const LINK_CODE_ALPHABET = process.env.LINK_CODE_ALPHABET || 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 const MAX_ALLOW_COLLISIONS = parseInt(process.env.MAX_ALLOW_COLLISIONS || '25', 10);
