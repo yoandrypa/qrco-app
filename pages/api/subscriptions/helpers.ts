@@ -1,7 +1,6 @@
 import Joi from "joi";
 
 import { NextApiRequest } from "next";
-import { BatRequest } from "../../../libs/exceptions";
 import { IS_PRODUCTION } from "../base/helpers";
 import { stripe } from "../../../libs/gateways/stripe";
 
@@ -15,22 +14,13 @@ import {
 export { NotFound, respondWithException } from "../../../libs/exceptions";
 export { withSessionRoute, checkAuthorization } from '../base/helpers';
 
-function getLicencePlanId(type: string) {
+function getPricesIds(type: string) {
+  const [licencePlans, meteredPlans] = IS_PRODUCTION
+    ? [PLAN_LIVE_MODE_PRICES, PLAN_LIVE_METERED_PRICES]
+    : [PLAN_TEST_MODE_PRICES, PLAN_TEST_METERED_PRICES];
+
   //@ts-ignore
-  const planId = IS_PRODUCTION ? PLAN_LIVE_MODE_PRICES[type] : PLAN_TEST_MODE_PRICES[type];
-
-  if (!planId) throw new BatRequest('Invalid plan type');
-
-  return planId;
-}
-
-function getMeteredPlanId(type: string) {
-  //@ts-ignore
-  const planId = IS_PRODUCTION ? PLAN_LIVE_METERED_PRICES[type] : PLAN_TEST_METERED_PRICES[type];
-
-  if (!planId) throw new BatRequest('Invalid plan type');
-
-  return planId;
+  return { licencePriceId: licencePlans[type], meteredPriceId: meteredPlans[type] }
 }
 
 /**
@@ -38,28 +28,18 @@ function getMeteredPlanId(type: string) {
  * @param req
  */
 export function parseFromPostRequest(req: NextApiRequest) {
+  const planTypeOptions = Object.keys(IS_PRODUCTION ? PLAN_LIVE_METERED_PRICES : PLAN_TEST_METERED_PRICES);
   const schema = Joi.object({
-    planType: Joi.string().required(),
+    planType: Joi.string().valid(...planTypeOptions).required(),
   });
 
   return Joi.attempt(req.body, schema, { abortEarly: false });
 }
 
-// TODO: Deprecate
-// export async function createCustomer(currentUser: any) {
-//   const { email, localRecord } = currentUser;
-//   const stripeRecord = await stripe.customers.create({ email })
-//
-//   localRecord.customerId = stripeRecord.id;
-//
-//   return await Users.update({ id: localRecord.id }, { customerId: stripeRecord.id });
-// }
-
 export async function createCheckoutSession(currentUser: any, planType: string) {
-  const { email, cognito_user_id } = currentUser;
   const serverBaseUrl = process.env.SERVER_BASE_URL;
-  const licencePriceId = getLicencePlanId(planType);
-  const meteredPriceId = getMeteredPlanId(planType);
+  const { email, cognito_user_id } = currentUser;
+  const { licencePriceId, meteredPriceId } = getPricesIds(planType);
 
   const checkoutSession = await stripe.checkout.sessions.create({
     mode: 'subscription',
