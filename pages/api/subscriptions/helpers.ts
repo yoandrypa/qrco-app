@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 import { NextApiRequest } from "next";
-import { IS_PRODUCTION } from "../base/helpers";
+import { isProductionMode } from "../base/helpers";
 import { stripe } from "../../../libs/gateways/stripe";
 
 import * as Users from "../../../handlers/users";
@@ -15,7 +15,7 @@ export { NotFound, respondWithException } from "../../../libs/exceptions";
 export { withSessionRoute, checkAuthorization } from '../base/helpers';
 
 function getPricesIds(type: string) {
-  const [licencePlans, meteredPlans] = IS_PRODUCTION
+  const [licencePlans, meteredPlans] = isProductionMode
     ? [PLAN_LIVE_MODE_PRICES, PLAN_LIVE_METERED_PRICES]
     : [PLAN_TEST_MODE_PRICES, PLAN_TEST_METERED_PRICES];
 
@@ -28,7 +28,7 @@ function getPricesIds(type: string) {
  * @param req
  */
 export function parseFromPostRequest(req: NextApiRequest) {
-  const planTypeOptions = Object.keys(IS_PRODUCTION ? PLAN_LIVE_METERED_PRICES : PLAN_TEST_METERED_PRICES);
+  const planTypeOptions = Object.keys(isProductionMode ? PLAN_LIVE_MODE_PRICES : PLAN_TEST_MODE_PRICES);
   const schema = Joi.object({
     planType: Joi.string().valid(...planTypeOptions).required(),
   });
