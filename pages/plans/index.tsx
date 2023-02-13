@@ -10,11 +10,9 @@ import Alert from "@mui/material/Alert";
 
 import Context from "../../components/context/Context";
 import PlanCard from "../../components/plans/plancard";
-import BillingPortal from "../../components/billing/BillingPortal";
 import PlanCalculator from "../../components/plans/PlanCalculator";
 
 import { parseErrorMessage } from "../../libs/exceptions";
-import * as Users from "../../handlers/users";
 
 import * as plans from "./plans";
 
@@ -39,19 +37,8 @@ const Plans = (props: Props) => {
   const user = session.currentAccount;
   const [error, setError] = useState<string | null>(null);
 
+  // @ts-ignore
   const { setLoading } = React.useContext(Context);
-
-  useEffect(() => {
-    if (session.isAuthenticated) {
-      Users.get(user.cognito_user_id).then((profile) => {
-        if (profile?.subscriptionData != null && profile?.customerId != null) {
-          <BillingPortal customerId={profile?.customerId} />;
-        }
-
-        //TODO add logic for customer portal here
-      });
-    }
-  }, [user]);
 
   const handleClick = async (plan: string) => {
     if (!session.isAuthenticated) return router.push("/plans/buy/" + plan);
