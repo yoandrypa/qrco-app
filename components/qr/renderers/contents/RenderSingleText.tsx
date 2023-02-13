@@ -17,11 +17,11 @@ export default function RenderSingleText({text, handleValues, index, includeText
 
   const setValue = (event: ChangeEvent<HTMLInputElement>) => {
     beforeSend('includeTextDescription')(event.target.checked);
-  }
+  };
 
   return (
     <>
-      <RenderTextFields item="text" label="" value={text} handleValues={beforeSend} multiline />
+      <RenderTextFields item="text" label="" value={text} handleValues={beforeSend} multiline index={index} />
       <FormControlLabel label="Include section description" control={
         <Switch checked={includeTextDescription || false} inputProps={{'aria-label': 'textDescription'}} onChange={setValue}/>}
       />

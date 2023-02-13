@@ -11,6 +11,9 @@ import dynamic from "next/dynamic";
 import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
 import DonationsData, { DonationsProps } from './renderers/DonationsData';
 import { qrNameDisplayer } from "../../helpers/qr/helpers";
+import pluralize from "pluralize";
+import {FILE_LIMITS} from "../../consts";
+import {formatBytes} from "../../utils";
 
 const CardDataStatic = dynamic(() => import("./renderers/custom/CardDataStatic"));
 const Custom = dynamic(() => import("./renderers/Custom"));
@@ -21,7 +24,6 @@ const WifiData = dynamic(() => import('./renderers/WifiData'));
 const EmailData = dynamic(() => import('./renderers/EmailData'));
 const SMSData = dynamic(() => import('./renderers/SMSData'));
 const TwitterData = dynamic(() => import('./renderers/TwitterData'));
-const AssetData = dynamic(() => import('./renderers/AssetData'));
 const PetIdData = dynamic(() => import('./renderers/PetIdData'));
 const CryptoData = dynamic(() => import('./renderers/CryptoData'));
 const SendMeMoneyData = dynamic(() => import('./renderers/SendMeMoneyData'));
@@ -153,7 +155,14 @@ const QrContentHandler = () => { // @ts-ignore
       case 'pdf':
       case 'audio':
       case 'video': {
-        return <AssetData type={selected} data={data} setData={handlePayload} handleValues={handleValues} setIsWrong={setIsWrong} />;
+        return <Custom
+          data={data}
+          setData={setData}
+          handleValues={handleValues}
+          setIsWrong={setIsWrong}
+          tip={`You can upload a maximum of ${pluralize("file", FILE_LIMITS[selected].totalFiles, true)} of size ${formatBytes(FILE_LIMITS[selected].totalMbPerFile * 1048576)}.`}
+          predefined={['title', selected]}
+        />
       }
       case 'donation': {
         return <DonationsData data={data} handleValues={handleValues} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong} />

@@ -30,6 +30,7 @@ export default function RenderTitleDesc({
         {header ? header : 'Optional'}
       </Typography>}
       <RenderTextFields
+        index={index}
         item="titleAbout"
         label="Title"
         value={title || ''}
@@ -37,6 +38,7 @@ export default function RenderTitleDesc({
       />
       <RenderTextFields
         multiline
+        index={index}
         item="descriptionAbout"
         label="Description"
         value={description || ''}

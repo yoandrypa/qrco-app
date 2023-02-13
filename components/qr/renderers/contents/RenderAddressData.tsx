@@ -15,7 +15,7 @@ export default function RenderAddressData({data, handleValues, index}: ContentPr
     const value = data?.[item] || '' as string;
     return (
       <RenderTextFields item={item} label={label} isError={item === 'zip' && value.length && !ZIP.test(value)}
-                        value={value} handleValues={beforeSend} />
+                        value={value} handleValues={beforeSend} index={index} />
     );
   };
 

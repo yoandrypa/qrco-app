@@ -27,7 +27,7 @@ export default function RenderEmailWeb({data, handleValues, sx, index}: RenderEm
       handleValues(item, index)(payload);
     }
 
-    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={beforeSend}/>;
+    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={beforeSend} index={index}/>;
   };
 
   return (

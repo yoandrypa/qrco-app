@@ -62,7 +62,7 @@ export default function RenderActionButton({data, setData, handleValues, index}:
         handleValues={beforeSend}
       />);
     }
-    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={beforeSend} required={required} />;
+    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={beforeSend} required={required} index={index} />;
   };
 
   useEffect(() => {

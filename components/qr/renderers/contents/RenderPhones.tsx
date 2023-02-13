@@ -24,7 +24,7 @@ export default function RenderPhones({data, handleValues, isCompany, index, mess
       isError = true;
     }
 
-    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={beforeSend}/>;
+    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={beforeSend} index={index}/>;
   };
 
   return (

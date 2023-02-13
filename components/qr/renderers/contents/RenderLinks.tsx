@@ -138,6 +138,7 @@ export default function RenderLinks({data, setData, topics, index}: RenderLinksP
                             <TableCell sx={{p: 0, width: '50%', borderBottom: 'none'}}>
                               <RenderTextFields
                                 required
+                                index={index}
                                 placeholder="URL here"
                                 value={x.link}
                                 handleValues={handleChangeValue('link', idx)}

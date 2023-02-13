@@ -16,6 +16,7 @@ export default function RenderCouponData({data, handleValues, index}: ContentPro
         handleValues={beforeSend} // @ts-ignore
         value={data?.[item] || ''}
         item={item}
+        index={index}
         label={label}
         placeholder={placeholder}
         multiline={item === 'text'}

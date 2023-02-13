@@ -39,6 +39,7 @@ export default function RenderCouponInfo({data, handleValues, index}: ContentPro
         handleValues={beforeSend}
         value={value}
         item={item}
+        index={index}
         label={label}
         placeholder={placeholder}
         multiline={item === 'description'}

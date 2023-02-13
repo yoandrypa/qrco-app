@@ -26,6 +26,7 @@ export default function RenderCompanyData({data, handleValues, index}: ContentPr
     return (
       <RenderTextFields
         item={item}
+        index={index}
         label={label}
         isError={isError}
         value={value}

@@ -17,7 +17,7 @@ export default function RenderPresentation({data, handleValues, message, index}:
   const renderItem = (item: string, label: string) => { // @ts-ignore
     const value = data?.[item] || '' as string;
     return <RenderTextFields
-      item={item} label={label} value={value} handleValues={beforeSend} required={item === 'firstName'} />;
+      item={item} label={label} value={value} handleValues={beforeSend} required={item === 'firstName'} index={index}/>;
   };
 
   return (
