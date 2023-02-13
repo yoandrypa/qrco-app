@@ -47,7 +47,7 @@ const Expander = ({expand, setExpand, editFunc, item, title, bold, required, del
       }}
     >
       <Box sx={{display: 'flex', justifyContent: 'space-between', width: '100%'}} onClick={handleExpand}>
-        <Tooltip title="Edit section name" disableHoverListener={editFunc === undefined}>
+        <Tooltip title="Edit section headline" disableHoverListener={editFunc === undefined}>
           <Typography
             sx={{fontWeight: bold ? 'bold' : 'normal', display: 'inline-flex'}}
             onClick={handleEdit}>{title}</Typography>

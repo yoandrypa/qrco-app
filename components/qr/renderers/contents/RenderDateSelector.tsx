@@ -31,16 +31,10 @@ const RenderDateSelector = ({label, data, handleValues, index}: DateSelProps) =>
           renderInput={(params) => <TextField {...params} size="small" fullWidth margin="dense"/>}
         />
       </LocalizationProvider>
-      <Box sx={{display: 'flex', ml: {sm: '10px', xs: 0}}}>
-        <FormControlLabel sx={{width: '187px'}} label="Show date legend" control={
-          <Switch checked={data?.hideDateLegend === undefined ? true : !data.hideDateLegend} inputProps={{'aria-label': 'hideDateLegend'}}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) => setValue('hideDateLegend', event.target.checked)}/>}
-        />
-        <FormControlLabel sx={{width: '135px'}} label="Long date" control={
-          <Switch checked={data?.shortDateFormat === undefined ? true : !data.shortDateFormat} inputProps={{'aria-label': 'longDate'}}
-                  onChange={(event: ChangeEvent<HTMLInputElement>) => setValue('shortDateFormat', event.target.checked)}/>}
-        />
-      </Box>
+      <FormControlLabel sx={{width: '165px', ml: {xs: 0, sm: '10px'}}} label="Long date" control={
+        <Switch checked={data?.shortDateFormat === undefined ? true : !data.shortDateFormat} inputProps={{'aria-label': 'longDate'}}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => setValue('shortDateFormat', event.target.checked)}/>}
+      />
     </Box>
   );
 };

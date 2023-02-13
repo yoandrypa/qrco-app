@@ -69,9 +69,11 @@ export type OpeningType = {
 } | {} | null;
 
 export type LinkType = {
-  label: string;
+  label?: string;
   link: string;
 }
+
+export type KeyValues = { key?: string; value: string; }
 
 export type SocialProps = {
   facebook?: string;
@@ -90,12 +92,12 @@ export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'y
 export type SocialNetworksType = { network: SocialsType, value?: string };
 
 export type Type = {
-  includeTextDescription?: boolean;
+  hideHeadLine?: boolean;
   prevNetworks?: string[];
   shortDateFormat?: boolean;
-  hideDateLegend?: boolean;
   socialsOnlyIcons?: boolean;
-  includeDescription?: boolean;
+  linksOnlyLinks?: boolean;
+  keyValues?: KeyValues[];
   badge?: string;
   number?: string;
   message?: string;
@@ -172,6 +174,10 @@ export type Type = {
     wifi?: boolean;
   } | undefined;
   files?: File[];
+  petName?: string;
+  petBreed?: string;
+  petYearOfBirth?: string;
+  petGender?: string;
 };
 
 export type CustomType = { component: string, name?: string, data?: Type; expand: string; };
@@ -330,6 +336,7 @@ export type HeadAndItemsType = {
     type?: validTypes
   }];
 }
+
 export type EbanuxDonationPriceData = {
   priceId?: string,
   productId?: string,
@@ -345,10 +352,6 @@ export interface EbanuxSimplePaymentLinkData {
   amount: number,
   successUrl?: string
 }
-
-export type CardDataProps = {
-  data: DataType; setData: Function;
-};
 
 export type ColorTypes = {
   p: string; s: string;

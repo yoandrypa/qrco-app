@@ -2,6 +2,7 @@ import {CustomType, DataType, LinkType, Type} from "../../types/types";
 import {EMAIL, PHONE, ZIP} from "../../constants";
 import {isValidUrl} from "../../../../utils";
 import socialsAreValid from "../validator";
+import {getUuid} from "../../../../helpers/qr/helpers";
 
 export const components = [
   {type: 'address', name: 'Address'}, {type: 'company', name: 'Company'},
@@ -11,8 +12,9 @@ export const components = [
   {type: 'presentation', name: 'Presentation'}, {type: 'opening', name: 'Opening time'},
   {type: 'socials', name: 'Social networks'}, {type: 'title', name: 'Title and description'},
   {type: 'action', name: 'Action button'}, {type: 'single', name: 'Single text'},
-  {type: 'pdf', name: 'PDF file'}, {type: 'audio', name: 'Audio files'}, {type: 'video', name: 'Video files'},
-  {type: 'couponInfo', name: 'Promotion info', notInMenu: true}, {type: 'couponData', name: 'Coupon data', notInMenu: true}
+  {type: 'pdf', name: 'PDF file'}, {type: 'audio', name: 'Audio files'}, {type: 'video', name: 'Video files'}, {type: 'keyvalue', name: 'Details'},
+  {type: 'couponInfo', name: 'Promotion info', notInMenu: true}, {type: 'couponData', name: 'Coupon data', notInMenu: true},
+  {type: 'petId', name: 'Pet presentation', notInMenu: true}
 ];
 
 export const getName = (index: number) => {
@@ -27,6 +29,7 @@ export const getNameStr = (type: string): string => {
 export interface CustomProps {
   predefined?: string[];
   tip?: string;
+  selected?: string;
   data: DataType;
   setData: Function;
   handleValues: Function;
@@ -82,7 +85,7 @@ export const validator = (dataToCheck: DataType): boolean => {
       return false;
     }
     if (component === 'links' && data?.links?.some((x: LinkType) =>
-      (!x.label.trim().length || !x.link.trim().length || !isValidUrl(x.link)))) {
+      ((!data.linksOnlyLinks && !(x.label || '').trim().length) || !x.link.trim().length || !isValidUrl(x.link)))) {
       errors = true;
       return false;
     }

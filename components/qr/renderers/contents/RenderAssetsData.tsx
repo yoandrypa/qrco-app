@@ -18,13 +18,12 @@ interface AssetsProps {
   type: "gallery" | "video" | "pdf" | "audio";
   totalFiles: number;
   data?: Type;
-  hideInclude?: boolean;
   setData: Function;
   index: number;
   doNotAutoOpen?: boolean;
 }
 
-export default function RenderAssetsData({type, totalFiles, data, setData, index, doNotAutoOpen, hideInclude}: AssetsProps) {
+export default function RenderAssetsData({type, totalFiles, data, setData, index, doNotAutoOpen}: AssetsProps) {
   const handleValues = (autoOpen: boolean) => {
     setData((prev: DataType) => {
       const newData = {...prev};
@@ -78,27 +77,6 @@ export default function RenderAssetsData({type, totalFiles, data, setData, index
     }
   };
 
-  const handleInclude = (event: ChangeEvent<HTMLInputElement>) => {
-    setData((prev: DataType) => {
-      const newData = {...prev};
-      if (index === -1) {
-        if (newData.includeDescription !== undefined && !event.target.checked) {
-          delete newData.includeDescription;
-        } else {
-          newData.includeDescription = event.target.checked;
-        }
-      } else {
-        if (newData?.custom?.[index]?.data?.includeDescription !== undefined && !event.target.checked) { // @ts-ignore
-          delete newData.custom[index].data.includeDescription;
-        } else { // @ts-ignore
-          if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
-          newData.custom[index].data.includeDescription = event.target.checked;
-        }
-      }
-      return newData;
-    });
-  };
-
   let title = "Drag 'n' drop some files here, or click to select files.";
   if (totalFiles > 1) {
     title += ` Selected ${data?.files?.length || 0} of ${totalFiles} allowed`;
@@ -123,17 +101,12 @@ export default function RenderAssetsData({type, totalFiles, data, setData, index
         maxSize={toBytes(FILE_LIMITS[type].totalMbPerFile, "MB")}
       />
       <Box sx={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
-        <Box sx={{display: 'flex'}}>
-          {!doNotAutoOpen && type === 'pdf' && data?.files?.length === 1 && (
-            <FormControlLabel label="Auto open" control={
-              <Switch checked={data?.autoOpen} inputProps={{'aria-label': 'isAutoOpen'}} sx={{mr: !hideInclude ? '5px' : 0}}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) => handleValues(event.target.checked)} />}
-            />
-          )}
-          {!hideInclude && (<FormControlLabel label="Include section description" control={
-            <Switch checked={data?.includeDescription} inputProps={{'aria-label': 'includeDescription'}} onChange={handleInclude} />}
-          />)}
-        </Box>
+        {!doNotAutoOpen && type === 'pdf' && data?.files?.length === 1 && (
+          <FormControlLabel label="Auto open" control={
+            <Switch checked={data?.autoOpen} inputProps={{'aria-label': 'isAutoOpen'}} sx={{mr: '5px'}}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => handleValues(event.target.checked)} />}
+          />
+        )}
         <Typography variant="caption" sx={{color: theme => theme.palette.text.disabled}}>
           {`Up to ${pluralize('files', totalFiles, true)}`}
         </Typography>

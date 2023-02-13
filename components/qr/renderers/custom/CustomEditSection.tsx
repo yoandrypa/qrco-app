@@ -56,7 +56,7 @@ export default function CustomEditSection({handleClose, value, anchor, current, 
       <Box sx={{width: '300px', p: 2}}>
         <Box sx={{display: 'flex'}}>
           <EditIcon sx={{mr: '5px', color: theme => theme.palette.primary.light}} fontSize="small" />
-          <Typography sx={{mb: 1}}>{'Update the section description:'}</Typography>
+          <Typography sx={{mb: 1}}>{'Update the section headline:'}</Typography>
         </Box>
         <TextField
           label=""

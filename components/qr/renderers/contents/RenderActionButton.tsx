@@ -57,6 +57,7 @@ export default function RenderActionButton({data, setData, handleValues, index}:
         options={['View menu', 'Shop online', 'Book now', 'Apply now', 'Learn more', 'Read more', 'More info']}
         value={value}
         item={item}
+        index={index}
         label={label}
         isError={isError}
         handleValues={beforeSend}

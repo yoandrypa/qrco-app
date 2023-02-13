@@ -46,16 +46,21 @@ const QrContentHandler = () => { // @ts-ignore
   const { data, setData, selected, setIsWrong, userInfo }: QrContentHandlerProps = useContext(Context);
 
   const handleValues = (item: string, index?: number) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
+
     const value = typeof payload === 'string' || typeof payload === 'boolean' ? payload : payload.target.value;
     setData((prev: DataType) => {
       const newData = {...prev};
       if (index !== undefined && index !== -1) { // @ts-ignore
         const element = newData.custom[index];
-
         if (!element.data) { element.data = {}; }
         const elementData = element.data as Type;
-
-        if (item === 'easiness') {
+        if (item === 'hideHeadLine') {
+          if (element.data.hideHeadLine !== undefined && payload === false) {
+            delete element.data.hideHeadLine
+          } else {
+            element.data.hideHeadLine = true;
+          }
+        } else if (item === 'easiness') {
           if (!elementData.easiness) { elementData.easiness = {}; } // @ts-ignore
           if (!elementData.easiness[payload]) { // @ts-ignore
             elementData.easiness[payload] = true;
@@ -131,16 +136,16 @@ const QrContentHandler = () => { // @ts-ignore
       }
       case 'link': {
         return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
-          tip="Add at least one link to your websites." predefined={['title', 'links', 'socials']}/>;
+          tip="Add at least one link to your websites." predefined={['title', 'links', 'socials']} selected={selected}/>;
       }
       case 'coupon': {
         return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
-          tip="Share a coupon for promotion." predefined={['couponInfo', 'couponData', 'address']}/>;
+          tip="Share a coupon for promotion." predefined={['couponInfo', 'couponData', 'address']} selected={selected}/>;
       }
       case 'business': {
         return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
           tip="Your business or company details. Users can contact your business or company right away."
-          predefined={['company', 'action', 'address', 'opening', 'easiness', 'socials']}/>;
+          predefined={['company', 'action', 'address', 'opening', 'easiness', 'socials']} selected={selected}/>;
       }
       case 'email': {
         return <EmailData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
@@ -155,13 +160,9 @@ const QrContentHandler = () => { // @ts-ignore
       case 'pdf':
       case 'audio':
       case 'video': {
-        return <Custom
-          data={data}
-          setData={setData}
-          handleValues={handleValues}
-          setIsWrong={setIsWrong}
+        return <Custom data={data} setData={setData} handleValues={handleValues}
+          setIsWrong={setIsWrong} predefined={['title', selected]} selected={selected}
           tip={`You can upload a maximum of ${pluralize("file", FILE_LIMITS[selected].totalFiles, true)} of size ${formatBytes(FILE_LIMITS[selected].totalMbPerFile * 1048576)}.`}
-          predefined={['title', selected]}
         />
       }
       case 'donation': {
@@ -177,7 +178,10 @@ const QrContentHandler = () => { // @ts-ignore
         return <FundMe data={data} setData={setData} handleValues={handleValues} />
       }
       case 'petId': {
-        return <PetIdData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
+        // return <PetIdData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
+        return <Custom
+          data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} tip="Your pet information."
+          predefined={['petId', 'title', 'presentation', 'phones', 'address', 'keyvalue', 'links', 'socials']} selected={selected}/>;
       }
       case 'linkedLabel': {
         return <LinkedLabelData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
@@ -189,7 +193,7 @@ const QrContentHandler = () => { // @ts-ignore
         return <InventoryData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
       }
       default: {
-        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
+        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected}
           tip="Your social networks. Users can reach you using the social networks." predefined={['title', 'socials']}/>
       }
     }

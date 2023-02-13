@@ -5,31 +5,26 @@ import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import {DataType, LinkType, Type} from "../../types/types";
+import {DataType, KeyValues, Type} from "../../types/types";
 import TableRow from "@mui/material/TableRow";
 import {getItemStyle} from "../../helperComponents/looseComps/StyledComponents";
 import TableCell from "@mui/material/TableCell";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import RenderProposalsTextFields from "../helpers/RenderProposalsTextFields";
 import RenderTextFields from "../helpers/RenderTextFields";
-import {isValidUrl} from "../../../../utils";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {ChangeEvent, useCallback, useEffect} from "react";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
-import FormControl from "@mui/material/FormControl";
 
-interface RenderLinksProps {
+interface KeyValueProps {
   index: number;
   data?: Type;
   setData: Function;
   topics?: string;
 }
 
-export default function RenderLinks({data, setData, topics, index}: RenderLinksProps) {
+export default function RenderKeyValue({data, setData, topics, index}: KeyValueProps) {
   const onDragEnd = useCallback((result: any) => {
     if (!result?.destination) {
       return null;
@@ -37,27 +32,27 @@ export default function RenderLinks({data, setData, topics, index}: RenderLinksP
 
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
-      const newLinks = Array.from((index === -1 ? newData.links : newData.custom[index].data.links) || []);
-      const [removed] = newLinks.splice(result.source.index, 1);
-      newLinks.splice(result.destination.index, 0, removed); // @ts-ignore
-      newData.custom[index].data.links = newLinks;
+      const newPairs = Array.from(newData.custom[index].data.keyValues || []);
+      const [removed] = newPairs.splice(result.source.index, 1);
+      newPairs.splice(result.destination.index, 0, removed); // @ts-ignore
+      newData.custom[index].data.keyValues = newPairs;
       return newData;
     });
   }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const add = useCallback(() => {
     setData((prev: DataType) => {
-      const newData = {...prev};  // @ts-ignore
-      newData.custom[index].data.links.push({label: '', link: ''});
+      const newData = {...prev}; // @ts-ignore
+      newData.custom[index].data.keyValues.push({value: ''});
       return newData;
     });
   }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const remove = useCallback((idx: number) => () => {
     setData((prev: DataType) => {
-      const newData = {...prev};// @ts-ignore
-      newData.custom[index].data.links.splice(idx, 1); // @ts-ignore
-      if (newData.custom[index].data.links.length === 1 && newData.custom[index].data.position === 'middle') { // @ts-ignore
+      const newData = {...prev}; // @ts-ignore
+      newData.custom[index].data.keyValues.splice(idx, 1); // @ts-ignore
+      if (newData.custom[index].data.keyValues.length === 1 && newData.custom[index].data.position === 'middle') { // @ts-ignore
         delete newData.custom[index].data.position;
       }
       return newData;
@@ -68,20 +63,7 @@ export default function RenderLinks({data, setData, topics, index}: RenderLinksP
     const value = payload.target?.value !== undefined ? payload.target.value : payload;
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
-      newData.custom[index].data.links[idx][item] = value;
-      return newData;
-    });
-  }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleOnly = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setData((prev: DataType) => {
-      const newData = {...prev}; // @ts-ignore
-      if (!newData?.custom?.[index]?.data) { newData.custom[index].data = {}; }
-      if (e.target.checked) { // @ts-ignore
-        newData.custom[index].data.linksOnlyLinks = true;
-      } else { // @ts-ignore
-        delete newData.custom[index].data.linksOnlyLinks;
-      }
+      newData.custom[index].data.keyValues[idx][item] = value;
       return newData;
     });
   }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -90,24 +72,26 @@ export default function RenderLinks({data, setData, topics, index}: RenderLinksP
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
       if (!newData?.custom?.[index]?.data) { newData.custom[index].data = {}; } // @ts-ignore
-      if (!newData.custom[index].data.links?.length) { newData.custom[index].data.links = [{label: '', link: ''}]; }
+      if (!newData.custom[index].data.keyValues?.length) { newData.custom[index].data.keyValues = [{value: ''}]; }
       return newData;
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Box sx={{width: '100%'}}>
-      {topics !== undefined && <Topics message={topics} top="3px" secMessage={data?.links && `(${pluralize('link', data.links?.length || 0, true)})`}/>}
+      {topics !== undefined && (
+        <Topics message={topics} top="3px" secMessage={data?.keyValues && `(${pluralize('item', data.keyValues?.length || 0, true)})`}/>
+      )}
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
           {(provided: any) => (
             <TableContainer sx={{mt: '-8px'}}>
               <Table size="small">
                 <TableBody {...provided.droppableProps} ref={provided.innerRef}>
-                  {data?.links?.length && data.links.map((x: LinkType, idx: number) => {
+                  {(data?.keyValues || []).map((x: KeyValues, idx: number) => {
                     const itemId = `item${idx}`;
                     return ( // @ts-ignore
-                      <Draggable key={itemId} draggableId={itemId} index={idx} isDragDisabled={data.links.length === 1}>
+                      <Draggable key={itemId} draggableId={itemId} index={idx} isDragDisabled={data.keyValues.length === 1}>
                         {(provided: any, snapshot: any) => (
                           <TableRow
                             sx={{p: 0, width: '100%'}}
@@ -116,33 +100,31 @@ export default function RenderLinks({data, setData, topics, index}: RenderLinksP
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}> {/* @ts-ignore */}
-                            {data.links.length > 1 && (
+                            {data.keyValues.length > 1 && (
                               <TableCell sx={{p: 0, pr: 1, width: '40px', borderBottom: 'none'}}>
                                 <DragIndicatorIcon sx={{ color: theme => theme.palette.text.disabled, mt: '8px' }} />
                               </TableCell>
                             )}
-                            {!data?.linksOnlyLinks && (<TableCell sx={{p: 0, pr: 1, width: '50%', borderBottom: 'none'}}>
-                              <RenderProposalsTextFields
-                                required
-                                index={index}
-                                options={['My website', 'My youtube channel', 'My blog', 'My portfolio', 'My podcast', 'My store']}
-                                placeholder="Label here"
-                                value={x.label || ''}
-                                handleValues={handleChangeValue('label', idx)}
-                              />
-                            </TableCell>)}
-                            <TableCell sx={{p: 0, width: !data?.linksOnlyLinks ? '50%' : '100%', borderBottom: 'none'}}>
+                            <TableCell sx={{p: 0, pr: 1, width: '50%', borderBottom: 'none'}}>
                               <RenderTextFields
                                 required
                                 index={index}
-                                placeholder="URL here"
-                                value={x.link}
-                                handleValues={handleChangeValue('link', idx)}
-                                isError={x.link.trim().length > 0 && !isValidUrl(x.link)}
+                                placeholder="Label here"
+                                value={x.key || ''}
+                                handleValues={handleChangeValue('key', idx)}
+                              />
+                            </TableCell>
+                            <TableCell sx={{p: 0, width: '50%', borderBottom: 'none'}}>
+                              <RenderTextFields
+                                required
+                                index={index}
+                                placeholder="Value here"
+                                value={x.value}
+                                handleValues={handleChangeValue('value', idx)}
                               />
                             </TableCell>
                             <TableCell sx={{p: 0, borderBottom: 'none'}} align="right">
-                              {idx + 1 === (data?.links?.length || 0) ? (
+                              {idx + 1 === (data?.keyValues?.length || 0) ? (
                                 <Tooltip title={'Add a link'}>
                                   <IconButton onClick={add}><AddBoxIcon color="primary"/></IconButton>
                                 </Tooltip>
@@ -163,10 +145,6 @@ export default function RenderLinks({data, setData, topics, index}: RenderLinksP
           )}
         </Droppable>
       </DragDropContext>
-      <FormControl sx={{mt: '-5px'}}>
-        <FormControlLabel control={<Switch onChange={handleOnly} checked={data?.linksOnlyLinks || false} />}
-          label="Only links" />
-      </FormControl>
     </Box>
   );
 }

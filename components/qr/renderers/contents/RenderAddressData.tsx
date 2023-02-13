@@ -7,7 +7,7 @@ import {ChangeEvent} from "react";
 import {ContentProps} from "../custom/helperFuncs";
 
 export default function RenderAddressData({data, handleValues, index}: ContentProps) {
-  const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
+  const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string) => {
     handleValues(item, index)(payload);
   }
 
