@@ -3,7 +3,7 @@ import Schema from '../commons/schema';
 const schema = new Schema(
   {
     payment_method_options: {
-      type: Schema.Types.Mixed,
+      type: Object,
     },
     payment_method_types: {
       type: String,
@@ -14,6 +14,11 @@ const schema = new Schema(
       enum: ['off', 'on_subscription'],
     },
   },
+  {
+    saveUnknown: [
+      'payment_method_options.**'
+    ]
+  }
 );
 
 export default schema;

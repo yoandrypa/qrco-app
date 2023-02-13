@@ -46,11 +46,15 @@ const schema = new Schema(
       type: String,
     },
     pending_update: {
-      type: PendingUpdateSchema,
+      type: Object,
+      schema: PendingUpdateSchema,
     },
     status: {
       type: String,
       enum: ['incomplete', 'incomplete_expired', 'trialing', 'active', 'past_due', 'canceled', 'unpaid'],
+      index: {
+        name: "subscriptionStatusIndex"
+      }
     },
     application: {
       type: String,
@@ -61,13 +65,15 @@ const schema = new Schema(
       max: 100,
     },
     automatic_tax: {
-      type: AutomaticTaxSchema,
+      type: Object,
+      schema: AutomaticTaxSchema,
     },
     billing_cycle_anchor: {
       type: Number,
     },
     billing_thresholds: {
-      type: BillingThresholdsSchema,
+      type: Object,
+      schema: BillingThresholdsSchema,
     },
     cancel_at: {
       type: Number,
@@ -89,7 +95,8 @@ const schema = new Schema(
       type: String,
     },
     discount: {
-      type: DiscountSchema,
+      type: Object,
+      schema: DiscountSchema,
     },
     ended_at: {
       type: Number,
@@ -101,11 +108,13 @@ const schema = new Schema(
       type: Number,
     },
     pause_collection: {
-      type: PauseCollectionSchema,
+      type: Object,
+      schema: PauseCollectionSchema,
       default: {},
     },
     pending_invoice_item_interval: {
-      type: PendingInvoiceItemIntervalSchema,
+      type: Object,
+      schema: PendingInvoiceItemIntervalSchema,
     },
     schedule: {
       type: String,
@@ -117,7 +126,8 @@ const schema = new Schema(
       type: String,
     },
     transfer_data: {
-      type: TransferDataSchema,
+      type: Object,
+      schema: TransferDataSchema,
     },
     trial_end: {
       type: Number,
@@ -136,22 +146,24 @@ const schema = new Schema(
       type: [ItemSchema],
     },
     plan: {
-      type: IdentifierSchema,
+      type: Object,
+      schema: IdentifierSchema,
     },
     payment_settings: {
-      type: PaymentSettingsSchema,
+      type: Object,
+      schema: PaymentSettingsSchema,
     },
-    cognito_user_id: {
+    cognito_user_idcognito_user_id: {
       type: String,
       required: true,
-    },
-    origin: {
-      type: String,
-      enum: ['platform', 'connected'],
+      index: true,
     },
   },
   {
     timestamps: true,
+    saveUnknown: [
+      'metadata.**'
+    ]
   },
 );
 

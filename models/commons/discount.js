@@ -9,10 +9,12 @@ const schema = new Schema({
     unique: true,
   },
   coupon: {
-    type: IdentifierSchema,
+    type: Object,
+    schema: IdentifierSchema,
   },
   promotion_code: {
-    type: IdentifierSchema,
+    type: Object,
+    schema: IdentifierSchema,
   },
   customer: {
     type: String,

@@ -8,4 +8,4 @@ const schema = new Schema(
   },
 );
 
-export default  schema;
+export default schema;

@@ -9,17 +9,16 @@ const schema = new Schema(
       type: String,
     },
     price: {
-      type: IdentifierSchema,
-    },
-    plan: {
-      type: IdentifierSchema,
+      type: Object,
+      schema: IdentifierSchema,
     },
     quantity: {
       type: Number,
       min: 0,
     },
     billing_thresholds: {
-      type: BillingThresholdsSchema,
+      type: Object,
+      schema: BillingThresholdsSchema,
     },
     created: {
       type: Number,
@@ -31,6 +30,11 @@ const schema = new Schema(
     metadata: {
       type: Object,
     },
+  },
+  {
+    saveUnknown: [
+      'metadata.**'
+    ]
   },
 );
 
