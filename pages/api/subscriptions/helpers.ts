@@ -5,6 +5,7 @@ import { isProductionMode } from "../base/helpers";
 import { stripe } from "../../../libs/gateways/stripe";
 
 import * as Users from "../../../handlers/users";
+import Subscription from "../../../models/subscription";
 
 import {
   PLAN_TEST_MODE_PRICES, PLAN_LIVE_MODE_PRICES,
@@ -34,6 +35,11 @@ export function parseFromPostRequest(req: NextApiRequest) {
   });
 
   return Joi.attempt(req.body, schema, { abortEarly: false });
+}
+
+export async function getSubscription(currentUser: any) {
+  const localRecord = await Subscription.getActiveByUser(currentUser);
+  return { type: 'subscription', result: localRecord }
 }
 
 export async function createCheckoutSession(currentUser: any, planType: string) {

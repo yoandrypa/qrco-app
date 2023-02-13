@@ -6,6 +6,7 @@ import {
   checkAuthorization,
   parseFromPostRequest,
   createCheckoutSession,
+  getSubscription,
 } from './helpers';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -16,7 +17,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const { currentUser } = req.session;
 
-    if (req.method === 'POST') {
+    if (req.method === 'GET') {
+      result = await getSubscription(currentUser);
+    } else if (req.method === 'POST') {
       const { planType } = parseFromPostRequest(req);
       result = await createCheckoutSession(currentUser, planType);
     } else {
