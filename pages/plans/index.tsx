@@ -14,7 +14,7 @@ import PlanCalculator from "../../components/plans/PlanCalculator";
 
 import { parseErrorMessage } from "../../libs/exceptions";
 
-import * as plans from "./plans";
+import * as plans from "../../consts/plans";
 
 // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
