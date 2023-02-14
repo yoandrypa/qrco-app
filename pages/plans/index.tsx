@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
 
 import Box from "@mui/material/Box";
@@ -14,34 +14,37 @@ import PlanCalculator from "../../components/plans/PlanCalculator";
 
 import { parseErrorMessage } from "../../libs/exceptions";
 
-import * as plans from "../../consts/plans";
+import plans from "../../consts/plans";
+import Subscription from "../../models/subscription";
 
 // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
 // @ts-ignore
 import { request } from "@ebanux/ebanux-utils/request";
 
-type Props = {
-  logged: boolean,
-  profile?: {
-    planType?: string,
-    customerId?: string,
-    subscriptionData?: {
-      //TODO
-    }
-  }
-}
-
-const Plans = (props: Props) => {
+const Plans = () => {
   const router = useRouter();
-  const user = session.currentAccount;
-  const [error, setError] = useState<string | null>(null);
-
   // @ts-ignore
-  const { setLoading } = React.useContext(Context);
+  const { subscription, setSubscription, setLoading } = useContext(Context);
+  const { currentAccount: user, isAuthenticated } = session;
+  const [error, setError] = useState<string | null>(null);
+  const [activePlan, setActivePlan] = useState<string | null>('free');
 
-  const handleClick = async (plan: string) => {
-    if (!session.isAuthenticated) return router.push("/plans/buy/" + plan);
+  useEffect(() => {
+    if (isAuthenticated) {
+      setLoading(true);
+
+      Subscription.getActiveByUser(user.cognito_user_id).then((subscription: any) => {
+        setSubscription(subscription);
+        setActivePlan(subscription?.metadata?.plan_type);
+      }).finally(() => {
+        setLoading(false);
+      });
+    }
+  }, [subscription]);
+
+  const handleClick = async (planType: string) => {
+    if (!session.isAuthenticated) return router.push("/plans/buy/" + planType);
 
     try {
       setLoading(true);
@@ -49,15 +52,13 @@ const Plans = (props: Props) => {
       const options = {
         url: 'subscriptions',
         method: "POST",
-        data: {
-          planType: plan,
-        },
+        data: { planType },
       };
 
-      const response = await request(options);
-      console.log(response);
-      window.open(response.result.url, '_blank')
-      // window.location.href = response.result.url;
+      // Send request to create and get checkout-session url
+      const { result: { url: checkoutSessionUrl } } = await request(options);
+
+      window.location.href = checkoutSessionUrl;
     } catch (ex) {
       setError(parseErrorMessage(ex));
     } finally {
@@ -85,10 +86,11 @@ const Plans = (props: Props) => {
       </Grid>
       <Grid container marginTop={3} marginBottom={3} alignContent="center" display="flex" spacing={1}
             justifyContent={"center"}>
-        <PlanCard data={plans.free} isCurrentPlan={false} clickAction={handleClick} />
-        <PlanCard data={plans.basic} isCurrentPlan={false} clickAction={handleClick} />
-        <PlanCard data={plans.business} isCurrentPlan={false} clickAction={handleClick} />
-        <PlanCard data={plans.premium} isCurrentPlan={false} clickAction={handleClick} />
+        {
+          Object.entries<any>(plans).map(([planType, data]) => (
+            <PlanCard data={data} key={planType} isCurrentPlan={activePlan === planType} clickAction={handleClick} />
+          ))
+        }
       </Grid>
     </>
   );

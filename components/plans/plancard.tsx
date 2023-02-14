@@ -25,9 +25,12 @@ type PlanCardProps = {
 const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
   const [innerLoading, setInnerLoading] = useState(false)
 
+  const elevation = isCurrentPlan ? 5 : 2;
+  const bgColor = isCurrentPlan ? '#efffef' : '#ffffff';
+
   return (
     <Grid item xs={12} sm={6} md={3} lg={3}>
-      <Paper sx={{ borderRadius: 2.5, maxWidth: 340, height: '100%' }}>
+      <Paper sx={{ borderRadius: 2.5, maxWidth: 340, height: '100%', backgroundColor: bgColor }} elevation={elevation}>
         <Typography variant='h5' align='center' sx={{ marginBottom: 2, paddingTop: 3 }}>
           {data.title}
         </Typography>
@@ -65,21 +68,21 @@ const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
             {isCurrentPlan ? 'Review' : data.buttonText || 'Buy now'}
           </LoadingButton>
         </Grid>
-        {data.features?.map((feature, index) => {
-
-          return (
-            <Grid key={index} container sx={{ marginLeft: 1, paddingBottom: 2, marginBottom: 2 }}>
-              <Grid item key={index} xs={2} sx={{ display: 'flex', justifyContent: 'right', paddingRight: 1 }}>
-                <Done color='success' />
+        {
+          data.features?.map((feature, index) => (
+              <Grid key={index} container sx={{ marginLeft: 1, paddingBottom: 1, marginBottom: 1.5 }}>
+                <Grid item key={index} xs={2} sx={{ display: 'flex', justifyContent: 'right', paddingRight: 1 }}>
+                  <Done color='success' />
+                </Grid>
+                <Grid item xs={10}>
+                  <Typography sx={{ paddingRight: 1 }}>
+                    {feature}
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid item xs={10}>
-                <Typography sx={{ paddingRight: 1 }}>
-                  {feature}
-                </Typography>
-              </Grid>
-            </Grid>
+            )
           )
-        })}
+        }
       </Paper>
     </Grid>
   )

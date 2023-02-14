@@ -17,7 +17,6 @@ export const free = {
     "Dynamic QR codes content edition",
     "Microsites appearance customization and edition",
   ],
-
 };
 
 export const basic = {
@@ -39,7 +38,6 @@ export const basic = {
     "Dynamic QR codes content edition",
     "Microsites appearance customization and edition",
   ],
-
 };
 export const basicAnnual = {
   title: "Basic",
@@ -60,7 +58,6 @@ export const basicAnnual = {
     "Dynamic QR codes content edition",
     "Microsites appearance customization and edition",
   ],
-
 };
 
 export const business = {
@@ -101,9 +98,7 @@ export const businessAnnual = {
     "QR codes design customization and edition",
     "Dynamic QR codes content edition",
     "Microsites appearance customization and edition",
-
   ],
-
 };
 
 export const premium = {
@@ -146,3 +141,5 @@ export const premiumAnnual = {
     "Microsites appearance customization and edition",
   ],
 };
+
+export default { free, basic, business, premium };
