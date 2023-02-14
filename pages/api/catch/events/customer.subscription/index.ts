@@ -1,9 +1,10 @@
 import Stripe from "stripe";
 import Subscription from "../../../../../models/subscription";
+import { fixNullAttrs } from '../helpers';
 
 export const process = async (event: Stripe.Event) => {
-  const capturedRecord: any = event.data.object;
-  const { id } = capturedRecord;
+  const { id, items: { data: items }, ...others } = event.data.object as any;
+  const data = fixNullAttrs({ items, ...others });
 
-  Subscription.update({ id }, { capturedRecord });
+  await Subscription.update({ id }, data);
 };

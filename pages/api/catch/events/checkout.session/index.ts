@@ -10,7 +10,7 @@ export const process = async (event: Stripe.Event) => {
   if (status === 'complete') {
     const localUser = userId ? await Users.get(userId) : null;
 
-    if (localUser || !planType) {
+    if (!(localUser && planType)) {
       const message = `Cannot identify owner user or plan type of checkout-session instance with ID ${id}`;
       console.warn(message);
       return { success: false, message };
