@@ -92,7 +92,11 @@ export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'y
 export type SocialNetworksType = { network: SocialsType, value?: string };
 
 export type Type = {
+  quantity?: number;
+  sku?: string;
+  avoidButtons?: boolean;
   hideHeadLine?: boolean;
+  includeExtraInfo?: boolean;
   prevNetworks?: string[];
   shortDateFormat?: boolean;
   socialsOnlyIcons?: boolean;

@@ -39,7 +39,7 @@ interface MultipleFieldDataProps {
 //       {
 //         "label": "label",
 //         "value": "value"
-//       } 
+//       }
 //     ]
 //   }
 export default function MultipleField({ item }: MultipleFieldDataProps) {
@@ -276,7 +276,7 @@ export default function MultipleField({ item }: MultipleFieldDataProps) {
                             <TableCell
                               sx={{ p: 0, borderBottom: 'none', width: '5%' }}
                               align="right">
-                              <Tooltip title={'Add a item'}>
+                              <Tooltip title={'Add an item'}>
                                 <IconButton
                                   onClick={() => {
                                     add(index);
@@ -288,7 +288,7 @@ export default function MultipleField({ item }: MultipleFieldDataProps) {
                             <TableCell
                               sx={{ p: 0, borderBottom: 'none', width: '5%' }}
                               align="right">
-                              <Tooltip title={'Remove a item'}>
+                              <Tooltip title={'Remove an item'}>
                                 <IconButton onClick={() => remove(index)}>
                                   <Delete color="error" />
                                 </IconButton>

@@ -26,7 +26,7 @@ const buttonStyles = (edit: boolean) => {
 
 const DragPaper = ({children, avoidIcon, editFunc, removeFunc, ...otherProps}: DragPaper) => (
   <Paper {...otherProps}>
-    {!avoidIcon ? (<Tooltip title="Drag knob">
+    {!avoidIcon ? (<Tooltip title="Dragging knob">
       <IconButton size="small" sx={{
         mt: '-42px', ml: '5px', background: blueGrey[50], '&:hover': {background: blueGrey[100]}
       }}>
@@ -34,7 +34,7 @@ const DragPaper = ({children, avoidIcon, editFunc, removeFunc, ...otherProps}: D
       </IconButton>
     </Tooltip>) : <Box sx={{height: !removeFunc ? '25px' : 0}}/>}
     {editFunc !== undefined && (
-      <Tooltip title="Edit section name">
+      <Tooltip title="Edit section headline">
         <IconButton size="small" onClick={editFunc} sx={buttonStyles(true)}>
           <EditIcon sx={{color: '#fff'}} fontSize="small"/>
         </IconButton>

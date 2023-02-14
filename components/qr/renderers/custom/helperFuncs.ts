@@ -2,28 +2,42 @@ import {CustomType, DataType, LinkType, Type} from "../../types/types";
 import {EMAIL, PHONE, ZIP} from "../../constants";
 import {isValidUrl} from "../../../../utils";
 import socialsAreValid from "../validator";
-import {getUuid} from "../../../../helpers/qr/helpers";
 
 export const components = [
   {type: 'address', name: 'Address'}, {type: 'company', name: 'Company'},
-  {type: 'date', name: 'Date'}, {type: 'email', name: 'Email and web'}, {type: 'easiness', name: 'Easiness'},
+  {type: 'date', name: 'Date'}, {type: 'justEmail', name: 'Email address'},
+  {type: 'email', name: 'Email and web'}, {type: 'easiness', name: 'Easiness'},
   {type: 'links', name: 'Links'}, {type: 'organization', name: 'Organization'},
   {type: 'phones', name: 'Phones and cells'}, {type: 'gallery', name: 'Photos'},
   {type: 'presentation', name: 'Presentation'}, {type: 'opening', name: 'Opening time'},
   {type: 'socials', name: 'Social networks'}, {type: 'title', name: 'Title and description'},
   {type: 'action', name: 'Action button'}, {type: 'single', name: 'Single text'},
-  {type: 'pdf', name: 'PDF file'}, {type: 'audio', name: 'Audio files'}, {type: 'video', name: 'Video files'}, {type: 'keyvalue', name: 'Details'},
-  {type: 'couponInfo', name: 'Promotion info', notInMenu: true}, {type: 'couponData', name: 'Coupon data', notInMenu: true},
-  {type: 'petId', name: 'Pet presentation', notInMenu: true}
+  {type: 'pdf', name: 'PDF file'}, {type: 'audio', name: 'Audio files'}, {type: 'video', name: 'Video files'},
+  {type: 'keyvalue', name: 'Details'}, {type: 'couponInfo', name: 'Promotion info', notInMenu: true},
+  {type: 'couponData', name: 'Coupon data', notInMenu: true}, {type: 'petId', name: 'Pet presentation', notInMenu: true},
+  {type: 'sku', name: 'Product', notInMenu: true}, {type: 'petId', name: 'Pet presentation', notInMenu: true}
 ];
 
 export const getName = (index: number) => {
   return components[index].name;
 }
 
-export const getNameStr = (type: string): string => {
+const lookFor = (type: string): string => {
   const index = components.findIndex(x => x.type === type);
   return getName(index);
+}
+
+export const getNameStr = (type: string, selected: string): string => {
+  if (['inventory'].includes(selected)) {
+    switch (type) {
+      case 'title': { return 'Product information'; }
+      case 'gallery': { return 'Images'; }
+      case 'sku': { return 'Product SKU and quantity'; }
+      case 'keyvalue': { return 'Location'; }
+    }
+    return lookFor(type);
+  }
+  return lookFor(type);
 }
 
 export interface CustomProps {
@@ -79,6 +93,10 @@ export const validator = (dataToCheck: DataType): boolean => {
       errors = true;
       return false;
     }
+    if (component === 'justEmail' && data.email?.trim().length && !EMAIL.test(data.email)) {
+      errors = true;
+      return false;
+    }
     if (component === 'email' && (data.email?.trim().length && !EMAIL.test(data.email)) ||
       (data.web?.trim().length && !isValidUrl(data.web))) {
       errors = true;
@@ -94,7 +112,11 @@ export const validator = (dataToCheck: DataType): boolean => {
       errors = true;
       return false;
     }
-    if (component === 'presentation' && !data.firstName?.trim().length) {
+    if (component === 'presentation' && !data.firstName?.trim().length && (data.includeExtraInfo && (
+      (data.email?.trim() && !EMAIL.test(data.email)) || (data.phone?.trim().length && !PHONE.test(data.phone)) ||
+      (data.cell?.trim().length && !PHONE.test(data.cell)) || (data.fax?.trim().length && !PHONE.test(data.fax)) ||
+      (data.zip?.trim().length && !ZIP.test(data.zip))
+    ))) {
       errors = true;
       return false;
     }
