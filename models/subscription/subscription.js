@@ -155,7 +155,7 @@ const schema = new Schema(
       type: Object,
       schema: PaymentSettingsSchema,
     },
-    cognito_user_idcognito_user_id: {
+    cognito_user_id: {
       type: String,
       required: true,
       index: true,
