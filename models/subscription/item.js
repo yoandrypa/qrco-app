@@ -24,7 +24,8 @@ const schema = new Schema(
       type: Number,
     },
     tax_rates: {
-      type: [IdentifierSchema],
+      type: Array,
+      schema: [IdentifierSchema],
       default: [],
     },
     metadata: {
@@ -34,7 +35,7 @@ const schema = new Schema(
   {
     saveUnknown: [
       'metadata.**'
-    ]
+    ],
   },
 );
 

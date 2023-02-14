@@ -11,7 +11,8 @@ const schema = new Schema(
       type: Number,
     },
     subscription_items: {
-      type: [IdentifierSchema],
+      type: Array,
+      schema: [IdentifierSchema],
       default: [],
     },
     trial_end: {

@@ -139,11 +139,13 @@ const schema = new Schema(
       type: Object,
     },
     default_tax_rates: {
-      type: [IdentifierSchema],
+      type: Array,
+      schema: [IdentifierSchema],
       default: [],
     },
     items: {
-      type: [ItemSchema],
+      type: Array,
+      schema: [ItemSchema],
     },
     plan: {
       type: Object,
@@ -163,7 +165,7 @@ const schema = new Schema(
     timestamps: true,
     saveUnknown: [
       'metadata.**'
-    ]
+    ],
   },
 );
 
