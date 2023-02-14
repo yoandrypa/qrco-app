@@ -24,14 +24,12 @@ const WifiData = dynamic(() => import('./renderers/WifiData'));
 const EmailData = dynamic(() => import('./renderers/EmailData'));
 const SMSData = dynamic(() => import('./renderers/SMSData'));
 const TwitterData = dynamic(() => import('./renderers/TwitterData'));
-const PetIdData = dynamic(() => import('./renderers/PetIdData'));
 const CryptoData = dynamic(() => import('./renderers/CryptoData'));
 const SendMeMoneyData = dynamic(() => import('./renderers/SendMeMoneyData'));
 const FundMe = dynamic(() => import('./renderers/FundMeData'));
 const PleaseWait = dynamic(() => import('../PleaseWait'));
 const RenderNoUserWarning = dynamic(() => import('./helperComponents/smallpieces/RenderNoUserWarning'));
 const LinkedLabelData = dynamic(() => import('./renderers/LinkedLabelData'));
-const FindMeData = dynamic(() => import ('./renderers/FindMeData'));
 const InventoryData = dynamic(() => import('./renderers/InventoryData'));
 
 type QrContentHandlerProps = {
@@ -46,8 +44,8 @@ const QrContentHandler = () => { // @ts-ignore
   const { data, setData, selected, setIsWrong, userInfo }: QrContentHandlerProps = useContext(Context);
 
   const handleValues = (item: string, index?: number) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
-
-    const value = typeof payload === 'string' || typeof payload === 'boolean' ? payload : payload.target.value;
+    const value = typeof payload === 'string' || typeof payload === 'boolean' ? payload :
+      (item === 'includeExtraInfo' ? payload.target.checked : payload.target.value);
     setData((prev: DataType) => {
       const newData = {...prev};
       if (index !== undefined && index !== -1) { // @ts-ignore
@@ -68,8 +66,12 @@ const QrContentHandler = () => { // @ts-ignore
             delete elementData.easiness[payload];
             if (!Object.keys(elementData.easiness).length) { delete elementData.easiness; }
           }
-        } else if ((typeof value === "string" && value.length) || payload) { // @ts-ignore
-          elementData[item] = value; // @ts-ignore
+        } else if ((typeof value === "string" && value.length) || payload) {
+          if (item === 'includeExtraInfo' && !value && elementData.includeExtraInfo !== undefined) {
+            delete elementData.includeExtraInfo;
+          } else { // @ts-ignore
+            elementData[item] = value;
+          } // @ts-ignore
         } else if (elementData[item]) { // @ts-ignore
           delete elementData[item];
         }
@@ -178,19 +180,20 @@ const QrContentHandler = () => { // @ts-ignore
         return <FundMe data={data} setData={setData} handleValues={handleValues} />
       }
       case 'petId': {
-        // return <PetIdData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
-        return <Custom
-          data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} tip="Your pet information."
-          predefined={['petId', 'title', 'presentation', 'phones', 'address', 'keyvalue', 'links', 'socials']} selected={selected}/>;
+        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} tip="Your pet information."
+          predefined={['petId', 'presentation', 'phones', 'address', 'keyvalue', 'links', 'socials']} selected={selected}/>;
       }
       case 'linkedLabel': {
         return <LinkedLabelData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
       }
       case 'findMe':{
-        return <FindMeData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
+        return <Custom data={data} handleValues={handleValues} setIsWrong={setIsWrong} setData={setData} selected={selected}
+          tip="Information to make easy to find you" predefined={['presentation', 'keyvalue', 'links', 'socials']}/>;
       }
       case 'inventory': {
-        return <InventoryData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
+        // return <InventoryData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
+        return <Custom data={data} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected} setData={setData}
+           tip="Inventory tracking information" predefined={['title', 'gallery', 'sku', 'keyvalue']}/>;
       }
       default: {
         return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected}

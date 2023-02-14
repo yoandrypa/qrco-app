@@ -79,7 +79,7 @@ export default function RenderAssetsData({type, totalFiles, data, setData, index
 
   let title = "Drag 'n' drop some files here, or click to select files.";
   if (totalFiles > 1) {
-    title += ` Selected ${data?.files?.length || 0} of ${totalFiles} allowed`;
+    title += ` Selected ${data?.files?.length || 0} of ${totalFiles} files.`;
   }
 
   useEffect(() => {

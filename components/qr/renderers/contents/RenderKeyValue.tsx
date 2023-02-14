@@ -125,11 +125,11 @@ export default function RenderKeyValue({data, setData, topics, index}: KeyValueP
                             </TableCell>
                             <TableCell sx={{p: 0, borderBottom: 'none'}} align="right">
                               {idx + 1 === (data?.keyValues?.length || 0) ? (
-                                <Tooltip title={'Add a link'}>
+                                <Tooltip title={'Add item'}>
                                   <IconButton onClick={add}><AddBoxIcon color="primary"/></IconButton>
                                 </Tooltip>
                               ) : (
-                                <Tooltip title={'Remove link'}>
+                                <Tooltip title={'Remove item'}>
                                   <IconButton onClick={remove(idx)}><DeleteIcon color="error"/></IconButton>
                                 </Tooltip>
                               )}

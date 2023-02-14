@@ -73,14 +73,22 @@ export default function RenderLinks({data, setData, topics, index}: RenderLinksP
     });
   }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleOnly = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+  const handleOnly = useCallback((item: string) => (e: ChangeEvent<HTMLInputElement>) => {
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
       if (!newData?.custom?.[index]?.data) { newData.custom[index].data = {}; }
-      if (e.target.checked) { // @ts-ignore
-        newData.custom[index].data.linksOnlyLinks = true;
-      } else { // @ts-ignore
-        delete newData.custom[index].data.linksOnlyLinks;
+      if (item === 'avoidButtons') {
+        if (!e.target.checked) { // @ts-ignore
+          newData.custom[index].data.avoidButtons = true;
+        } else { // @ts-ignore
+          delete newData.custom[index].data.avoidButtons;
+        }
+      } else {
+        if (e.target.checked) { // @ts-ignore
+          newData.custom[index].data.linksOnlyLinks = true;
+        } else { // @ts-ignore
+          delete newData.custom[index].data.linksOnlyLinks;
+        }
       }
       return newData;
     });
@@ -163,10 +171,16 @@ export default function RenderLinks({data, setData, topics, index}: RenderLinksP
           )}
         </Droppable>
       </DragDropContext>
-      <FormControl sx={{mt: '-5px'}}>
-        <FormControlLabel control={<Switch onChange={handleOnly} checked={data?.linksOnlyLinks || false} />}
+      <Box sx={{width: '100%', display: 'flex', mt: '-5px'}}>
+      <FormControl disabled={data?.linksOnlyLinks}>
+        <FormControlLabel control={<Switch onChange={handleOnly('avoidButtons')} checked={!Boolean(data?.avoidButtons)} />}
+          label="Links as buttons" />
+      </FormControl>
+      <FormControl sx={{mr: '5px'}}>
+        <FormControlLabel control={<Switch onChange={handleOnly('linksOnlyLinks')} checked={data?.linksOnlyLinks || false} />}
           label="Only links" />
       </FormControl>
+      </Box>
     </Box>
   );
 }
