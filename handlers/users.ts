@@ -33,13 +33,14 @@ export const findByCustomerId = async (customerId: string): Promise<any> => {
   }
 };
 
-export const deleteUserSubscription = async (customerId: Match<UserType>) => {
-  try {
-    return await User.deleteSubscription({ customerId: customerId });
-  } catch (e: any) {
-    throw new CustomError(e.message, 500, e);
-  }
-};
+// TODO: Deprecate
+// export const deleteUserSubscription = async (customerId: Match<UserType>) => {
+//   try {
+//     return await User.deleteSubscription({ customerId: customerId });
+//   } catch (e: any) {
+//     throw new CustomError(e.message, 500, e);
+//   }
+// };
 
 export const getOrCreate = async (id: string) => {
   let record;

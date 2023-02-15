@@ -1,4 +1,4 @@
-import { cloneElement, ReactElement, ReactNode, useCallback, useEffect, useState } from "react";
+import { cloneElement, ReactElement, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -22,6 +22,7 @@ import { list } from '../handlers/qrs'
 
 import RenderSupport from "./wrapper/RenderSupport";
 import * as Users from "../handlers/users";
+import Context from "./context/Context";
 
 const CountDown = dynamic(() => import("./countdown/CountDown"));
 const RenderButton = dynamic(() => import("./wrapper/RenderButton"));
@@ -63,9 +64,12 @@ export default function AppWrapper(props: AppWrapperProps) {
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
   const [freeLimitReached, setFreeLimitReached] = useState<boolean>(false)
 
+  // @ts-ignore
+  const { subscription } = useContext(Context);
+
   const beforeLogout = () => {
     if (handleLogout) {
-      setIsFreeMode && setIsFreeMode(false);
+      setIsFreeMode?.call(null, false);
       setStartTrialDate(null);
       handleLoading(true);
       handleLogout();
@@ -107,24 +111,25 @@ export default function AppWrapper(props: AppWrapperProps) {
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (userInfo) {
-      Users.get(userInfo.cognito_user_id).then(profile => {
-        //@ts-ignore
-        if (profile.subscriptionData?.status !== "active") {
-          setIsFreeMode?.call(null, true);
-          setStartTrialDate(profile.createdAt);
-          //@ts-ignore
-          list({ userId: userInfo.cognito_user_id }).then(qrs => {
-            // @ts-ignore
-            if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) {
-              setFreeLimitReached(true);
-            }
-          });
-        } else {
-          setIsFreeMode?.call(null, false);
-          setStartTrialDate(null);
-        }
-      }).catch(console.error);
+    const { currentAccount: currentUser, isAuthenticated } = session;
+
+    if (isAuthenticated) {
+      //@ts-ignore
+      if (subscription?.status !== "active") {
+        setIsFreeMode?.call(null, true);
+        setStartTrialDate(currentUser.localRecord.createdAt);
+        // TODO: Review setFreeLimitReached
+        // @ts-ignore
+        // list({ userId: userInfo.cognito_user_id }).then(qrs => {
+        //   // @ts-ignore
+        //   if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) {
+        //     setFreeLimitReached(true);
+        //   }
+        // });
+      } else {
+        setIsFreeMode?.call(null, false);
+        setStartTrialDate(null);
+      }
     }
   }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 

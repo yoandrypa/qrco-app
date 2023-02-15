@@ -310,19 +310,20 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
         ...qrData.shortLinkId
       };
 
-      //This will execute when a new Dynamic QR is created
-      if (userInfo) {
-        const user = await getUser(userInfo.cognito_user_id);
-        if (user.subscriptionData?.status == 'active') {
-          try {
-            const currentUsage = !user.planUsage ? 0 : user.planUsage;
-            console.log('add 1 to current usage ', currentUsage);
-            const result = await recordPlanUsage(1, user.subscriptionData.id, userInfo.cognito_user_id);
-          } catch (error) {
-            console.error('unable to report usage', error)
-          }
-        }
-      }
+      // TODO: Review apply usage after create QR
+      // This will execute when a new Dynamic QR is created
+      // if (userInfo) {
+      //   const user = await getUser(userInfo.cognito_user_id);
+      //   if (user.subscriptionData?.status == 'active') {
+      //     try {
+      //       const currentUsage = !user.planUsage ? 0 : user.planUsage;
+      //       console.log('add 1 to current usage ', currentUsage);
+      //       const result = await recordPlanUsage(1, user.subscriptionData.id, userInfo.cognito_user_id);
+      //     } catch (error) {
+      //       console.error('unable to report usage', error)
+      //     }
+      //   }
+      // }
     }
     qrDesign.id = qrDesignId;
   }

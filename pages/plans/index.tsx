@@ -15,7 +15,6 @@ import PlanCalculator from "../../components/plans/PlanCalculator";
 import { parseErrorMessage } from "../../libs/exceptions";
 
 import plans from "../../consts/plans";
-import Subscription from "../../models/subscription";
 
 // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
@@ -25,23 +24,9 @@ import { request } from "@ebanux/ebanux-utils/request";
 const Plans = () => {
   const router = useRouter();
   // @ts-ignore
-  const { subscription, setSubscription, setLoading } = useContext(Context);
-  const { currentAccount: user, isAuthenticated } = session;
+  const { subscription, setLoading } = useContext(Context);
   const [error, setError] = useState<string | null>(null);
-  const [activePlan, setActivePlan] = useState(subscription?.metadata?.plan_type || 'free');
-
-  useEffect(() => {
-    if (isAuthenticated && !subscription) {
-      setLoading(true);
-
-      Subscription.getActiveByUser(user.cognito_user_id).then((subscription: any) => {
-        setSubscription(subscription);
-        setActivePlan(subscription?.metadata?.plan_type);
-      }).finally(() => {
-        setLoading(false);
-      });
-    }
-  }, []);
+  const activePlan = subscription?.metadata?.plan_type || 'free';
 
   const handleClick = async (planType: string) => {
     if (!session.isAuthenticated) return router.push("/plans/buy/" + planType);

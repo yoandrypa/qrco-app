@@ -22,6 +22,7 @@ import session from "@ebanux/ebanux-utils/sessionStorage";
 import { logout } from '@ebanux/ebanux-utils/auth';
 import PleaseWait from "../PleaseWait";
 import Claimer from "../claimer/Claimer";
+import Subscription from "../../models/subscription";
 
 const Loading = dynamic(() => import("../Loading"));
 const Generator = dynamic(() => import("../qr/Generator"));
@@ -176,6 +177,20 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       setVerifying(false);
     }
     doneInitialRender.current = true;
+  }, []);
+
+  useEffect(() => {
+    const { currentAccount: currentUser, isAuthenticated } = session;
+
+    if (isAuthenticated && !subscription) {
+      setLoading(true);
+
+      Subscription.getActiveByUser(currentUser.cognito_user_id).then((subscription: any) => {
+        setSubscription(subscription);
+      }).finally(() => {
+        setLoading(false);
+      });
+    }
   }, []);
 
   if (isEmbedded) {
