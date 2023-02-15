@@ -59,18 +59,14 @@ const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
         <Typography color='gray' textAlign={'center'}> {data.legend}</Typography>
         <Grid sx={{ justifyContent: 'center', alignContent: 'center', display: 'flex', margin: 2 }}>
           <LoadingButton loading={innerLoading} disabled={data.plan_type === 'free'}
-                         onClick={() => {
-                           setInnerLoading(true)
-                           clickAction(data.plan_type)
-                           setInnerLoading(false)
-                         }}
+                         onClick={() => clickAction(data.plan_type)}
                          variant={data.highlighted ? 'contained' : 'outlined'}>
             {isCurrentPlan ? 'Review' : data.buttonText || 'Buy now'}
           </LoadingButton>
         </Grid>
         {
           data.features?.map((feature, index) => (
-              <Grid key={index} container sx={{ marginLeft: 1, paddingBottom: 1, marginBottom: 1.5 }}>
+              <Grid key={index} container sx={{ minHeight: 60 }}>
                 <Grid item key={index} xs={2} sx={{ display: 'flex', justifyContent: 'right', paddingRight: 1 }}>
                   <Done color='success' />
                 </Grid>

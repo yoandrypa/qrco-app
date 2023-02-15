@@ -217,7 +217,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       cornersData, setCornersData, dotsData, setDotsData, frame, setFrame, background, setBackground,
       options, setOptions, selected, setSelected, data, setData, isTrialMode, userInfo,
       clearData, loading, setLoading, setRedirecting, isWrong, setIsWrong, doNotClear,
-      setSubscription,
+      subscription, setSubscription,
     }}>
       {renderContent()}
     </Context.Provider>

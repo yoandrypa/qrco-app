@@ -41,10 +41,23 @@ const Plans = () => {
         setLoading(false);
       });
     }
-  }, [subscription]);
+  }, [isAuthenticated]);
 
   const handleClick = async (planType: string) => {
     if (!session.isAuthenticated) return router.push("/plans/buy/" + planType);
+
+    // TODO: Add confirmation dialog before any subscription action.
+
+    if (subscription) {
+      if (subscription.metadata.plan_type === planType) {
+        // TODO: The functionality for reviewing subscriptions is not ready yet.
+        setError('The functionality for reviewing subscriptions is not ready yet.');
+      } else {
+        // TODO: You are already subscribed to a plan, the functionality for changing subscriptions is not ready yet.
+        setError('TODO: You are already subscribed to a plan, the functionality for changing subscriptions is not ready yet.');
+      }
+      return;
+    }
 
     try {
       setLoading(true);
