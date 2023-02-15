@@ -23,8 +23,6 @@ type PlanCardProps = {
 }
 
 const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
-  const [innerLoading, setInnerLoading] = useState(false)
-
   const elevation = isCurrentPlan ? 5 : 2;
   const bgColor = isCurrentPlan ? '#efffef' : '#ffffff';
 
@@ -58,7 +56,7 @@ const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
         </Grid>
         <Typography color='gray' textAlign={'center'}> {data.legend}</Typography>
         <Grid sx={{ justifyContent: 'center', alignContent: 'center', display: 'flex', margin: 2 }}>
-          <LoadingButton loading={innerLoading} disabled={data.plan_type === 'free'}
+          <LoadingButton disabled={data.plan_type === 'free'}
                          onClick={() => clickAction(data.plan_type)}
                          variant={data.highlighted ? 'contained' : 'outlined'}>
             {isCurrentPlan ? 'Review' : data.buttonText || 'Buy now'}

@@ -41,7 +41,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [selected, setSelected] = useState<string | null>(null);
 
   const [userInfo, setUserInfo] = useState(null);
-  const [subscription, setSubscription] = useState({ metadata: { plan_type: 'free' } });
+  const [subscription, setSubscription] = useState(null);
   const [verifying, setVerifying] = useState<boolean>(true);
   const [redirecting, setRedirecting] = useState<boolean>(false);
 

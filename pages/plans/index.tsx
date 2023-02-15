@@ -28,10 +28,10 @@ const Plans = () => {
   const { subscription, setSubscription, setLoading } = useContext(Context);
   const { currentAccount: user, isAuthenticated } = session;
   const [error, setError] = useState<string | null>(null);
-  const [activePlan, setActivePlan] = useState<string | null>('free');
+  const [activePlan, setActivePlan] = useState(subscription?.metadata?.plan_type || 'free');
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !subscription) {
       setLoading(true);
 
       Subscription.getActiveByUser(user.cognito_user_id).then((subscription: any) => {
@@ -41,7 +41,7 @@ const Plans = () => {
         setLoading(false);
       });
     }
-  }, [isAuthenticated]);
+  }, []);
 
   const handleClick = async (planType: string) => {
     if (!session.isAuthenticated) return router.push("/plans/buy/" + planType);
