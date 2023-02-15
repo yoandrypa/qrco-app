@@ -12,10 +12,11 @@ interface RenderTextFieldsProps {
   isError?: boolean;
   value: string;
   item?: string;
+  index?: number;
   options: string[];
 }
 
-const RenderProposalsTextFields = ({ value, handleValues, placeholder, label, item, required, isError, options }: RenderTextFieldsProps) => {
+const RenderProposalsTextFields = ({ value, handleValues, placeholder, label, item, required, isError, options, index }: RenderTextFieldsProps) => {
   const handleBefore = (newValue: string | null) => {
     const value = newValue || '';
     if (item !== undefined) {
@@ -61,7 +62,7 @@ const RenderProposalsTextFields = ({ value, handleValues, placeholder, label, it
 
 // @ts-ignore
 function notIf(current, next) {
-  return current.value === next.value && current.isError === next.isError;
+  return current.value === next.value && current.isError === next.isError && current.index === next.index;
 }
 
 export default memo(RenderProposalsTextFields, notIf);

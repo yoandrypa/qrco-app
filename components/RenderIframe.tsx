@@ -61,6 +61,28 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
             await getImageAsString(data.foregndImg) : await getImageAsString(mainImg);
         }
 
+        if (data.custom) {
+          for (let idx = 0, ll = data.custom.length; idx < ll; idx += 1) {
+            const section = data.custom[idx];
+            if (['pdf', 'gallery', 'audio', 'video'].includes(section.component) && section.data?.files) {
+              let files: string[] = []; // @ts-ignore
+              if (!data.isSample) {
+                for (let i = 0, l = section.data.files.length; i < l; i += 1) {
+                  const x = section.data.files[i] as File | string; // @ts-ignore
+                  if (typeof x === 'string' || x.Key !== undefined) { // @ts-ignore
+                    files.push(x);
+                  } else { // @ts-ignore
+                    files.push(await convertBase64(x));
+                  }
+                }
+              } else { // @ts-ignore
+                files = section.data.files;
+              } // @ts-ignore
+              previewData.custom[idx].data.files = files;
+            }
+          }
+        }
+
         // @ts-ignore
         if (data.files) {
           let files: string[] = []; // @ts-ignore
