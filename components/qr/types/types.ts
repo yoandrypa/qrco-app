@@ -92,6 +92,7 @@ export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'y
 export type SocialNetworksType = { network: SocialsType, value?: string };
 
 export type Type = {
+  tags?: string[];
   splitInTwoColumns?: boolean;
   quantity?: number;
   sku?: string;
@@ -186,7 +187,8 @@ export type Type = {
   petGender?: string;
 };
 
-export type CustomType = { component: string, name?: string, data?: Type; expand: string; };
+export type CustomType = {
+    element: {}; component: string, name?: string, data?: Type; expand: string; };
 
 export type DataType = {
   qrType?: string;

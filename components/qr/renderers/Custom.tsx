@@ -45,6 +45,7 @@ const RenderKeyValue = dynamic(() => import("./contents/RenderKeyValue"));
 const RenderEmail = dynamic(() => import("./contents/RenderEmail"));
 const RenderWeb = dynamic(() => import("./contents/RenderWeb"));
 const RenderSku = dynamic(() => import("./contents/RenderSku"));
+const RenderTags = dynamic(() => import("./contents/RenderTags"));
 
 export default function Custom({data, setData, handleValues, setIsWrong, predefined, tip, selected}: CustomProps) {
   const [showOptions, setShowOptions] = useState<HTMLElement | null>(null);
@@ -65,7 +66,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
     setData((prev: DataType) => {
       const newData = {...prev};
       if (!newData.custom) { newData.custom = []; } // @ts-ignore
-      const expand = getUuid();
+      const expand = getUuid(); // @ts-ignore
       newData.custom.push({component: item, expand});
       setExpander((prev: string[]) => {
         const newExpander = [...prev];
@@ -222,8 +223,8 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                               {component === components[11].type && <RenderOpeningTime data={x.data} setData={setData} index={index}/>}
                               {component === components[12].type && <RenderSocials data={x.data} setData={setData} index={index}/>}
                               {component === components[13].type && (
-                                <RenderTitleDesc handleValues={handleValues} title={x.data?.titleAbout} noHeader noPaper
-                                                 description={x.data?.descriptionAbout} sx={{mt: '5px'}} index={index}/>
+                                <RenderTitleDesc handleValues={handleValues} title={x.data?.titleAbout} noPaper sx={{mt: '5px'}}
+                                                 header="Fill at least one of these fields" description={x.data?.descriptionAbout} index={index}/>
                               )}
                               {component === components[14].type && (
                                 <RenderActionButton index={index} setData={setData} handleValues={handleValues} data={x.data} />
@@ -245,10 +246,11 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                               )}
                               {component === components[19].type && <RenderKeyValue index={index} setData={setData} data={x.data} topics="" />}
                               {component === components[20].type && <RenderWeb data={x.data} handleValues={handleValues} index={index} />}
-                              {component === components[21].type && <RenderCouponData index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[22].type && <RenderCouponInfo index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[23].type && <RenderPetDesc index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[24].type && <RenderSku index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[21].type && <RenderTags index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[22].type && <RenderCouponData index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[23].type && <RenderCouponInfo index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[24].type && <RenderPetDesc index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[25].type && <RenderSku index={index} handleValues={handleValues} data={x.data} />}
                             </>)}
                           </DragPaper>
                         </Box>

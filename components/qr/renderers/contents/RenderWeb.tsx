@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import {EMAIL} from "../../constants";
 import RenderTextFields from "../helpers/RenderTextFields";
 import {ChangeEvent} from "react";
 import {ContentProps} from "../custom/helperFuncs";

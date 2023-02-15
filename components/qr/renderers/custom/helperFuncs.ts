@@ -1,4 +1,4 @@
-import {CustomType, DataType, LinkType, Type} from "../../types/types";
+import {CustomType, DataType, KeyValues, LinkType, Type} from "../../types/types";
 import {EMAIL, PHONE, ZIP} from "../../constants";
 import {isValidUrl} from "../../../../utils";
 import socialsAreValid from "../validator";
@@ -14,7 +14,7 @@ export const components = [
   {type: 'action', name: 'Action button'}, {type: 'single', name: 'Single text'},
   {type: 'pdf', name: 'PDF file'}, {type: 'audio', name: 'Audio files'}, {type: 'video', name: 'Video files'},
   {type: 'keyvalue', name: 'Details'}, {type: 'web', name: 'Web'},
-  {type: 'couponInfo', name: 'Promotion info', notInMenu: true},
+  {type: 'tags', name: 'Tags'}, {type: 'couponInfo', name: 'Promotion info', notInMenu: true},
   {type: 'couponData', name: 'Coupon data', notInMenu: true},
   {type: 'petId', name: 'Pet presentation', notInMenu: true},
   {type: 'sku', name: 'Product', notInMenu: true}, {type: 'petId', name: 'Pet presentation', notInMenu: true}
@@ -75,8 +75,7 @@ export const validator = (dataToCheck: DataType, selected?: string): boolean => 
   let errors = false;
 
   dataToCheck.custom.every((custom: CustomType) => {
-    const {data} = custom;
-    if (!data || !socialsAreValid(data)) { return true; }
+    const data = custom.data || {};
 
     const {component} = custom;
     if (component === 'company' && (!data.company?.trim().length || (
@@ -89,20 +88,25 @@ export const validator = (dataToCheck: DataType, selected?: string): boolean => 
       errors = true;
       return false;
     }
-    if (component === 'address' && data.zip?.trim().length && !ZIP.test(data.zip)) {
+    if ((component === 'address' && data.zip?.trim().length && !ZIP.test(data.zip)) ||
+      (component === 'justEmail' && data.email?.trim().length && !EMAIL.test(data.email)) ||
+      (component === 'web' && data.web?.trim().length && !isValidUrl(data.web))) {
       errors = true;
       return false;
     }
-    if (component === 'justEmail' && data.email?.trim().length && !EMAIL.test(data.email)) {
+    if (component === 'tags' && !data.tags?.length) {
       errors = true;
       return false;
     }
-    if (component === 'email' && (data.email?.trim().length && !EMAIL.test(data.email)) ||
-      (data.web?.trim().length && !isValidUrl(data.web))) {
+    if (component === 'email' && (data.email?.trim().length && !EMAIL.test(data.email)) || (data.web?.trim().length && !isValidUrl(data.web))) {
       errors = true;
       return false;
     }
-    if (component === 'links' && data?.links?.some((x: LinkType) =>
+    if (component === 'keyvalue' && data.keyValues?.some((x: KeyValues) => (!x.key?.trim().length || !x.value.trim().length))) {
+      errors = true;
+      return false;
+    }
+    if (component === 'links' && data.links?.some((x: LinkType) =>
       ((!data.linksOnlyLinks && !(x.label || '').trim().length) || !x.link.trim().length || !isValidUrl(x.link)))) {
       errors = true;
       return false;
@@ -124,7 +128,9 @@ export const validator = (dataToCheck: DataType, selected?: string): boolean => 
         errors = true;
         return false;
     }
-    if (component === 'photos' && !data.files?.length) {
+    if ((['gallery', 'pdf', 'audio', 'video'].includes(component) && !data.files?.length) ||
+      (component === 'title' && !data.titleAbout?.trim().length && !data.descriptionAbout?.trim().length) ||
+      (component === 'socials' && !socialsAreValid(data))) {
       errors = true;
       return false;
     }
