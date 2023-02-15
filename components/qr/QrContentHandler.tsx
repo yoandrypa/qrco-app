@@ -51,11 +51,12 @@ const QrContentHandler = () => { // @ts-ignore
         const element = newData.custom[index];
         if (!element.data) { element.data = {}; }
         const elementData = element.data as Type;
-        if (item === 'hideHeadLine') {
-          if (element.data.hideHeadLine !== undefined && payload === false) {
-            delete element.data.hideHeadLine
-          } else {
-            element.data.hideHeadLine = true;
+        if (['hideHeadLine', 'centerHeadLine'].includes(item)) { // @ts-ignore
+          if (element.data[item] !== undefined && payload === false) { // @ts-ignore
+            delete element.data[item];
+          } else { // @ts-ignore
+            element.data[item] = true;
+            if (item === 'hideHeadLine' && element.data.centerHeadLine !== undefined) { delete element.data.centerHeadLine; }
           }
         } else if (item === 'easiness') {
           if (!elementData.easiness) { elementData.easiness = {}; } // @ts-ignore

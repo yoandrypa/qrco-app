@@ -97,6 +97,7 @@ export type Type = {
   sku?: string;
   avoidButtons?: boolean;
   hideHeadLine?: boolean;
+  centerHeadLine?: boolean;
   includeExtraInfo?: boolean;
   prevNetworks?: string[];
   shortDateFormat?: boolean;
