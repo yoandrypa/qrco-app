@@ -89,13 +89,13 @@ export default function RenderFontsHandler({data, handleValue, selected}: Render
             <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Sub titles'}</Typography>
             <Grid container spacing={2}>
               <Grid item xs={isWide ? 4 : 12}>
-                <RenderFontsSelector handleSelect={handleValue} property="subtitlesFont"value={data?.subtitlesFont || "none"} label="Font"/>
+                <RenderFontsSelector handleSelect={handleValue} property="subtitlesFont" value={data?.subtitlesFont || "none"} label="Font"/>
               </Grid>
               <Grid item xs={isWide ? 4 : isWideEnough ? 6 : 12}>
-                <RenderFontsSizeSelector handleSelect={handleValue} property="subtitlesFontSize"value={data?.subtitlesFontSize || "default"} label="Size"/>
+                <RenderFontsSizeSelector handleSelect={handleValue} property="subtitlesFontSize" value={data?.subtitlesFontSize || "default"} label="Size"/>
               </Grid>
               <Grid item xs={isWide ? 4 : isWideEnough ? 6 : 12}>
-                <RenderFontStyles value={data?.subtitlesFontStyle} property="subtitlesFontStyle"handleValue={handleValue}/>
+                <RenderFontStyles value={data?.subtitlesFontStyle} property="subtitlesFontStyle" handleValue={handleValue}/>
               </Grid>
             </Grid>
           </Paper>)}

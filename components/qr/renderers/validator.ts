@@ -1,7 +1,7 @@
 import {PHONE} from "../constants";
-import {DataType, SocialNetworksType} from "../types/types";
+import {DataType, Type, SocialNetworksType} from "../types/types";
 
-export default function socialsAreValid(data: DataType) {
+export default function socialsAreValid(data: DataType | Type) {
   let result = true;
   if (data?.socials?.length) {
     data.socials.every((x: SocialNetworksType) => {
