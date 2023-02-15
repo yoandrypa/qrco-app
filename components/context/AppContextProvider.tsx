@@ -191,7 +191,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       });
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isEmbedded) {
     return <Claimer code="" embedded />;
