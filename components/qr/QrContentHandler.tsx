@@ -29,7 +29,6 @@ const SendMeMoneyData = dynamic(() => import('./renderers/SendMeMoneyData'));
 const FundMe = dynamic(() => import('./renderers/FundMeData'));
 const PleaseWait = dynamic(() => import('../PleaseWait'));
 const RenderNoUserWarning = dynamic(() => import('./helperComponents/smallpieces/RenderNoUserWarning'));
-const LinkedLabelData = dynamic(() => import('./renderers/LinkedLabelData'));
 
 type QrContentHandlerProps = {
   data: DataType;
@@ -42,8 +41,8 @@ type QrContentHandlerProps = {
 const QrContentHandler = () => { // @ts-ignore
   const { data, setData, selected, setIsWrong, userInfo }: QrContentHandlerProps = useContext(Context);
 
-  const handleValues = (item: string, index?: number) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
-    const value = typeof payload === 'string' || typeof payload === 'boolean' ? payload :
+  const handleValues = (item: string, index?: number) => (payload: ChangeEvent<HTMLInputElement> | string | boolean | string[]) => {
+    const value = Array.isArray(payload) || typeof payload === 'string' || typeof payload === 'boolean' ? payload :
       (item === 'includeExtraInfo' ? payload.target.checked : payload.target.value);
     setData((prev: DataType) => {
       const newData = {...prev};
@@ -51,12 +50,22 @@ const QrContentHandler = () => { // @ts-ignore
         const element = newData.custom[index];
         if (!element.data) { element.data = {}; }
         const elementData = element.data as Type;
-        if (['hideHeadLine', 'centerHeadLine'].includes(item)) { // @ts-ignore
-          if (element.data[item] !== undefined && payload === false) { // @ts-ignore
-            delete element.data[item];
+        if (item === 'tags') {
+          if (Array.isArray(payload)) {
+            if (payload.length) {
+              elementData.tags = payload;
+            } else if (elementData.tags !== undefined) {
+              delete elementData.tags;
+            }
+          } else if (typeof payload === 'string') {
+            elementData.tags?.push(payload);
+          }
+        } else if (['hideHeadLine', 'centerHeadLine'].includes(item)) { // @ts-ignore
+          if (elementData[item] !== undefined && payload === false) { // @ts-ignore
+            delete elementData[item];
           } else { // @ts-ignore
             element.data[item] = true;
-            if (item === 'hideHeadLine' && element.data.centerHeadLine !== undefined) { delete element.data.centerHeadLine; }
+            if (item === 'hideHeadLine' && elementData.centerHeadLine !== undefined) { delete elementData.centerHeadLine; }
           }
         } else if (item === 'easiness') {
           if (!elementData.easiness) { elementData.easiness = {}; } // @ts-ignore
@@ -184,7 +193,8 @@ const QrContentHandler = () => { // @ts-ignore
           predefined={['petId', 'presentation', 'phones', 'address', 'keyvalue', 'links', 'socials']} selected={selected}/>;
       }
       case 'linkedLabel': {
-        return <LinkedLabelData data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
+        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} tip="Smart labels."
+          predefined={['title', 'tags', 'gallery']} selected={selected}/>;
       }
       case 'findMe':{
         return <Custom data={data} handleValues={handleValues} setIsWrong={setIsWrong} setData={setData} selected={selected}

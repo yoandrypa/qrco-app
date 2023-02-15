@@ -27,7 +27,7 @@ export default function RenderTitleDesc({
   const renderContent = () => (
     <Box>
       {!noHeader && <Typography sx={{fontSize: 'small', color: theme => theme.palette.text.disabled}}>
-        {header ? header : 'Optional'}
+        {header || 'Optional'}
       </Typography>}
       <RenderTextFields
         index={index}
