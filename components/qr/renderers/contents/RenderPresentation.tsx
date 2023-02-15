@@ -15,13 +15,15 @@ const RenderPhones = dynamic(() => import("./RenderPhones"));
 const RenderEmail = dynamic(() => import("./RenderEmail"));
 const RenderAddressData = dynamic(() => import("./RenderAddressData"));
 const Paper = dynamic(() => import("@mui/material/Paper"));
+const RenderWeb = dynamic(() => import("./RenderWeb"));
 
 interface PresentationProps extends ContentProps {
   message?: string;
   showExtra?: boolean;
+  isVCard?: boolean;
 }
 
-export default function RenderPresentation({data, handleValues, message, index, showExtra}: PresentationProps) {
+export default function RenderPresentation({data, handleValues, message, index, showExtra, isVCard}: PresentationProps) {
   const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
     handleValues(item, index)(payload);
   };
@@ -31,6 +33,21 @@ export default function RenderPresentation({data, handleValues, message, index, 
     return <RenderTextFields
       item={item} label={label} value={value} handleValues={beforeSend} required={item === 'firstName'} index={index}/>;
   };
+
+  const renderExtraInfo = () => (
+    <>
+      <RenderPhones index={index} handleValues={handleValues} data={data}/>
+      <Box sx={{mt: 1}}>
+        <RenderAddressData index={index} handleValues={handleValues} data={data}/>
+      </Box>
+      <Box sx={{display: 'flex'}}>
+        <RenderEmail index={index} handleValues={handleValues} data={data}/>
+        <Box sx={{ml: 1, width: '100%'}}>
+          <RenderWeb index={index} handleValues={handleValues} data={data}/>
+        </Box>
+      </Box>
+    </>
+  );
 
   return (
     <Box sx={{width: '100%'}}>
@@ -45,19 +62,20 @@ export default function RenderPresentation({data, handleValues, message, index, 
         <Grid item sm={5} xs={12} style={{paddingTop: 0}}>
           {renderItem('lastName', 'Last name')}
         </Grid>
+        {isVCard &&
+          <Grid item xs={12}>
+            {renderExtraInfo()}
+          </Grid>
+        }
         {data?.includeExtraInfo && (
           <Grid item xs={12}>
             <Paper sx={{p: 2}} elevation={3}>
-              <RenderPhones index={index} handleValues={handleValues} data={data}/>
-              <RenderEmail index={index} handleValues={handleValues} data={data}/>
-              <Box sx={{mt: 1}}>
-                <RenderAddressData index={index} handleValues={handleValues} data={data}/>
-              </Box>
+              {renderExtraInfo()}
             </Paper>
           </Grid>
         )}
       </Grid>
-      {showExtra && (
+      {showExtra && !isVCard && (
         <Tooltip title="Includes phone numbers, email and address" disableHoverListener={Boolean(data?.includeExtraInfo)}>
           <FormControlLabel label="Include extra information" control={
             <Switch checked={Boolean(data?.includeExtraInfo)} inputProps={{'aria-label': 'includeExtraInfo'}}
