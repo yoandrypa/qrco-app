@@ -16,6 +16,9 @@ import IconButton from "@mui/material/IconButton";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {ChangeEvent, useCallback, useEffect} from "react";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+import FormControl from "@mui/material/FormControl";
 
 interface KeyValueProps {
   index: number;
@@ -67,6 +70,18 @@ export default function RenderKeyValue({data, setData, topics, index}: KeyValueP
       return newData;
     });
   }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSplit = useCallback(() => {
+    setData((prev: DataType) => {
+      const newData = {...prev}; // @ts-ignore
+      if (newData.custom[index].data.splitInTwoColumns === undefined) {  // @ts-ignore
+        newData.custom[index].data.splitInTwoColumns = true;
+      } else { // @ts-ignore
+        delete newData.custom[index].data.splitInTwoColumns;
+      }
+      return newData;
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setData((prev: DataType) => {
@@ -145,6 +160,12 @@ export default function RenderKeyValue({data, setData, topics, index}: KeyValueP
           )}
         </Droppable>
       </DragDropContext>
+      {(data?.keyValues || []).length > 1 && (
+        <FormControl>
+          <FormControlLabel control={<Switch onChange={handleSplit} checked={Boolean(data?.splitInTwoColumns)} />}
+                            label="Split in two columns" />
+        </FormControl>
+      )}
     </Box>
   );
 }

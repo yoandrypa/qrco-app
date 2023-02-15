@@ -38,11 +38,12 @@ const RenderPresentation = dynamic(() => import("./contents/RenderPresentation")
 const Button = dynamic(() => import("@mui/material/Button"));
 const RenderCouponData = dynamic(() => import("./contents/RenderCouponData"));
 const RenderCouponInfo = dynamic(() => import("./contents/RenderCouponInfo"));
-const ArrowCircleUpIcon = dynamic(() => import("@mui/icons-material/ArrowCircleUpTwoTone"));
+const ArrowCircleUpIcon = dynamic(() => import("@mui/icons-material/ArrowCircleUp"));
 const IconButton = dynamic(() => import("@mui/material/IconButton"));
 const RenderPetDesc = dynamic(() => import("./contents/RenderPetDesc"));
 const RenderKeyValue = dynamic(() => import("./contents/RenderKeyValue"));
 const RenderEmail = dynamic(() => import("./contents/RenderEmail"));
+const RenderWeb = dynamic(() => import("./contents/RenderWeb"));
 const RenderSku = dynamic(() => import("./contents/RenderSku"));
 
 export default function Custom({data, setData, handleValues, setIsWrong, predefined, tip, selected}: CustomProps) {
@@ -170,14 +171,14 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
   }, [data?.custom?.length]);
 
   useEffect(() => {
-    setIsWrong(validator(data));
+    setIsWrong(validator(data, selected));
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Common msg={tip || "Create a custom QR Link on your own, using the predefined sections."}>
       <Box sx={{mt: 1, width: '100%'}}>
         <Button startIcon={<AddIcon />} variant="outlined" onClick={handleOptions}>{'Sections...'}</Button>
-        <div ref={topElement} style={{ height: '20px', width: '1px', display: 'inline-flex'}} />
+        <div ref={topElement} style={{height: '20px', width: '1px', display: 'inline-flex'}} />
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided: any) => (
@@ -216,7 +217,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                                                   totalFiles={predefined === undefined || selected === 'inventory' ? 3 : FILE_LIMITS['gallery'].totalFiles}/>
                               )}
                               {component === components[10].type && (
-                                <RenderPresentation data={x.data} handleValues={handleValues} index={index}
+                                <RenderPresentation data={x.data} handleValues={handleValues} index={index} isVCard={selected === 'vcard+'}
                                                     showExtra={['petId', 'findMe'].includes(selected || '')}/>)}
                               {component === components[11].type && <RenderOpeningTime data={x.data} setData={setData} index={index}/>}
                               {component === components[12].type && <RenderSocials data={x.data} setData={setData} index={index}/>}
@@ -243,10 +244,11 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                                                   totalFiles={predefined === undefined ? 1 : FILE_LIMITS['video'].totalFiles}/>
                               )}
                               {component === components[19].type && <RenderKeyValue index={index} setData={setData} data={x.data} topics="" />}
-                              {component === components[20].type && <RenderCouponData index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[21].type && <RenderCouponInfo index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[22].type && <RenderPetDesc index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[23].type && <RenderSku index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[20].type && <RenderWeb data={x.data} handleValues={handleValues} index={index} />}
+                              {component === components[21].type && <RenderCouponData index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[22].type && <RenderCouponInfo index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[23].type && <RenderPetDesc index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[24].type && <RenderSku index={index} handleValues={handleValues} data={x.data} />}
                             </>)}
                           </DragPaper>
                         </Box>

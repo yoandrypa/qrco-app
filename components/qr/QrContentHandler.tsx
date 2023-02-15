@@ -30,7 +30,6 @@ const FundMe = dynamic(() => import('./renderers/FundMeData'));
 const PleaseWait = dynamic(() => import('../PleaseWait'));
 const RenderNoUserWarning = dynamic(() => import('./helperComponents/smallpieces/RenderNoUserWarning'));
 const LinkedLabelData = dynamic(() => import('./renderers/LinkedLabelData'));
-const InventoryData = dynamic(() => import('./renderers/InventoryData'));
 
 type QrContentHandlerProps = {
   data: DataType;
@@ -128,13 +127,13 @@ const QrContentHandler = () => { // @ts-ignore
       case 'custom': {
         return <Custom data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />;
       }
-      case 'vcard+':
-      case 'vcard': {
-        return Boolean(data.isDynamic) ? <Custom
-          data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
+      case 'vcard+': {
+        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
           tip="Your contact details. Users can store your info or contact you right away."
-          predefined={['presentation', 'phones', 'organization', 'address', 'email']} /> :
-          <CardDataStatic data={data} handleValues={handleValues} setIsWrong={setIsWrong} />;
+          predefined={['presentation', 'organization', 'socials']} selected={selected} />;
+      }
+      case 'vcard': {
+        return <CardDataStatic data={data} handleValues={handleValues} setIsWrong={setIsWrong} />;
       }
       case 'link': {
         return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
@@ -191,7 +190,6 @@ const QrContentHandler = () => { // @ts-ignore
           tip="Information to make easy to find you" predefined={['presentation', 'keyvalue', 'links', 'socials']}/>;
       }
       case 'inventory': {
-        // return <InventoryData data={data} handlePayload={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />
         return <Custom data={data} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected} setData={setData}
            tip="Inventory tracking information" predefined={['title', 'gallery', 'sku', 'keyvalue']}/>;
       }

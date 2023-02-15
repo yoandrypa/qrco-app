@@ -24,6 +24,7 @@ interface RenderImageProps {
 interface ErrorProps {
   msg: string;
   title: string;
+  warning?: boolean;
 }
 
 export default function RenderImagePicker({title, kind, handleClose, handleAcept, wasError}: RenderImageProps) {
@@ -32,11 +33,14 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
   const handleLoadedImage = async (f: File[]) => {
     if (f.length) {
       if (f[0].size <= 1000000) {
+        handleAcept(f[0], kind);
+
         const result = await checkForAlpha(f[0]);
-        if (!result || !result.hasAlpha) {
-          handleAcept(f[0], kind);
-        } else {
-          setError({msg: 'The selected image file contains alpha channels. Please, select any image with no alpha channels.', title: 'No alpha channel'})
+        if (result?.hasAlpha) {
+          setError({
+            msg: 'The selected image file has alpha channels. This might cause it to not render correctly. Be advised.',
+            title: 'Alpha channel detected', warning: true
+          });
         }
       } else {
         setError({msg: 'The selected file is larger than 1 megabyte.', title: 'Too heavy'});
@@ -64,8 +68,7 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
         )}
         <Paper sx={{ width: '100%', height: 'auto' }}>
           <FileUpload
-            value={[]}
-            // @ts-ignore
+            value={[]} // @ts-ignore
             onChange={handleLoadedImage}
             multiple={false}
             maxFiles={1}
@@ -82,6 +85,7 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
           onClose={() => setError(null)}
           title={error.title}
           autoHideDuration={7500}
+          severity={!error.warning ? 'error' : 'warning'}
           vertical="bottom"
           showProgress
           message={error.msg} />

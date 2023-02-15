@@ -3,17 +3,18 @@ import {EMAIL} from "../../constants";
 import RenderTextFields from "../helpers/RenderTextFields";
 import {ChangeEvent} from "react";
 import {ContentProps} from "../custom/helperFuncs";
+import {isValidUrl} from "../../../../utils";
 
 interface RenderEmail extends ContentProps {
   sx?: Object;
 }
 
-export default function RenderEmail({data, handleValues, sx, index}: RenderEmail) {
+export default function RenderWeb({data, handleValues, sx, index}: RenderEmail) {
   const renderItem = () => {
     let isError = false as boolean; // @ts-ignore
-    const value = data?.email || '' as string;
+    const value = data?.web || '' as string;
 
-    if (value.trim().length && !EMAIL.test(value)) {
+    if (value.trim().length && !isValidUrl(value)) {
       isError = true;
     }
 
@@ -21,7 +22,7 @@ export default function RenderEmail({data, handleValues, sx, index}: RenderEmail
       handleValues(item, index)(payload);
     }
 
-    return <RenderTextFields item="email" label="Email" isError={isError} value={value} handleValues={beforeSend} index={index}/>;
+    return <RenderTextFields item="web" label="Web" isError={isError} value={value} handleValues={beforeSend} index={index}/>;
   };
 
   return (
