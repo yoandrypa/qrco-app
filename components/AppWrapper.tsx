@@ -50,7 +50,6 @@ interface AppWrapperProps {
   userInfo?: any;
   handleLogout?: () => void;
   clearData?: (keepType?: boolean, doNot?: boolean) => void;
-  setLoading?: (loading: boolean) => void;
   setRedirecting?: (redirecting: boolean) => void;
   setIsFreeMode?: (isFreeMode: boolean) => void;
   isTrialMode?: boolean;
@@ -58,14 +57,14 @@ interface AppWrapperProps {
 
 export default function AppWrapper(props: AppWrapperProps) {
   const {
-    children, userInfo, handleLogout, clearData, setLoading, setIsFreeMode: setIsFreeMode, mode, isTrialMode: isFreeMode, setRedirecting
+    children, userInfo, handleLogout, clearData, setIsFreeMode: setIsFreeMode, mode, isTrialMode: isFreeMode, setRedirecting
   } = props;
 
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
   const [freeLimitReached, setFreeLimitReached] = useState<boolean>(false)
 
   // @ts-ignore
-  const { subscription } = useContext(Context);
+  const { subscription, setError, setLoading } = useContext(Context);
 
   const beforeLogout = () => {
     if (handleLogout) {
@@ -120,9 +119,14 @@ export default function AppWrapper(props: AppWrapperProps) {
 
         // TODO: Use setStartTrialDate(currentUser.localRecord.createdAt) after implement user/me services.
         // setStartTrialDate(currentUser.localRecord.createdAt);
+        setLoading(true);
         Users.get(currentUser.cognito_user_id).then(profile => {
           setStartTrialDate(profile.createdAt);
-        }).catch(console.error);
+        }).catch((err) => {
+          setError(err.message);
+        }).finally(() => {
+          setLoading(false);
+        });
 
         // TODO: Review setFreeLimitReached
         // @ts-ignore
@@ -137,7 +141,7 @@ export default function AppWrapper(props: AppWrapperProps) {
         setStartTrialDate(null);
       }
     }
-  }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

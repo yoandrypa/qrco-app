@@ -218,8 +218,15 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       }
     } else {
       return (
-        <AppWrapper setIsFreeMode={setIsTrialMode} handleLogout={logout} clearData={clearData} setLoading={setLoading}
-                    mode={data.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} userInfo={userInfo}>
+        // TODO: Remover las propiedades que están contenidas en el Context y usar "const { vvv } = useContext(Context);" para acceder al recurso.
+        <AppWrapper setIsFreeMode={setIsTrialMode}
+                    handleLogout={logout}
+                    clearData={clearData}
+                    mode={data.mode}
+                    setRedirecting={setRedirecting}
+                    isTrialMode={isTrialMode}
+                    userInfo={userInfo}
+        >
           {loading && <Loading />}
           {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>
