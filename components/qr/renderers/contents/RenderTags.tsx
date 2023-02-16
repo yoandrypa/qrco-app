@@ -67,6 +67,8 @@ export default function RenderTags({data, handleValues, index}: ContentProps) {
                 setOptions([...options, tempo.current]);
                 handleValues('tags', index)(tempo.current);
               }
+
+              tempo.current = '';
             }
           }}
         />

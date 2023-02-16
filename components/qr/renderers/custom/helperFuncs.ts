@@ -116,7 +116,7 @@ export const validator = (dataToCheck: DataType, selected?: string): boolean => 
       errors = true;
       return false;
     }
-    if (component === 'presentation' && !data.firstName?.trim().length && ((data.includeExtraInfo || selected === 'vcard+') &&
+    if (component === 'presentation' && !data.firstName?.trim().length && ((data.includeExtraInfo || ['vcard+', 'petId'].includes(selected || '')) &&
       ((data.email?.trim() && !EMAIL.test(data.email)) || (data.web?.trim() && !isValidUrl(data.web)) ||
       (data.phone?.trim().length && !PHONE.test(data.phone)) || (data.cell?.trim().length && !PHONE.test(data.cell)) ||
       (data.fax?.trim().length && !PHONE.test(data.fax)) || (data.zip?.trim().length && !ZIP.test(data.zip))))) {

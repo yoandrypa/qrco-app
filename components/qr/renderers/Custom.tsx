@@ -218,8 +218,8 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                                                   totalFiles={predefined === undefined || selected === 'inventory' ? 3 : FILE_LIMITS['gallery'].totalFiles}/>
                               )}
                               {component === components[10].type && (
-                                <RenderPresentation data={x.data} handleValues={handleValues} index={index} isVCard={selected === 'vcard+'}
-                                                    showExtra={['petId', 'findMe'].includes(selected || '')}/>)}
+                                <RenderPresentation data={x.data} handleValues={handleValues} index={index} showExtra={selected === 'findMe'}
+                                                    forceExtra={['vcard+', 'petId'].includes(selected || '')} />)}
                               {component === components[11].type && <RenderOpeningTime data={x.data} setData={setData} index={index}/>}
                               {component === components[12].type && <RenderSocials data={x.data} setData={setData} index={index}/>}
                               {component === components[13].type && (
