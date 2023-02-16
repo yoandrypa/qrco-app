@@ -26,14 +26,12 @@ export const PARAM_QR_TEXT = "qr_text" as string;
 export const NO_MICROSITE = ["facebook", "twitter", "whatsapp", "paylink", "fundme"];
 export const ONLY_QR = ["fundme", "paylink"];
 
-export const PROFILE_IMAGE = ['vcard+', 'link', 'business', 'social', 'donation', 'petId', 'linkedLabel', 'custom', 'findMe'];
+export const PROFILE_IMAGE = ['vcard+', 'link', 'business', 'social', 'donation', 'petId', 'linkedLabel', 'custom', 'findMe', 'gallery', 'pdf', 'audio', 'video'];
 
 export const EMAIL = new RegExp("^\\w+(\\.\\w+)*(\\+\\w+(\\.\\w+)*)?@\\w+(\\.\\w+)+$", "i");
 export const PHONE = new RegExp("^(\\+\\d{1,3}\\s?)?((\\(\\d{1,3}\\))|\\d{1,3})(\\s|\\-)?(\\d+((\\s|\\-)\\d+)*)$");
 export const ZIP = new RegExp("^\\d{5}(-\\d{4})?$");
 export const YEAR = new RegExp('^\\d{4}$');
-
-export const EBANUX_PLATFORM_FEE = 0.04;
 
 export const IS_DEV_ENV = process.env.REACT_NODE_ENV === "develop";
 

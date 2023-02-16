@@ -120,6 +120,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     }
   }, [backImg, foreImg]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  console.log(data);
+
   const getFiles = useCallback(async (key: string, item: string) => {
     try {
       lastAction.current = 'loading the background/main images';
@@ -127,9 +129,9 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
 
       if (options.mode === 'edit') {
         if (item === 'backgndImg') { // @ts-ignore
-          setBackImg(fileData.content);
+          setBackImg(structuredClone(fileData.content));
         } else { // @ts-ignore
-          setForeImg(fileData.content);
+          setForeImg(structuredClone(fileData.content));
         }
       } else if (options.mode === 'clone') {
         if (item === 'backgndImg') {
@@ -217,9 +219,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     return opts;
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const omitProfileImg = useMemo(() => (
-    !PROFILE_IMAGE.includes(selected) || !data?.isDynamic
-  ), [selected, data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
+  const omitProfileImg = useMemo(() => !PROFILE_IMAGE.includes(selected) || !data?.isDynamic, [selected, data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

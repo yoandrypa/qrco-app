@@ -66,7 +66,7 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
     img.src = URL.createObjectURL(f);
     img.onload = async () => {
       if (f.size <= 51200) {
-        const base: object = await convertBase64(f);
+        const base = await convertBase64(f);
         const check = await checkForAlpha(f);
         const back = {...background, file: base};
         if (check?.hasAlpha) {
