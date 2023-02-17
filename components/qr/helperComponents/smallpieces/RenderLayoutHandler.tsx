@@ -64,10 +64,10 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
         onClick={handle(kind)}
         sx={{
           display: 'inline-block',
-          mr: !noMore ? 2 : 0,
+          mr: !noMore ? '10px' : 0,
           cursor: 'pointer',
-          width: '115px',
-          height: '200px',
+          width: '80px',
+          height: '155px',
           position: 'relative',
           background: blueGrey[50],
           borderRadius: '8px',
@@ -76,7 +76,7 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
           '&:hover': {boxShadow: !selected ? '0 0 2px 2px #849abb' : '0 0 2px 2px #286ED6'} }}>
         <Box sx={{
           width: `calc(100% - ${!isBorder ? 0 : '10px'})`,
-          height: `${(!isBorder ? 65 : 60) + (inverse ? 10 : 0)}px`,
+          height: `${(!isBorder ? 55 : 50) + (inverse ? 10 : 0)}px`,
           mt: !isBorder ? 0 : '5px',
           mx: 'auto',
           background: blueGrey[300],
@@ -88,19 +88,27 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
         )}
         {!omitPrimary ? (
           <Box sx={{
-            width: '48px',
-            height: '48px',
+            width: '38px',
+            height: '38px',
             background: blueGrey[500],
             mx: 'auto',
-            transform: `translate(${!isLeft ? 0 : '-25px'}, ${!inverse ? -24 : -34}px)`,
+            transform: `translate(${!isLeft ? 0 : '-20px'}, ${!inverse ? -22 : -32}px)`,
             border: 'solid 2px #fff',
             borderRadius: !data?.foregndImgType || data.foregndImgType === 'circle' ? '50%' : (data.foregndImgType === 'smooth' ? '10px' : '3px')
           }}/>) : <Box sx={{height: '48px'}} />}
         {kind.includes('sections') && (
-          <Box sx={{ width: 'calc(100% - 20px)', mx: '5px', marginTop: `${(!inverse ? -18 : -28) - (omitPrimary ? 10 : 0)}px`, marginLeft: 'auto', marginRight: 'auto' }}>
-            <Box sx={{ width: '100%', height: '40px', background: blueGrey[300], mb: '10px', borderRadius: '5px' }}/>
-            <Box sx={{ width: '100%', height: '40px', background: blueGrey[300], borderRadius: '5px' }}/>
+          <Box sx={{ width: 'calc(100% - 20px)', marginTop: `${(!inverse ? -18 : -28) - (omitPrimary ? 10 : 0)}px`, mx: 'auto' }}>
+            <Box sx={{ width: '100%', height: '25px', background: blueGrey[300], mb: '15px', borderRadius: '5px' }}/>
+            <Box sx={{ width: '100%', height: '25px', background: blueGrey[300], borderRadius: '5px' }}/>
           </Box>
+        )}
+        {kind.includes('entire') && (
+          <Box sx={{
+            width: 'calc(100% - 20px)',
+            mt: `${(!inverse ? -18 : -28) - (omitPrimary ? 10 : 0)}px`,
+            mx: 'auto', height: '67px',
+            background: blueGrey[300],
+            borderRadius: '5px' }}/>
         )}
       </Box>
     )
@@ -113,7 +121,10 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
       {renderLayout('inverse')}
       {renderLayout('sectionsSingle')}
       {renderLayout('sectionsSoft')}
-      {renderLayout('sectionsInverse', true)}
+      {renderLayout('sectionsInverse')}
+      {renderLayout('entireSingle')}
+      {renderLayout('entireSoft')}
+      {renderLayout('entireInverse', true)}
       <Box sx={{width: '100%', display: 'flex'}}>
       <FormControlLabel label="Border" control={
         <Switch checked={isBorder} inputProps={{'aria-label': 'isBorder'}}

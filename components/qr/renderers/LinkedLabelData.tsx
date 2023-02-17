@@ -140,6 +140,7 @@ export default function LinkedLabelData({
             <Grid container key={index}>
               <Grid item xs={12}>
                 <RenderTitleDesc
+                  index={-1}
                   sx={{ p: 1, mt: 0 }}
                   title={item.title}
                   description={item.text}

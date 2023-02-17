@@ -25,6 +25,12 @@ export class NotFound extends StandardError {
   }
 }
 
+export class BatRequest extends StandardError {
+  constructor(message = '') {
+    super(message || 'Bad request', 400);
+  }
+}
+
 export const respondWithException = (response: NextApiResponse, ex: any) => {
   let message;
   let code;
@@ -36,7 +42,7 @@ export const respondWithException = (response: NextApiResponse, ex: any) => {
     message = ex.message;
     code = ex.statusCode || 400;
   } else {
-    message = ex.message;
+    message = ex.message || ex;
     code = ex.code || 500;
   }
 
@@ -46,4 +52,11 @@ export const respondWithException = (response: NextApiResponse, ex: any) => {
   if (ex.stack) console.error(ex.stack);
 
   response.status(code).json({ success: false, message });
+};
+
+export const parseErrorMessage = (err: any) => {
+  if (typeof err === 'string') return err;
+  if (err.response && err.response.data.message) return err.response.data.message;
+
+  return err.message || 'Something went wrong. We are working on it.';
 };

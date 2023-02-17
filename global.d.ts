@@ -9,7 +9,6 @@ interface UserType {
   createdAt?: Date;
   id: string;
   updatedAt?: string;
-  subscriptionData?: UserSubscription;
   customerId?: string;
   planType?: string;
   planUsage?: number

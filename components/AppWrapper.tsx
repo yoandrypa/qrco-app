@@ -1,4 +1,4 @@
-import {cloneElement, ReactElement, ReactNode, useCallback, useEffect, useState} from "react";
+import { cloneElement, ReactElement, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -10,16 +10,19 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 
 import dynamic from "next/dynamic";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import Link from "next/link";
 
-import {PARAM_QR_TEXT, QR_TYPE_ROUTE} from "./qr/constants";
-import {get as getUser} from "../handlers/users"; // @ts-ignore
-import session from "@ebanux/ebanux-utils/sessionStorage"; // @ts-ignore
-import {startAuthorizationFlow} from "@ebanux/ebanux-utils/auth";
-import {list} from '../handlers/qrs'
+import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
+// @ts-ignore
+import session from "@ebanux/ebanux-utils/sessionStorage";
+// @ts-ignore
+import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
+import { list } from '../handlers/qrs'
 
 import RenderSupport from "./wrapper/RenderSupport";
+import * as Users from "../handlers/users";
+import Context from "./context/Context";
 
 const CountDown = dynamic(() => import("./countdown/CountDown"));
 const RenderButton = dynamic(() => import("./wrapper/RenderButton"));
@@ -47,7 +50,6 @@ interface AppWrapperProps {
   userInfo?: any;
   handleLogout?: () => void;
   clearData?: (keepType?: boolean, doNot?: boolean) => void;
-  setLoading?: (loading: boolean) => void;
   setRedirecting?: (redirecting: boolean) => void;
   setIsFreeMode?: (isFreeMode: boolean) => void;
   isTrialMode?: boolean;
@@ -55,15 +57,18 @@ interface AppWrapperProps {
 
 export default function AppWrapper(props: AppWrapperProps) {
   const {
-    children, userInfo, handleLogout, clearData, setLoading, setIsFreeMode: setIsFreeMode, mode, isTrialMode: isFreeMode, setRedirecting
+    children, userInfo, handleLogout, clearData, setIsFreeMode: setIsFreeMode, mode, isTrialMode: isFreeMode, setRedirecting
   } = props;
 
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
   const [freeLimitReached, setFreeLimitReached] = useState<boolean>(false)
 
+  // @ts-ignore
+  const { subscription, setError, setLoading } = useContext(Context);
+
   const beforeLogout = () => {
     if (handleLogout) {
-      setIsFreeMode && setIsFreeMode(false);
+      setIsFreeMode?.call(null, false);
       setStartTrialDate(null);
       handleLoading(true);
       handleLogout();
@@ -87,7 +92,7 @@ export default function AppWrapper(props: AppWrapperProps) {
     const isInListView = router.pathname === "/";
     const isEdit = !isInListView && mode === "edit";
 
-    if (setRedirecting && !isInListView) { setRedirecting(true); }
+    if (setRedirecting && !isInListView) setRedirecting(true);
     if (clearData !== undefined) {
       clearData(false, isEdit || !isInListView);
     }
@@ -99,37 +104,44 @@ export default function AppWrapper(props: AppWrapperProps) {
 
     router.push(navigationOptions, isInListView ? QR_TYPE_ROUTE : "/",
       { shallow: true }).then(() => {
-        handleLoading(false);
-        if (setRedirecting) { setRedirecting(false); }
-      });
+      handleLoading(false);
+      if (setRedirecting) setRedirecting(false);
+    });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (userInfo) {
-      const fetchUser = async () => {
-        return await getUser(userInfo.cognito_user_id);
-      };
+    const { currentAccount: currentUser, isAuthenticated } = session;
 
-      fetchUser().then(profile => {//@ts-ignore
-        if (!profile?.customerId) {//(!profile?.customerId || profile?.subscriptionData?.status !== "active")) {
-          // @ts-ignore
-          setIsFreeMode(true); //@ts-ignore
+    if (isAuthenticated) {
+      //@ts-ignore
+      if (subscription?.status !== "active") {
+        setIsFreeMode?.call(null, true);
+
+        // TODO: Use setStartTrialDate(currentUser.localRecord.createdAt) after implement user/me services.
+        // setStartTrialDate(currentUser.localRecord.createdAt);
+        setLoading(true);
+        Users.get(currentUser.cognito_user_id).then(profile => {
           setStartTrialDate(profile.createdAt);
-          console.log('Is on free mode')
-          //@ts-ignore
-          list({ userId: userInfo.cognito_user_id }).then(qrs => { // @ts-ignore
-            if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) {
-              setFreeLimitReached(true);
-            }
-          });
-          //Not in free account
-        } else { // @ts-ignore
-          setIsFreeMode(false); //@ts-ignore
-          setStartTrialDate(null);
-        }
-      }).catch(console.error);
+        }).catch((err) => {
+          setError(err.message);
+        }).finally(() => {
+          setLoading(false);
+        });
+
+        // TODO: Review setFreeLimitReached
+        // @ts-ignore
+        // list({ userId: userInfo.cognito_user_id }).then(qrs => {
+        //   // @ts-ignore
+        //   if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) {
+        //     setFreeLimitReached(true);
+        //   }
+        // });
+      } else {
+        setIsFreeMode?.call(null, false);
+        setStartTrialDate(null);
+      }
     }
-  }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -137,7 +149,12 @@ export default function AppWrapper(props: AppWrapperProps) {
       {handleLogout !== undefined && !router.query.login && (<ElevationScroll>
         <AppBar component="nav" sx={{ background: "#fff", height }}>
           <Container sx={{ my: "auto" }}>
-            <Toolbar sx={{ "&.MuiToolbar-root": { px: 0 }, display: "flex", justifyContent: "space-between", color: theme => theme.palette.text.primary }}>
+            <Toolbar sx={{
+              "&.MuiToolbar-root": { px: 0 },
+              display: "flex",
+              justifyContent: "space-between",
+              color: theme => theme.palette.text.primary
+            }}>
               <Link href={{ pathname: !userInfo ? QR_TYPE_ROUTE : "/" }}>
                 <Box component="img" alt="EBANUX" src="/logo.svg" sx={{ width: "160px", cursor: "pointer" }} />
               </Link>

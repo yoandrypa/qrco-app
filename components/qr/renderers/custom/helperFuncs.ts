@@ -1,28 +1,51 @@
-import {DataType, LinkType} from "../../types/types";
+import {CustomType, DataType, KeyValues, LinkType, Type} from "../../types/types";
 import {EMAIL, PHONE, ZIP} from "../../constants";
 import {isValidUrl} from "../../../../utils";
 import socialsAreValid from "../validator";
 
 export const components = [
-  /*{type: 'gallery', name: 'Gallery'},*/
   {type: 'address', name: 'Address'}, {type: 'company', name: 'Company'},
-  {type: 'date', name: 'Date'}, {type: 'email', name: 'Email and web'}, {type: 'easiness', name: 'Easiness'},
+  {type: 'date', name: 'Date'}, {type: 'justEmail', name: 'Email address'},
+  {type: 'email', name: 'Email and web'}, {type: 'easiness', name: 'Easiness'},
   {type: 'links', name: 'Links'}, {type: 'organization', name: 'Organization'},
-  {type: 'phones', name: 'Phones and cells'}, {type: 'photos', name: 'Photos'},
+  {type: 'phones', name: 'Phones and cells'}, {type: 'gallery', name: 'Photos'},
   {type: 'presentation', name: 'Presentation'}, {type: 'opening', name: 'Opening time'},
-  {type: 'socials', name: 'Social networks'}, {type: 'title', name: 'Title and description'}
+  {type: 'socials', name: 'Social networks'}, {type: 'title', name: 'Title and description'},
+  {type: 'action', name: 'Action button'}, {type: 'single', name: 'Single text'},
+  {type: 'pdf', name: 'PDF file'}, {type: 'audio', name: 'Audio files'}, {type: 'video', name: 'Video files'},
+  {type: 'keyvalue', name: 'Details'}, {type: 'web', name: 'Web'},
+  {type: 'tags', name: 'Tags'}, {type: 'couponInfo', name: 'Promotion info', notInMenu: true},
+  {type: 'couponData', name: 'Coupon data', notInMenu: true},
+  {type: 'petId', name: 'Pet presentation', notInMenu: true},
+  {type: 'sku', name: 'Product', notInMenu: true}, {type: 'petId', name: 'Pet presentation', notInMenu: true}
 ];
 
 export const getName = (index: number) => {
   return components[index].name;
 }
 
-export const getNameStr = (type: string): string => {
+const lookFor = (type: string): string => {
   const index = components.findIndex(x => x.type === type);
   return getName(index);
 }
 
+export const getNameStr = (type: string, selected: string): string => {
+  if (['inventory'].includes(selected)) {
+    switch (type) {
+      case 'title': { return 'Product information'; }
+      case 'gallery': { return 'Images'; }
+      case 'sku': { return 'Product SKU and quantity'; }
+      case 'keyvalue': { return 'Location'; }
+    }
+    return lookFor(type);
+  }
+  return lookFor(type);
+}
+
 export interface CustomProps {
+  predefined?: string[];
+  tip?: string;
+  selected?: string;
   data: DataType;
   setData: Function;
   handleValues: Function;
@@ -30,47 +53,88 @@ export interface CustomProps {
 }
 
 export interface CustomEditProps {
-  anchor: HTMLButtonElement;
+  anchor: HTMLElement;
   index: number;
   item: string;
   name?: string;
 }
 
-export const validator = (data: DataType, sections: any[]): boolean => {
-  if (!sections.length || !socialsAreValid(data)) {
-    return true;
-  }
+export interface ContentProps {
+  index: number;
+  data?: Type;
+  handleValues: Function;
+}
+
+export const isRequired = (component: string, dataInfo?: Type) =>
+  (component === 'action' && (!dataInfo?.urlOptionLabel?.trim().length || !dataInfo?.urlOptionLink?.trim().length || !isValidUrl(dataInfo.urlOptionLink))) ||
+  (component === 'company' && !dataInfo?.company?.trim().length) || (component === 'presentation' && !dataInfo?.firstName?.trim().length);
+
+export const validator = (dataToCheck: DataType, selected?: string): boolean => {
+  if (!dataToCheck.custom?.length) { return true; }
 
   let errors = false;
 
-  if (!errors && sections.includes('company') && (!data.company?.trim().length || (
-    (data.companyPhone?.trim().length && !PHONE.test(data.companyPhone)) ||
-    (data.companyCell?.trim().length && !PHONE.test(data.companyCell)) ||
-    (data.companyFax?.trim().length && !PHONE.test(data.companyFax)) ||
-    (data.companyWebSite?.trim().length && !isValidUrl(data.companyWebSite)) ||
-    (data.companyEmail?.trim().length && !EMAIL.test(data.companyEmail))
-  ))) {
-    errors = true;
-  } else if (sections.includes('address') && data.zip?.trim().length && !ZIP.test(data.zip)) {
-    errors = true;
-  } else if (sections.includes('email') && data.email?.trim().length && !EMAIL.test(data.email)) {
-    errors = true;
-  } else if (sections.includes('links') && data?.links?.some((x: LinkType) =>
-      (!x.label.trim().length || !x.link.trim().length || !isValidUrl(x.link)))) {
-    errors = true;
-  } else if (sections.includes('phones') && ((data.phone?.trim().length && !PHONE.test(data.phone)) ||
-    (data.cell?.trim().length && !PHONE.test(data.cell)) || (data.fax?.trim().length && !PHONE.test(data.fax)))) {
-    errors = true;
-  } else if (sections.includes('presentation') && !data.firstName?.trim().length) {
-    errors = true;
-  } else if (sections.includes('email') && (data.web?.trim().length && !isValidUrl(data.web)) ||
-    (data.email?.trim().length && !EMAIL.test(data.email))) {
-    errors = true;
-  } else if (data.urlOptionLabel !== undefined && data.urlOptionLink !== undefined) {
-    if (!data.urlOptionLabel.trim().length || !data.urlOptionLink.trim().length || !isValidUrl(data.urlOptionLink)) {
+  dataToCheck.custom.every((custom: CustomType) => {
+    const data = custom.data || {};
+
+    const {component} = custom;
+    if (component === 'company' && (!data.company?.trim().length || (
+      (data.companyPhone?.trim().length && !PHONE.test(data.companyPhone)) ||
+      (data.companyCell?.trim().length && !PHONE.test(data.companyCell)) ||
+      (data.companyFax?.trim().length && !PHONE.test(data.companyFax)) ||
+      (data.companyWebSite?.trim().length && !isValidUrl(data.companyWebSite)) ||
+      (data.companyEmail?.trim().length && !EMAIL.test(data.companyEmail))
+    ))) {
       errors = true;
+      return false;
     }
-  }
+    if ((component === 'address' && data.zip?.trim().length && !ZIP.test(data.zip)) ||
+      (component === 'justEmail' && data.email?.trim().length && !EMAIL.test(data.email)) ||
+      (component === 'web' && data.web?.trim().length && !isValidUrl(data.web))) {
+      errors = true;
+      return false;
+    }
+    if (component === 'tags' && !data.tags?.length) {
+      errors = true;
+      return false;
+    }
+    if (component === 'email' && (data.email?.trim().length && !EMAIL.test(data.email)) || (data.web?.trim().length && !isValidUrl(data.web))) {
+      errors = true;
+      return false;
+    }
+    if (component === 'keyvalue' && data.keyValues?.some((x: KeyValues) => (!x.key?.trim().length || !x.value.trim().length))) {
+      errors = true;
+      return false;
+    }
+    if (component === 'links' && data.links?.some((x: LinkType) =>
+      ((!data.linksOnlyLinks && !(x.label || '').trim().length) || !x.link.trim().length || !isValidUrl(x.link)))) {
+      errors = true;
+      return false;
+    }
+    if (component === 'phones' && ((data.phone?.trim().length && !PHONE.test(data.phone)) ||
+      (data.cell?.trim().length && !PHONE.test(data.cell)) || (data.fax?.trim().length && !PHONE.test(data.fax)))) {
+      errors = true;
+      return false;
+    }
+    if (component === 'presentation' && !data.firstName?.trim().length && ((data.includeExtraInfo || selected === 'vcard+') &&
+      ((data.email?.trim() && !EMAIL.test(data.email)) || (data.web?.trim() && !isValidUrl(data.web)) ||
+      (data.phone?.trim().length && !PHONE.test(data.phone)) || (data.cell?.trim().length && !PHONE.test(data.cell)) ||
+      (data.fax?.trim().length && !PHONE.test(data.fax)) || (data.zip?.trim().length && !ZIP.test(data.zip))))) {
+      errors = true;
+      return false;
+    }
+    if (component === 'action' && data.urlOptionLabel !== undefined && data.urlOptionLink !== undefined &&
+      (!data.urlOptionLabel.trim().length || !data.urlOptionLink.trim().length || !isValidUrl(data.urlOptionLink))) {
+        errors = true;
+        return false;
+    }
+    if ((['gallery', 'pdf', 'audio', 'video'].includes(component) && !data.files?.length) ||
+      (component === 'title' && !data.titleAbout?.trim().length && !data.descriptionAbout?.trim().length) ||
+      (component === 'socials' && !socialsAreValid(data))) {
+      errors = true;
+      return false;
+    }
+  });
 
   return errors;
 }

@@ -13,6 +13,7 @@ interface RenderTextFieldsProps {
   value: string;
   item?: string;
   sx?: any;
+  index?: number;
 }
 
 const RenderTextFields = ({value, handleValues, placeholder, label, item, required, isError, multiline, sx}: RenderTextFieldsProps) => (
@@ -42,7 +43,7 @@ const RenderTextFields = ({value, handleValues, placeholder, label, item, requir
 
 // @ts-ignore
 function notIf(current, next) {
-  return current.value === next.value && current.isError === next.isError;
+  return current.value === next.value && current.isError === next.isError && current.index === next.index;
 }
 
 export default memo(RenderTextFields, notIf);

@@ -1,4 +1,4 @@
-import {DataType} from "../../types/types";
+import {Type} from "../../types/types";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
@@ -6,7 +6,7 @@ import TextField from "@mui/material/TextField";
 import {getHM, setHM} from "../../../helpers/generalFunctions";
 
 interface TimeSelProps {
-  data: DataType;
+  data?: Type;
   setData: Function;
   day: string;
   index: number;
@@ -27,7 +27,7 @@ const RenderTimeSelector = ({data, setData, day, ini, index}: TimeSelProps) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
     <TimePicker
-      ampm={data.is12hours || false}
+      ampm={data?.is12hours || false}
       value={setHM(value)}
       onChange={(newValue) => {
         // @ts-ignore

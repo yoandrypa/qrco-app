@@ -56,6 +56,11 @@ const QrTypeSelector = () => { // @ts-ignore
       originalData.preGenerated = dataComp.preGenerated;
     }
 
+    // @ts-ignore
+    if (dataComp.custom !== undefined && !data.custom.some(x => Object.keys(x).length !== 2)) { // @ts-ignore
+      originalData.custom = dataComp.custom;
+    }
+
     if (!areEquals(dataComp, originalData) || !areEquals(options, compareWith)) {
       setDisplayConfirm(payload);
     } else {

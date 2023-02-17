@@ -42,7 +42,7 @@ export const handleDesignerString = (selected: string | null | undefined, data: 
       if (data.organization) { designerString += `ORG:${data.organization}\n`; }
       if (data.position) { designerString += `TITLE:${data.position}\n`; }
       if (data.address || data.city || data.zip || data.state || data.country) {
-        designerString += `ADR;TYPE=WORK,PREF:;;${data.address || ''};${data.city || ''};${data.state || ''};${data.zip || ''};${data.country || ''}\n`;
+        designerString += `ADR;TYPE=WORK,PREF:;;${data.address || ''}${data.address2 ? `${data.address ? ', ' : ''}${data.address2}` : ''};${data.city || ''};${data.state || ''};${data.zip || ''};${data.country || ''}\n`;
       }
       if (data.email) { designerString += `EMAIL:${data.email}\n`; }
       if (data.web) { designerString += `URL:${data.web}\n`; }

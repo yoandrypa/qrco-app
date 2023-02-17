@@ -1,47 +1,19 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import Stripe from 'stripe'
+import { respondWithException, NotFound } from "../../../libs/exceptions";
+import { createCheckoutSession } from './helpers'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    // https://github.com/stripe/stripe-node#configuration
-    apiVersion: '2022-08-01',
-  })
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  let result;
 
-  export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
-  ) {
-
+  try {
     if (req.method === 'POST') {
-
-        try {
-            // // Validate the plan passed by the user
-            // if (!(amount >= MIN_AMOUNT && amount <= MAX_AMOUNT)) {
-            //   throw new Error('Invalid amount.')
-            // }
-            // Create Checkout Sessions from body params.
-            const params: Stripe.Checkout.SessionCreateParams = {
-             mode: 'subscription',
-              line_items: [
-                {
-                  price:"",                 
-                  quantity: 1,
-                },
-              ],
-              success_url: `${req.headers.origin}/result?session_id={CHECKOUT_SESSION_ID}`,
-              cancel_url: `${req.headers.origin}/plans`,
-            }
-            const checkoutSession: Stripe.Checkout.Session =
-              await stripe.checkout.sessions.create(params)
-      
-            res.status(200).json(checkoutSession)
-          } catch (err) {
-            const errorMessage =
-              err instanceof Error ? err.message : 'Internal server error'
-            res.status(500).json({ statusCode: 500, message: errorMessage })
-          }
-
+      result = await createCheckoutSession(<string>req.headers.origin);
     } else {
-    res.setHeader('Allow', 'POST')
-    res.status(405).end('Method Not Allowed')
+      throw new NotFound;
+    }
+
+    res.status(200).json(result);
+  } catch (ex: any) {
+    respondWithException(res, ex);
   }
-  }
+}

@@ -271,7 +271,7 @@ export default function PetIdData({
                 title="Social information"
               />
               {expander === 'socials' && (
-                <RenderSocials data={data} setData={handlePayload} />
+                <RenderSocials data={data} setData={handlePayload} index={-1} />
               )}
             </Paper>
             <Divider sx={{ my: 1 }} />

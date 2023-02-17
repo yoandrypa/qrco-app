@@ -18,7 +18,6 @@ import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
 
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import usePlans from "../../hooks/usePlans";
 
 const RenderConfirmDlg = dynamic(() => import("../renderers/RenderConfirmDlg"));
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
@@ -26,11 +25,7 @@ const Notifications = dynamic(() => import("../notifications/Notifications"));
 const ProcessHandler = dynamic(() => import("./renderers/ProcessHandler"));
 const RenderPreview = dynamic(() => import("./renderers/RenderPreview"));
 
-interface QrWizardProps {
-  children: ReactNode;
-}
-
-const QrWizard = ({ children }: QrWizardProps) => {
+const QrWizard = ({ children }: { children: ReactNode; }) => {
   const [isError, setIsError] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [size, setSize] = useState<number>(0);
@@ -53,7 +48,6 @@ const QrWizard = ({ children }: QrWizardProps) => {
     setLoading, setRedirecting, clearData, setData }: StepsProps = useContext(Context);
 
   const router = useRouter();
-  const plans = usePlans(options.mode || 'edit', userInfo);
 
   const handleBack = () => {
     router.push(router.pathname === QR_DESIGN_ROUTE ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE,
@@ -154,30 +148,30 @@ const QrWizard = ({ children }: QrWizardProps) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { // REACT_APP_STATUS will forbid the checking on develop
-    if (userInfo && options.mode !== 'edit' && process.env.REACT_APP_STATUS !== 'develop') {
-      const fetchUser = async () => {
-        return await getUser(userInfo.cognito_user_id);
-      };
-      fetchUser().then(profile => {
-        list({ userId: userInfo.cognito_user_id }).then(qrs => { // @ts-ignore
-          if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) {
-            setLimitReached(true);
-          }
-        });
-        if (!profile?.subscriptionData) {
-          setIsFreeMode(true);
-        } else {
-          setIsFreeMode(false);
-          //TODO handle plan limits
-          //per diferent plans
-        }
-      }).catch(console.error);
-    }
+    // TODO: Check
+    // if (userInfo && options.mode !== 'edit' && process.env.REACT_APP_STATUS !== 'develop') {
+    //   const fetchUser = async () => {
+    //     return await getUser(userInfo.cognito_user_id);
+    //   };
+    //   fetchUser().then(profile => {
+    //     list({ userId: userInfo.cognito_user_id }).then(qrs => { // @ts-ignore
+    //       if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) {
+    //         setLimitReached(true);
+    //       }
+    //     });
+    //     if (!profile?.subscriptionData) {
+    //       setIsFreeMode(true);
+    //     } else {
+    //       setIsFreeMode(false);
+    //       //TODO handle plan limits
+    //       //per diferent plans
+    //     }
+    //   }).catch(console.error);
+    // }
   }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
-
       {showLimitDlg &&
         <RenderConfirmDlg
           title="Oops"

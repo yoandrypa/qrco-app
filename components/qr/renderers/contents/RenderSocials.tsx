@@ -7,7 +7,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 
 import RenderIcon from "../../helperComponents/smallpieces/RenderIcon";
-import {DataType, SocialNetworksType, SocialsType} from "../../types/types";
+import {DataType, SocialNetworksType, SocialsType, Type} from "../../types/types";
 import {PHONE} from "../../constants";
 import SectionSelector from "../../helperComponents/SectionSelector";
 import {getItemStyle} from "../../helperComponents/looseComps/StyledComponents";
@@ -18,31 +18,37 @@ import dynamic from "next/dynamic";
 
 const Switch = dynamic(() => import("@mui/material/Switch"));
 const FormControlLabel = dynamic(() => import("@mui/material/FormControlLabel"));
-const RenderTitleDesc = dynamic(() => import("./RenderTitleDesc"));
 
 interface RenderSocialsProps {
-  data: DataType;
+  index: number;
+  data?: Type;
   setData: Function;
-  showTitleAndDesc?: boolean;
 }
 
-const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) => {
+const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
   const selection = useRef<SocialsType | null>(null);
 
   const handleValues = (item: SocialsType) => (event: ChangeEvent<HTMLInputElement>) => {
     setData((prev: DataType) => {
-      const tempo = {...prev};
-
-      if (['titleAbout', 'descriptionAbout'].includes(item)) { // @ts-ignore
-        tempo[item] = event.target.value;
-      }
-      if (tempo.socials) {
-        const network = tempo.socials.find((x: SocialNetworksType) => x.network === item);
-        if (network) {
-          network.value = event.target.value;
+      const newData = {...prev};
+      if (index === -1) {
+        if (['titleAbout', 'descriptionAbout'].includes(item)) { // @ts-ignore
+          newData[item] = event.target.value;
+        }
+        if (newData.socials) {
+          const network = newData.socials.find((x: SocialNetworksType) => x.network === item);
+          if (network) { network.value = event.target.value; }
+        }
+      } else {
+        if (['titleAbout', 'descriptionAbout'].includes(item)) { // @ts-ignore
+          newData.custom[index].data[item] = event.target.value;
+        }
+        if (newData.custom?.[index]?.data?.socials) { // @ts-ignore
+          const network = newData.custom[index].data.socials.find((x: SocialNetworksType) => x.network === item);
+          if (network) { network.value = event.target.value; }
         }
       }
-      return tempo;
+      return newData;
     });
   };
 
@@ -80,66 +86,81 @@ const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) =>
   const handleSelection = (item: SocialsType) => {
     selection.current = item;
     setData((prev: DataType) => {
-      const temp = {...prev};
-      if (!temp.socials || !temp.socials.some((x: SocialNetworksType) => x.network === item)) {
-        if (!temp.socials) {
-          temp.socials = [];
+      const newData = {...prev};
+      if (index === -1) {
+        if (!newData.socials || !newData.socials.some((x: SocialNetworksType) => x.network === item)) {
+          if (!newData.socials) { newData.socials = []; }
+          newData.socials.push({network: item, value: ''});
+        } else {
+          const index = newData.socials.findIndex((x: SocialNetworksType) => x.network === item);
+          newData.socials.splice(index, 1);
+          if (newData.socials.length === 0) {
+            delete newData.socials;
+            if (newData.socialsOnlyIcons !== undefined) { delete newData.socialsOnlyIcons; }
+          }
         }
-        temp.socials.push({ network: item, value: ''});
-      } else {
-        const index = temp.socials.findIndex((x: SocialNetworksType) => x.network === item);
-        temp.socials.splice(index, 1);
-        if (temp.socials.length === 0) {
-          delete temp.socials;
-          if (temp.socialsOnlyIcons !== undefined) {
-            delete temp.socialsOnlyIcons;
+      } else { // @ts-ignore
+        if (!newData.custom?.[index]?.data?.socials || !newData.custom[index].data.socials.some((x: SocialNetworksType) => x.network === item)) { // @ts-ignore
+          if (!newData.custom?.[index]?.data) { newData.custom[index].data = {}; } // @ts-ignore
+          if (!newData.custom?.[index]?.data?.socials) { newData.custom[index].data.socials = []; } // @ts-ignore
+          newData.custom[index].data.socials.push({network: item, value: ''});
+        } else { // @ts-ignore
+          const idx = newData.custom[index].data.socials.findIndex((x: SocialNetworksType) => x.network === item); // @ts-ignore
+          newData.custom[index].data.socials.splice(idx, 1); // @ts-ignore
+          if (newData.custom[index].data.socials.length === 0) { // @ts-ignore
+            delete newData.custom[index].data.socials; // @ts-ignore
+            if (newData.custom[index].data.socialsOnlyIcons !== undefined) { delete newData.custom[index].data.socialsOnlyIcons; }
           }
         }
       }
-      return temp;
+      return newData;
     });
   }
 
   const onDragEnd = (result: any) => {
-    if (!result?.destination) {
-      return null;
-    }
+    if (!result?.destination) { return null; }
 
     setData((prev: DataType) => {
-      const tempo = {...prev};
-
-      const newSocials = Array.from(tempo.socials || []);
+      const newData = {...prev}; // @ts-ignore
+      const newSocials = Array.from((index === -1 ? newData.socials : newData.custom[index].data.socials) || []);
       const [removed] = newSocials.splice(result.source.index, 1);
       newSocials.splice(result.destination.index, 0, removed);
-
-      tempo.socials = newSocials;
-      return tempo;
+      if (index === -1) { // @ts-ignore
+        newData.socials = newSocials;
+      } else { // @ts-ignore
+        newData.custom[index].data.socials = newSocials;
+      }
+      return newData;
     });
   }
 
   const handleOnlyIcons = (onlyIcons: boolean) => {
     setData((prev: DataType) => {
       const newData = {...prev};
-      if (onlyIcons) {
-        newData.socialsOnlyIcons = true;
+      if (index === -1) {
+        if (onlyIcons) {
+          newData.socialsOnlyIcons = true;
+        } else {
+          delete newData.socialsOnlyIcons;
+        }
       } else {
-        delete newData.socialsOnlyIcons;
+        if (onlyIcons) { // @ts-ignore
+          if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
+          newData.custom[index].data.socialsOnlyIcons = true;
+        } else { // @ts-ignore
+          delete newData.custom[index].data.socialsOnlyIcons;
+        }
       }
       return newData;
     });
   }
 
   const exists = useCallback((network: SocialsType) => (
-    data.socials !== undefined && data.socials.some((x: SocialNetworksType) => x.network === network)
+    data?.socials !== undefined && data.socials.some((x: SocialNetworksType) => x.network === network)
   ), [data?.socials?.length || 0]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Grid container spacing={1}>
-      {showTitleAndDesc && (
-        <Grid item xs={12}>
-          <RenderTitleDesc handleValues={handleValues} title={data.titleAbout} description={data.descriptionAbout} />
-        </Grid>
-      )}
       <Grid item xs={12}>
         <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: 'fit-content', margin: '0 auto'}}>
           <SectionSelector
@@ -193,8 +214,7 @@ const RenderSocials = ({data, setData, showTitleAndDesc}: RenderSocialsProps) =>
         {data?.socials !== undefined && data?.socials?.length !== 0 && (
           <FormControlLabel label="Only icons" control={
             <Switch checked={data?.socialsOnlyIcons || false} inputProps={{'aria-label': 'onlyIcons'}}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) => handleOnlyIcons(event.target.checked)} />}
-          />
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => handleOnlyIcons(event.target.checked)} />} />
         )}
       </Grid>
     </Grid>
