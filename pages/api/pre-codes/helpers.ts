@@ -19,7 +19,7 @@ export function parseFromPostRequest(req: NextApiRequest) {
   const schema = Joi.object({
     size: Joi.number().min(4).max(32),
     count: Joi.number().min(1).max(10),
-    owner: Joi.string(),
+    owner: Joi.string().optional(),
   });
 
   return Joi.attempt(req.body, schema, { abortEarly: false });
@@ -32,7 +32,7 @@ export function parseFromPostRequest(req: NextApiRequest) {
 export function parseFromPutsRequest(req: NextApiRequest) {
   const schema = Joi.object({
     codes: Joi.array().items(Joi.string()).min(1),
-    owner: Joi.string(),
+    owner: Joi.string().optional(),
   });
 
   return Joi.attempt(req.body, schema, { abortEarly: false });
