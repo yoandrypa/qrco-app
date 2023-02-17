@@ -118,7 +118,7 @@ export async function loadNewCodes(items: string[], owner: string = 'any') {
  * @param owner
  */
 export async function getPreGenCodes(owner: string = 'any') {
-  const codes = await PreGeneratedModel.query({ owner }).exec();
+  const codes: any[] = await PreGeneratedModel.query({ owner }).exec();
 
   return {
     codes: codes.map((item) => ({ ...item, url: `${MICRO_SITES_ROUTE}/${item.code}` })),
