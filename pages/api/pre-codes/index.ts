@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { respondWithException } from "../../../libs/exceptions";
 import {
   getPreGenCodes,
   genNewCodes,
   loadNewCodes,
   parseFromPostRequest,
   parseFromPutsRequest,
+  respondWithException,
 } from "./helpers";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { codes } = parseFromPutsRequest(req);
       result = await loadNewCodes(codes);
     } else if (req.method == 'GET') {
-      result = await getPreGenCodes(<string>req.query.owner);
+      result = await getPreGenCodes(req.query.owner as string);
     } else {
       return res.status(404);
     }
