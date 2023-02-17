@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { codes } = parseFromPutsRequest(req);
       result = await loadNewCodes(codes);
     } else if (req.method == 'GET') {
-      result = await getPreGenCodes(<string>req.query.owner);
+      result = await getPreGenCodes(req.query.owner as string);
     } else {
       return res.status(404);
     }
