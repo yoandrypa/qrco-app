@@ -247,8 +247,8 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                               {component === components[19].type && <RenderKeyValue index={index} setData={setData} data={x.data} topics="" />}
                               {component === components[20].type && <RenderWeb data={x.data} handleValues={handleValues} index={index} />}
                               {component === components[21].type && <RenderTags index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[22].type && <RenderCouponData index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[23].type && <RenderCouponInfo index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[22].type && <RenderCouponInfo index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[23].type && <RenderCouponData index={index} handleValues={handleValues} data={x.data} />}
                               {component === components[24].type && <RenderPetDesc index={index} handleValues={handleValues} data={x.data} />}
                               {component === components[25].type && <RenderSku index={index} handleValues={handleValues} data={x.data} />}
                             </>)}

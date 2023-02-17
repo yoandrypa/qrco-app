@@ -120,8 +120,6 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     }
   }, [backImg, foreImg]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  console.log(data);
-
   const getFiles = useCallback(async (key: string, item: string) => {
     try {
       lastAction.current = 'loading the background/main images';
