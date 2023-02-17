@@ -1,12 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { saveUsage } from '../../../handlers/usage'
-import Stripe from 'stripe'
 import { getUuid } from '../../../helpers/qr/helpers';
-
-const stripe = new Stripe(process.env.REACT_STRIPE_SECRET_KEY || 'sk_test_51Ksb3LCHh3XhfaZr2tgzaQKAQtuTF9vRtgdXBS7X2rAaPC6FNoLQ3hyPFVmlnRhsif0FDdbi5cdgEh7Y1Wt9Umo900w9YPUGo6', {
-    // https://github.com/stripe/stripe-node#configuration
-    apiVersion: '2022-08-01',
-});
+import { stripe } from "../../../libs/gateways/stripe";
 
 async function recordUsage(usageQuantity: number, subscriptionId: string, overwrite: boolean = false) {
     const subscriptionItems = await stripe.subscriptionItems.list({

@@ -1,18 +1,21 @@
 import Box from "@mui/material/Box";
-import Topics from "../helpers/Topics";
 import Grid from "@mui/material/Grid";
-import {DataType} from "../../types/types";
 import {PHONE} from "../../constants";
 import RenderTextFields from "../helpers/RenderTextFields";
+import {ChangeEvent} from "react";
+import {ContentProps} from "../custom/helperFuncs";
+import Topics from "../helpers/Topics";
 
-interface RenderPhonesProps {
-  data: DataType;
-  handleValues: Function;
+interface RenderPhonesProps extends ContentProps {
   isCompany?: boolean;
   message?: string;
 }
 
-export default function RenderPhones({data, handleValues, message, isCompany}: RenderPhonesProps) {
+export default function RenderPhones({data, handleValues, isCompany, index, message}: RenderPhonesProps) {
+  const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
+    handleValues(item, index)(payload);
+  }
+
   const renderItem = (item: string, label: string) => {
     let isError = false as boolean; // @ts-ignore
     const value = data?.[item] || '' as string;
@@ -21,7 +24,7 @@ export default function RenderPhones({data, handleValues, message, isCompany}: R
       isError = true;
     }
 
-    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={handleValues}/>;
+    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={beforeSend} index={index}/>;
   };
 
   return (

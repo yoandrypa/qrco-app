@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { respondWithException } from "../../../libs/exceptions";
 import {
   getPreGenCodes,
   genNewCodes,
   loadNewCodes,
   parseFromPostRequest,
   parseFromPutsRequest,
+  respondWithException,
 } from "./helpers";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

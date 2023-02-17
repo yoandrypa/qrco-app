@@ -55,8 +55,7 @@ const UserSchema = new dynamoose.Schema({
 }, {
   "saveUnknown": [
     "subscriptionData.**"
-  ]
-  ,
+  ],
   "timestamps": true
 });
 

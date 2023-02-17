@@ -22,6 +22,7 @@ import session from "@ebanux/ebanux-utils/sessionStorage";
 import { logout } from '@ebanux/ebanux-utils/auth';
 import PleaseWait from "../PleaseWait";
 import Claimer from "../claimer/Claimer";
+import Subscription from "../../models/subscription";
 
 const Loading = dynamic(() => import("../Loading"));
 const Generator = dynamic(() => import("../qr/Generator"));
@@ -41,6 +42,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [selected, setSelected] = useState<string | null>(null);
 
   const [userInfo, setUserInfo] = useState(null);
+  const [subscription, setSubscription] = useState(null);
   const [verifying, setVerifying] = useState<boolean>(true);
   const [redirecting, setRedirecting] = useState<boolean>(false);
 
@@ -75,10 +77,10 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     setOptions(handleInitialData("Ebanux"));
 
     setData(() => {
-      let newData:DataType;
+      let newData: DataType;
 
       if (!keepType || data?.isDynamic) {
-        newData = {...initialData};
+        newData = { ...initialData };
       } else {
         newData = {};
       }
@@ -102,7 +104,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (doneInitialRender.current && options.mode === undefined && router.pathname === QR_TYPE_ROUTE) {
       if (!forbidClear.current) {
-        clearData(true, false,  false, data.claim, data.claimable, data.preGenerated);
+        clearData(true, false, false, data.claim, data.claimable, data.preGenerated);
       } else {
         forbidClear.current = false;
       }
@@ -116,8 +118,12 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (loading) { setLoading(false); }
-    if (redirecting) { setRedirecting(false); }
+    if (loading) {
+      setLoading(false);
+    }
+    if (redirecting) {
+      setRedirecting(false);
+    }
     if (router.pathname === '/') {
       clearData(true);
     }
@@ -173,6 +179,20 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     doneInitialRender.current = true;
   }, []);
 
+  useEffect(() => {
+    const { currentAccount: currentUser, isAuthenticated } = session;
+
+    if (isAuthenticated && !subscription) {
+      setLoading(true);
+
+      Subscription.getActiveByUser(currentUser.cognito_user_id).then((subscription: any) => {
+        setSubscription(subscription);
+      }).finally(() => {
+        setLoading(false);
+      });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (isEmbedded) {
     return <Claimer code="" embedded />;
   }
@@ -198,8 +218,15 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       }
     } else {
       return (
-        <AppWrapper setIsFreeMode={setIsTrialMode} handleLogout={logout} clearData={clearData} setLoading={setLoading}
-          mode={data.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} userInfo={userInfo}>
+        // TODO: Remover las propiedades que están contenidas en el Context y usar "const { vvv } = useContext(Context);" para acceder al recurso.
+        <AppWrapper setIsFreeMode={setIsTrialMode}
+                    handleLogout={logout}
+                    clearData={clearData}
+                    mode={data.mode}
+                    setRedirecting={setRedirecting}
+                    isTrialMode={isTrialMode}
+                    userInfo={userInfo}
+        >
           {loading && <Loading />}
           {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>
@@ -211,7 +238,8 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     <Context.Provider value={{
       cornersData, setCornersData, dotsData, setDotsData, frame, setFrame, background, setBackground,
       options, setOptions, selected, setSelected, data, setData, isTrialMode, userInfo,
-      clearData, loading, setLoading, setRedirecting, isWrong, setIsWrong, doNotClear
+      clearData, loading, setLoading, setRedirecting, isWrong, setIsWrong, doNotClear,
+      subscription, setSubscription,
     }}>
       {renderContent()}
     </Context.Provider>

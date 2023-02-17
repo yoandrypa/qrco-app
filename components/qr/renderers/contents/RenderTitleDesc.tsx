@@ -1,10 +1,11 @@
 import Typography from '@mui/material/Typography';
 import RenderTextFields from '../helpers/RenderTextFields';
 import Paper from '@mui/material/Paper';
-import React from 'react';
+import React, {ChangeEvent} from 'react';
 import Box from "@mui/material/Box";
 
 interface RenderTitleDescProps {
+  index?: number;
   title?: string;
   description?: string;
   handleValues: Function;
@@ -16,33 +17,32 @@ interface RenderTitleDescProps {
 }
 
 export default function RenderTitleDesc({
-  title,
-  description,
-  handleValues,
-  header,
-  elevation,
-  noHeader,
-  noPaper,
-  sx
+  index, title, description, handleValues, header, elevation, noHeader, noPaper, sx
 }: RenderTitleDescProps) {
+
+  const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
+    handleValues(item, index)(payload);
+  };
 
   const renderContent = () => (
     <Box>
       {!noHeader && <Typography sx={{fontSize: 'small', color: theme => theme.palette.text.disabled}}>
-        {header ? header : 'Optional'}
+        {header || 'Optional'}
       </Typography>}
       <RenderTextFields
+        index={index}
         item="titleAbout"
         label="Title"
         value={title || ''}
-        handleValues={handleValues}
+        handleValues={beforeSend}
       />
       <RenderTextFields
         multiline
+        index={index}
         item="descriptionAbout"
         label="Description"
         value={description || ''}
-        handleValues={handleValues}
+        handleValues={beforeSend}
       />
     </Box>
   );

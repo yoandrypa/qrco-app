@@ -1,10 +1,9 @@
-import { Grid, Box, ButtonGroup, Button } from '@mui/material';
+import {Box, Button, ButtonGroup, Grid} from '@mui/material';
 import Topics from '../helpers/Topics';
-import { DataType } from '../../types/types';
 import RenderTitleDesc from './RenderTitleDesc';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { ALLOWED_FILE_EXTENSIONS, FILE_LIMITS } from '../../../../consts';
-import { conjunctMethods, toBytes } from '../../../../utils';
+import {ChangeEvent} from 'react';
+import {ALLOWED_FILE_EXTENSIONS, FILE_LIMITS} from '../../../../consts';
+import {conjunctMethods, toBytes} from '../../../../utils';
 import FileUpload from 'react-material-file-upload';
 import RenderTextFields from '../helpers/RenderTextFields';
 
@@ -43,14 +42,14 @@ export default function RenderProduct({
     handleValues(newData);
   };
   //@ts-ignore
-  const handleValuesText = (item: string) => 
+  const handleValuesText = (item: string) =>
   (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
-    
+
     const value =
       typeof payload === 'string' || typeof payload === 'boolean'
         ? payload
         : payload.target.value;
-    
+
     const newData = {
       ...dataRef.current,
       product: { ...dataRef.current.product }
@@ -118,7 +117,7 @@ export default function RenderProduct({
         spacing={1}>
         <Grid container item xs={12} md={6} style={{ paddingTop: 1 }}>
           <Grid item container xs={2} alignItems={'center'} justifyContent={'center'}>
-            <Topics message={'SKU:'} sx={{mb:0}}/>          
+            <Topics message={'SKU:'} sx={{mb:0}}/>
           </Grid>
           <Grid xs={10}>
             <RenderTextFields
