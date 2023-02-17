@@ -95,6 +95,8 @@ export type Type = {
   tags?: string[];
   splitInTwoColumns?: boolean;
   quantity?: number;
+  description?: string;
+  data?: string;
   sku?: string;
   avoidButtons?: boolean;
   hideHeadLine?: boolean;
@@ -188,7 +190,8 @@ export type Type = {
 };
 
 export type CustomType = {
-    element: {}; component: string, name?: string, data?: Type; expand: string; };
+  component: string, name?: string, data?: Type; expand: string;
+};
 
 export type DataType = {
   qrType?: string;

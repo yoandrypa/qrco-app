@@ -17,7 +17,7 @@ export default function RenderCouponInfo({data, handleValues, index}: ContentPro
     const value = data?.[item] || '' as string;
 
     // @ts-ignore
-    if (data[item] !== undefined && (item === 'urlOptionLink' && !isValidUrl(value))) {
+    if (data?.[item] !== undefined && (item === 'urlOptionLink' && !isValidUrl(value))) {
       isError = true;
     }
 

@@ -67,12 +67,28 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
     const compareWith = {...initialOptions, data: options.data}; // @ts-ignore
     if (options.id) { compareWith.id = options.id; } // @ts-ignore
     if (options.shortCode) { compareWith.shortCode = options.shortCode; }
-    const dataComp = {...data};
 
-    const initialDataCpy = {...initialData};
+    const dataComp = structuredClone(data);
+    const initialDataCpy = structuredClone(initialData) as any;
 
     if (initialDataCpy.isDynamic !== undefined) {
       dataComp.isDynamic = initialDataCpy.isDynamic;
+    }
+
+    if (dataComp.claim !== undefined) { // @ts-ignore
+      originalData.claim = dataComp.claim;
+    }
+
+    if (dataComp.claimable !== undefined) { // @ts-ignore
+      originalData.claimable = dataComp.claimable;
+    }
+
+    if (dataComp.preGenerated !== undefined) { // @ts-ignore
+      originalData.preGenerated = dataComp.preGenerated;
+    }
+
+    if (dataComp.custom?.length && !dataComp.custom.some(x => Object.keys(x.data || {}).length)) {
+      initialDataCpy.custom = dataComp.custom;
     }
 
     if (!areEquals(dataComp, initialDataCpy) || !areEquals(options, compareWith)) {

@@ -11,8 +11,6 @@ import { DataType, OptionsType, ProcessHanldlerType } from "./types/types";
 import { QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { getUuid } from "../../helpers/qr/helpers";
 import { getStep, saveOrUpdate, steps, StepsProps } from "./auxFunctions";
-import { get as getUser } from "../../handlers/users";
-import { list } from "../../handlers/qrs"
 import RenderNextButton from "./helperComponents/smallpieces/RenderNextButton";
 import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
 
@@ -31,9 +29,8 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   const [size, setSize] = useState<number>(0);
   const [forceDownload, setForceDownload] = useState<{ item: HTMLElement } | undefined>(undefined);
   const [, setUnusedState] = useState();
-  const [showLimitDlg, setShowLimitDlg] = useState<boolean>(false)
-  const [limitReached, setLimitReached] = useState<boolean>(false)
-  const [isFreeMode, setIsFreeMode] = useState<boolean>(false)
+  const [showLimitDlg, setShowLimitDlg] = useState<boolean>(false);
+  const [limitReached, setLimitReached] = useState<boolean>(false);
 
   // @ts-ignore
   const forceUpdate = useCallback(() => setUnusedState({}), []);
@@ -147,7 +144,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     return () => window.removeEventListener("resize", getWidth);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => { // REACT_APP_STATUS will forbid the checking on develop
+  // useEffect(() => { // REACT_APP_STATUS will forbid the checking on develop
     // TODO: Check
     // if (userInfo && options.mode !== 'edit' && process.env.REACT_APP_STATUS !== 'develop') {
     //   const fetchUser = async () => {
@@ -168,7 +165,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     //     }
     //   }).catch(console.error);
     // }
-  }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
+  // }, [userInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

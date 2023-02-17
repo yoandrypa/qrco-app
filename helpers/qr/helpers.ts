@@ -82,16 +82,13 @@ export const getBase64FromUrl = async (url: string) => {
   });
 };
 
-export const convertBase64 = (file: Blob | File): object => {
+export const convertBase64 = (file: File) => {
+  const newFile = new File([file], file.name);
   return new Promise((resolve, reject) => {
-    const fileReader = new FileReader();
-    fileReader.readAsDataURL(file);
-    fileReader.onload = () => {
-      resolve(fileReader.result);
-    };
-    fileReader.onerror = error => {
-      reject(error);
-    };
+    const reader = new FileReader();
+    reader.readAsDataURL(newFile);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
   });
 };
 

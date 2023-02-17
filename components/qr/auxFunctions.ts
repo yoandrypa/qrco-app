@@ -11,13 +11,15 @@ import { areEquals } from "../helpers/generalFunctions";
 import { initialBackground, initialFrame } from "../../helpers/qr/data";
 import { upload, remove } from "../../handlers/storage";
 import { updateEbanuxDonationPrice, createEbanuxDonationPrice } from "../../handlers/ebanux";
-import {convertBase64, getBase64FromUrl, getUuid} from "../../helpers/qr/helpers";
+import { getUuid } from "../../helpers/qr/helpers";
 import { generateId, generateShortLink } from "../../utils";
 import { create, edit as qrEdit } from "../../handlers/qrs";
 import { QR_CONTENT_ROUTE, QR_TYPE_ROUTE } from "./constants";
-import { get as getUser } from "../../handlers/users"; // @ts-ignore
+// import { get as getUser } from "../../handlers/users";
+// @ts-ignore
 import { recordPlanUsage, recordUsage, saveUsage } from "../../handlers/usage"; //@ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
+import { capitalize } from "@mui/material";
 
 interface UserInfoProps {
   attributes: { sub: string, email: string },
@@ -163,11 +165,22 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     }
   }
 
-  const data = {...dataSource};
+  const data = structuredClone(dataSource);
   if (data.custom?.length) {
-    data.custom.forEach(x => { // @ts-ignore
+    for (let idx = 0, len = data.custom?.length || 0; idx < len; idx += 1) {
+      const x = data.custom[idx]; // @ts-ignore
       if (x.expand !== undefined) { delete x.expand; }
-    });
+      if (["pdf", "audio", "gallery", "video"].includes(x.component) && x.data?.files?.length) {
+        prevUpdatingHandler(`Uploading assets for ${capitalize(x.component)} section`);
+        try {
+          x.data.files = await upload(x.data.files, `${userInfo.cognito_user_id}/${selected}s`);
+          prevUpdatingHandler(null, true);
+        } catch {
+          prevUpdatingHandler(null, false);
+          setIsError(true);
+        }
+      }
+    }
   }
 
   if (data.claim) {
@@ -177,31 +190,31 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
   const dataLength = updatingHandler !== undefined && dataInfo !== undefined && dataInfo > 0;
 
   //Process assets before saving de QR Data
-  if (["pdf", "audio", "gallery", "video", "inventory"].includes(selected) || (selected === 'custom' && data.files && data.files.length)) {
-    prevUpdatingHandler("Uploading assets");
-    try { // @ts-ignore
-      data.files = await upload(data.files, `${userInfo.cognito_user_id}/${selected}s`);
-      prevUpdatingHandler(null, true);
-    } catch {
-      prevUpdatingHandler(null, false);
-      setIsError(true);
-    }
-  }
+  // if (["pdf", "audio", "gallery", "video", "inventory"].includes(selected) || (selected === 'custom' && data.files && data.files.length)) {
+  //   prevUpdatingHandler("Uploading assets");
+  //   try { // @ts-ignore
+  //     data.files = await upload(data.files, `${userInfo.cognito_user_id}/${selected}s`);
+  //     prevUpdatingHandler(null, true);
+  //   } catch {
+  //     prevUpdatingHandler(null, false);
+  //     setIsError(true);
+  //   }
+  // }
 
-  if (selected === "linkedLabel" && data.fields) {
-    prevUpdatingHandler("Uploading assets");
-    for (let index = 0; index < data.fields?.length; index++) {
-      try {
-        if (['media', 'gallery', 'video'].includes(data.fields[index].type)) {//@ts-ignore
-          data.fields[index].files = await upload(data.fields[index].files, `${userInfo.cognito_user_id}/${selected}s`);
-          prevUpdatingHandler(null, true);
-        }
-      } catch {
-        prevUpdatingHandler(null, false);
-        setIsError(true);
-      }
-    }
-  }
+  // if (selected === "linkedLabel" && data.fields) {
+  //   prevUpdatingHandler("Uploading assets");
+  //   for (let index = 0; index < data.fields?.length; index++) {
+  //     try {
+  //       if (['media', 'gallery', 'video'].includes(data.fields[index].type)) {//@ts-ignore
+  //         data.fields[index].files = await upload(data.fields[index].files, `${userInfo.cognito_user_id}/${selected}s`);
+  //         prevUpdatingHandler(null, true);
+  //       }
+  //     } catch {
+  //       prevUpdatingHandler(null, false);
+  //       setIsError(true);
+  //     }
+  //   }
+  // }
 
   if (data.backgndImg !== undefined) {
     if (!Array.isArray(data.backgndImg)) {

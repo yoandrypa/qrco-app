@@ -20,12 +20,13 @@ import { create, get } from "../../handlers/users";
 import session from "@ebanux/ebanux-utils/sessionStorage";
 // @ts-ignore
 import { logout } from '@ebanux/ebanux-utils/auth';
-import PleaseWait from "../PleaseWait";
-import Claimer from "../claimer/Claimer";
 import Subscription from "../../models/subscription";
 
 const Loading = dynamic(() => import("../Loading"));
 const Generator = dynamic(() => import("../qr/Generator"));
+const PleaseWait = dynamic(() => import("../PleaseWait"));
+const Claimer = dynamic(() => import("../claimer/Claimer"));
+const UpdateBrowser = dynamic(() => import("../UpdateBrowser"));
 
 const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [options, setOptions] = useState<OptionsType>(handleInitialData("Ebanux"));
@@ -35,6 +36,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [frame, setFrame] = useState<FramesType>(initialFrame);
   const [data, setData] = useState<DataType>(initialData);
   const [isTrialMode, setIsTrialMode] = useState<boolean>(false);
+  const [updateBrowser, setUpdateBrowser] = useState<boolean>(false);
 
   const [isEmbedded, setIsEmbedded] = useState<boolean>(false);
   const [done, setDone] = useState<boolean>(false);
@@ -177,6 +179,10 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       setVerifying(false);
     }
     doneInitialRender.current = true;
+
+    if (!structuredClone) {
+      setUpdateBrowser(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -192,6 +198,10 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (updateBrowser) {
+    return <UpdateBrowser />;
+  }
 
   if (isEmbedded) {
     return <Claimer code="" embedded />;

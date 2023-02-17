@@ -218,8 +218,8 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                                                   totalFiles={predefined === undefined || selected === 'inventory' ? 3 : FILE_LIMITS['gallery'].totalFiles}/>
                               )}
                               {component === components[10].type && (
-                                <RenderPresentation data={x.data} handleValues={handleValues} index={index} isVCard={selected === 'vcard+'}
-                                                    showExtra={['petId', 'findMe'].includes(selected || '')}/>)}
+                                <RenderPresentation data={x.data} handleValues={handleValues} index={index} showExtra={selected === 'findMe'}
+                                                    forceExtra={['vcard+', 'petId'].includes(selected || '')} />)}
                               {component === components[11].type && <RenderOpeningTime data={x.data} setData={setData} index={index}/>}
                               {component === components[12].type && <RenderSocials data={x.data} setData={setData} index={index}/>}
                               {component === components[13].type && (
@@ -247,8 +247,8 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                               {component === components[19].type && <RenderKeyValue index={index} setData={setData} data={x.data} topics="" />}
                               {component === components[20].type && <RenderWeb data={x.data} handleValues={handleValues} index={index} />}
                               {component === components[21].type && <RenderTags index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[22].type && <RenderCouponData index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[23].type && <RenderCouponInfo index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[22].type && <RenderCouponInfo index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[23].type && <RenderCouponData index={index} handleValues={handleValues} data={x.data} />}
                               {component === components[24].type && <RenderPetDesc index={index} handleValues={handleValues} data={x.data} />}
                               {component === components[25].type && <RenderSku index={index} handleValues={handleValues} data={x.data} />}
                             </>)}
