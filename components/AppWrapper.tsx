@@ -116,17 +116,7 @@ export default function AppWrapper(props: AppWrapperProps) {
       //@ts-ignore
       if (subscription?.status !== "active") {
         setIsFreeMode?.call(null, true);
-
-        // TODO: Use setStartTrialDate(currentUser.localRecord.createdAt) after implement user/me services.
-        // setStartTrialDate(currentUser.localRecord.createdAt);
-        setLoading(true);
-        Users.get(currentUser.cognito_user_id).then(profile => {
-          setStartTrialDate(profile.createdAt);
-        }).catch((err) => {
-          setError(err.message);
-        }).finally(() => {
-          setLoading(false);
-        });
+        setStartTrialDate(currentUser.localRecord.createdAt);
 
         // TODO: Review setFreeLimitReached
         // @ts-ignore
