@@ -11,7 +11,7 @@ import {CustomType, DataType} from "../types/types";
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 
 import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
-import {cleaner, components, CustomEditProps, CustomProps, getNameStr, isRequired, validator} from "./custom/helperFuncs";
+import {cleaner, components, CustomEditProps, CustomProps, getNameStr, validator} from "./custom/helperFuncs";
 import {getUuid} from "../../../helpers/qr/helpers";
 import {FILE_LIMITS} from "../../../consts";
 
@@ -200,8 +200,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                             <Expander expand={expanded || null} setExpand={handleExpander} item={x.expand} multi
                                       index={index} handleValues={handleValues} checked={x?.data?.hideHeadLine}
                                       title={x.name || getNameStr(component, selected || '')}
-                                      bold={Boolean(x.name)} required={isRequired(component, x.data)}
-                                      editFunc={isHeadline ? handleEdit(index, component, x.name) : undefined}/>
+                                      bold={Boolean(x.name)} editFunc={isHeadline ? handleEdit(index, component, x.name) : undefined}/>
                             {expanded !== undefined && (<>
                               {isHeadline && <RenderHeadline index={index} handleValues={handleValues} hideHeadLine={x?.data?.hideHeadLine} centerHeadLine={x?.data?.centerHeadLine}/>}
                               {component === components[0].type && <RenderAddressData data={x.data} handleValues={handleValues} index={index}/>}
