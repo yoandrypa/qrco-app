@@ -37,7 +37,7 @@ function BuyPlan ({ plan }: Props) {
           break;
       }
       try {
-        const user = session.currentAccount;
+        const user = session.currentUser;
         const payload = {
           id: user.cognito_user_id,
           email: user.email,

@@ -39,7 +39,7 @@ export default function FindMeData({
   setIsWrong
 }: FindMeDataProps) {
   const [expander, setExpander] = useState<string | null>(null);
-  const { currentAccount } = session;
+  const { currentUser } = session;
   const isDynamic = useMemo(() => Boolean(data?.isDynamic), []) as boolean; // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderSelectItem = (item: string, label: string, options: { value: string, label: string }[], whatSave?: 'label' | 'value') => {
@@ -154,7 +154,7 @@ export default function FindMeData({
                     handleChange={(type: string, index: number, value: string) => {
                       const newData = { ...data };
                       if (!newData.contactForm)
-                        newData.contactForm = { type: 'contact', email: data.contactForm?.email || currentAccount.email, [type]: value };
+                        newData.contactForm = { type: 'contact', email: data.contactForm?.email || currentUser.email, [type]: value };
                       else
                         newData.contactForm = { ...newData.contactForm, [type]: value }
                       handlePayload(newData);

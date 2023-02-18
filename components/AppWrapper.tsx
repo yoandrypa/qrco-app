@@ -110,7 +110,7 @@ export default function AppWrapper(props: AppWrapperProps) {
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const { currentAccount: currentUser, isAuthenticated } = session;
+    const { currentUser, isAuthenticated } = session;
 
     if (isAuthenticated) {
       //@ts-ignore

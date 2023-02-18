@@ -49,7 +49,7 @@ export default function LinkedLabelData({
   const open = Boolean(anchorEl);
   const MAX_NUM_GALLERIES = 6;
 
-  const { currentAccount } = session;
+  const { currentUser } = session;
 
   const handleClickAddField = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -104,7 +104,7 @@ export default function LinkedLabelData({
       if (!tempo.fields) {
         tempo.fields = [];
       }
-      tempo.fields?.push({ type: 'contact', title: '', message: '', buttonText: '', email: currentAccount.email });
+      tempo.fields?.push({ type: 'contact', title: '', message: '', buttonText: '', email: currentUser.email });
       return tempo;
     });
     setExpander([...expander, true]);

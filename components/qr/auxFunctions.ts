@@ -256,7 +256,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
   }
 
   if (selected === "donation") {
-    data["email"] = session.currentAccount.account.email;
+    data["email"] = session.currentUser.email;
     let priceData: EbanuxDonationPriceData;
     priceData = {
       name: `Donate ${data["title"]}` || "Donation",

@@ -166,7 +166,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     };
 
     try {
-      const userData = session.currentAccount;
+      const userData = session.currentUser;
       setUserInfo(userData);
 
       if (userData) {
@@ -180,7 +180,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    const { currentAccount: currentUser, isAuthenticated } = session;
+    const { currentUser, isAuthenticated } = session;
 
     if (isAuthenticated && !subscription) {
       setLoading(true);

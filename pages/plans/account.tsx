@@ -1,27 +1,28 @@
-
-
 import React, { useEffect, useState } from 'react'
-import Paper from '@mui/material/Paper'
 import { useRouter } from "next/router";
+
 import Typography from "@mui/material/Typography"
 import Divider from "@mui/material/Divider"
-import BillingPortal from "../../components/billing/BillingPortal"
+import Paper from '@mui/material/Paper'
 import Grid from '@mui/material/Grid'
+
+import BillingPortal from "../../components/billing/BillingPortal"
 import { get } from '../../handlers/users'
 import Loading from '../../components/Loading';
 
 // @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
-const AccountPage = () => {
 
-  const user = session.currentAccount;
+const AccountPage = () => {
   const router = useRouter();
   const id = router.query["session_id"];
   const [userCustomerId, setUserCustomerId] = useState(null);
 
   useEffect(() => {
-    if (session.isAuthenticated) {
-      get(user.cognito_user_id).then(profile => {
+    const { currentUser, isAuthenticated } = session;
+
+    if (isAuthenticated) {
+      get(currentUser.cognito_user_id).then(profile => {
         console.log(profile);
         //@ts-ignore
         if (!profile?.customerId) {
@@ -34,8 +35,7 @@ const AccountPage = () => {
 
       });
     }
-  }, [router, user.cognito_user_id]);
-  console.log(session);
+  }, []);
 
   if (!userCustomerId) {
     return (
