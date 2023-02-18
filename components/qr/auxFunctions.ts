@@ -189,33 +189,6 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   const dataLength = updatingHandler !== undefined && dataInfo !== undefined && dataInfo > 0;
 
-  //Process assets before saving de QR Data
-  // if (["pdf", "audio", "gallery", "video", "inventory"].includes(selected) || (selected === 'custom' && data.files && data.files.length)) {
-  //   prevUpdatingHandler("Uploading assets");
-  //   try { // @ts-ignore
-  //     data.files = await upload(data.files, `${userInfo.cognito_user_id}/${selected}s`);
-  //     prevUpdatingHandler(null, true);
-  //   } catch {
-  //     prevUpdatingHandler(null, false);
-  //     setIsError(true);
-  //   }
-  // }
-
-  // if (selected === "linkedLabel" && data.fields) {
-  //   prevUpdatingHandler("Uploading assets");
-  //   for (let index = 0; index < data.fields?.length; index++) {
-  //     try {
-  //       if (['media', 'gallery', 'video'].includes(data.fields[index].type)) {//@ts-ignore
-  //         data.fields[index].files = await upload(data.fields[index].files, `${userInfo.cognito_user_id}/${selected}s`);
-  //         prevUpdatingHandler(null, true);
-  //       }
-  //     } catch {
-  //       prevUpdatingHandler(null, false);
-  //       setIsError(true);
-  //     }
-  //   }
-  // }
-
   if (data.backgndImg !== undefined) {
     if (!Array.isArray(data.backgndImg)) {
       prevUpdatingHandler("Uploading background image");
