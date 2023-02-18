@@ -1,8 +1,8 @@
-import { QrDataModel } from "../models/qr/QrDataModel";
+import { QrDataModel } from "../models";
 import dynamoose from "../libs/dynamoose";
 import { CustomError } from "../utils";
-import { LinkModel } from "../models/link";
-import { QrOptionsModel } from "../models/qr/QrOptionsModel";
+import { LinkModel } from "../models";
+import { QrOptionsModel } from "../models";
 import { ObjectType } from "dynamoose/dist/General";
 import * as StorageHandler from "../handlers/storage";
 
@@ -166,7 +166,14 @@ export const remove = async (key: { userId: string, createdAt: number }) => {
     const createdAt = (new Date(qr.createdAt)).getTime();
     transactions.push(QrDataModel.transaction.delete({ userId: qr.userId, createdAt }));
     const promises = [dynamoose.transaction(transactions)];
-    if (["video", "gallery", "pdf", "audio"].includes(qr.qrType)) {
+
+    for (let i = 0, l = qr.custom?.length || 0; i < l; i += 1) {
+      const section = qr.custom[i];
+      if (["video", "gallery", "pdf", "audio"].includes(section.component) && section.data?.files?.length) {
+        promises.push(StorageHandler.remove(section.data.files));
+      }
+    }
+    if (["video", "gallery", "pdf", "audio"].includes(qr.qrType) && qr.files?.length) {
       promises.push(StorageHandler.remove(qr.files));
     }
     if (qr.backgndImg) {
