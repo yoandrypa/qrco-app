@@ -52,7 +52,6 @@ export default function RenderAssetsData({type, totalFiles, data, setData, index
         return newData;
       });
     } else {
-      debugger;
       const isSameFile = (uploadedFile: File, fileToUpload: File) => {
         return uploadedFile.name === fileToUpload.name && uploadedFile.lastModified === fileToUpload.lastModified;
       };
