@@ -65,10 +65,6 @@ export interface ContentProps {
   handleValues: Function;
 }
 
-export const isRequired = (component: string, dataInfo?: Type) =>
-  (component === 'action' && (!dataInfo?.urlOptionLabel?.trim().length || !dataInfo?.urlOptionLink?.trim().length || !isValidUrl(dataInfo.urlOptionLink))) ||
-  (component === 'company' && !dataInfo?.company?.trim().length) || (component === 'presentation' && !dataInfo?.firstName?.trim().length);
-
 export const validator = (dataToCheck: DataType, selected?: string): boolean => {
   if (!dataToCheck.custom?.length) { return true; }
 
