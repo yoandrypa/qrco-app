@@ -23,6 +23,7 @@ import { logout } from '@ebanux/ebanux-utils/auth';
 import PleaseWait from "../PleaseWait";
 import Claimer from "../claimer/Claimer";
 import Subscription from "../../models/subscription";
+import Waiting, { startWaiting, releaseWaiting } from "../Waiting";
 
 const Loading = dynamic(() => import("../Loading"));
 const Generator = dynamic(() => import("../qr/Generator"));
@@ -183,12 +184,11 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     const { currentUser, isAuthenticated } = session;
 
     if (isAuthenticated && !subscription) {
-      setLoading(true);
-
+      startWaiting();
       Subscription.getActiveByUser(currentUser.cognito_user_id).then((subscription: any) => {
         setSubscription(subscription);
       }).finally(() => {
-        setLoading(false);
+        releaseWaiting();
       });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -227,7 +227,11 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
                     isTrialMode={isTrialMode}
                     userInfo={userInfo}
         >
-          {loading && <Loading />}
+          {
+            // TODO: Deprecated, remove this after migrate to Waiting
+            loading && <Loading />
+          }
+          <Waiting />
           {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>
       );
