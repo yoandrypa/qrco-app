@@ -1,49 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import { useRouter } from "next/router";
+import React from 'react'
 
 import Typography from "@mui/material/Typography"
 import Divider from "@mui/material/Divider"
 import Paper from '@mui/material/Paper'
 import Grid from '@mui/material/Grid'
 
-import BillingPortal from "../../components/billing/BillingPortal"
-import { get } from '../../handlers/users'
-import Loading from '../../components/Loading';
+import Button from "@mui/material/Button";
 
-// @ts-ignore
-import session from "@ebanux/ebanux-utils/sessionStorage";
+import { request } from "../../libs/utils/reguest";
 
 const AccountPage = () => {
-  const router = useRouter();
-  const id = router.query["session_id"];
-  const [userCustomerId, setUserCustomerId] = useState(null);
 
-  useEffect(() => {
-    const { currentUser, isAuthenticated } = session;
-
-    if (isAuthenticated) {
-      get(currentUser.cognito_user_id).then(profile => {
-        console.log(profile);
-        //@ts-ignore
-        if (!profile?.customerId) {
-          //@ts-ignore
-          setTimeout(() => {
-            router.reload()
-          }, 2000);
-        }
-        setUserCustomerId(profile.customerId)
-
-      });
-    }
-  }, []);
-
-  if (!userCustomerId) {
-    return (
-      <Loading text='Loading your billing information' />
-    )
+  async function reviewingPlan() {
+    const { url } = await request({ url: 'billing-portal', errorHandler: setError });
+    window.open(url, '_blank');
   }
 
-  //Billing portal
   return (
     <>
       <Typography variant='h4'>
@@ -59,7 +31,9 @@ const AccountPage = () => {
         </Typography>
         <Grid container spacing={2}>
           <Grid item padding={2} marginLeft={2}>
-            <BillingPortal customerId={userCustomerId} />
+            <Button variant='contained' onClick={reviewingPlan}>
+              Review plan
+            </Button>
           </Grid>
         </Grid>
 
