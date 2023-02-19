@@ -70,8 +70,8 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     if (!keepType || doNot || takeAwaySelection) {
       resetSelected();
     }
-    setBackground(initialBackground);
-    setFrame(initialFrame);
+    setBackground(structuredClone(initialBackground));
+    setFrame(structuredClone(initialFrame));
     setDotsData(null);
     setCornersData(null);
     setIsWrong(false);
@@ -82,7 +82,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       let newData: DataType;
 
       if (!keepType || data?.isDynamic) {
-        newData = { ...initialData };
+        newData = structuredClone(initialData);
       } else {
         newData = {};
       }
@@ -207,7 +207,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     return <Claimer code="" embedded />;
   }
 
-  if (verifying || !done) {
+  if (verifying || !done || !data) {
     return <PleaseWait />
   }
 

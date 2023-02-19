@@ -8,7 +8,7 @@ export const components = [
   {type: 'date', name: 'Date'}, {type: 'justEmail', name: 'Email address'},
   {type: 'email', name: 'Email and web'}, {type: 'easiness', name: 'Easiness'},
   {type: 'links', name: 'Links'}, {type: 'organization', name: 'Organization'},
-  {type: 'phones', name: 'Phones and cells'}, {type: 'gallery', name: 'Photos'},
+  {type: 'phones', name: 'Phones and cells'}, {type: 'gallery', name: 'Gallery'},
   {type: 'presentation', name: 'Presentation'}, {type: 'opening', name: 'Opening time'},
   {type: 'socials', name: 'Social networks'}, {type: 'title', name: 'Title and description'},
   {type: 'action', name: 'Action button'}, {type: 'single', name: 'Single text'},
