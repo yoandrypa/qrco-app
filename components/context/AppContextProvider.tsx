@@ -58,7 +58,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const isUserInfo = useMemo(() => userInfo !== null, [userInfo]);
 
   // TODO: Remove after replace all setLoading references by startWaiting or releaseWaiting.
-  function setLoading(value) {
+  function setLoading(value: boolean) {
     console.debug('Calling to deprecated method setLoading');
     value ? startWaiting() : releaseWaiting();
     setDeprecateLoading(value);
