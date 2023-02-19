@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { useRouter } from "next/router";
 
 import Box from "@mui/material/Box";
@@ -13,6 +13,7 @@ import PlanCard from "../../components/plans/plancard";
 import PlanCalculator from "../../components/plans/PlanCalculator";
 
 import { parseErrorMessage } from "../../libs/exceptions";
+import { startWaiting, releaseWaiting } from "../../components/Waiting";
 
 import plans from "../../consts/plans";
 
@@ -24,7 +25,7 @@ import { request } from "@ebanux/ebanux-utils/request";
 const Plans = () => {
   const router = useRouter();
   // @ts-ignore
-  const { subscription, setLoading } = useContext(Context);
+  const { subscription } = useContext(Context);
   const [error, setError] = useState<string | null>(null);
   const activePlan = subscription?.metadata?.plan_type || 'free';
 
@@ -45,7 +46,7 @@ const Plans = () => {
     }
 
     try {
-      setLoading(true);
+      startWaiting();
 
       const options = {
         url: 'subscriptions',
@@ -60,7 +61,7 @@ const Plans = () => {
     } catch (ex) {
       setError(parseErrorMessage(ex));
     } finally {
-      setLoading(false);
+      releaseWaiting();
     }
   };
 

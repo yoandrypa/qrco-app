@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -47,7 +47,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [verifying, setVerifying] = useState<boolean>(true);
   const [redirecting, setRedirecting] = useState<boolean>(false);
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setDeprecateLoading] = useState<boolean>(false);
   const [isWrong, setIsWrong] = useState<boolean>(false);
 
   const doneInitialRender = useRef<boolean>(false);
@@ -56,6 +56,13 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   const isUserInfo = useMemo(() => userInfo !== null, [userInfo]);
+
+  // TODO: Remove after replace all setLoading references by startWaiting or releaseWaiting.
+  function setLoading(value) {
+    console.debug('Calling to deprecated method setLoading');
+    value ? startWaiting() : releaseWaiting();
+    setDeprecateLoading(value);
+  }
 
   const doNotClear = useCallback(() => {
     forbidClear.current = true;
@@ -74,7 +81,6 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     setDotsData(null);
     setCornersData(null);
     setIsWrong(false);
-    setLoading(false);
     setOptions(handleInitialData("Ebanux"));
 
     setData(() => {
@@ -119,9 +125,6 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (loading) {
-      setLoading(false);
-    }
     if (redirecting) {
       setRedirecting(false);
     }
@@ -227,10 +230,6 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
                     isTrialMode={isTrialMode}
                     userInfo={userInfo}
         >
-          {
-            // TODO: Deprecated, remove this after migrate to Waiting
-            loading && <Loading />
-          }
           <Waiting />
           {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>
