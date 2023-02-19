@@ -75,7 +75,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
       });
       return newData;
     });
-  }, [data.custom?.length, expander]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data?.custom?.length, expander]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDelete = useCallback((index: number, item: string) => {
     setConfirm(undefined);
@@ -141,8 +141,9 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    const expand = [] as string[];
+
     if (predefined) {
-      const expand = [] as string[];
       setData((prev: DataType) => {
         const newData = {...prev, custom: []};
         predefined.forEach((item, index) => { // @ts-ignore
@@ -153,8 +154,11 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
         });
         return newData;
       });
-      setExpander(expand);
+    } else if (data.custom?.length && data.custom[0].expand !== undefined) {
+      expand.push(data.custom[0].expand);
     }
+
+    if (expand.length) { setExpander(expand); }
 
     const observer = new IntersectionObserver(
       (payload: IntersectionObserverEntry[]) => {
@@ -189,9 +193,10 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                   const expanded = expander.find(exp => exp === x.expand);
 
                   const isHeadline = !['title', 'action', 'sku'].includes(component) && !(component === 'gallery' && selected === 'inventory');
+                  const key = x.expand || `tempo${index}`;
 
                   return (
-                    <Draggable key={x.expand} draggableId={x.expand} index={index} isDragDisabled={data.custom?.length === 1}>
+                    <Draggable key={key} draggableId={key} index={index} isDragDisabled={data.custom?.length === 1}>
                       {(prov: any, snap: any) => (
                         <Box sx={{my: 4, width: '100%', ...getItemStyle(snap.isDragging, prov.draggableProps.style)}}
                              ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>

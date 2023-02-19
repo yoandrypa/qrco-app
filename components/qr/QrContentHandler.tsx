@@ -136,12 +136,12 @@ const QrContentHandler = () => { // @ts-ignore
         return <WifiData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
       }
       case 'custom': {
-        return <Custom data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />;
+        return <Custom data={data} setData={setData} setIsWrong={setIsWrong} handleValues={handleValues}/>;
       }
       case 'vcard+': {
         return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
           tip="Your contact details. Users can store your info or contact you right away." selected={selected}
-          predefined={options.mode === undefined ? ['presentation', 'organization', 'socials'] : undefined} />;
+          predefined={options.mode === undefined ? ['presentation', 'organization', 'socials'] : undefined}/>;
       }
       case 'vcard': {
         return <CardDataStatic data={data} handleValues={handleValues} setIsWrong={setIsWrong} />;

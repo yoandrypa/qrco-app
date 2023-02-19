@@ -173,6 +173,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       if (["pdf", "audio", "gallery", "video"].includes(x.component) && x.data?.files?.length) {
         prevUpdatingHandler(`Uploading assets for ${capitalize(x.component)} section`);
         try {
+          // upload will handle only File instances, others are ignored
           x.data.files = await upload(x.data.files, `${userInfo.cognito_user_id}/${selected}s`);
           prevUpdatingHandler(null, true);
         } catch {
