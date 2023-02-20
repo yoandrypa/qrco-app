@@ -35,6 +35,7 @@ export default function Claimer({ code }: ClaimerProps) {
   const [checking, setChecking] = useState<boolean>(true);
 
   const lynk = useRef<string>(`${URL}${custom}`);
+  const embedded = iFrameDetected;
 
   const router = useRouter();
 
@@ -49,7 +50,7 @@ export default function Claimer({ code }: ClaimerProps) {
   }
 
   const handleClaim = (event: MouseEvent<HTMLButtonElement>) => {
-    if (!iFrameDetected) {
+    if (!embedded) {
       setOpen(event.currentTarget);
     } else if (window && window.top) {
       window.top.location.href = `${window.location.origin}/qr/type?address=${custom}`;
