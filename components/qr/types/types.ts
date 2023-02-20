@@ -88,7 +88,17 @@ export type SocialProps = {
   isDynamic?: boolean;
 };
 
-export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram' | 'title' | 'about';
+export type SocialsType =
+  'facebook'
+  | 'whatsapp'
+  | 'twitter'
+  | 'instagram'
+  | 'youtube'
+  | 'linkedin'
+  | 'pinterest'
+  | 'telegram'
+  | 'title'
+  | 'about';
 export type SocialNetworksType = { network: SocialsType, value?: string };
 
 export type Type = {
@@ -188,7 +198,12 @@ export type Type = {
 };
 
 export type CustomType = {
-    element: {}; component: string, name?: string, data?: Type; expand: string; };
+  element: {};
+  component: string;
+  name?: string;
+  data?: Type;
+  expand: string;
+};
 
 export type DataType = {
   qrType?: string;

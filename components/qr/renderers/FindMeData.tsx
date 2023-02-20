@@ -17,7 +17,6 @@ import RenderSelectField from './helpers/RenderSelectField';
 import RenderPresentation from './contents/RenderPresentation';
 import RenderAddressData from './contents/RenderAddressData';
 import RenderContactForm from '../helperComponents/smallpieces/RenderContactForm';
-//@ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import RenderPhones from './contents/RenderPhones';
 

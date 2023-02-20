@@ -1,18 +1,21 @@
 import { ChangeEvent, useEffect, useState } from 'react';
+
+import session from "@ebanux/ebanux-utils/sessionStorage";
+
 import Grid from '@mui/material/Grid';
+import { Button, Menu, MenuItem } from '@mui/material';
+
 import { ALLOWED_FILE_EXTENSIONS } from '../../../consts';
 import Common from '../helperComponents/Common';
 import Topics from './helpers/Topics';
 import RenderTextFields from './helpers/RenderTextFields';
 import { DataType } from '../types/types';
-import { Button, Menu, MenuItem, Typography } from '@mui/material';
 import RenderChipFields from './helpers/RenderChipFields';
 import RenderDragDrop from './helpers/RenderDragDrop';
 import RenderContactForm from '../helperComponents/smallpieces/RenderContactForm';
 import RenderGallerySection from '../helperComponents/smallpieces/RenderGallerySection';
-//@ts-ignore
-import session from "@ebanux/ebanux-utils/sessionStorage";
 import RenderTitleDesc from './contents/RenderTitleDesc';
+
 interface LinkedLabelDataProps {
   data: DataType;
   setData: Function;
@@ -38,11 +41,11 @@ const categoryOptions = [
 ];
 
 export default function LinkedLabelData({
-  data,
-  setData,
-  handleValues,
-  setIsWrong
-}: LinkedLabelDataProps) {
+                                          data,
+                                          setData,
+                                          handleValues,
+                                          setIsWrong
+                                        }: LinkedLabelDataProps) {
   const [expander, setExpander] = useState<boolean[]>([]);
   const [galleries, setGalleries] = useState<number>(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

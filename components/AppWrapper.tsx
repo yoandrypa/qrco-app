@@ -13,11 +13,10 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
-import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
-// @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
-// @ts-ignore
 import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
+import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
+
 import { list } from '../handlers/qrs'
 
 import RenderSupport from "./wrapper/RenderSupport";

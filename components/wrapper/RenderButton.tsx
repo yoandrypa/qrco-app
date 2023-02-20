@@ -4,9 +4,7 @@ import Box from "@mui/material/Box";
 import RenderNewQrButton from "../renderers/RenderNewQrButton";
 import LogoutIcon from "@mui/icons-material/Logout";
 
-// @ts-ignore
-import {startAuthorizationFlow} from "@ebanux/ebanux-utils/auth";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 
 interface ButtonProps {
   userInfo?: any;
@@ -15,7 +13,7 @@ interface ButtonProps {
   handleLogin: () => void;
 }
 
-export default function RenderButton({userInfo, handleLogout, handleNavigation, handleLogin}: ButtonProps) {
+export default function RenderButton({ userInfo, handleLogout, handleNavigation, handleLogin }: ButtonProps) {
   const router = useRouter();
 
   if (!userInfo) {

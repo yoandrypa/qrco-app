@@ -11,12 +11,12 @@ import { areEquals } from "../helpers/generalFunctions";
 import { initialBackground, initialFrame } from "../../helpers/qr/data";
 import { upload, remove } from "../../handlers/storage";
 import { updateEbanuxDonationPrice, createEbanuxDonationPrice } from "../../handlers/ebanux";
-import {convertBase64, getBase64FromUrl, getUuid} from "../../helpers/qr/helpers";
+import { convertBase64, getBase64FromUrl, getUuid } from "../../helpers/qr/helpers";
 import { generateId, generateShortLink } from "../../utils";
 import { create, edit as qrEdit } from "../../handlers/qrs";
 import { QR_CONTENT_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { get as getUser } from "../../handlers/users"; // @ts-ignore
-import { recordPlanUsage, recordUsage, saveUsage } from "../../handlers/usage"; //@ts-ignore
+import { recordPlanUsage, recordUsage, saveUsage } from "../../handlers/usage";
 import session from "@ebanux/ebanux-utils/sessionStorage";
 
 interface UserInfoProps {
@@ -73,15 +73,19 @@ export interface GenProps {
 export const steps = ["Type", "Content", "QR Design"];
 
 const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame: FramesType,
-  cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, edit: boolean): void => {
+                 cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, edit: boolean): void => {
   if (!areEquals(frame, initialFrame)) {
     qrDesign.frame = frame;
   }
 
   if (!areEquals(background, initialBackground)) {
     qrDesign.background = background;
-    if (qrDesign.background.file === null) { qrDesign.background.file = ''; }
-    if (qrDesign.background.backColor === null) { qrDesign.background.backColor = '#fff'; }
+    if (qrDesign.background.file === null) {
+      qrDesign.background.file = '';
+    }
+    if (qrDesign.background.backColor === null) {
+      qrDesign.background.backColor = '#fff';
+    }
   } else if (edit) { // @ts-ignore
     qrDesign.background = initialBackground;
   }
@@ -111,9 +115,15 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
     qrName: qrData.qrName
   } as EditType;
 
-  if (objToEdit.updatedAt) { delete objToEdit.updatedAt; }
-  if (data.isDynamic) { objToEdit.isDynamic = true; }
-  if (objToEdit.mode) { delete objToEdit.mode; }
+  if (objToEdit.updatedAt) {
+    delete objToEdit.updatedAt;
+  }
+  if (data.isDynamic) {
+    objToEdit.isDynamic = true;
+  }
+  if (objToEdit.mode) {
+    delete objToEdit.mode;
+  }
 
   objToEdit.qrOptionsId = qrDesign;
 
@@ -152,10 +162,10 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
  * @param updatingHandler
  */
 export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps, options: OptionsType, frame: FramesType,
-  background: BackgroundType, cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string,
-  setLoading: (loading: boolean) => void, setIsError: (isError: boolean) => void,
-  success: (creationData?: string) => void, router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
-  updatingHandler?: (value: string | null, status?: boolean) => void) => {
+                                   background: BackgroundType, cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string,
+                                   setLoading: (loading: boolean) => void, setIsError: (isError: boolean) => void,
+                                   success: (creationData?: string) => void, router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
+                                   updatingHandler?: (value: string | null, status?: boolean) => void) => {
 
   const prevUpdatingHandler = (value: string | null, status?: boolean) => {
     if (updatingHandler) {
@@ -163,16 +173,15 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     }
   }
 
-  const data = {...dataSource};
+  const data = { ...dataSource };
   if (data.custom?.length) {
-    data.custom.forEach(x => { // @ts-ignore
-      if (x.expand !== undefined) { delete x.expand; }
+    data.custom.forEach((x) => {
+      // @ts-ignore
+      delete x.expand;
     });
   }
 
-  if (data.claim) {
-    delete data.claim;
-  }
+  if (data.claim) delete data.claim;
 
   const dataLength = updatingHandler !== undefined && dataInfo !== undefined && dataInfo > 0;
 
@@ -342,7 +351,9 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
         prevUpdatingHandler("Saving QR Code data");
       }
       const response = await create({ shortLink, qrDesign, qrData });
-      if (success && response?.creationDate) { success(response.creationDate); }
+      if (success && response?.creationDate) {
+        success(response.creationDate);
+      }
     } else {
       edition = true;
       if (dataLength) {
@@ -356,7 +367,9 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       }
 
       await qrEdit(objToEdit);
-      if (success) { success(); }
+      if (success) {
+        success();
+      }
     }
     if (dataLength) {
       prevUpdatingHandler(null, true);

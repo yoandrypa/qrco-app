@@ -3,7 +3,6 @@ import { handleFetchResponse } from "../../handlers/helpers";
 import Loading from "../Loading";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
-// @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import * as UserHandler from "../../handlers/users";
 

@@ -4,7 +4,6 @@ import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-// @ts-ignore
 import messaging from "@ebanux/ebanux-utils/messaging";
 
 const mSubscriptions: any[] = [];

@@ -10,9 +10,6 @@ import CoffeeIcon from '@mui/icons-material/Coffee';
 import RenderProposalsTextFields from './helpers/RenderProposalsTextFields';
 import Box from '@mui/material/Box';
 
-//@ts-ignore
-import session from "@ebanux/ebanux-utils/sessionStorage";
-
 export interface DonationsProps {
   data: {
     title?: string,

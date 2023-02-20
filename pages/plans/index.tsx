@@ -1,9 +1,7 @@
-import React from "react";
-import { useState, useContext } from "react";
-import { useRouter } from "next/router";
-
-// @ts-ignore
+import React, { useState, useContext } from "react";
 import session from "@ebanux/ebanux-utils/sessionStorage";
+
+import { useRouter } from "next/router";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -33,7 +31,7 @@ const Plans = () => {
   async function handlePlanClick(planType: string) {
     if (!session.isAuthenticated) return router.push("/plans/buy/" + planType);
 
-    if (subscription & activePlan === planType) return await reviewingPlan();
+    if (subscription && activePlan === planType) return await reviewingPlan();
 
     const options = {
       url: 'subscriptions',

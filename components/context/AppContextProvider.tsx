@@ -16,10 +16,9 @@ import {
 } from "../../helpers/qr/helpers";
 import { create, get } from "../../handlers/users";
 
-// @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
-// @ts-ignore
 import { logout } from '@ebanux/ebanux-utils/auth';
+
 import PleaseWait from "../PleaseWait";
 import Claimer from "../claimer/Claimer";
 import Subscription from "../../models/subscription";
