@@ -46,6 +46,7 @@ const RenderEmail = dynamic(() => import("./contents/RenderEmail"));
 const RenderWeb = dynamic(() => import("./contents/RenderWeb"));
 const RenderSku = dynamic(() => import("./contents/RenderSku"));
 const RenderTags = dynamic(() => import("./contents/RenderTags"));
+const RenderContactForm = dynamic(() => import("./contents/RenderContactForm"));
 
 export default function Custom({data, setData, handleValues, setIsWrong, predefined, tip, selected}: CustomProps) {
   const [showOptions, setShowOptions] = useState<HTMLElement | null>(null);
@@ -250,11 +251,12 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                               )}
                               {component === components[19].type && <RenderKeyValue index={index} setData={setData} data={x.data} topics="" />}
                               {component === components[20].type && <RenderWeb data={x.data} handleValues={handleValues} index={index} />}
-                              {component === components[21].type && <RenderTags index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[22].type && <RenderCouponInfo index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[23].type && <RenderCouponData index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[24].type && <RenderPetDesc index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[25].type && <RenderSku index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[21].type && <RenderContactForm index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[22].type && <RenderTags index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[23].type && <RenderCouponInfo index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[24].type && <RenderCouponData index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[25].type && <RenderPetDesc index={index} handleValues={handleValues} data={x.data} />}
+                              {component === components[26].type && <RenderSku index={index} handleValues={handleValues} data={x.data} />}
                             </>)}
                           </DragPaper>
                         </Box>

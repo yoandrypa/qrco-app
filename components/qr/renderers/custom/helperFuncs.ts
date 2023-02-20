@@ -13,7 +13,7 @@ export const components = [
   {type: 'socials', name: 'Social networks'}, {type: 'title', name: 'Title and description'},
   {type: 'action', name: 'Action button'}, {type: 'single', name: 'Single text'},
   {type: 'pdf', name: 'PDF file'}, {type: 'audio', name: 'Audio files'}, {type: 'video', name: 'Video files'},
-  {type: 'keyvalue', name: 'Details'}, {type: 'web', name: 'Web'},
+  {type: 'keyvalue', name: 'Details'}, {type: 'web', name: 'Web'}, {type: 'contact', name: 'Contact form'},
   {type: 'tags', name: 'Tags'}, {type: 'couponInfo', name: 'Promotion info', notInMenu: true},
   {type: 'couponData', name: 'Coupon data', notInMenu: true},
   {type: 'petId', name: 'Pet presentation', notInMenu: true},
@@ -84,13 +84,14 @@ export const validator = (dataToCheck: DataType, selected?: string): boolean => 
       errors = true;
       return false;
     }
-    if ((component === 'address' && data.zip?.trim().length && !ZIP.test(data.zip)) ||
-      (component === 'justEmail' && data.email?.trim().length && !EMAIL.test(data.email)) ||
-      (component === 'web' && data.web?.trim().length && !isValidUrl(data.web))) {
+    if ((component === 'contact') && (!data.email?.trim().length || !EMAIL.test(data.email) || !data.message?.trim().length)) {
       errors = true;
       return false;
     }
-    if (component === 'tags' && !data.tags?.length) {
+    if ((component === 'address' && data.zip?.trim().length && !ZIP.test(data.zip)) ||
+      (component === 'justEmail' && data.email?.trim().length && !EMAIL.test(data.email)) ||
+      (component === 'web' && data.web?.trim().length && !isValidUrl(data.web)) ||
+      (component === 'tags' && !data.tags?.length)) {
       errors = true;
       return false;
     }
