@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     if (req.method === 'POST') {
-      result = await createCheckoutSession(<string>req.headers.origin);
+      result = await createCheckoutSession(req.headers.origin as string);
     } else {
       throw new NotFound;
     }
