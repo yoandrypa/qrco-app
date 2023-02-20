@@ -41,7 +41,7 @@ const Plans = () => {
     };
 
     // Send request to create and get checkout-session url
-    const { result: { url: checkoutSessionUrl } } = await request(options);
+    const { url: checkoutSessionUrl } = await request(options);
 
     window.location.href = checkoutSessionUrl;
   };
