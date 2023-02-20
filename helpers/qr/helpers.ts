@@ -213,7 +213,7 @@ export const downloadAsImg = async (svgData: string | { outerHTML: string | numb
     canvas.setAttribute('height', h);
     const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
     context?.clearRect(0, 0, w, h); // @ts-ignore
-    // context.drawImage(imageToHandle, 0, 0, w, h);
+    context.drawImage(imageToHandle, 0, 0, w, h);
     const data = canvas.toDataURL( `image/${!asJpg ? 'png' : 'jpeg'}`, 1);
     if (!verify) {
       const anchor = document.createElement('a');
