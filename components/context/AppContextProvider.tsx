@@ -81,7 +81,6 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     setDotsData(null);
     setCornersData(null);
     setIsWrong(false);
-    setLoading(false);
     setOptions(handleInitialData("Ebanux"));
 
     setData(() => {
@@ -126,9 +125,6 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (loading) {
-      setLoading(false);
-    }
     if (redirecting) {
       setRedirecting(false);
     }
@@ -195,12 +191,12 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     const { currentAccount: currentUser, isAuthenticated } = session;
 
     if (isAuthenticated && !subscription) {
-      setLoading(true);
+      startWaiting();
 
       Subscription.getActiveByUser(currentUser.cognito_user_id).then((subscription: any) => {
         setSubscription(subscription);
       }).finally(() => {
-        setLoading(false);
+        releaseWaiting();
       });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
