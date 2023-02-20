@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 
 import RenderIcon from './helperComponents/smallpieces/RenderIcon';
 import Context from '../context/Context';
-import { DataType, SocialProps, Type } from './types/types';
+import {DataType, OptionsType, SocialProps, Type} from './types/types';
 
 import dynamic from "next/dynamic";
 
@@ -33,13 +33,14 @@ const RenderNoUserWarning = dynamic(() => import('./helperComponents/smallpieces
 type QrContentHandlerProps = {
   data: DataType;
   userInfo: object;
+  options: OptionsType;
   setData: Function;
   selected?: string | null;
   setIsWrong: (isWrong: boolean) => void;
 }
 
 const QrContentHandler = () => { // @ts-ignore
-  const { data, setData, selected, setIsWrong, userInfo }: QrContentHandlerProps = useContext(Context);
+  const { data, setData, selected, setIsWrong, userInfo, options }: QrContentHandlerProps = useContext(Context);
 
   const handleValues = (item: string, index?: number) => (payload: ChangeEvent<HTMLInputElement> | string | boolean | string[]) => {
     const value = Array.isArray(payload) || typeof payload === 'string' || typeof payload === 'boolean' ? payload :
@@ -135,28 +136,30 @@ const QrContentHandler = () => { // @ts-ignore
         return <WifiData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
       }
       case 'custom': {
-        return <Custom data={data} setData={handlePayload} setIsWrong={setIsWrong} handleValues={handleValues} />;
+        return <Custom data={data} setData={setData} setIsWrong={setIsWrong} handleValues={handleValues}/>;
       }
       case 'vcard+': {
         return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
-          tip="Your contact details. Users can store your info or contact you right away."
-          predefined={['presentation', 'organization', 'socials']} selected={selected} />;
+          tip="Your contact details. Users can store your info or contact you right away." selected={selected}
+          predefined={options.mode === undefined ? ['presentation', 'organization', 'socials'] : undefined}/>;
       }
       case 'vcard': {
         return <CardDataStatic data={data} handleValues={handleValues} setIsWrong={setIsWrong} />;
       }
       case 'link': {
         return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
-          tip="Add at least one link to your websites." predefined={['title', 'links', 'socials']} selected={selected}/>;
+          tip="Add at least one link to your websites." selected={selected}
+          predefined={options.mode === undefined ? ['title', 'links', 'socials'] : undefined} />;
       }
       case 'coupon': {
         return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
-          tip="Share a coupon for promotion." predefined={['couponInfo', 'couponData', 'address']} selected={selected}/>;
+          tip="Share a coupon for promotion." selected={selected}
+          predefined={options.mode === undefined ? ['couponInfo', 'couponData', 'address'] : undefined} />;
       }
       case 'business': {
-        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
+        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected}
           tip="Your business or company details. Users can contact your business or company right away."
-          predefined={['company', 'action', 'address', 'opening', 'easiness', 'socials']} selected={selected}/>;
+          predefined={options.mode === undefined ? ['company', 'action', 'address', 'opening', 'easiness', 'socials'] : undefined} />;
       }
       case 'email': {
         return <EmailData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
@@ -171,8 +174,8 @@ const QrContentHandler = () => { // @ts-ignore
       case 'pdf':
       case 'audio':
       case 'video': {
-        return <Custom data={data} setData={setData} handleValues={handleValues}
-          setIsWrong={setIsWrong} predefined={['title', selected]} selected={selected}
+        return <Custom data={data} setData={setData} handleValues={handleValues} selected={selected} setIsWrong={setIsWrong}
+          predefined={options.mode === undefined ? ['title', selected] : undefined}
           tip={`You can upload a maximum of ${pluralize("file", FILE_LIMITS[selected].totalFiles, true)} of size ${formatBytes(FILE_LIMITS[selected].totalMbPerFile * 1048576)}.`}
         />
       }
@@ -189,24 +192,28 @@ const QrContentHandler = () => { // @ts-ignore
         return <FundMe data={data} setData={setData} handleValues={handleValues} />
       }
       case 'petId': {
-        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} tip="Your pet information."
-          predefined={['petId', 'presentation', 'phones', 'address', 'keyvalue', 'links', 'socials']} selected={selected}/>;
+        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
+          tip="Your pet information."  selected={selected}
+          predefined={options.mode === undefined ? ['petId', 'presentation', 'keyvalue', 'links', 'socials'] : undefined}/>;
       }
       case 'linkedLabel': {
         return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} tip="Smart labels."
-          predefined={['title', 'tags', 'gallery']} selected={selected}/>;
+          predefined={options.mode === undefined ? ['title', 'tags', 'gallery'] : undefined} selected={selected}/>;
       }
       case 'findMe':{
         return <Custom data={data} handleValues={handleValues} setIsWrong={setIsWrong} setData={setData} selected={selected}
-          tip="Information to make easy to find you" predefined={['presentation', 'keyvalue', 'links', 'socials']}/>;
+          tip="Information to make easy to find you."
+          predefined={options.mode === undefined ? ['presentation', 'keyvalue', 'links', 'socials'] : undefined}/>;
       }
       case 'inventory': {
-        return <Custom data={data} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected} setData={setData}
-           tip="Inventory tracking information" predefined={['title', 'gallery', 'sku', 'keyvalue']}/>;
+        return <Custom data={data} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected}
+           setData={setData} tip="Inventory tracking information"
+           predefined={options.mode === undefined ? ['title', 'gallery', 'sku', 'keyvalue'] : undefined}/>;
       }
       default: {
         return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected}
-          tip="Your social networks. Users can reach you using the social networks." predefined={['title', 'socials']}/>
+          tip="Your social networks. Users can reach you using the social networks."
+          predefined={options.mode === undefined ? ['title', 'socials'] : undefined}/>
       }
     }
   };

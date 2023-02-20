@@ -36,9 +36,9 @@ const QrTypeSelector = () => { // @ts-ignore
     const compareWith = {...initialOptions, data: options.data}; // @ts-ignore
     if (options.id) {compareWith.id = options.id;} // @ts-ignore
     if (options.shortCode) {compareWith.shortCode = options.shortCode;}
-    const dataComp = {...data};
 
-    const originalData = {...initialData};
+    const dataComp = structuredClone(data);
+    const originalData = structuredClone(initialData) as any;
 
     if (originalData.isDynamic !== undefined) {
       dataComp.isDynamic = originalData.isDynamic;
@@ -56,8 +56,7 @@ const QrTypeSelector = () => { // @ts-ignore
       originalData.preGenerated = dataComp.preGenerated;
     }
 
-    // @ts-ignore
-    if (dataComp.custom !== undefined && !data.custom.some(x => Object.keys(x).length !== 2)) { // @ts-ignore
+    if (dataComp.custom?.length && !dataComp.custom.some(x => Object.keys(x.data || {}).length)) {
       originalData.custom = dataComp.custom;
     }
 

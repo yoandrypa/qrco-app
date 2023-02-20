@@ -24,7 +24,7 @@ export default function MainHandler({ Component, pageProps }: AppProps) {
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // @ts-ignore
-  if (router.query.code || isAPrivateRoute(router.pathname, data.isDynamic || pageProps.isDynamic || false)) {
+  if (router.query.code || isAPrivateRoute(router.pathname, data?.isDynamic || pageProps.isDynamic || false)) {
     return (
       <Authenticator>
         {({ user }: any) => (

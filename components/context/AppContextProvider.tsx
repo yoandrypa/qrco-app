@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -19,13 +19,13 @@ import { create, get } from "../../handlers/users";
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import { logout } from '@ebanux/ebanux-utils/auth';
 
-import PleaseWait from "../PleaseWait";
-import Claimer from "../claimer/Claimer";
 import Subscription from "../../models/subscription";
 import Waiting, { startWaiting, releaseWaiting } from "../Waiting";
 
-const Loading = dynamic(() => import("../Loading"));
 const Generator = dynamic(() => import("../qr/Generator"));
+const PleaseWait = dynamic(() => import("../PleaseWait"));
+const Claimer = dynamic(() => import("../claimer/Claimer"));
+const UpdateBrowser = dynamic(() => import("../UpdateBrowser"));
 
 const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [options, setOptions] = useState<OptionsType>(handleInitialData("Ebanux"));
@@ -35,6 +35,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [frame, setFrame] = useState<FramesType>(initialFrame);
   const [data, setData] = useState<DataType>(initialData);
   const [isTrialMode, setIsTrialMode] = useState<boolean>(false);
+  const [updateBrowser, setUpdateBrowser] = useState<boolean>(false);
 
   const [isEmbedded, setIsEmbedded] = useState<boolean>(false);
   const [done, setDone] = useState<boolean>(false);
@@ -75,18 +76,19 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     if (!keepType || doNot || takeAwaySelection) {
       resetSelected();
     }
-    setBackground(initialBackground);
-    setFrame(initialFrame);
+    setBackground(structuredClone(initialBackground));
+    setFrame(structuredClone(initialFrame));
     setDotsData(null);
     setCornersData(null);
     setIsWrong(false);
+    setLoading(false);
     setOptions(handleInitialData("Ebanux"));
 
     setData(() => {
       let newData: DataType;
 
       if (!keepType || data?.isDynamic) {
-        newData = { ...initialData };
+        newData = structuredClone(initialData);
       } else {
         newData = {};
       }
@@ -124,6 +126,9 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    if (loading) {
+      setLoading(false);
+    }
     if (redirecting) {
       setRedirecting(false);
     }
@@ -169,7 +174,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     };
 
     try {
-      const userData = session.currentUser;
+      const userData = session.currentAccount;
       setUserInfo(userData);
 
       if (userData) {
@@ -180,26 +185,35 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       setVerifying(false);
     }
     doneInitialRender.current = true;
+
+    if (!structuredClone) {
+      setUpdateBrowser(true);
+    }
   }, []);
 
   useEffect(() => {
-    const { currentUser, isAuthenticated } = session;
+    const { currentAccount: currentUser, isAuthenticated } = session;
 
     if (isAuthenticated && !subscription) {
-      startWaiting();
+      setLoading(true);
+
       Subscription.getActiveByUser(currentUser.cognito_user_id).then((subscription: any) => {
         setSubscription(subscription);
       }).finally(() => {
-        releaseWaiting();
+        setLoading(false);
       });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (updateBrowser) {
+    return <UpdateBrowser />;
+  }
 
   if (isEmbedded) {
     return <Claimer code="" embedded />;
   }
 
-  if (verifying || !done) {
+  if (verifying || !done || !data) {
     return <PleaseWait />
   }
 

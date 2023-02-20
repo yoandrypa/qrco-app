@@ -82,16 +82,13 @@ export const getBase64FromUrl = async (url: string) => {
   });
 };
 
-export const convertBase64 = (file: Blob | File): object => {
+export const convertBase64 = (file: File) => {
+  const newFile = new File([file], file.name);
   return new Promise((resolve, reject) => {
-    const fileReader = new FileReader();
-    fileReader.readAsDataURL(file);
-    fileReader.onload = () => {
-      resolve(fileReader.result);
-    };
-    fileReader.onerror = error => {
-      reject(error);
-    };
+    const reader = new FileReader();
+    reader.readAsDataURL(newFile);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
   });
 };
 
@@ -335,7 +332,7 @@ export const handleInitialData = (value: string | null | undefined) => {
 };
 
 export const dataCleaner = (options: any, mainObj?: boolean) => {
-  const data = { ...options };
+  const data = structuredClone(options);
   const base = ['backgroundOptions', 'cornersDotOptions', 'cornersSquareOptions', 'dotsOptions', 'imageOptions',
     'qrOptions', 'margin', 'type', 'width', 'height', 'image', 'data'] as string[];
 
@@ -343,8 +340,9 @@ export const dataCleaner = (options: any, mainObj?: boolean) => {
     [...base, 'qrOptionsId', 'shortLinkId', 'qrData', 'qrDesign', 'id', 'qrType', 'userId'].forEach((x: string) => {
       if (data[x]) { delete data[x]; }
     });
+    data.custom.forEach((x: any) => { x.expand = getUuid(); });
   } else {
-    const checkFor = [...base, 'id', 'userId', 'shortCode', 'qrType', 'mode'] as string[];
+    const checkFor = [...base, 'id', 'userId', 'shortCode', 'qrType', 'mode', 'custom'] as string[];
     Object.keys(data).forEach((x: string) => {
       if (!checkFor.includes(x)) { delete data[x]; }
     });
@@ -394,18 +392,6 @@ export const cleanSelectionForMicrositeURL = (item: string, isDynamic: boolean, 
 
   return `sample qr ${clearItem(item)}`;
 };
-
-// @ts-ignore
-export const debounce = (func, delay, { leading } = {}) => { // @ts-ignore
-  let timerId; // @ts-ignore
-  return (...args) => { // @ts-ignore
-    if (!timerId && leading) {
-      func(...args);
-    } // @ts-ignore
-    clearTimeout(timerId);
-    timerId = setTimeout(() => func(...args), delay);
-  }
-}
 
 export const getSx = (theme: any) => ({
   border: `solid 1px ${theme.palette.primary.main}`, borderRadius: '100%', width: '40px', height: '40px', my: 'auto', p: '5px', color: theme.palette.primary.main

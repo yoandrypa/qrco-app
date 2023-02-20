@@ -8,7 +8,7 @@ export const components = [
   {type: 'date', name: 'Date'}, {type: 'justEmail', name: 'Email address'},
   {type: 'email', name: 'Email and web'}, {type: 'easiness', name: 'Easiness'},
   {type: 'links', name: 'Links'}, {type: 'organization', name: 'Organization'},
-  {type: 'phones', name: 'Phones and cells'}, {type: 'gallery', name: 'Photos'},
+  {type: 'phones', name: 'Phones and cells'}, {type: 'gallery', name: 'Gallery'},
   {type: 'presentation', name: 'Presentation'}, {type: 'opening', name: 'Opening time'},
   {type: 'socials', name: 'Social networks'}, {type: 'title', name: 'Title and description'},
   {type: 'action', name: 'Action button'}, {type: 'single', name: 'Single text'},
@@ -65,10 +65,6 @@ export interface ContentProps {
   handleValues: Function;
 }
 
-export const isRequired = (component: string, dataInfo?: Type) =>
-  (component === 'action' && (!dataInfo?.urlOptionLabel?.trim().length || !dataInfo?.urlOptionLink?.trim().length || !isValidUrl(dataInfo.urlOptionLink))) ||
-  (component === 'company' && !dataInfo?.company?.trim().length) || (component === 'presentation' && !dataInfo?.firstName?.trim().length);
-
 export const validator = (dataToCheck: DataType, selected?: string): boolean => {
   if (!dataToCheck.custom?.length) { return true; }
 
@@ -116,7 +112,7 @@ export const validator = (dataToCheck: DataType, selected?: string): boolean => 
       errors = true;
       return false;
     }
-    if (component === 'presentation' && !data.firstName?.trim().length && ((data.includeExtraInfo || selected === 'vcard+') &&
+    if (component === 'presentation' && !data.firstName?.trim().length && ((data.includeExtraInfo || ['vcard+', 'petId'].includes(selected || '')) &&
       ((data.email?.trim() && !EMAIL.test(data.email)) || (data.web?.trim() && !isValidUrl(data.web)) ||
       (data.phone?.trim().length && !PHONE.test(data.phone)) || (data.cell?.trim().length && !PHONE.test(data.cell)) ||
       (data.fax?.trim().length && !PHONE.test(data.fax)) || (data.zip?.trim().length && !ZIP.test(data.zip))))) {

@@ -20,10 +20,10 @@ const RenderWeb = dynamic(() => import("./RenderWeb"));
 interface PresentationProps extends ContentProps {
   message?: string;
   showExtra?: boolean;
-  isVCard?: boolean;
+  forceExtra?: boolean;
 }
 
-export default function RenderPresentation({data, handleValues, message, index, showExtra, isVCard}: PresentationProps) {
+export default function RenderPresentation({data, handleValues, message, index, showExtra, forceExtra}: PresentationProps) {
   const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
     handleValues(item, index)(payload);
   };
@@ -62,7 +62,7 @@ export default function RenderPresentation({data, handleValues, message, index, 
         <Grid item sm={5} xs={12} style={{paddingTop: 0}}>
           {renderItem('lastName', 'Last name')}
         </Grid>
-        {isVCard &&
+        {forceExtra &&
           <Grid item xs={12}>
             {renderExtraInfo()}
           </Grid>
@@ -75,7 +75,7 @@ export default function RenderPresentation({data, handleValues, message, index, 
           </Grid>
         )}
       </Grid>
-      {showExtra && !isVCard && (
+      {showExtra && !forceExtra && (
         <Tooltip title="Includes phone numbers, email and address" disableHoverListener={Boolean(data?.includeExtraInfo)}>
           <FormControlLabel label="Include extra information" control={
             <Switch checked={Boolean(data?.includeExtraInfo)} inputProps={{'aria-label': 'includeExtraInfo'}}
