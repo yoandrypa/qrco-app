@@ -19,7 +19,7 @@ export function parseFromPostRequest(req: NextApiRequest) {
   const schema = Joi.object({
     size: Joi.number().min(4).max(32),
     count: Joi.number().min(1).max(10),
-    owner: Joi.string(),
+    owner: Joi.string().optional(),
   });
 
   return Joi.attempt(req.body, schema, { abortEarly: false });
@@ -32,7 +32,7 @@ export function parseFromPostRequest(req: NextApiRequest) {
 export function parseFromPutsRequest(req: NextApiRequest) {
   const schema = Joi.object({
     codes: Joi.array().items(Joi.string()).min(1),
-    owner: Joi.string(),
+    owner: Joi.string().optional(),
   });
 
   return Joi.attempt(req.body, schema, { abortEarly: false });
@@ -58,8 +58,6 @@ async function exists(code: string) {
  * @param owner
  */
 export async function genNewCodes(size: number, count: number, owner: string = 'any') {
-  owner ||= 'any';
-
   const nanoId = customAlphabet(LINK_CODE_ALPHABET, size);
   const transactions = [];
   const maxAllowCollisions = MAX_ALLOW_COLLISIONS * 100 / count;
@@ -94,8 +92,6 @@ export async function genNewCodes(size: number, count: number, owner: string = '
  * @param owner
  */
 export async function loadNewCodes(items: string[], owner: string = 'any') {
-  owner ||= 'any';
-
   const transactions = [];
 
   let collisions = 0;
@@ -122,9 +118,7 @@ export async function loadNewCodes(items: string[], owner: string = 'any') {
  * @param owner
  */
 export async function getPreGenCodes(owner: string = 'any') {
-  owner ||= 'any';
-
-  const codes = await PreGeneratedModel.query({ owner }).exec();
+  const codes: any[] = await PreGeneratedModel.query({ owner }).exec();
 
   return {
     codes: codes.map((item) => ({ ...item, url: `${MICRO_SITES_ROUTE}/${item.code}` })),

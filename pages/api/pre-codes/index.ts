@@ -16,10 +16,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { size, count, owner } = parseFromPostRequest(req);
       result = await genNewCodes(size, count, owner);
     } else if (req.method == 'PUT') {
-      const { codes } = parseFromPutsRequest(req);
-      result = await loadNewCodes(codes);
+      const { codes, owner } = parseFromPutsRequest(req);
+      result = await loadNewCodes(codes, owner);
     } else if (req.method == 'GET') {
-      result = await getPreGenCodes(<string>req.query.owner);
+      result = await getPreGenCodes(req.query.owner as string);
     } else {
       return res.status(404);
     }

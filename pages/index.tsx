@@ -1,9 +1,8 @@
-import QrGen from "./qr/type";
-import {useContext, useEffect} from "react";
-import Context from "../components/context/Context";
-
-// @ts-ignore
+import { useContext, useEffect } from "react";
 import session from "@ebanux/ebanux-utils/sessionStorage";
+
+import QrGen from "./qr/type";
+import Context from "../components/context/Context";
 import QrList from "../components/qr/QrList";
 
 export default function Index({ user }: any) {

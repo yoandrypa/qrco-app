@@ -15,11 +15,9 @@ import { getUuid } from "../../helpers/qr/helpers";
 import { generateId, generateShortLink } from "../../utils";
 import { create, edit as qrEdit } from "../../handlers/qrs";
 import { QR_CONTENT_ROUTE, QR_TYPE_ROUTE } from "./constants";
-// import { get as getUser } from "../../handlers/users";
-// @ts-ignore
-import { recordPlanUsage, recordUsage, saveUsage } from "../../handlers/usage"; //@ts-ignore
-import session from "@ebanux/ebanux-utils/sessionStorage";
 import { capitalize } from "@mui/material";
+
+import session from "@ebanux/ebanux-utils/sessionStorage";
 
 interface UserInfoProps {
   attributes: { sub: string, email: string },
@@ -75,7 +73,7 @@ export interface GenProps {
 export const steps = ["Type", "Content", "QR Design"];
 
 const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame: FramesType,
-  cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, edit: boolean): void => {
+                 cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, edit: boolean): void => {
   if (!areEquals(frame, initialFrame)) {
     qrDesign.frame = frame;
   }
@@ -154,10 +152,10 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
  * @param updatingHandler
  */
 export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps, options: OptionsType, frame: FramesType,
-  background: BackgroundType, cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string,
-  setLoading: (loading: boolean) => void, setIsError: (isError: boolean) => void,
-  success: (creationData?: string) => void, router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
-  updatingHandler?: (value: string | null, status?: boolean) => void) => {
+                                   background: BackgroundType, cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string,
+                                   setLoading: (loading: boolean) => void, setIsError: (isError: boolean) => void,
+                                   success: (creationData?: string) => void, router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
+                                   updatingHandler?: (value: string | null, status?: boolean) => void) => {
 
   const prevUpdatingHandler = (value: string | null, status?: boolean) => {
     if (updatingHandler) {
@@ -243,7 +241,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
   }
 
   if (selected === "donation") {
-    data["email"] = session.currentAccount.account.email;
+    data["email"] = session.currentUser.account.email;
     let priceData: EbanuxDonationPriceData;
     priceData = {
       name: `Donate ${data["title"]}` || "Donation",
@@ -343,7 +341,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       }
 
       await qrEdit(objToEdit);
-      if (success) { success(); }
+      if (success) success();
     }
     if (dataLength) {
       prevUpdatingHandler(null, true);

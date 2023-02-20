@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -14,15 +14,14 @@ import AppWrapper from "../AppWrapper";
 import {
   dataCleaner, getBackgroundObject, getCornersAndDotsObject, getFrameObject, handleInitialData
 } from "../../helpers/qr/helpers";
-import { create, get } from "../../handlers/users";
 
-// @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
-// @ts-ignore
 import { logout } from '@ebanux/ebanux-utils/auth';
-import Subscription from "../../models/subscription";
+import { iFrameDetected } from '@ebanux/ebanux-utils/utils';
 
-const Loading = dynamic(() => import("../Loading"));
+import Subscription from "../../models/subscription";
+import Waiting, { startWaiting, releaseWaiting } from "../Waiting";
+
 const Generator = dynamic(() => import("../qr/Generator"));
 const PleaseWait = dynamic(() => import("../PleaseWait"));
 const Claimer = dynamic(() => import("../claimer/Claimer"));
@@ -37,18 +36,12 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<DataType>(initialData);
   const [isTrialMode, setIsTrialMode] = useState<boolean>(false);
   const [updateBrowser, setUpdateBrowser] = useState<boolean>(false);
-
-  const [isEmbedded, setIsEmbedded] = useState<boolean>(false);
-  const [done, setDone] = useState<boolean>(false);
-
   const [selected, setSelected] = useState<string | null>(null);
-
   const [userInfo, setUserInfo] = useState(null);
   const [subscription, setSubscription] = useState(null);
   const [verifying, setVerifying] = useState<boolean>(true);
   const [redirecting, setRedirecting] = useState<boolean>(false);
-
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setDeprecateLoading] = useState<boolean>(false);
   const [isWrong, setIsWrong] = useState<boolean>(false);
 
   const doneInitialRender = useRef<boolean>(false);
@@ -57,6 +50,13 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   const isUserInfo = useMemo(() => userInfo !== null, [userInfo]);
+
+  // TODO: Remove after replace all setLoading references by startWaiting or releaseWaiting.
+  function setLoading(value: boolean) {
+    console.debug('Calling to deprecated method setLoading');
+    value ? startWaiting() : releaseWaiting();
+    setDeprecateLoading(value);
+  }
 
   const doNotClear = useCallback(() => {
     forbidClear.current = true;
@@ -75,7 +75,6 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     setDotsData(null);
     setCornersData(null);
     setIsWrong(false);
-    setLoading(false);
     setOptions(handleInitialData("Ebanux"));
 
     setData(() => {
@@ -120,9 +119,6 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, [data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (loading) {
-      setLoading(false);
-    }
     if (redirecting) {
       setRedirecting(false);
     }
@@ -150,66 +146,32 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, [options.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (window.top !== window) {
-      setIsEmbedded(true);
-    } else {
-      setDone(true);
-    }
+    setUserInfo(session.currentUser);
 
-    const userCreation = async (id: string) => {
-      try {
-        const user = await get(id);
-        if (!user) {
-          await create({ id });
-        }
-      } catch {
-        console.log("Error accessing user.");
-      }
-    };
-
-    try {
-      const userData = session.currentAccount;
-      setUserInfo(userData);
-
-      if (userData) {
-        userCreation(userData.cognito_user_id);
-      }
-    } catch {
-      setUserInfo(null);
-      setVerifying(false);
-    }
     doneInitialRender.current = true;
 
-    if (!structuredClone) {
-      setUpdateBrowser(true);
-    }
-  }, []);
+    if (!structuredClone) setUpdateBrowser(true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const { currentAccount: currentUser, isAuthenticated } = session;
+    const { currentUser, isAuthenticated } = session;
 
     if (isAuthenticated && !subscription) {
-      setLoading(true);
+      startWaiting();
 
       Subscription.getActiveByUser(currentUser.cognito_user_id).then((subscription: any) => {
         setSubscription(subscription);
       }).finally(() => {
-        setLoading(false);
+        releaseWaiting();
       });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (updateBrowser) {
-    return <UpdateBrowser />;
-  }
+  if (updateBrowser) return <UpdateBrowser />;
 
-  if (isEmbedded) {
-    return <Claimer code="" embedded />;
-  }
+  if (iFrameDetected) return <Claimer code="" embedded />;
 
-  if (verifying || !done || !data) {
-    return <PleaseWait />
-  }
+  if (verifying || !data) return <PleaseWait />;
 
   if (router.pathname.startsWith("/qr") && ![QR_TYPE_ROUTE, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE]
     .includes(router.pathname)) {
@@ -237,7 +199,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
                     isTrialMode={isTrialMode}
                     userInfo={userInfo}
         >
-          {loading && <Loading />}
+          <Waiting />
           {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>
       );

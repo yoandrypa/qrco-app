@@ -5,7 +5,6 @@
 // import { list } from "../handlers/qrs"
 // import { QRCODE_PLANS } from '../components/qr/constants';
 // import Context from "../components/context/Context";
-// // @ts-ignore
 // import session from "@ebanux/ebanux-utils/sessionStorage";
 //
 // type usePlansParams = {

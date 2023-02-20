@@ -1,12 +1,12 @@
-// @ts-ignore
-import { Authenticator } from "@ebanux/ebanux-utils/auth";
-// @ts-ignore
-import session from "@ebanux/ebanux-utils/sessionStorage";
-import "@ebanux/ebanux-utils/styles/spinner.css";
+import { useContext, useEffect } from "react";
 import { useRouter } from "next/router";
+
+import session from "@ebanux/ebanux-utils/sessionStorage";
+import { Authenticator } from "@ebanux/ebanux-utils/auth";
+import "@ebanux/ebanux-utils/styles/spinner.css";
+
 import { PRIVATE_ROUTES } from "./qr/constants";
 import { AppProps } from "next/app";
-import { useContext, useEffect } from "react";
 import Context from "./context/Context";
 
 const isAPrivateRoute = (path: string, isDynamic: boolean) =>

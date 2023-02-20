@@ -38,7 +38,7 @@ export function parseFromPostRequest(req: NextApiRequest) {
 }
 
 export async function getSubscription(currentUser: any) {
-  const localRecord = await Subscription.getActiveByUser(currentUser);
+  const localRecord = await Subscription.getActiveByUser(currentUser.cognito_user_id);
   return { type: 'subscription', result: localRecord }
 }
 
