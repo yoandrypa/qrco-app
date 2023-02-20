@@ -4,7 +4,6 @@ export const QR_TYPE_ROUTE = "/qr/type" as string;
 export const QR_CONTENT_ROUTE = "/qr/content" as string;
 export const QR_DESIGN_ROUTE = "/qr/design" as string;
 export const QR_DETAILS_ROUTE = "/qr/[id]/details" as string;
-export const QR_PLAN_ROUTE = "/plans/buy/[plan]" as string;
 export const PLANS_ACCOUNT_PORTAL = "/plans/account" as string;
 
 export const PRIVATE_ROUTES = [

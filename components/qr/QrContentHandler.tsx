@@ -135,31 +135,8 @@ const QrContentHandler = () => { // @ts-ignore
       case 'wifi': {
         return <WifiData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
       }
-      case 'custom': {
-        return <Custom data={data} setData={setData} setIsWrong={setIsWrong} handleValues={handleValues}/>;
-      }
-      case 'vcard+': {
-        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
-          tip="Your contact details. Users can store your info or contact you right away." selected={selected}
-          predefined={options.mode === undefined ? ['presentation', 'organization', 'socials'] : undefined}/>;
-      }
       case 'vcard': {
         return <CardDataStatic data={data} handleValues={handleValues} setIsWrong={setIsWrong} />;
-      }
-      case 'link': {
-        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
-          tip="Add at least one link to your websites." selected={selected}
-          predefined={options.mode === undefined ? ['title', 'links', 'socials'] : undefined} />;
-      }
-      case 'coupon': {
-        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
-          tip="Share a coupon for promotion." selected={selected}
-          predefined={options.mode === undefined ? ['couponInfo', 'couponData', 'address'] : undefined} />;
-      }
-      case 'business': {
-        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected}
-          tip="Your business or company details. Users can contact your business or company right away."
-          predefined={options.mode === undefined ? ['company', 'action', 'address', 'opening', 'easiness', 'socials'] : undefined} />;
       }
       case 'email': {
         return <EmailData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
@@ -169,15 +146,6 @@ const QrContentHandler = () => { // @ts-ignore
       }
       case 'twitter': {
         return <TwitterData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
-      }
-      case 'gallery':
-      case 'pdf':
-      case 'audio':
-      case 'video': {
-        return <Custom data={data} setData={setData} handleValues={handleValues} selected={selected} setIsWrong={setIsWrong}
-          predefined={options.mode === undefined ? ['title', selected] : undefined}
-          tip={`You can upload a maximum of ${pluralize("file", FILE_LIMITS[selected].totalFiles, true)} of size ${formatBytes(FILE_LIMITS[selected].totalMbPerFile * 1048576)}.`}
-        />
       }
       case 'donation': {
         return <DonationsData data={data} handleValues={handleValues} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong} />
@@ -191,29 +159,51 @@ const QrContentHandler = () => { // @ts-ignore
       case 'fundme': {
         return <FundMe data={data} setData={setData} handleValues={handleValues} />
       }
-      case 'petId': {
-        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong}
-          tip="Your pet information."  selected={selected}
-          predefined={options.mode === undefined ? ['petId', 'presentation', 'keyvalue', 'links', 'socials'] : undefined}/>;
-      }
-      case 'linkedLabel': {
-        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} tip="Smart labels."
-          predefined={options.mode === undefined ? ['title', 'tags', 'gallery'] : undefined} selected={selected}/>;
-      }
-      case 'findMe':{
-        return <Custom data={data} handleValues={handleValues} setIsWrong={setIsWrong} setData={setData} selected={selected}
-          tip="Information to make easy to find you."
-          predefined={options.mode === undefined ? ['presentation', 'keyvalue', 'links', 'socials'] : undefined}/>;
-      }
-      case 'inventory': {
-        return <Custom data={data} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected}
-           setData={setData} tip="Inventory tracking information"
-           predefined={options.mode === undefined ? ['title', 'gallery', 'sku', 'keyvalue'] : undefined}/>;
-      }
+
       default: {
-        return <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected}
-          tip="Your social networks. Users can reach you using the social networks."
-          predefined={options.mode === undefined ? ['title', 'socials'] : undefined}/>
+        let tip = '' as string | undefined;
+        let predefined = [] as string[] | undefined;
+
+        if (selected !== 'custom') {
+          const handlePredefined = (pred: string[]): string[] | undefined => options.mode === undefined ? pred : undefined;
+
+          if (selected === 'vcard+') {
+            tip = "Your contact details. Users can store your info or contact you right away.";
+            predefined = handlePredefined(['presentation', 'organization', 'socials']);
+          } else if (selected === 'link') {
+            tip = "Add at least one link to your websites";
+            predefined = handlePredefined(['presentation', 'organization', 'socials']);
+          } else if (selected === 'coupon') {
+            tip = "Share a coupon for promotion.";
+            predefined = handlePredefined(['couponInfo', 'couponData', 'address']);
+          } else if (selected === 'business') {
+            tip = "Your business or company details. Users can contact your business or company right away.";
+            predefined = handlePredefined(['company', 'action', 'address', 'opening', 'easiness', 'socials']);
+          } else if (['gallery', 'pdf', 'audio', 'video'].includes(selected)) { // @ts-ignore
+            const kind = FILE_LIMITS[selected];
+            tip = `You can upload a maximum of ${pluralize("file", kind.totalFiles, true)} of size ${formatBytes(kind.totalMbPerFile * 1048576)}.`;
+            predefined = handlePredefined(['title', selected]);
+          } else if (selected === 'petId') {
+            tip = "Your pet information.";
+            predefined = handlePredefined(['petId', 'presentation', 'keyvalue', 'links', 'socials']);
+          } else if (selected === 'linkedLabel') {
+            tip = "Your pet information.";
+            predefined = handlePredefined(['petId', 'presentation', 'keyvalue', 'links', 'socials']);
+          } else if (selected === 'findMe') {
+            tip = "Information to make easy to find you.";
+            predefined = handlePredefined(['presentation', 'keyvalue', 'links', 'socials', 'contact']);
+          } else if (selected === 'inventory') {
+            tip = "Inventory tracking information";
+            predefined = handlePredefined(['title', 'gallery', 'sku', 'keyvalue']);
+          } else {
+            tip = "Your social networks. Users can reach you using the social networks.";
+            predefined = handlePredefined(['title', 'socials']);
+          }
+        }
+
+        return (
+          <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected} tip={tip} predefined={predefined}/>
+        );
       }
     }
   };

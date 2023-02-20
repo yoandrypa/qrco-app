@@ -20,6 +20,7 @@ import TypeSelector from "./TypeSelector";
 import {MyBadge} from "./looseComps/StyledComponents";
 import {areEquals} from "../../helpers/generalFunctions";
 import initialOptions, {initialData} from "../../../helpers/qr/data";
+import {dynamicQrTypes, staticQrTypes} from "../qrtypes";
 
 const RenderMode = dynamic(() => import("./looseComps/RenderMode"));
 const RenderClaimingInfo = dynamic(() => import("./smallpieces/RenderClaimingInfo"));
@@ -108,6 +109,17 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
     </Grid>
   );
 
+  const renderTypes = (items: object) => {
+    const keys = Object.keys(items);
+    return keys.map((x: string) => { // @ts-ignore
+      const type = items[x];
+      if (IS_DEV_ENV || !type.devOnly) {
+        return renderTypeSelector(x, type.description, true);
+      }
+      return null;
+    })
+  };
+
   useEffect(() => {
     if (isWideForPreview && openPreview) {
       setOpenPreview(false);
@@ -144,40 +156,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
             {data.mode && <RenderMode isWide={isWide} sx={{top: '17px'}} mode={data.mode} />}
           </Box>
         </Grid>
-        {renderTypeSelector("web",  isDynamic ? "Transform a long URL in a shortened link" : "Link to any page on the web", true)}
-        {!isDynamic ?
-          (<>
-            {renderTypeSelector("vcard", "Share your contact details", true)}
-            {renderTypeSelector("email", "Receive email messages", true)}
-            {renderTypeSelector("sms", "Receive text messages", true)}
-            {renderTypeSelector("text", "Share a short text message", true)}
-            {renderTypeSelector("wifi", "Invite to get connected to a WiFi network", true)}
-            {renderTypeSelector("twitter", "Invite to post a tweet", true)}
-            {renderTypeSelector("whatsapp", "Receive WhatsApp messages", true)}
-            {renderTypeSelector("facebook", "Invite to share an URL in Facebook", true)}
-            {IS_DEV_ENV && renderTypeSelector("crypto", "Receive crypto on your eWallet", true)}
-          </>) : (<>
-            {renderTypeSelector("vcard+", "Share your contact and social details", true)}
-            {renderTypeSelector('business', 'Describe your business or company', true)}
-            {renderTypeSelector("social", "Share your social networks information", true)}
-            {renderTypeSelector("link", "Share your own links, including social info", true)}
-            {renderTypeSelector("coupon", "Share a coupon", true)}
-            {renderTypeSelector("donation", "Get donations from your supporters worldwide", true)}
-            {renderTypeSelector("petId", "Share your pet's information", true)}
-            {renderTypeSelector("custom", "Custom QR link from scratch using predefined sections", true)}
-            {renderTypeSelector("findMe", "Place a QR link on your stuff to make easy to find you", true)}
-            {renderTypeSelector("linkedLabel", "Share your product's information", true)}
-            {renderTypeSelector("inventory", "Tag your products to make easy to find them", true)}
-            {IS_DEV_ENV && renderTypeSelector("fundme", "Start your own charity or fundraising campaign", true)}
-            {IS_DEV_ENV && renderTypeSelector("paylink", "Receive payments worldwide", true)}
-          </>)
-        }
-        {isDynamic ? (<>
-          {renderTypeSelector("pdf", "Share a PDF file", true)}
-          {renderTypeSelector("audio", "Share an audio file", true)}
-          {renderTypeSelector("gallery", "Share a gallery of images", true)}
-          {renderTypeSelector("video", "Share video files", true)}
-        </>) : null}
+        {renderTypes(isDynamic ? dynamicQrTypes : staticQrTypes)}
       </Grid>
       {isWideForPreview && selected && (
         <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '56px', width: '287px', position: 'sticky', top: '120px'}}
