@@ -4,8 +4,6 @@ import Common from '../helperComponents/Common';
 import { DataType } from '../types/types';
 import Topics from './helpers/Topics';
 import MultipleField from '../helperComponents/MultipleField';
-//@ts-ignore
-import session from "@ebanux/ebanux-utils/sessionStorage";
 import RenderProduct from './contents/RenderProduct';
 
 interface InventoryDataProps {
@@ -26,7 +24,7 @@ export default function InventoryData({
   setIsWrong
 }: InventoryDataProps) {
   const dataRef = useRef<DataType>(data);
-  const checkData = () => { 
+  const checkData = () => {
     let band = false;
     if (!data?.firstName?.trim().length)
       band = true;
@@ -54,7 +52,7 @@ export default function InventoryData({
       <Grid container spacing={1} sx={{mt:1}}>
         <MultipleField item={{ key: 'otherDetails', label: 'Location', type: 'string', requireLabel: true, requireValue: true }}/>
       </Grid>
-      
+
     </Common>
   );
 }

@@ -5,7 +5,6 @@ import Divider from "@mui/material/Divider";
 import {DataType} from "./qr/types/types";
 import {convertBase64, getImageAsString} from "../helpers/qr/helpers";
 import CircularProgress from "@mui/material/CircularProgress";
-import { MEDIA } from "../consts";
 
 interface IframeProps {
   src: string;
@@ -45,28 +44,28 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
 
   useEffect(() => {
     if (data && isReady) {
-      const isInEdition = data.mode === 'edit' || data.mode === 'clone';
+      const previewData = structuredClone(data);
+      const isInEdition = previewData.mode === 'edit' || previewData.mode === 'clone';
 
-      setTimeout(async () => {
-        const previewData = {...data}; // @ts-ignore
-        if (shareLink && data.shortlinkurl === undefined) { // @ts-ignore
+      setTimeout(async () => { // @ts-ignore
+        if (shareLink && previewData.shortlinkurl === undefined) { // @ts-ignore
           previewData.shortlinkurl = shareLink;
         }
-        if (data.backgndImg || backImg) { // @ts-ignore
-          previewData.backgndImg = !isInEdition || proceed(backImg, data.backgndImg) ?
-            await getImageAsString(data.backgndImg) : await getImageAsString(backImg);
+        if (previewData.backgndImg || backImg) { // @ts-ignore
+          previewData.backgndImg = !isInEdition || proceed(backImg, previewData.backgndImg) ?
+            await getImageAsString(previewData.backgndImg) : await getImageAsString(backImg);
         }
-        if (data.foregndImg || mainImg) { // @ts-ignore
-          previewData.foregndImg = !isInEdition || proceed(mainImg, data.foregndImg) ?
-            await getImageAsString(data.foregndImg) : await getImageAsString(mainImg);
+        if (previewData.foregndImg || mainImg) { // @ts-ignore
+          previewData.foregndImg = !isInEdition || proceed(mainImg, previewData.foregndImg) ?
+            await getImageAsString(previewData.foregndImg) : await getImageAsString(mainImg);
         }
 
-        if (data.custom) {
-          for (let idx = 0, ll = data.custom.length; idx < ll; idx += 1) {
-            const section = data.custom[idx];
+        if (previewData.custom) {
+          for (let idx = 0, ll = previewData.custom.length; idx < ll; idx += 1) {
+            const section = previewData.custom[idx];
             if (['pdf', 'gallery', 'audio', 'video'].includes(section.component) && section.data?.files) {
               let files: string[] = []; // @ts-ignore
-              if (!data.isSample) {
+              if (!previewData.isSample) {
                 for (let i = 0, l = section.data.files.length; i < l; i += 1) {
                   const x = section.data.files[i] as File | string; // @ts-ignore
                   if (typeof x === 'string' || x.Key !== undefined) { // @ts-ignore
@@ -83,53 +82,10 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
           }
         }
 
-        // @ts-ignore
-        if (data.files) {
-          let files: string[] = []; // @ts-ignore
-          if (!data.isSample) {
-            for (let i = 0, l = data.files.length; i < l; i += 1) {
-              const x = data.files[i] as File | string; // @ts-ignore
-              if (typeof x === 'string' || x.Key !== undefined) { // @ts-ignore
-                files.push(x);
-              } else { // @ts-ignore
-                files.push(await convertBase64(x));
-              }
-            }
-          } else { // @ts-ignore
-            files = data.files;
-          } // @ts-ignore
-          previewData.files = files;
-        }
-
-        if(data.fields) { // convert images on media fields to base64
-          let fields: any[] = []; // @ts-ignore
-          if (!data.isSample) {
-            for (let i = 0, l = data.fields.length; i < l; i += 1) {
-              if(!MEDIA.includes(data.fields[i].type) ){
-                fields.push(data.fields[i]);
-                continue;
-              }
-              const media = {type:data.fields[i].type, files:[]}// @ts-ignore
-              for( let j = 0, k = data.fields[i].files.length; j < k; j += 1) {// @ts-ignore
-                const file = data.fields[i].files[j] as File | string; // @ts-ignore
-                if (typeof file === 'string' || file.Key !== undefined) { // @ts-ignore
-                  media.files.push(file);
-                } else { // @ts-ignore
-                  media.files.push(await convertBase64(file));
-                }
-              }
-              fields.push(media);
-            }
-          }  else { // @ts-ignore
-            fields = data.fields;
-          } // @ts-ignore
-          previewData.fields = fields;
-        }
-
         if (iRef.current?.contentWindow) { // @ts-ignore
           iRef.current.contentWindow.postMessage(JSON.stringify({previewData}), process.env.REACT_MICROSITES_ROUTE);
         }
-      }, 50);
+      }, 75);
     }
   }, [data, isReady, backImg, mainImg]); // eslint-disable-line react-hooks/exhaustive-deps
 

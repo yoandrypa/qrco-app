@@ -1,12 +1,11 @@
-import {useRouter} from "next/router";
-// @ts-ignore
+import { useRouter } from "next/router";
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import Context from "../components/context/Context";
-import {useContext, useEffect} from "react";
+import { useContext, useEffect } from "react";
 
 const AuthCallback = () => {
   // @ts-ignore
-  const {setLoading} = useContext(Context);
+  const { setLoading } = useContext(Context);
   const router = useRouter();
 
   useEffect(() => {

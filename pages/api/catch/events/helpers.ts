@@ -1,7 +1,6 @@
 import { NextApiRequest } from "next";
 import { buffer } from 'micro';
 import { constructEvent } from "../../../../libs/gateways/stripe";
-// @ts-ignore
 import { isObject, isEmpty } from "@ebanux/ebanux-utils/utils";
 
 export { NotFound, respondWithException } from "../../../../libs/exceptions";

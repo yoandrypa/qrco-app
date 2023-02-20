@@ -1,5 +1,6 @@
-import React from "react";
-import { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
+import session from "@ebanux/ebanux-utils/sessionStorage";
+
 import { useRouter } from "next/router";
 
 import Box from "@mui/material/Box";
@@ -11,57 +12,38 @@ import Alert from "@mui/material/Alert";
 import Context from "../../components/context/Context";
 import PlanCard from "../../components/plans/plancard";
 import PlanCalculator from "../../components/plans/PlanCalculator";
-
-import { parseErrorMessage } from "../../libs/exceptions";
-
 import plans from "../../consts/plans";
 
-// @ts-ignore
-import session from "@ebanux/ebanux-utils/sessionStorage";
-// @ts-ignore
-import { request } from "@ebanux/ebanux-utils/request";
+import { request } from "../../libs/utils/reguest";
 
 const Plans = () => {
   const router = useRouter();
   // @ts-ignore
-  const { subscription, setLoading } = useContext(Context);
+  const { subscription } = useContext(Context);
   const [error, setError] = useState<string | null>(null);
   const activePlan = subscription?.metadata?.plan_type || 'free';
 
-  const handleClick = async (planType: string) => {
+  async function reviewingPlan() {
+    const { url } = await request({ url: 'billing-portal', errorHandler: setError });
+    window.open(url, '_blank');
+  }
+
+  async function handlePlanClick(planType: string) {
     if (!session.isAuthenticated) return router.push("/plans/buy/" + planType);
 
-    // TODO: Add confirmation dialog before any subscription action.
+    if (subscription && activePlan === planType) return await reviewingPlan();
 
-    if (subscription) {
-      if (subscription.metadata.plan_type === planType) {
-        // TODO: The functionality for reviewing subscriptions is not ready yet.
-        setError('The functionality for reviewing subscriptions is not ready yet.');
-      } else {
-        // TODO: You are already subscribed to a plan, the functionality for changing subscriptions is not ready yet.
-        setError('TODO: You are already subscribed to a plan, the functionality for changing subscriptions is not ready yet.');
-      }
-      return;
-    }
+    const options = {
+      url: 'subscriptions',
+      method: "POST",
+      data: { planType },
+      errorHandler: setError,
+    };
 
-    try {
-      setLoading(true);
+    // Send request to create and get checkout-session url
+    const { url: checkoutSessionUrl } = await request(options);
 
-      const options = {
-        url: 'subscriptions',
-        method: "POST",
-        data: { planType },
-      };
-
-      // Send request to create and get checkout-session url
-      const { result: { url: checkoutSessionUrl } } = await request(options);
-
-      window.location.href = checkoutSessionUrl;
-    } catch (ex) {
-      setError(parseErrorMessage(ex));
-    } finally {
-      setLoading(false);
-    }
+    window.location.href = checkoutSessionUrl;
   };
 
   return (
@@ -86,7 +68,9 @@ const Plans = () => {
             justifyContent={"center"}>
         {
           Object.entries<any>(plans).map(([planType, data]) => (
-            <PlanCard data={data} key={planType} isCurrentPlan={activePlan === planType} clickAction={handleClick} />
+            <PlanCard data={data} key={planType}
+                      isCurrentPlan={activePlan === planType}
+                      clickAction={handlePlanClick} />
           ))
         }
       </Grid>

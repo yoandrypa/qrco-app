@@ -20,7 +20,7 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
   return (
     <>
       <Head>
-        <title>QRLynk | Pro QR codes</title>
+        <title>QRLynk | Smart QR codes</title>
         <link rel="icon" href="/qlIcon.png" />
       </Head>
       <StyledEngineProvider injectFirst>

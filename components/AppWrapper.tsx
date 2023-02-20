@@ -13,11 +13,10 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
-import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
-// @ts-ignore
 import session from "@ebanux/ebanux-utils/sessionStorage";
-// @ts-ignore
 import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
+import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
+
 import { list } from '../handlers/qrs'
 
 import RenderSupport from "./wrapper/RenderSupport";
@@ -110,23 +109,13 @@ export default function AppWrapper(props: AppWrapperProps) {
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const { currentAccount: currentUser, isAuthenticated } = session;
+    const { currentUser, isAuthenticated } = session;
 
     if (isAuthenticated) {
       //@ts-ignore
       if (subscription?.status !== "active") {
         setIsFreeMode?.call(null, true);
-
-        // TODO: Use setStartTrialDate(currentUser.localRecord.createdAt) after implement user/me services.
-        // setStartTrialDate(currentUser.localRecord.createdAt);
-        setLoading(true);
-        Users.get(currentUser.cognito_user_id).then(profile => {
-          setStartTrialDate(profile.createdAt);
-        }).catch((err) => {
-          setError(err.message);
-        }).finally(() => {
-          setLoading(false);
-        });
+        setStartTrialDate(currentUser.localRecord.createdAt);
 
         // TODO: Review setFreeLimitReached
         // @ts-ignore

@@ -1,12 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-
+import { NextApiRequest, NextApiResponse } from 'next'
 import {
-  NotFound,
+  checkAuthorization,
   respondWithException,
   withSessionRoute,
-  checkAuthorization,
-  getBillingPortal,
-} from './helpers';
+} from "../helpers";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   let result;
@@ -16,10 +13,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const { currentUser } = req.session;
 
-    if (req.method === 'GET') {
-      result = await getBillingPortal(currentUser);
+    if (req.method == 'GET') {
+      result = { type: 'user', result: currentUser };
     } else {
-      throw new NotFound;
+      return res.status(404);
     }
 
     res.status(200).json(result);
