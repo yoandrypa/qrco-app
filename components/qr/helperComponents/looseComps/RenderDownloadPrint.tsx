@@ -4,12 +4,14 @@ import DownloadIcon from "@mui/icons-material/Download";
 import PrintIcon from "@mui/icons-material/Print";
 import TumbUpIcon from "@mui/icons-material/ThumbUp";
 import Box from "@mui/material/Box";
+import {FramesType} from "../../types/types";
 
 import {useRouter} from "next/router";
 
-import RenderDownload from "../RenderDownload";
-import {FramesType} from "../../types/types";
-import PDFGenDlg from "../PDFGenDlg";
+import dynamic from "next/dynamic";
+
+const RenderDownload = dynamic(() => import("../RenderDownload"));
+const PDFGenDlg = dynamic(() => import("../PDFGenDlg"));
 
 interface DownloadPrintProps {
   code: string;
