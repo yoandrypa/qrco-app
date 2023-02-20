@@ -169,7 +169,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
   if (updateBrowser) return <UpdateBrowser />;
 
-  if (iFrameDetected) return <Claimer code="" embedded />;
+  if (iFrameDetected) return <Claimer code="" />;
 
   if (verifying || !data) return <PleaseWait />;
 
