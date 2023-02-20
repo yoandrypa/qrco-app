@@ -6,7 +6,7 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 
 import { FramesType } from '../types/types';
-import { downloadAsPNG, downloadAsSVGOrVerify } from '../../../helpers/qr/helpers';
+import { downloadAsImg, downloadAsSVGOrVerify } from '../../../helpers/qr/helpers';
 
 interface RenderDownloadProps {
   qrImageData: any;
@@ -55,11 +55,18 @@ const RenderDownload = ({ anchor, qrImageData, frame, setAnchor, contrast }: Ren
             id="buttonPNG"
             variant="outlined"
             sx={{ width: '100%'}}
-            onClick={() => {
-              // @ts-ignore
-              downloadAsPNG(qrImageData, Boolean(frame?.type) ? frame : { type: '' }, undefined, undefined);
+            onClick={() => { // @ts-ignore
+              downloadAsImg(qrImageData, Boolean(frame?.type) ? frame : { type: '' }, undefined, undefined);
               setAnchor(null);
             }}>PNG</Button>
+          <Button
+            id="buttonJPG"
+            variant="outlined"
+            sx={{ ml: '5px', width: '100%'}}
+            onClick={() => { // @ts-ignore
+              downloadAsImg(qrImageData, Boolean(frame?.type) ? frame : { type: '' }, undefined, undefined, true);
+              setAnchor(null);
+            }}>JPG</Button>
           <Button
             id="buttonSVG"
             variant="outlined"

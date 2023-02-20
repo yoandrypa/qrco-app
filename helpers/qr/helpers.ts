@@ -201,22 +201,23 @@ export const downloadAsSVGOrVerify = (qrImageData: string | { outerHTML: string;
   }
 };
 
-export const downloadAsPNG = async (svgData: string | { outerHTML: string | number | boolean; }, frame: FramesType | { type: string; }, verify: Function | undefined, contrast: any | undefined): Promise<void> => {
+export const downloadAsImg = async (svgData: string | { outerHTML: string | number | boolean; }, frame: FramesType | { type: string; }, verify: Function | undefined, contrast: any | undefined, asJpg?: boolean): Promise<void> => {
   const base64doc = window.btoa(decodeURIComponent(encodeURIComponent(typeof svgData === 'string' ? svgData : svgData.outerHTML)));
   const imageToHandle = document.createElement('img');
   imageToHandle.src = 'data:image/svg+xml;base64,' + base64doc;
   const canvas = document.createElement('canvas');
   imageToHandle.onload = () => {
-    const w: number = 280;
-    const h: number = frame.type !== '' && frame.type !== '/frame/frame0.svg' ? 330 : 280; // @ts-ignore
+    const w: number = 280 * 5;
+    const h: number = (frame.type !== '' && frame.type !== '/frame/frame0.svg' ? 330 : 280) * 5; // @ts-ignore
     canvas.setAttribute('width', w); // @ts-ignore
     canvas.setAttribute('height', h);
-    const context: CanvasRenderingContext2D | null = canvas.getContext('2d'); // @ts-ignore
-    context.drawImage(imageToHandle, 0, 0, w, h);
-    const data = canvas.toDataURL('image/png', 1);
+    const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
+    context?.clearRect(0, 0, w, h); // @ts-ignore
+    // context.drawImage(imageToHandle, 0, 0, w, h);
+    const data = canvas.toDataURL( `image/${!asJpg ? 'png' : 'jpeg'}`, 1);
     if (!verify) {
       const anchor = document.createElement('a');
-      anchor.download = 'ebanuxQr.png';
+      anchor.download = `ebanuxQr.${!asJpg ? 'png' : 'jpg'}`;
       anchor.href = data;
       anchor.click();
       anchor.remove();
