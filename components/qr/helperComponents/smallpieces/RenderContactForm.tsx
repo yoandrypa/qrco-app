@@ -1,12 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
-import React, { useEffect } from 'react'
-import Grid from "@mui/material/Grid";
-import RenderTextFields from '../../renderers/helpers/RenderTextFields';
+import { useEffect } from 'react'
 import Stack from '@mui/material/Stack';
-import { TextField, Typography } from '@mui/material';
+import TextField from '@mui/material/TextField';
 import Alert from '@mui/material/Alert';
 import { EMAIL } from '../../constants';
-
 
 interface ContactFormProps {
   title: string;
@@ -19,9 +16,7 @@ interface ContactFormProps {
 }
 
 function RenderContactForm({ title, buttonText, messagePlaceholder, handleChange, index, email, setIsWrong }: ContactFormProps) {
-
   useEffect(() => {
-    let isWrong = false;
     if (email) {
       if (!EMAIL.test(email)) {
         setIsWrong(true);
@@ -30,6 +25,7 @@ function RenderContactForm({ title, buttonText, messagePlaceholder, handleChange
       }
     }
   }, [email, setIsWrong]);
+
   return (
     <Stack spacing={2}>
       <Alert severity='info' sx={{ mb: 1 }}>
