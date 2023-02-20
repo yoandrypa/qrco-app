@@ -14,10 +14,10 @@ import AppWrapper from "../AppWrapper";
 import {
   dataCleaner, getBackgroundObject, getCornersAndDotsObject, getFrameObject, handleInitialData
 } from "../../helpers/qr/helpers";
-import { create, get } from "../../handlers/users";
 
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import { logout } from '@ebanux/ebanux-utils/auth';
+import { iFrameDetected } from '@ebanux/ebanux-utils/utils';
 
 import Subscription from "../../models/subscription";
 import Waiting, { startWaiting, releaseWaiting } from "../Waiting";
@@ -36,17 +36,11 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<DataType>(initialData);
   const [isTrialMode, setIsTrialMode] = useState<boolean>(false);
   const [updateBrowser, setUpdateBrowser] = useState<boolean>(false);
-
-  const [isEmbedded, setIsEmbedded] = useState<boolean>(false);
-  const [done, setDone] = useState<boolean>(false);
-
   const [selected, setSelected] = useState<string | null>(null);
-
   const [userInfo, setUserInfo] = useState(null);
   const [subscription, setSubscription] = useState(null);
   const [verifying, setVerifying] = useState<boolean>(true);
   const [redirecting, setRedirecting] = useState<boolean>(false);
-
   const [loading, setDeprecateLoading] = useState<boolean>(false);
   const [isWrong, setIsWrong] = useState<boolean>(false);
 
@@ -152,40 +146,12 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, [options.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (window.top !== window) {
-      setIsEmbedded(true);
-    } else {
-      setDone(true);
-    }
+    setUserInfo(session.currentUser);
 
-    const userCreation = async (id: string) => {
-      try {
-        const user = await get(id);
-        if (!user) {
-          await create({ id });
-        }
-      } catch {
-        console.log("Error accessing user.");
-      }
-    };
-
-    try {
-      const userData = session.currentUser;
-      setUserInfo(userData);
-
-      if (userData) {
-        userCreation(userData.cognito_user_id);
-      }
-    } catch {
-      setUserInfo(null);
-      setVerifying(false);
-    }
     doneInitialRender.current = true;
 
-    if (!structuredClone) {
-      setUpdateBrowser(true);
-    }
-  }, []);
+    if (!structuredClone) setUpdateBrowser(true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const { currentUser, isAuthenticated } = session;
@@ -201,17 +167,11 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (updateBrowser) {
-    return <UpdateBrowser />;
-  }
+  if (updateBrowser) return <UpdateBrowser />;
 
-  if (isEmbedded) {
-    return <Claimer code="" embedded />;
-  }
+  if (iFrameDetected) return <Claimer code="" embedded />;
 
-  if (verifying || !done || !data) {
-    return <PleaseWait />
-  }
+  if (verifying || !data) return <PleaseWait />;
 
   if (router.pathname.startsWith("/qr") && ![QR_TYPE_ROUTE, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE]
     .includes(router.pathname)) {
