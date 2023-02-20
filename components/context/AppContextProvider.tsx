@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -170,7 +170,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     };
 
     try {
-      const userData = session.currentAccount;
+      const userData = session.currentUser;
       setUserInfo(userData);
 
       if (userData) {
@@ -188,7 +188,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    const { currentAccount: currentUser, isAuthenticated } = session;
+    const { currentUser, isAuthenticated } = session;
 
     if (isAuthenticated && !subscription) {
       startWaiting();
