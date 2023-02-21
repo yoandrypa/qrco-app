@@ -1,16 +1,16 @@
 import * as dynamoose from "dynamoose";
 
 const configuration = {
-  region: <string>process.env.AWZ_WS_REGION,
+  region: <string>process.env.AMZ_WS_REGION,
   credentials: {
-    accessKeyId: <string>process.env.AWZ_WS_ACCESS_KEY_ID,
-    secretAccessKey: <string>process.env.AWZ_WS_SECRET_ACCESS_KEY,
+    accessKeyId: <string>process.env.AMZ_WS_ACCESS_KEY_ID,
+    secretAccessKey: <string>process.env.AMZ_WS_SECRET_ACCESS_KEY,
   }
 };
 
-if (process.env.AWZ_WS_DYNAMODB_URL) {
+if (process.env.AMZ_WS_DYNAMODB_URL) {
   // @ts-ignore
-  configuration.endpoint = <string>process.env.AWZ_WS_DYNAMODB_URL;
+  configuration.endpoint = <string>process.env.AMZ_WS_DYNAMODB_URL;
 }
 
 // Create new DynamoDB instance

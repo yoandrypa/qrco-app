@@ -6,19 +6,19 @@ import {
 } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 // Set the AWS Region.
-const REGION = process.env.AWZ_WS_REGION; // For example, "us-east-1".
+const REGION = process.env.AMZ_WS_REGION; // For example, "us-east-1".
 const CREDENTIALS = {
-  accessKeyId: <string>process.env.AWZ_WS_ACCESS_KEY_ID,
-  secretAccessKey: <string>process.env.AWZ_WS_SECRET_ACCESS_KEY
+  accessKeyId: <string>process.env.AMZ_WS_ACCESS_KEY_ID,
+  secretAccessKey: <string>process.env.AMZ_WS_SECRET_ACCESS_KEY
 };
 const configuration = {
   region: REGION,
   credentials: CREDENTIALS,
   apiVersion: "2012-08-10"
 };
-if (process.env.AWZ_WS_DYNAMODB_URL) {
+if (process.env.AMZ_WS_DYNAMODB_URL) {
   // @ts-ignore
-  configuration["endpoint"] = <string>process.env.AWZ_WS_DYNAMODB_URL;
+  configuration["endpoint"] = <string>process.env.AMZ_WS_DYNAMODB_URL;
 }
 
 // Create an Amazon DynamoDB service client object.
