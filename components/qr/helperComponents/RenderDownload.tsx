@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 
 import { FramesType } from '../types/types';
 import { downloadAsImg, downloadAsSVGOrVerify } from '../../../helpers/qr/helpers';
+import RenderConfirmDlg from "../../renderers/RenderConfirmDlg";
 
 interface RenderDownloadProps {
   qrImageData: any;
@@ -16,8 +17,31 @@ interface RenderDownloadProps {
   contrast?: {color1?: string; color2: string} | undefined
 }
 
+const lookforA = "<rect x=\"0\" y=\"0\" height=\"280\" width=\"280\" clip-path=\"url('#clip-path-background-color')\" fill=\"#ffffff\"></rect>";
+const lookforB = "<g id=\"background\"><rect width=\"280\" height=\"280\" x=\"0\" y=\"0\" fill=\"#ffffff\"></rect></g>";
+
 const RenderDownload = ({ anchor, qrImageData, frame, setAnchor, contrast }: RenderDownloadProps) => {
   const [isReadable, setIsReadable] = useState<{readable: boolean} | undefined>(undefined);
+  const [open, setOpen] = useState<string | null>(null);
+
+  const proceedWithPng = (dataImg: string) => { // @ts-ignore
+    downloadAsImg(dataImg, Boolean(frame?.type) ? frame : { type: '' }, undefined, undefined);
+    setAnchor(null);
+    if (open !== null) {
+      setOpen(null);
+    }
+  }
+
+  const handlePng = () => {
+    const image = qrImageData;
+    const doc = structuredClone(typeof image === 'string' ? image : image.outerHTML);
+    const includes = doc.includes(lookforA) && doc.includes(lookforB);
+    if (!includes) {
+      proceedWithPng(doc);
+    } else {
+      setOpen(doc);
+    }
+  }
 
   useEffect(() => {
     downloadAsSVGOrVerify(qrImageData, setIsReadable, contrast);
@@ -55,10 +79,7 @@ const RenderDownload = ({ anchor, qrImageData, frame, setAnchor, contrast }: Ren
             id="buttonPNG"
             variant="outlined"
             sx={{ width: '100%'}}
-            onClick={() => { // @ts-ignore
-              downloadAsImg(qrImageData, Boolean(frame?.type) ? frame : { type: '' }, undefined, undefined);
-              setAnchor(null);
-            }}>PNG</Button>
+            onClick={handlePng}>PNG</Button>
           <Button
             id="buttonJPG"
             variant="outlined"
@@ -77,6 +98,16 @@ const RenderDownload = ({ anchor, qrImageData, frame, setAnchor, contrast }: Ren
             }}>SVG</Button>
         </Box>
       </Box>
+      {open !== null && (
+        <RenderConfirmDlg
+          disableESC
+          handleCancel={() => proceedWithPng(open)}
+          handleOk={() => proceedWithPng(open.replace(lookforA, '').replace(lookforB, ''))}
+          noMsg="white background"
+          yesMsg="transparent background"
+          title="Downloading png" message="This QR code can be downloaded as a png file with transparent background or white background."
+          confirmationMsg="What version would you like?" />
+      )}
     </Popover>
   );
 };
