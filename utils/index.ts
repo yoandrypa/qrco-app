@@ -74,7 +74,7 @@ export const isValidUrl = (urlString: string) => {
 };
 
 export const getStatsLimit = (): number =>
-  parseInt(<string>process.env.REACT_DEFAULT_MAX_STATS_PER_LINK) || 100000000;
+  parseInt(<string>process.env.DEFAULT_MAX_STATS_PER_LINK) || 100000000;
 
 export const getInitStats = (): StatsType => {
   return Object.create({

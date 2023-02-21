@@ -388,7 +388,7 @@ export const cleanSelectionForMicrositeURL = (item: string, isDynamic: boolean, 
   // }
 
   if (isDynamic) {
-    return `${process.env.MICROSITES_ROUTE}/sample/${clearItem(item)}`;
+    return `${process.env.MICRO_SITES_BASE_URL}/sample/${clearItem(item)}`;
   }
 
   return `sample qr ${clearItem(item)}`;
