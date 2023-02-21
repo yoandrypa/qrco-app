@@ -7,8 +7,8 @@ import { setCurrentToken } from './index';
 import { getUserAttrs } from './users';
 import * as Users from "../../../handlers/users";
 
-const region = process.env.AWS_REGION || 'us-east-1';
-const cognitoUserPoolId = process.env.AWS_COGNITO_USER_POOL_ID || 'undefined';
+const region = process.env.AMZ_WS_REGION || 'us-east-1';
+const cognitoUserPoolId = process.env.AMZ_WS_COGNITO_USER_POOL_ID || 'undefined';
 
 const cognitoExpress: CognitoExpress = new CognitoExpress({ region, cognitoUserPoolId, tokenUse: 'id' });
 
