@@ -63,7 +63,7 @@ const RenderSamplePreview = ({
     }
   }
 
-  const URL = isDynamic ? (selected ? cleanSelectionForMicrositeURL(selected, isDynamic) : (`${process.env.REACT_MICROSITES_ROUTE}/${code}`)) : qrNameDisplayer(selected || '', false);
+  const URL = isDynamic ? (selected ? cleanSelectionForMicrositeURL(selected, isDynamic) : (`${process.env.MICROSITES_ROUTE}/${code}`)) : qrNameDisplayer(selected || '', false);
 
   const repaint = useCallback(debounce(() => { // eslint-disable-line react-hooks/exhaustive-deps
     setUpdating(true);
@@ -187,7 +187,7 @@ const RenderSamplePreview = ({
           <RenderCellPhoneShape width={270} height={550} offlineText="The selected card has no available sample">
             {code || (selected && !NO_MICROSITE.includes(selected)) ? (
               <Suspense fallback={<PleaseWait />}>
-                <RenderIframe src={!code ? cleanSelectionForMicrositeURL(selected || '', isDynamic, true) : `${process.env.REACT_MICROSITES_ROUTE}/sample/empty`}
+                <RenderIframe src={!code ? cleanSelectionForMicrositeURL(selected || '', isDynamic, true) : `${process.env.MICROSITES_ROUTE}/sample/empty`}
                               selected={selected} width="256px" height="536px" data={data} backImg={backImg} mainImg={mainImg} shareLink={shareLink}/>
               </Suspense>
             ) : null}
