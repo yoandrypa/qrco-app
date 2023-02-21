@@ -1,3 +1,7 @@
+import pluralize from "pluralize";
+import {formatBytes} from "../../utils";
+import {FILE_LIMITS} from "../../consts";
+
 export const dynamicQrTypes = {
   web: {
     description: "Transform a long URL in a shortened link"
@@ -54,6 +58,67 @@ export const dynamicQrTypes = {
   },
   video: {
     description: "Share video files"
+  }
+};
+
+const handleAssetDesc = (selected: 'pdf' | 'gallery' | 'audio' | 'video') => (
+  `You can upload a maximum of ${pluralize("file", FILE_LIMITS[selected].totalFiles, true)} of size ${formatBytes(FILE_LIMITS[selected].totalMbPerFile * 1048576)}.`
+)
+
+export const dynamicQr = {
+  'vcard+': {
+    tip: "Your contact details. Users can store your info or contact you right away.",
+    predefined: ['presentation', 'organization', 'socials']
+  },
+  business: {
+    tip: "Your business or company details. Users can contact your business or company right away.",
+    predefined: ['company', 'action', 'address', 'opening', 'easiness', 'socials']
+  },
+  social: {
+    description: "Share your social networks information"
+  },
+  link: {
+    tip: "Add at least one link to your websites",
+    predefined: ['presentation', 'organization', 'socials']
+  },
+  coupon: {
+    tip: "Share a coupon for promotion.",
+    predefined: ['couponInfo', 'couponData', 'address']
+  },
+  petId: {
+    tip: "Your pet information.",
+    predefined: ['petId', 'presentation', 'keyvalue', 'links', 'socials', 'contact']
+  },
+  custom: {
+    tip: "Create a custom qr link on your own from scratch."
+  },
+  findMe: {
+    tip: "Information to make easy to find you.",
+    predefined: ['presentation', 'keyvalue', 'links', 'socials', 'contact']
+  },
+  linkedLabel: {
+    tip: "Smart labels.",
+    predefined: ['title', 'tags', 'gallery']
+  },
+  inventory: {
+    tip: "Inventory tracking information.",
+    predefined: ['title', 'gallery', 'sku', 'keyvalue']
+  },
+  pdf: {
+    tip: handleAssetDesc('pdf'),
+    predefined: ['title', 'pdf']
+  },
+  audio: {
+    tip: handleAssetDesc('audio'),
+    predefined: ['title', 'audio']
+  },
+  gallery: {
+    tip: handleAssetDesc('gallery'),
+    predefined: ['title', 'gallery']
+  },
+  video: {
+    tip: handleAssetDesc('video'),
+    predefined: ['title', 'vodep']
   }
 };
 

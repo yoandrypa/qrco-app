@@ -11,9 +11,7 @@ import dynamic from "next/dynamic";
 import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
 import DonationsData, { DonationsProps } from './renderers/DonationsData';
 import { qrNameDisplayer } from "../../helpers/qr/helpers";
-import pluralize from "pluralize";
-import {FILE_LIMITS} from "../../consts";
-import {formatBytes} from "../../utils";
+import {dynamicQr} from "./qrtypes";
 
 const CardDataStatic = dynamic(() => import("./renderers/custom/CardDataStatic"));
 const Custom = dynamic(() => import("./renderers/Custom"));
@@ -161,48 +159,13 @@ const QrContentHandler = () => { // @ts-ignore
       }
 
       default: {
-        let tip = '' as string | undefined;
-        let predefined = [] as string[] | undefined;
-
-        if (selected !== 'custom') {
-          const handlePredefined = (pred: string[]): string[] | undefined => options.mode === undefined ? pred : undefined;
-
-          if (selected === 'vcard+') {
-            tip = "Your contact details. Users can store your info or contact you right away.";
-            predefined = handlePredefined(['presentation', 'organization', 'socials']);
-          } else if (selected === 'link') {
-            tip = "Add at least one link to your websites";
-            predefined = handlePredefined(['presentation', 'organization', 'socials']);
-          } else if (selected === 'coupon') {
-            tip = "Share a coupon for promotion.";
-            predefined = handlePredefined(['couponInfo', 'couponData', 'address']);
-          } else if (selected === 'business') {
-            tip = "Your business or company details. Users can contact your business or company right away.";
-            predefined = handlePredefined(['company', 'action', 'address', 'opening', 'easiness', 'socials']);
-          } else if (['gallery', 'pdf', 'audio', 'video'].includes(selected)) { // @ts-ignore
-            const kind = FILE_LIMITS[selected];
-            tip = `You can upload a maximum of ${pluralize("file", kind.totalFiles, true)} of size ${formatBytes(kind.totalMbPerFile * 1048576)}.`;
-            predefined = handlePredefined(['title', selected]);
-          } else if (selected === 'petId') {
-            tip = "Your pet information.";
-            predefined = handlePredefined(['petId', 'presentation', 'keyvalue', 'links', 'socials']);
-          } else if (selected === 'linkedLabel') {
-            tip = "Your pet information.";
-            predefined = handlePredefined(['petId', 'presentation', 'keyvalue', 'links', 'socials']);
-          } else if (selected === 'findMe') {
-            tip = "Information to make easy to find you.";
-            predefined = handlePredefined(['presentation', 'keyvalue', 'links', 'socials', 'contact']);
-          } else if (selected === 'inventory') {
-            tip = "Inventory tracking information";
-            predefined = handlePredefined(['title', 'gallery', 'sku', 'keyvalue']);
-          } else {
-            tip = "Your social networks. Users can reach you using the social networks.";
-            predefined = handlePredefined(['title', 'socials']);
-          }
-        }
+        // @ts-ignore
+        const item = dynamicQr[selected];
+        const handlePredefined = (pred?: string[]): string[] | undefined => options.mode === undefined ? pred : undefined;
 
         return (
-          <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected} tip={tip} predefined={predefined}/>
+          <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected}
+                  tip={item.tip} predefined={handlePredefined(item.predefined)} />
         );
       }
     }
