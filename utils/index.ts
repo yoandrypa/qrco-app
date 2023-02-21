@@ -8,14 +8,13 @@ import {
 import { EMAIL, PHONE, ZIP } from "../components/qr/constants";
 
 export const generateShortLink = (id: string | undefined, customDomain?: string | null): string => {
-  const protocol =
-    process.env.REACT_APP_CUSTOM_DOMAIN_USE_HTTPS === "true" || customDomain ? "https://" : "";
-  const domain = process.env.REACT_APP_SERVER_BASE_URL;
-  return `${protocol}${customDomain || domain}/${id}`;
+  const serverBaseUrl = process.env.SERVER_BASE_URL;
+
+  return customDomain ? `https://${customDomain}/${id}` : `${serverBaseUrl}/${id}`;
 };
 
 // @ts-ignore
-export const generateId = async (domainId: {userId: string, createdAt: number} | null = "", codeLenght: number = process.env.REACT_APP_LINK_LENGTH) => {
+export const generateId = async (domainId: { userId: string, createdAt: number } | null = "", codeLenght: number = process.env.LINK_LENGTH) => {
   try {
     const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
       parseInt(`${codeLenght}`));
@@ -42,7 +41,7 @@ export const sanitize = {
     ...link,
     bannedById: undefined,
     // @ts-ignore
-    link: generateShortLink(link.address, link.domain || process.env.REACT_APP_SHORT_URL_DOMAIN)
+    link: generateShortLink(link.address, link.domain || process.env.SHORT_URL_DOMAIN)
   })
 };
 
@@ -134,7 +133,7 @@ const AvsAnSimple = ((root) => {
     raw: root,
     //Usage example: AvsAnSimple.query("example")
     //example returns: "an"
-    query: function(word: string[]) {
+    query: function (word: string[]) {
       let node = root, sI = 0, result, c;
       do {
         c = word[sI++];
@@ -153,7 +152,7 @@ const AvsAnSimple = ((root) => {
 })({});
 
 export const fixArticles = (txt: string) => {
-  return txt.replace(/\b(a|an) ([\s\(\"'“‘-]?\w*)\b/gim, function(match, article, following) {
+  return txt.replace(/\b(a|an) ([\s\(\"'“‘-]?\w*)\b/gim, function (match, article, following) {
     const input = following.replace(/^[\s\(\"'“‘-]+|\s+$/g, ""); //strip initial punctuation symbols
     const res = AvsAnSimple.query(input);
     // @ts-ignore
@@ -229,38 +228,38 @@ export const conjunctMethods = {
   }
 };
 
-export const validate = (data: any, type:string) => {
+export const validate = (data: any, type: string) => {
   let isError = false as boolean;
-    // @ts-ignore
-    switch (type) {
-      case 'string':
-      case 'text':
-        break;
-      case 'phone':
-      case 'fax':
-      case 'cell':
-        if (!PHONE.test(data)) {
-          isError = true;
-        }
-        break;
-      case 'zip':
-        if (!ZIP.test(data)) {
-          isError = true;
-        }
-        break;
-      case 'url':
-      case 'web':
-        if (!isValidUrl(data)) {
-          isError = true;
-        }
-        break;
-      case 'email':
-        if (!EMAIL.test(data)) {
-          isError = true;
-        }
-        break;
-      default:
-        break;
-    }
+  // @ts-ignore
+  switch (type) {
+    case 'string':
+    case 'text':
+      break;
+    case 'phone':
+    case 'fax':
+    case 'cell':
+      if (!PHONE.test(data)) {
+        isError = true;
+      }
+      break;
+    case 'zip':
+      if (!ZIP.test(data)) {
+        isError = true;
+      }
+      break;
+    case 'url':
+    case 'web':
+      if (!isValidUrl(data)) {
+        isError = true;
+      }
+      break;
+    case 'email':
+      if (!EMAIL.test(data)) {
+        isError = true;
+      }
+      break;
+    default:
+      break;
+  }
   return isError;
 }

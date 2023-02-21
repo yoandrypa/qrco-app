@@ -83,7 +83,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
         }
 
         if (iRef.current?.contentWindow) { // @ts-ignore
-          iRef.current.contentWindow.postMessage(JSON.stringify({previewData}), process.env.REACT_MICROSITES_ROUTE);
+          iRef.current.contentWindow.postMessage(JSON.stringify({previewData}), process.env.MICROSITES_ROUTE);
         }
       }, 75);
     }
@@ -91,7 +91,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
 
   useEffect(() => {
     const handler = (event: any) => {
-      if (!isReady && event.origin.replace('https://www.', 'https://') === process.env.REACT_MICROSITES_ROUTE) {
+      if (!isReady && event.origin.replace('https://www.', 'https://') === process.env.MICROSITES_ROUTE) {
         try {
           const dataFromOutside = JSON.parse(event.data);
           if (dataFromOutside.ready && iRef.current?.contentWindow) {

@@ -84,7 +84,7 @@ export const create = async (data: CreateLinkData) => {
     }
     const linkItem = await Link.create(params);
 
-    if (!data.user && process.env.REACT_APP_NON_USER_COOLDOWN && data.realIP) {
+    if (!data.user && process.env.NON_USER_COOLDOWN && data.realIP) {
       await Ip.create(data.realIP);
     }
 
