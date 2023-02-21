@@ -1,16 +1,16 @@
 import * as dynamoose from "dynamoose";
 
 const configuration = {
-  region: <string>process.env.REACT_AWS_REGION,
+  region: <string>process.env.AWZ_WS_REGION,
   credentials: {
-    accessKeyId: <string>process.env.REACT_AWS_ACCESS_KEY_ID,
-    secretAccessKey: <string>process.env.REACT_AWS_SECRET_ACCESS_KEY,
+    accessKeyId: <string>process.env.AWZ_WS_ACCESS_KEY_ID,
+    secretAccessKey: <string>process.env.AWZ_WS_SECRET_ACCESS_KEY,
   }
 };
 
-if (process.env.REACT_AWS_DYNAMODB_URL) {
+if (process.env.AWZ_WS_DYNAMODB_URL) {
   // @ts-ignore
-  configuration.endpoint = <string>process.env.REACT_AWS_DYNAMODB_URL;
+  configuration.endpoint = <string>process.env.AWZ_WS_DYNAMODB_URL;
 }
 
 // Create new DynamoDB instance
@@ -21,9 +21,9 @@ dynamoose.aws.ddb.set(ddb);
 dynamoose.Table.defaults.set({
   create: true,
   throughput: "ON_DEMAND",
-  prefix: process.env.REACT_NODE_ENV === "production" ? "prd_" : "dev_",
+  prefix: process.env.APP_ENV === "production" ? "prd_" : "dev_",
   suffix: "",
-  waitForActive: process.env.REACT_NODE_ENV !== "production",
+  waitForActive: process.env.APP_ENV !== "production",
   update: false,
 });
 

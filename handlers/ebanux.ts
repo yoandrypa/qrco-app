@@ -1,4 +1,4 @@
-const EBANUX_API = process.env.REACT_NODE_ENV == 'production' ? 'https://ebanux.link' : 'https://dev.ebanux.link';
+const EBANUX_API = process.env.APP_ENV == 'production' ? 'https://ebanux.link' : 'https://dev.ebanux.link';
 import { EbanuxDonationPriceData, EbanuxSimplePaymentLinkData } from '../components/qr/types/types';
 import { createAxiosInstance } from "@ebanux/ebanux-utils/request";
 

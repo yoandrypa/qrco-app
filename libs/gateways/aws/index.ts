@@ -4,12 +4,12 @@ import {
   CognitoIdentityProviderClientConfig,
 } from '@aws-sdk/client-cognito-identity-provider';
 
-const awsAccountId = process.env.AWS_ACCOUNT_ID || 'undefined';
-const cognitoUserPoolId = process.env.AWS_COGNITO_USER_POOL_ID || 'undefined';
-const identityPoolId = process.env.AWS_COGNITO_INDETITY_POOL_ID || 'undefined';
-const region = process.env.AWS_REGION || 'us-east-1';
-const adminRole = process.env.AWS_EBANUX_ADMIN_ROLE || 'ebanux-admin';
-const userRole = process.env.AWS_EBANUX_ADMIN_ROLE || 'ebanux-user';
+const awsAccountId = process.env.AMZ_WS_ACCOUNT_ID || 'undefined';
+const cognitoUserPoolId = process.env.AMZ_WS_COGNITO_USER_POOL_ID || 'undefined';
+const identityPoolId = process.env.AMZ_WS_COGNITO_INDETITY_POOL_ID || 'undefined';
+const region = process.env.AMZ_WS_REGION || 'us-east-1';
+const adminRole = process.env.AMZ_WS_EBANUX_ADMIN_ROLE || 'ebanux-admin';
+const userRole = process.env.AMZ_WS_EBANUX_ADMIN_ROLE || 'ebanux-user';
 
 let currentToken: string | null = null;
 

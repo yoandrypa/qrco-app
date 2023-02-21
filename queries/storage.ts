@@ -17,7 +17,7 @@ const uc = require("unix-checksum");
 export const checkIfExist = async (key: string, checkSum?: string) => {
   try {
     const input: GetObjectAttributesCommandInput = {
-      Bucket: String(process.env.REACT_AWS_BUCKET_NAME),
+      Bucket: String(process.env.AWZ_WS_BUCKET_NAME),
       Key: key,
       ObjectAttributes: ["Checksum"]
     };
@@ -44,7 +44,7 @@ export const upload = async (file: File, key: string) => {
     let response = await checkIfExist(key, checkSum);
     if (!response) {
       const input: PutObjectCommandInput = {
-        Bucket: String(process.env.REACT_AWS_BUCKET_NAME),
+        Bucket: String(process.env.AWZ_WS_BUCKET_NAME),
         Body: body,
         Key: key,
         ContentLength: file.size,
@@ -74,7 +74,7 @@ export const multipartUpload = async (file: File, key = ""): Promise<CompleteMul
         Key: key
       };
     }
-    const Bucket = String(process.env.REACT_AWS_BUCKET_NAME);
+    const Bucket = String(process.env.AWZ_WS_BUCKET_NAME);
     const Key = key;
     const input: CreateMultipartUploadCommandInput = {
       Bucket,
@@ -150,7 +150,7 @@ export const download = async (key: string) => {
   try {
     const downloadParams: GetObjectCommandInput = {
       Key: key,
-      Bucket: String(process.env.REACT_AWS_BUCKET_NAME)
+      Bucket: String(process.env.AWZ_WS_BUCKET_NAME)
     };
     return await s3Client.getObject(downloadParams);
   } catch (e) {
@@ -161,7 +161,7 @@ export const download = async (key: string) => {
 export const remove = async (keys: ObjectIdentifier[]) => {
   try {
     const deleteParams: DeleteObjectsCommandInput = {
-      Bucket: String(process.env.REACT_AWS_BUCKET_NAME),
+      Bucket: String(process.env.AWZ_WS_BUCKET_NAME),
       Delete: {
         Objects: keys,
         Quiet: true

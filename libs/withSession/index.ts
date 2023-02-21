@@ -7,11 +7,11 @@ import {
 } from "next";
 
 const sessionOptions: IronSessionOptions = {
-  password: <string>(process.env.SESSION_SECRET || process.env.AWS_SECRET_ACCESS_KEY),
   cookieName: process.env.SESSION_COOKIE_NAME || 'ebanux-qrco-app',
+  password: (process.env.SESSION_SECRET || process.env.AMZ_WS_SECRET_ACCESS_KEY || '123456789') as string,
   // secure: true should be used in production (HTTPS) but can't be used in development (HTTP)
   cookieOptions: {
-    secure: process.env.NODE_ENV === "production",
+    secure: process.env.APP_ENV === "production",
   },
 };
 

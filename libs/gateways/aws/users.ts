@@ -1,7 +1,7 @@
 import { getAdminProvider, getUserProvider } from './index';
 import { StandardError } from '../../exceptions';
 
-const UserPoolId = process.env.AWS_COGNITO_USER_POOL_ID || 'undefined';
+const UserPoolId = process.env.AMZ_WS_COGNITO_USER_POOL_ID || 'undefined';
 
 // eslint-disable-next-line consistent-return
 const parseResponse = (resolve: (rep: any) => void, reject: (err: any) => void) => (err: any, data: any) => {

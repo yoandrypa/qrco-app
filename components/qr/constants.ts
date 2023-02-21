@@ -33,7 +33,7 @@ export const PHONE = new RegExp("^(\\+\\d{1,3}\\s?)?((\\(\\d{1,3}\\))|\\d{1,3})(
 export const ZIP = new RegExp("^\\d{5}(-\\d{4})?$");
 export const YEAR = new RegExp('^\\d{4}$');
 
-export const IS_DEV_ENV = process.env.REACT_NODE_ENV === "develop";
+export const IS_DEV_ENV = process.env.APP_ENV === "develop";
 
 export const QRCODE_PLANS = {
   BASIC: {

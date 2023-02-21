@@ -23,7 +23,7 @@ import { DataType } from '../types/types';
 import Common from '../helperComponents/Common';
 import Link from 'next/link';
 import { data } from 'cypress/types/jquery';
-const DEVELOPMENT = process.env.REACT_NODE_ENV === 'develop' ? true : false
+const DEVELOPMENT = process.env.APP_ENV === 'develop' ? true : false
 
 type SendMeMoneyProps = {
     setData: (value: DataType) => void;
