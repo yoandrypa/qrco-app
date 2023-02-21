@@ -12,7 +12,7 @@ import dynamic from "next/dynamic";
 
 import {Accordion, AccordionDetails, AccordionSummary} from "../renderers/Renderers";
 import {checkForAlpha, convertBase64, downloadAsSVGOrVerify, handleDesignerString} from "../../helpers/qr/helpers";
-import {OptionsType} from "./types/types";
+import {BackgroundType, FramesType, OptionsType} from "./types/types";
 import QrGenerator from "./QrGenerator";
 import {initialBackground, initialFrame} from "../../helpers/qr/data";
 import Context from "../context/Context";
@@ -104,13 +104,15 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
 
   const handleBackground = (item: string) => (event: { target: { value: string; checked: any; }; color: any; }) => {
     if (event.target) {
-      let back = {...background, [item]: item !== 'invert' ? event.target.value : event.target.checked};
-      if (event.target.value === 'solid') {
-        back = initialBackground;
-      }
-      setBackground(back);
+      setBackground((prev: BackgroundType) => {
+        let back = {...prev, [item]: item !== 'invert' ? event.target.value : event.target.checked};
+        if (event.target.value === 'solid') {
+          back = structuredClone(initialBackground);
+        }
+        return back;
+      });
     } else if (event.color) {
-      setBackground({...background, backColor: event.color});
+      setBackground((prev: BackgroundType) => ({...prev, backColor: event.color}));
     }
   };
 
@@ -119,24 +121,26 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
   };
 
   const handleReset = useCallback(() => {
-    setBackground(initialBackground);
+    setBackground(structuredClone(initialBackground));
   }, [background]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleMainFrame = (elem: string, payload: any) => {
     if (payload !== null) {
       if (elem === 'image') {
-        const selectedFrame = {...frame, type: payload};
-        if (payload === '/frame/frame1.svg' && frame.textColor === '#000000') {
-          selectedFrame.textColor = '#ffffff';
-        } else if (['/frame/frame2.svg', '/frame/frame3.svg', '/frame/frame4.svg'].includes(payload) && frame.textColor === '#ffffff') {
-          selectedFrame.textColor = '#000000';
-        }
-        setFrame(selectedFrame);
+        setFrame((prev: FramesType) => {
+          const selectedFrame = {...prev, type: payload};
+          if (payload === '/frame/frame1.svg' && frame.textColor === '#000000') {
+            selectedFrame.textColor = '#ffffff';
+          } else if (['/frame/frame2.svg', '/frame/frame3.svg', '/frame/frame4.svg'].includes(payload) && frame.textColor === '#ffffff') {
+            selectedFrame.textColor = '#000000';
+          }
+          return selectedFrame;
+        });
       } else {
-        setFrame({...frame, [elem]: payload});
+        setFrame((prev: FramesType) => ({...prev, [elem]: payload}));
       }
     } else {
-      setFrame({...frame, ...initialFrame});
+      setFrame((prev: FramesType) => ({...prev, ...initialFrame}));
     }
   };
 
@@ -201,19 +205,19 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
 
   useEffect(() => {
     if (doneFirst.current && Object.keys(background).length) {
-      const opts = {...options};
+      // const opts = {...options};
       if (background.type === 'solid') {
         handleReset();
       } else {
         handleUpload();
       }
-      setOptions(opts);
+      // setOptions(opts);
     }
   }, [background.type]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (background.type === 'image') {
-      setBackground({...background, opacity: background.invert ? 100 : 50});
+      setBackground((prev: BackgroundType) => ({...prev, opacity: background.invert ? 100 : 50}));
     }
   }, [background.invert]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -227,9 +231,11 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
 
   useEffect(() => {
     if (doneFirst.current && Boolean(options?.backgroundOptions)) {
-      const opts = {...options};
-      opts.backgroundOptions.color = background.file ? '#ffffff00' : '#ffffff';
-      setOptions(opts);
+      setOptions((prev: OptionsType) => {
+        const opts = {...prev};
+        opts.backgroundOptions.color = background.file ? '#ffffff00' : '#ffffff';
+        return opts;
+      });
     }
   }, [background.file]); // eslint-disable-line react-hooks/exhaustive-deps
 

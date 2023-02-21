@@ -9,8 +9,7 @@ import {DataType, OptionsType, SocialProps, Type} from './types/types';
 import dynamic from "next/dynamic";
 
 import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
-import DonationsData, { DonationsProps } from './renderers/DonationsData';
-import { qrNameDisplayer } from "../../helpers/qr/helpers";
+import {qrNameDisplayer} from "../../helpers/qr/helpers";
 import {dynamicQr} from "./qrtypes";
 
 const CardDataStatic = dynamic(() => import("./renderers/custom/CardDataStatic"));
@@ -27,6 +26,7 @@ const SendMeMoneyData = dynamic(() => import('./renderers/SendMeMoneyData'));
 const FundMe = dynamic(() => import('./renderers/FundMeData'));
 const PleaseWait = dynamic(() => import('../PleaseWait'));
 const RenderNoUserWarning = dynamic(() => import('./helperComponents/smallpieces/RenderNoUserWarning'));
+const DonationsData = dynamic(() => import('./renderers/DonationsData'));
 
 type QrContentHandlerProps = {
   data: DataType;
@@ -146,7 +146,7 @@ const QrContentHandler = () => { // @ts-ignore
         return <TwitterData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
       }
       case 'donation': {
-        return <DonationsData data={data} handleValues={handleValues} setData={(payload: DonationsProps) => setData(payload)} setIsWrong={setIsWrong} />
+        return <DonationsData data={data} handleValues={handleValues} setData={(payload: DataType) => setData(payload)} setIsWrong={setIsWrong} />
       }
       case 'paylink': {
         return <SendMeMoneyData data={data} setData={handlePayload} handleValues={handleValues} setIsWrong={setIsWrong} />
@@ -157,9 +157,7 @@ const QrContentHandler = () => { // @ts-ignore
       case 'fundme': {
         return <FundMe data={data} setData={setData} handleValues={handleValues} />
       }
-
-      default: {
-        // @ts-ignore
+      default: { // @ts-ignore
         const item = dynamicQr[selected];
         const handlePredefined = (pred?: string[]): string[] | undefined => options.mode === undefined ? pred : undefined;
 
