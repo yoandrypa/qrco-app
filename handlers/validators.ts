@@ -7,8 +7,10 @@ import * as Host from "../queries/host";
 //import dns from 'dns';
 //import { promisify } from "util";
 
+const googleSafeBrowsingKey = process.env.GOOGLE_SAFE_BROWSING_KEY;
+
 export const coolDown = (user: UserType) => {
-  if (!process.env.REACT_APP_GOOGLE_SAFE_BROWSING_KEY || !user ||
+  if (!googleSafeBrowsingKey || !user ||
     !user.coolDowns) return;
 
   // If it has active cooldown then throw error
@@ -23,10 +25,14 @@ export const coolDown = (user: UserType) => {
 };
 
 export const malware = async (user: UserType, target: string) => {
-  if (!process.env.REACT_APP_GOOGLE_SAFE_BROWSING_KEY) return;
+  if (!googleSafeBrowsingKey) return;
+
+  const clientId = String(process.env.SERVER_BASE_URL)
+    .replace(/(^https?:\/\/|[:/\?].*$)/g, '')
+    .replace(".", "");
 
   const response = await fetch(
-    `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${process.env.REACT_APP_GOOGLE_SAFE_BROWSING_KEY}`,
+    `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${googleSafeBrowsingKey}`,
     {
       method: "POST",
       headers: {
@@ -34,9 +40,7 @@ export const malware = async (user: UserType, target: string) => {
       },
       body: JSON.stringify({
         client: {
-          // @ts-ignore
-          clientId: process.env.REACT_APP_DEFAULT_DOMAIN.toLowerCase().
-            replace(".", ""),
+          clientId: clientId,
           clientVersion: "1.0.0",
         },
         threatInfo: {
@@ -96,9 +100,9 @@ export const linksCount = async (user?: UserType) => {
     });
 
     // @ts-ignore
-    if (count > process.env.REACT_APP_USER_LIMIT_PER_DAY) {
+    if (count > process.env.USER_LIMIT_PER_DAY) {
       throw new CustomError(
-        `You have reached your daily limit (${process.env.REACT_APP_USER_LIMIT_PER_DAY}). Please wait 24h.`,
+        `You have reached your daily limit (${process.env.USER_LIMIT_PER_DAY}). Please wait 24h.`,
       );
     }
   } catch (e: any) {

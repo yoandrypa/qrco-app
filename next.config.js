@@ -30,7 +30,7 @@ module.exports = {
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || process.env.REACT_STRIPE_SECRET_KEY,
     STRIPE_EVENTS_SECRET: process.env.STRIPE_EVENTS_SECRET || process.env.REACT_STRIPE_WEBHOOK_SECRET,
 
-    MICRO_SITES_ROUTE: process.env.MICRO_SITES_ROUTE || process.env.REACT_MICROSITES_ROUTE || "http://localhost:3001",
+    MICRO_SITES_BASE_URL: process.env.MICRO_SITES_BASE_URL || process.env.REACT_MICROSITES_ROUTE || "http://localhost:3001",
     REACT_EBANUX_API: process.env.REACT_EBANUX_API,
 
     SERVER_BASE_URL: process.env.SERVER_BASE_URL || process.env.REACT_APP_SERVER_BASE_URL,

@@ -136,7 +136,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
       const genShortLinkAndId = async () => {
         const id = getUuid();
         const shortCode = data.claim || await generateId(); // @ts-ignore
-        setOptions((prev: OptionsType) => ({ ...prev, id, shortCode, data: generateShortLink(shortCode, process.env.REACT_APP_SHORT_URL_DOMAIN) }));
+        setOptions((prev: OptionsType) => ({ ...prev, id, shortCode, data: generateShortLink(shortCode, process.env.SHORT_URL_DOMAIN) }));
       };
       genShortLinkAndId();
     }
