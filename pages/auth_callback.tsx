@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 
 import session from "@ebanux/ebanux-utils/sessionStorage";
-import { Authenticator } from "@ebanux/ebanux-utils/auth";
+// import { Authenticator } from "@ebanux/ebanux-utils/auth";
+import { Authenticator } from "./auth";
 
 import Alert from "@mui/material/Alert";
 
@@ -13,7 +14,6 @@ export default function AuthCallback() {
 
   useEffect(() => {
     startWaiting();
-    console.log(111, session.isAuthenticated);
     if (session.isAuthenticated) {
       const callbackRoute = session.get('CALLBACK_ROUTE', '/', true);
 
