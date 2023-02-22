@@ -5,7 +5,6 @@ import Divider from "@mui/material/Divider";
 import {DataType} from "./qr/types/types";
 import {convertBase64, getImageAsString} from "../helpers/qr/helpers";
 import CircularProgress from "@mui/material/CircularProgress";
-import {IS_DEV_ENV} from "./qr/constants";
 
 interface IframeProps {
   src: string;
@@ -92,7 +91,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
 
   useEffect(() => {
     const handler = (event: any) => {
-      if (!isReady && !IS_DEV_ENV && event.origin.replace('https://www.', 'https://') === process.env.MICRO_SITES_BASE_URL) {
+      if (!isReady && event.origin.replace('https://www.', 'https://') === process.env.MICRO_SITES_BASE_URL) {
         try {
           const dataFromOutside = JSON.parse(event.data);
           if (dataFromOutside.ready && iRef.current?.contentWindow) {
