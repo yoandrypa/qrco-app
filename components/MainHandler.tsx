@@ -1,17 +1,16 @@
-import React, { useContext, useEffect } from "react";
-import { useRouter, NextRouter } from "next/router";
+import {useContext, useEffect} from "react";
+import {useRouter} from "next/router";
 
 import session from "@ebanux/ebanux-utils/sessionStorage";
-import { Authenticator } from "@ebanux/ebanux-utils/auth";
+import {Authenticator} from "@ebanux/ebanux-utils/auth";
 import "@ebanux/ebanux-utils/styles/spinner.css";
 
-import { PRIVATE_ROUTES } from "./qr/constants";
-import { AppProps } from "next/app";
+import {PRIVATE_ROUTES} from "./qr/constants";
+import {AppProps} from "next/app";
 import Context from "./context/Context";
 
-const isAPrivateRoute = (pathname: string, isDynamic: boolean) => {
-  return isDynamic && PRIVATE_ROUTES.some((route: string) => pathname.match(route));
-}
+const isAPrivateRoute = (pathname: string, isDynamic: boolean) =>
+  isDynamic && PRIVATE_ROUTES.some((route: string) => pathname.match(route));
 
 export default function MainHandler({ Component, pageProps }: AppProps) {
   const router = useRouter();
