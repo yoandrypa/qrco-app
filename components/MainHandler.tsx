@@ -25,7 +25,7 @@ export default function MainHandler({ Component, pageProps }: AppProps) {
     if (!session.isAuthenticated && isAPrivateRoute(pathname, isDynamic)) {
       session.set('CALLBACK_ROUTE', { pathname, query });
     }
-  }, [pathname, isDynamic]);
+  }, [pathname, isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isAPrivateRoute(pathname, isDynamic)) {
     return (
