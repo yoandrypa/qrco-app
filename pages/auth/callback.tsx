@@ -6,7 +6,7 @@ import { Authenticator, authWithAuthCode } from "@ebanux/ebanux-utils/auth";
 
 import Alert from "@mui/material/Alert";
 
-import { startWaiting, releaseWaiting } from "../components/Waiting";
+import { startWaiting, releaseWaiting } from "../../components/Waiting";
 
 export default function AuthCallback() {
   const router = useRouter();
