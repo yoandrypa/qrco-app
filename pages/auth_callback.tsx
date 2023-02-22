@@ -13,6 +13,7 @@ export default function AuthCallback() {
 
   useEffect(() => {
     startWaiting();
+    console.log(111, session.isAuthenticated);
     if (session.isAuthenticated) {
       const callbackRoute = session.get('CALLBACK_ROUTE', '/', true);
 
