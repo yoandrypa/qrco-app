@@ -25,7 +25,7 @@ export default function MainHandler({ Component, pageProps }: AppProps) {
     if (!session.isAuthenticated && isAPrivateRoute(pathname, isDynamic)) {
       session.set('CALLBACK_ROUTE', { pathname, query });
     }
-  }, [router.pathname]);
+  }, [pathname, isDynamic]);
 
   if (isAPrivateRoute(pathname, isDynamic)) {
     return (

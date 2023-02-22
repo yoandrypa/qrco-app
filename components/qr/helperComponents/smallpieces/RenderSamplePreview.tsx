@@ -80,7 +80,7 @@ const RenderSamplePreview = (
       if (!isDynamic) return qrNameDisplayer(selected || '', false);
       if (selected) return cleanSelectionForMicrositeURL(selected, isDynamic);
       return `${microSitesBaseUrl}/${code}`;
-    }, [isDynamic, selected, code]
+    }, [isDynamic, selected, code] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const repaint = useCallback(debounce(() => { // eslint-disable-line react-hooks/exhaustive-deps
