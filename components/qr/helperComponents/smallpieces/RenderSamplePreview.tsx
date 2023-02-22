@@ -17,17 +17,17 @@ import { debounce } from "@mui/material";
 
 import { NO_MICROSITE, ONLY_QR } from "../../constants";
 import RenderPreview from "../../renderers/RenderPreview";
-import Notifications from "../../../notifications/Notifications";
-import { cleanSelectionForMicrositeURL, handleDesignerString, qrNameDisplayer } from "../../../../helpers/qr/helpers";
-import { DataType } from "../../types/types";
 import RenderCellPhoneShape from "../RenderCellPhoneShape";
-import RenderIcon from "./RenderIcon";
+import { cleanSelectionForMicrositeURL, qrNameDisplayer } from "../../../../helpers/qr/helpers";
+import { DataType } from "../../types/types";
 
 import dynamic from "next/dynamic";
 
 const PleaseWait = dynamic(() => import("../../../PleaseWait"));
 const Popover = dynamic(() => import("@mui/material/Popover"));
 const RenderIframe = dynamic(() => import('../../../RenderIframe'), { suspense: true });
+const Notifications = dynamic(() => import("../../../notifications/Notifications"));
+const RenderIcon = dynamic(() => import("./RenderIcon"));
 
 interface SamplePrevProps {
   style?: object;
@@ -154,8 +154,7 @@ const RenderSamplePreview = (
             }}>{!onlyQr ? clearUrl(URL || '') : URL || qrOptions?.data}</Typography>
             {!onlyQr ? (
               <>
-                <IconButton size="small" target="_blank" component="a" href={URL}
-                            sx={{ height: '28px', width: '28px', mt: '9px' }}>
+                <IconButton size="small" target="_blank" component="a" href={URL} sx={{ height: '28px', width: '28px', mt: '9px' }}>
                   <OpenInNewIcon fontSize="small" />
                 </IconButton>
                 <IconButton size="small" sx={{ height: '28px', width: '28px', mt: '9px' }} onClick={() => {
@@ -197,8 +196,7 @@ const RenderSamplePreview = (
             </Button>
           )}
           {showSampleMessage && (
-            <Typography
-              sx={{ mr: '10px', color: theme => theme.palette.text.disabled, fontSize: 'small' }}>SAMPLE</Typography>
+            <Typography sx={{ mr: '10px', color: theme => theme.palette.text.disabled, fontSize: 'small' }}>SAMPLE</Typography>
           )}
         </Box>
       </Box>

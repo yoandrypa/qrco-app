@@ -17,7 +17,5 @@ export default function Index({ user }: any) {
     return <QrGen />;
   }
 
-  return (
-    <QrList user={user} />
-  );
+  return <QrList user={user} />;
 };
