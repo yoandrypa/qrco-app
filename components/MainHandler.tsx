@@ -18,6 +18,7 @@ export default function MainHandler({ Component, pageProps }: AppProps) {
   // @ts-ignore
   const { data } = useContext(Context);
   const { pathname, query } = router;
+  // @ts-ignore
   const isDynamic: boolean = data?.isDynamic || pageProps.isDynamic;
 
   useEffect(() => {
