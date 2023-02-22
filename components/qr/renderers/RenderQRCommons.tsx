@@ -1,4 +1,4 @@
-import {ChangeEvent, useCallback, useContext, useState} from "react";
+import {ChangeEvent, useCallback, useContext, useEffect, useState} from "react";
 import Box from "@mui/material/Box";
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from "@mui/material/Button";
@@ -42,9 +42,10 @@ interface QRCommonsProps {
   backError?: boolean;
   foreError?: boolean;
   handleValue: Function;
+  forcePick?: string;
 }
 
-function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg, backError, foreError, handleValue, isWideForPreview}: QRCommonsProps) { // @ts-ignore
+function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg, backError, foreError, handleValue, isWideForPreview, forcePick}: QRCommonsProps) { // @ts-ignore
   const [selectFile, setSelectFile] = useState<string | null>(null);
   const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -92,6 +93,12 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
       </Tooltip>
     </>
   );
+
+  useEffect(() => {
+    if (forcePick) {
+      setSelectFile(forcePick === 'banner' ? 'backgndImg' : 'foregndImg');
+    }
+  }, [forcePick]);
 
   const shrink = isWideForPreview && !isWideEnough && (backgndImg || foregndImg);
 
