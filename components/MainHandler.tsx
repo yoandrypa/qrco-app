@@ -1,5 +1,5 @@
-import { useContext, useEffect } from "react";
-import { useRouter } from "next/router";
+import React, { useContext, useEffect } from "react";
+import { useRouter, NextRouter } from "next/router";
 
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import { Authenticator } from "@ebanux/ebanux-utils/auth";
@@ -9,22 +9,24 @@ import { PRIVATE_ROUTES } from "./qr/constants";
 import { AppProps } from "next/app";
 import Context from "./context/Context";
 
-const isAPrivateRoute = (path: string, isDynamic: boolean) =>
-  PRIVATE_ROUTES.some((route: string) => path.match(route)) && isDynamic;
+const isAPrivateRoute = (pathname: string, isDynamic: boolean) => {
+  return isDynamic && PRIVATE_ROUTES.some((route: string) => pathname.match(route));
+}
 
 export default function MainHandler({ Component, pageProps }: AppProps) {
   const router = useRouter();
   // @ts-ignore
   const { data } = useContext(Context);
+  const { pathname, query } = router;
+  const isDynamic: boolean = data?.isDynamic || pageProps.isDynamic;
 
   useEffect(() => {
-    if (router.pathname !== "/auth_callback") {
-      session.set('CALLBACK_ROUTER', { pathname: router.pathname, query: router.query })
+    if (!session.isAuthenticated && isAPrivateRoute(pathname, isDynamic)) {
+      session.set('CALLBACK_ROUTE', { pathname, query });
     }
-  }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [router.pathname]);
 
-  // @ts-ignore
-  if (router.query.code || isAPrivateRoute(router.pathname, data?.isDynamic || pageProps.isDynamic || false)) {
+  if (isAPrivateRoute(pathname, isDynamic)) {
     return (
       <Authenticator>
         {({ user }: any) => (

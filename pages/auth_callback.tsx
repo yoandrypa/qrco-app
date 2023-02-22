@@ -1,30 +1,34 @@
+import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import session from "@ebanux/ebanux-utils/sessionStorage";
-import Context from "../components/context/Context";
-import { useContext, useEffect } from "react";
 
-const AuthCallback = () => {
-  // @ts-ignore
-  const { setLoading } = useContext(Context);
+import session from "@ebanux/ebanux-utils/sessionStorage";
+import { Authenticator } from "@ebanux/ebanux-utils/auth";
+
+import Alert from "@mui/material/Alert";
+
+import { startWaiting, releaseWaiting } from "../components/Waiting";
+
+export default function AuthCallback() {
   const router = useRouter();
 
   useEffect(() => {
-    setLoading(true);
-    // @ts-ignore
-    const route = session.get('CALLBACK_ROUTER', '/');
+    startWaiting();
+    if (session.isAuthenticated) {
+      const callbackRoute = session.get('CALLBACK_ROUTE', '/', true);
 
-    if (route.query?.address?.length === 0) {
-      delete route.query.address;
+      router.push(callbackRoute, callbackRoute.pathname || '/').finally(() => {
+        releaseWaiting();
+      });
     }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-    router.push(route, route.pathname || '/').then(() => {
-      session.del('CALLBACK_ROUTER');
-      setLoading(false);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return <div />;
+  return (
+    <Authenticator>
+      {({ user }: any) => (
+        <Alert severity="success" variant="outlined">
+          Welcome: {user.name || user.email}.
+        </Alert>
+      )}
+    </Authenticator>
+  );
 };
-
-export default AuthCallback;
