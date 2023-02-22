@@ -17,7 +17,7 @@
     "@aws-sdk/client-ses": "^3.223.0",
     "@aws-sdk/credential-providers": "^3.266.0",
     "@aws-sdk/util-credentials": "^3.56.0",
-    "@ebanux/ebanux-utils": "^1.0.29",
+    "@ebanux/ebanux-utils": "^1.0.30",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "@mui/icons-material": "^5.8.4",

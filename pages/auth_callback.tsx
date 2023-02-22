@@ -2,8 +2,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 
 import session from "@ebanux/ebanux-utils/sessionStorage";
-// import { Authenticator } from "@ebanux/ebanux-utils/auth";
-import { Authenticator } from "./auth";
+import { Authenticator } from "@ebanux/ebanux-utils/auth";
 
 import Alert from "@mui/material/Alert";
 
