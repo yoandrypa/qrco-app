@@ -22,13 +22,14 @@ export default function AuthCallback() {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return (
-    <Authenticator>
-      {({ user }: any) => (
-        <Alert severity="success" variant="outlined">
-          Welcome: {user.name || user.email}.
-        </Alert>
-      )}
-    </Authenticator>
-  );
+  return <Alert severity="success" variant="outlined">Welcome</Alert>
+  // return (
+  //   <Authenticator>
+  //     {({ user }: any) => (
+  //       <Alert severity="success" variant="outlined">
+  //         Welcome: {user.name || user.email}.
+  //       </Alert>
+  //     )}
+  //   </Authenticator>
+  // );
 };
