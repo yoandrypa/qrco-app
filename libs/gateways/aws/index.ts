@@ -7,9 +7,9 @@ import {
 const awsAccountId = process.env.AMZ_WS_ACCOUNT_ID || 'undefined';
 const cognitoUserPoolId = process.env.AMZ_WS_COGNITO_USER_POOL_ID || 'undefined';
 const identityPoolId = process.env.AMZ_WS_COGNITO_INDETITY_POOL_ID || 'undefined';
-const region = process.env.AMZ_WS_REGION || 'us-east-1';
-const adminRole = process.env.AMZ_WS_EBANUX_ADMIN_ROLE || 'ebanux-admin';
-const userRole = process.env.AMZ_WS_EBANUX_ADMIN_ROLE || 'ebanux-user';
+const region = process.env.AMZ_WS_REGION as string;
+const adminRole = process.env.AMZ_WS_EBANUX_ADMIN_ROLE as string;
+const userRole = process.env.AMZ_WS_EBANUX_USER_ROLE as string;
 
 let currentToken: string | null = null;
 
