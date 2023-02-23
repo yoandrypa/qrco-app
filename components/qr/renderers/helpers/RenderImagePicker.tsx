@@ -33,7 +33,20 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
   const handleLoadedImage = async (f: File[]) => {
     if (f.length) {
       if (f[0].size <= 10000000) {
-        compressImage(f[0], (newFile: File) => handleAcept(newFile, kind), 0.35, 0.5);
+        if (f[0].size <= 153600) {
+         handleAcept(f[0], kind);
+        } else {
+          let quality = 0.4;
+          let resizing = 0.35;
+          if (f[0].size < 1048576) {
+            quality = 0.7;
+            resizing = 0.7;
+          } else if (f[0].size < 5242880) {
+            quality = 0.5;
+            resizing = 0.5;
+          }
+          compressImage(f[0], (newFile: File) => handleAcept(newFile, kind), resizing, quality);
+        }
         const result = await checkForAlpha(f[0]);
         if (result?.hasAlpha) {
           setError({
