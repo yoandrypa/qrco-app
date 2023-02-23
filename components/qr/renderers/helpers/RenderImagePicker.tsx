@@ -11,7 +11,7 @@ import PhotoIcon from '@mui/icons-material/Photo';
 import FileUpload from "react-material-file-upload";
 import {ALLOWED_FILE_EXTENSIONS} from "../../../../consts";
 import Notifications from "../../../notifications/Notifications";
-import {checkForAlpha} from "../../../../helpers/qr/helpers";
+import {checkForAlpha, compressImage} from "../../../../helpers/qr/helpers";
 
 interface RenderImageProps {
   handleClose: () => void;
@@ -32,9 +32,8 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
 
   const handleLoadedImage = async (f: File[]) => {
     if (f.length) {
-      if (f[0].size <= 1000000) {
-        handleAcept(f[0], kind);
-
+      if (f[0].size <= 10000000) {
+        compressImage(f[0], (newFile: File) => handleAcept(newFile, kind), 0.35, 0.5);
         const result = await checkForAlpha(f[0]);
         if (result?.hasAlpha) {
           setError({
@@ -43,7 +42,7 @@ export default function RenderImagePicker({title, kind, handleClose, handleAcept
           });
         }
       } else {
-        setError({msg: 'The selected file is larger than 1 megabyte.', title: 'Too heavy'});
+        setError({msg: 'The selected file is larger than 10 megabytes.', title: 'Too heavy'});
       }
     }
   }

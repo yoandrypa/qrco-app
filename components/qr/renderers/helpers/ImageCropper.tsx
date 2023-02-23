@@ -262,7 +262,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
         </Stack>
         <Box sx={{ mt: 2, display: 'flex', color: theme => theme.palette.text.disabled, width: '100%', justifyContent: 'center' }}>
           <Typography sx={{ fontSize: 'small', fontWeight: 'bold', mr: '5px' }}>{'Note:'}</Typography>
-          <Typography sx={{ fontSize: 'small'}}>{'Image might have a tiny difference on microsite.'}</Typography>
+          <Typography sx={{ fontSize: 'small'}}>{'Image might have a tiny difference on microsite. Also, image quality was reduced on porpuse.'}</Typography>
         </Box>
       </DialogContent>
       <DialogActions sx={{p: 2}}>
