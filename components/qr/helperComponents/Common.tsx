@@ -123,7 +123,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
 
   const getFiles = useCallback(async (key: string, item: string) => {
     try {
-      lastAction.current = 'loading the background/main images';
+      lastAction.current = 'loading the banner/profile images';
       const fileData = await download(key);
 
       if (options.mode === 'edit') {
@@ -270,7 +270,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
               <Box sx={{width: '100%', position: 'relative'}}>
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>
                   <Tab label="Content" icon={<ArticleIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
-                  <Tab label="Design" icon={<DesignServicesIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
+                  <Tab label="Page Design" icon={<DesignServicesIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
                 </Tabs>
                 {data.mode && <RenderMode isWide={isWideForPreview} mode={data.mode} />}
                 {data.claim !== undefined && (
