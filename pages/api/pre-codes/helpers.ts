@@ -7,7 +7,7 @@ import { NextApiRequest } from "next";
 
 export { respondWithException } from "../../../libs/exceptions";
 
-const MICRO_SITES_ROUTE = process.env.REACT_MICROSITES_ROUTE || 'https://dev.a-qr.link';
+const MICRO_SITES_BASE_URL = process.env.MICRO_SITES_BASE_URL || 'https://dev.a-qr.link';
 const LINK_CODE_ALPHABET = process.env.LINK_CODE_ALPHABET || 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 const MAX_ALLOW_COLLISIONS = parseInt(process.env.MAX_ALLOW_COLLISIONS || '25', 10);
 
@@ -19,7 +19,7 @@ export function parseFromPostRequest(req: NextApiRequest) {
   const schema = Joi.object({
     size: Joi.number().min(4).max(32),
     count: Joi.number().min(1).max(10),
-    owner: Joi.string(),
+    owner: Joi.string().optional(),
   });
 
   return Joi.attempt(req.body, schema, { abortEarly: false });
@@ -32,7 +32,7 @@ export function parseFromPostRequest(req: NextApiRequest) {
 export function parseFromPutsRequest(req: NextApiRequest) {
   const schema = Joi.object({
     codes: Joi.array().items(Joi.string()).min(1),
-    owner: Joi.string(),
+    owner: Joi.string().optional(),
   });
 
   return Joi.attempt(req.body, schema, { abortEarly: false });
@@ -118,10 +118,10 @@ export async function loadNewCodes(items: string[], owner: string = 'any') {
  * @param owner
  */
 export async function getPreGenCodes(owner: string = 'any') {
-  const codes = await PreGeneratedModel.query({ owner }).exec();
+  const codes: any[] = await PreGeneratedModel.query({ owner }).exec();
 
   return {
-    codes: codes.map((item) => ({ ...item, url: `${MICRO_SITES_ROUTE}/${item.code}` })),
+    codes: codes.map((item) => ({ ...item, url: `${MICRO_SITES_BASE_URL}/${item.code}` })),
     count: codes.length,
   };
 }
