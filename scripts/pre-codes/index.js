@@ -61,7 +61,7 @@ program
       let totalLoad = 0;
       let totalCollisions = 0;
 
-      items = items.filter((item) => !!item);
+      items = items.filter((item) => !!item).map((x) => x.split(/[\s\t]+/)).flat();
       items.splice(0, skip);
 
       while (items.length !== 0) {
