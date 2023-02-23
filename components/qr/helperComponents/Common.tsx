@@ -179,8 +179,12 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   }, [isWideForPreview]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (forceOpen && tabSelected === 0) {
-      setTabSelected(1);
+    if (forceOpen) {
+      if (tabSelected === 0) {
+        setTabSelected(1);
+      }
+    } else {
+      setForceOpen(undefined);
     }
   }, [forceOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 

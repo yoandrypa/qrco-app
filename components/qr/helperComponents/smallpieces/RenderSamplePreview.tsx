@@ -22,13 +22,13 @@ import { cleanSelectionForMicrositeURL, qrNameDisplayer } from "../../../../help
 import { DataType } from "../../types/types";
 
 import dynamic from "next/dynamic";
-import RenderEditImageOnClick from "../looseComps/RenderEditImageOnClick";
 
 const PleaseWait = dynamic(() => import("../../../PleaseWait"));
 const Popover = dynamic(() => import("@mui/material/Popover"));
 const RenderIframe = dynamic(() => import('../../../RenderIframe'), { suspense: true });
 const Notifications = dynamic(() => import("../../../notifications/Notifications"));
 const RenderIcon = dynamic(() => import("./RenderIcon"));
+const RenderEditImageOnClick = dynamic(() => import("../looseComps/RenderEditImageOnClick"));
 
 interface SamplePrevProps {
   style?: object;
