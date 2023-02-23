@@ -8,8 +8,8 @@ import { NextApiRequest } from "next";
 export { respondWithException } from "../../../libs/exceptions";
 
 const MICRO_SITES_BASE_URL = process.env.MICRO_SITES_BASE_URL || 'https://dev.a-qr.link';
-const LINK_CODE_ALPHABET = process.env.LINK_CODE_ALPHABET as string;
-const MAX_ALLOW_COLLISIONS = parseInt(process.env.MAX_ALLOW_COLLISIONS as string, 10);
+const LINK_CODE_ALPHABET = process.env.LINK_CODE_ALPHABET || 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+const MAX_ALLOW_COLLISIONS = parseInt(process.env.MAX_ALLOW_COLLISIONS || '25', 10);
 
 /**
  * Parse and validate the request via POST
