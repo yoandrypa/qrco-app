@@ -139,7 +139,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
             </ButtonGroup>
             {!omitPrimaryImg && (
               <ButtonGroup sx={{mt: shrink ? 1 : {xs: 1, md: 0}, width: '100%'}}>
-                <Tooltip title="Click for selecting the main image">
+                <Tooltip title="Click for selecting the profile image">
                   <Button
                     sx={{width: '100%'}}
                     startIcon={<ImageIcon sx={{ color: theme => foreError ? theme.palette.error.dark : undefined }}/>}
@@ -147,7 +147,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
                     disabled={loading}
                     onClick={handleSelectFile('foregndImg')}
                     color="primary">
-                    {`Main image${backgndImg && !loading ? ' | Loaded' : ''}`}
+                    {`Profile image${backgndImg && !loading ? ' | Loaded' : ''}`}
                   </Button>
                 </Tooltip>
                 {foregndImg && !loading && renderOptions('foregndImg')}
@@ -190,7 +190,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
       {selectFile !== null && (
         <RenderImagePicker
           handleClose={() => setSelectFile(null)}
-          title={selectFile === 'foregndImg' ? 'main' : 'banner'}
+          title={selectFile === 'foregndImg' ? 'profile' : 'banner'}
           kind={selectFile}
           handleAcept={handleAccept}
           wasError={(selectFile === 'foregndImg' && foreError) || (selectFile === 'backgndImg' && backError)}/>

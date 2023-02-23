@@ -206,8 +206,7 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
                 {step === 1 && (
                   <RenderEditImageOnClick
                     shape={data?.foregndImgType || undefined} left={data?.layout?.toLowerCase().includes('left') || false}
-                    handleEdit={handlePickImage}
-                  />
+                    handleEdit={handlePickImage} renderFloating={!Boolean(data?.foregndImg)} />
                 )}
                 <RenderIframe
                   src={!code ? cleanSelectionForMicrositeURL(selected || '', isDynamic, true) : `${microSitesBaseUrl}/sample/empty`}
