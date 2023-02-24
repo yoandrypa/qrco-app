@@ -58,9 +58,9 @@ const Notification = () => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Snackbar open={open} autoHideDuration={6000} onClose={onClose}
-              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-      <Alert variant="filled" sx={{ width: "100%" }} severity={severity} onClose={onClose}>
+    <Snackbar open={open} autoHideDuration={6000} sx={{ zIndex: 3000 }}
+              onClose={onClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+      <Alert variant="standard" sx={{ width: "100%" }} severity={severity} onClose={onClose}>
         {message}
       </Alert>
     </Snackbar>
