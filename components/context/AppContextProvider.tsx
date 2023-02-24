@@ -20,7 +20,8 @@ import { logout } from '@ebanux/ebanux-utils/auth';
 import { iFrameDetected } from '@ebanux/ebanux-utils/utils';
 
 import Subscription from "../../models/subscription";
-import Waiting, { startWaiting, releaseWaiting } from "../Waiting";
+import { startWaiting, releaseWaiting } from "../Waiting";
+import { setError } from "../Notification";
 
 const Generator = dynamic(() => import("../qr/Generator"));
 const PleaseWait = dynamic(() => import("../PleaseWait"));
@@ -161,6 +162,8 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
       Subscription.getActiveByUser(currentUser.cognito_user_id).then((subscription: any) => {
         setSubscription(subscription);
+      }).catch((err: any) => {
+        setError(err.message);
       }).finally(() => {
         releaseWaiting();
       });
@@ -199,7 +202,6 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
                     isTrialMode={isTrialMode}
                     userInfo={userInfo}
         >
-          <Waiting />
           {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>
       );
@@ -212,6 +214,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       options, setOptions, selected, setSelected, data, setData, isTrialMode, userInfo,
       clearData, loading, setLoading, setRedirecting, isWrong, setIsWrong, doNotClear,
       subscription, setSubscription,
+      setUserInfo,
     }}>
       {renderContent()}
     </Context.Provider>

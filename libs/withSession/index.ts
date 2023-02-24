@@ -7,7 +7,7 @@ import {
 } from "next";
 
 const sessionOptions: IronSessionOptions = {
-  cookieName: process.env.SESSION_COOKIE_NAME || 'ebanux-qrco-app',
+  cookieName: process.env.SESSION_COOKIE_NAME as string,
   password: (process.env.SESSION_SECRET || process.env.AMZ_WS_SECRET_ACCESS_KEY || '123456789') as string,
   // secure: true should be used in production (HTTPS) but can't be used in development (HTTP)
   cookieOptions: {

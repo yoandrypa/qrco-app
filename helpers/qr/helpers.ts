@@ -7,7 +7,7 @@ import frame4 from '../../components/qr/frames/frame4';
 import frame5 from '../../components/qr/frames/frame5';
 import frame6 from '../../components/qr/frames/frame6';
 import frame7 from '../../components/qr/frames/frame7';
-import { DataType, FramesType } from '../../components/qr/types/types';
+import {DataType, FramesType} from '../../components/qr/types/types';
 import initialOptions from "./data";
 import {capitalize} from "@mui/material";
 
@@ -138,6 +138,39 @@ export const checkForAlpha = (file: Blob | File): Promise<{ depth: number; type:
     };
   });
 };
+
+export async function compressImage(file: File, callback: (newFile: File) => void, resizingFactor: number, quality: number) {
+  const img: HTMLImageElement = new Image(); // @ts-ignore
+  img.src = await convertBase64(file);
+
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+
+  img.onload = () => {
+    const originalWidth = img.width;
+    const originalHeight = img.height;
+
+    const canvasWidth = originalWidth * resizingFactor;
+    const canvasHeight = originalHeight * resizingFactor;
+
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+
+    // @ts-ignore
+    context.drawImage(img, 0, 0, originalWidth * resizingFactor, originalHeight * resizingFactor);
+
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          const result = new File([blob], file.name, {type: file.type});
+          callback(result);
+        }
+      },
+      "image/jpeg",
+      quality
+    );
+  }
+}
 
 const getRGB = (hex: string): number[] => {
   const color = parseInt(hex.startsWith('#') ? hex.substring(1) : hex, 16);

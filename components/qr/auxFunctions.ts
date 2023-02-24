@@ -216,7 +216,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   if (data.foregndImg !== undefined) {
     if (!Array.isArray(data.foregndImg)) {
-      prevUpdatingHandler("Uploading main image");
+      prevUpdatingHandler("Uploading profile image");
       try { // @ts-ignore
         data.foregndImg = await upload([data.foregndImg], `${userInfo.cognito_user_id}/${selected}s/design`);
         prevUpdatingHandler(null, true);
@@ -229,7 +229,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     }
   }
   if (data.prevForeImg !== undefined) {
-    prevUpdatingHandler("Deleting previous main image");
+    prevUpdatingHandler("Deleting previous profile image");
     try {
       await remove([{ Key: data.prevForeImg }]);
       delete data.prevForeImg;

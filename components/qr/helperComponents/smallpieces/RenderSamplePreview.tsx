@@ -28,6 +28,7 @@ const Popover = dynamic(() => import("@mui/material/Popover"));
 const RenderIframe = dynamic(() => import('../../../RenderIframe'), { suspense: true });
 const Notifications = dynamic(() => import("../../../notifications/Notifications"));
 const RenderIcon = dynamic(() => import("./RenderIcon"));
+const RenderEditImageOnClick = dynamic(() => import("../looseComps/RenderEditImageOnClick"));
 
 interface SamplePrevProps {
   style?: object;
@@ -42,6 +43,7 @@ interface SamplePrevProps {
   backImg?: File | string;
   mainImg?: File | string;
   step: number;
+  handlePickImage?: (prop: string) => void;
   showSampleMessage?: boolean;
 }
 
@@ -57,12 +59,8 @@ interface WithSCode extends SamplePrevProps {
 
 const clearUrl = (url: string): string => url.slice(url.indexOf('//') + 2);
 
-const RenderSamplePreview = (
-  {
-    step, isDynamic, onlyQr, data, selected, style, save, code, isDrawed, saveDisabled,
-    qrOptions, backImg, mainImg, shareLink, showSampleMessage
-  }: WithSelection | WithSCode
-) => {
+const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, save, code, isDrawed, saveDisabled,
+    qrOptions, backImg, mainImg, shareLink, showSampleMessage, handlePickImage }: WithSelection | WithSCode) => {
   const [prev, setPrev] = useState<string>(!onlyQr ? 'preview' : 'qr');
   const [copied, setCopied] = useState<boolean>(false);
   const [open, setOpen] = useState<HTMLButtonElement | null>(null);
@@ -205,6 +203,11 @@ const RenderSamplePreview = (
           <RenderCellPhoneShape width={270} height={550} offlineText="The selected card has no available sample">
             {code || (selected && !NO_MICROSITE.includes(selected)) ? (
               <Suspense fallback={<PleaseWait />}>
+                {step === 1 && (
+                  <RenderEditImageOnClick
+                    shape={data?.foregndImgType || undefined} left={data?.layout?.toLowerCase().includes('left') || false}
+                    handleEdit={handlePickImage} renderFloating={!Boolean(data?.foregndImg)} />
+                )}
                 <RenderIframe
                   src={!code ? cleanSelectionForMicrositeURL(selected || '', isDynamic, true) : `${microSitesBaseUrl}/sample/empty`}
                   selected={selected} width="256px" height="536px" data={data} backImg={backImg} mainImg={mainImg}

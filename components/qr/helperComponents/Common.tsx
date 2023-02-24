@@ -43,6 +43,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   const [error, setError] = useState<boolean>(false);
   const [tabSelected, setTabSelected] = useState<number>(0);
   const [openPreview, setOpenPreview] = useState<boolean>(false);
+  const [forceOpen, setForceOpen] = useState<string | undefined>(undefined);
 
   const lastAction = useRef<string | undefined>(undefined);
 
@@ -122,7 +123,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
 
   const getFiles = useCallback(async (key: string, item: string) => {
     try {
-      lastAction.current = 'loading the background/main images';
+      lastAction.current = 'loading the banner/profile images';
       const fileData = await download(key);
 
       if (options.mode === 'edit') {
@@ -177,6 +178,16 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     if (isWideForPreview && openPreview) { setOpenPreview(false); }
   }, [isWideForPreview]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (forceOpen) {
+      if (tabSelected === 0) {
+        setTabSelected(1);
+      }
+    } else {
+      setForceOpen(undefined);
+    }
+  }, [forceOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const renderChildren = () => (<>
     <Typography>{msg}</Typography>
     {children}
@@ -205,6 +216,10 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       setLoading(false);
     });
   };
+
+  const handleImg = useCallback((prop: string) => {
+    setForceOpen(prop);
+  }, []);
 
   const optionsForPreview = useCallback(() => {
     const opts = {...options, background, frame, corners: cornersData, cornersDot: dotsData};
@@ -255,7 +270,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
               <Box sx={{width: '100%', position: 'relative'}}>
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>
                   <Tab label="Content" icon={<ArticleIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
-                  <Tab label="Design" icon={<DesignServicesIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
+                  <Tab label="Page Design" icon={<DesignServicesIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
                 </Tabs>
                 {data.mode && <RenderMode isWide={isWideForPreview} mode={data.mode} />}
                 {data.claim !== undefined && (
@@ -273,7 +288,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                     loading={loading}
                     foreError={foreImg === null}
                     backError={backImg === null}
-                    data={data}/>
+                    data={data}
+                    forcePick={forceOpen} />
                 )}
               </Box>
             ) : renderChildren()}
@@ -285,7 +301,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
               saveDisabled={isWrong || !data.qrName?.trim().length} shareLink={options?.data}
               qrOptions={optionsForPreview()} step={1} data={previewQRGenerator(data, selected, omitProfileImg)}
               onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
-              backImg={isEditOrClone && backImg ? backImg : undefined}
+              backImg={isEditOrClone && backImg ? backImg : undefined} handlePickImage={handleImg}
               mainImg={isEditOrClone && foreImg ? foreImg : undefined} />
           )}
         </Box>
@@ -298,7 +314,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
             save={handleSave} saveDisabled={isWrong || !data.qrName?.trim().length} style={{mt: '-15px'}}
             data={previewQRGenerator(data, selected, omitProfileImg)} step={1} isDrawed
             onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
-            shareLink={options?.data} qrOptions={optionsForPreview()}
+            shareLink={options?.data} qrOptions={optionsForPreview()} handlePickImage={handleImg}
             backImg={isEditOrClone && backImg ? backImg : undefined}
             mainImg={isEditOrClone && foreImg ? foreImg : undefined} />
         </RenderPreviewDrawer>
