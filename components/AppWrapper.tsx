@@ -1,4 +1,4 @@
-import { cloneElement, ReactElement, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import React, { cloneElement, ReactElement, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -17,11 +17,10 @@ import session from "@ebanux/ebanux-utils/sessionStorage";
 import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
 import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
 
-import { list } from '../handlers/qrs'
-
 import RenderSupport from "./wrapper/RenderSupport";
-import * as Users from "../handlers/users";
 import Context from "./context/Context";
+import Notification from "./Notification";
+import Waiting from "./Waiting";
 
 const CountDown = dynamic(() => import("./countdown/CountDown"));
 const RenderButton = dynamic(() => import("./wrapper/RenderButton"));
@@ -173,6 +172,8 @@ export default function AppWrapper(props: AppWrapperProps) {
       <Container sx={{ width: "100%" }}>
         <Box sx={{ height }} /> {/* Aims to fill the header's gap */}
         <Box sx={{ mx: "auto", minHeight: `calc(100vh - ${router.pathname === '/' ? 140 : 135}px)` }}>
+          <Notification />
+          <Waiting />
           {children}
         </Box>
         {handleLogout !== undefined && !router.query.login && (
