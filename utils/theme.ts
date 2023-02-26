@@ -17,7 +17,27 @@ export const themeConfig = (mode = THEMES_VARIANTS.light) => {
             minHeight: `${HEADER_HEIGHT}px !important`
           }
         }
-      }
+      },
+      MuiAlert: {
+        styleOverrides: {
+          standard: {
+            borderStyle: 'solid',
+            borderWidth: '1px',
+          },
+          standardWarning: {
+            borderColor: '#ff9800',
+          },
+          standardError: {
+            borderColor: '#ef5350',
+          },
+          standardInfo: {
+            borderColor: '#03a9f4',
+          },
+          standardSuccess: {
+            borderColor: '#4caf50',
+          },
+        },
+      },
     }
   };
 };
