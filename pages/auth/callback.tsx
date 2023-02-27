@@ -4,16 +4,15 @@ import { useRouter } from "next/router";
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import { authWithAuthCode } from "@ebanux/ebanux-utils/auth";
 
-import Alert from "@mui/material/Alert";
-
 import Context from "../../components/context/Context";
 import { startWaiting, releaseWaiting } from "../../components/Waiting";
-import { setSuccess, setError } from "../../components/Notification";
+import { setSuccess } from "../../components/Notification";
+import { loadSubscription } from "../../libs/utils/reguest";
 
 export default function AuthCallback() {
   const router = useRouter();
   // @ts-ignore
-  const { setUserInfo } = React.useContext(Context);
+  const { setUserInfo, setSubscription } = React.useContext(Context);
 
   function onLogin() {
     const currentUser = session.currentUser;
@@ -21,7 +20,15 @@ export default function AuthCallback() {
 
     setSuccess(`Welcome: ${currentUser.name || currentUser.email}...`);
     setUserInfo(currentUser);
-    router.push(callbackRoute, callbackRoute.pathname || '/').finally(() => releaseWaiting());
+
+    if (typeof callbackRoute === 'string' && callbackRoute.match(/^http/)) {
+      window.location.href = callbackRoute;
+    } else {
+      loadSubscription().then((subscription: any) => {
+        setSubscription(subscription);
+        router.push(callbackRoute, callbackRoute.pathname || '/').finally(() => releaseWaiting());
+      });
+    }
   }
 
   function onError({ message }: any) {

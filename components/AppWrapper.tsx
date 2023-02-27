@@ -16,6 +16,7 @@ import Link from "next/link";
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
 import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
+import { loadSubscription } from "../libs/utils/reguest";
 
 import RenderSupport from "./wrapper/RenderSupport";
 import Context from "./context/Context";
@@ -62,7 +63,7 @@ export default function AppWrapper(props: AppWrapperProps) {
   const [freeLimitReached, setFreeLimitReached] = useState<boolean>(false)
 
   // @ts-ignore
-  const { subscription, setError, setLoading } = useContext(Context);
+  const { subscription, setSubscription, setLoading } = useContext(Context);
 
   const beforeLogout = () => {
     if (handleLogout) {
@@ -130,6 +131,12 @@ export default function AppWrapper(props: AppWrapperProps) {
       }
     }
   }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (session.isAuthenticated && !subscription) loadSubscription().then((subscription: any) => {
+      setSubscription(subscription);
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

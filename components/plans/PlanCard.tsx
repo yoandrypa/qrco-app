@@ -19,7 +19,7 @@ interface CardOptions {
 
 type PlanCardProps = {
   data: CardOptions,
-  clickAction: (planType: string) => void,
+  clickAction?: (planType: string) => void,
   isCurrentPlan: boolean
 }
 
@@ -30,7 +30,9 @@ const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
 
   const elevation = isCurrentPlan ? 5 : 2;
   const bgColor = isCurrentPlan ? '#efffef' : '#ffffff';
-  const disabled = plan_type === 'free' || (!isCurrentPlan && subscription && subscription.status !== 'canceled');
+  const disabled = !clickAction
+    || plan_type === 'free'
+    || (!isCurrentPlan && subscription && subscription.status !== 'canceled');
 
   return (
     <Grid item xs={12} sm={6} md={3} lg={3}>
@@ -63,7 +65,7 @@ const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
         <Typography color='gray' textAlign={'center'}> {legend}</Typography>
         <Grid sx={{ justifyContent: 'center', alignContent: 'center', display: 'flex', margin: 2 }}>
           <LoadingButton disabled={disabled}
-                         onClick={() => clickAction(plan_type)}
+                         onClick={() => clickAction?.(plan_type)}
                          variant={highlighted ? 'contained' : 'outlined'}>
             {isCurrentPlan ? 'Review' : buttonText || 'Buy now'}
           </LoadingButton>
