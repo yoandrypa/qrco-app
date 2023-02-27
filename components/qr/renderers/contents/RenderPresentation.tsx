@@ -19,11 +19,10 @@ const RenderWeb = dynamic(() => import("./RenderWeb"));
 
 interface PresentationProps extends ContentProps {
   message?: string;
-  showExtra?: boolean;
   forceExtra?: boolean;
 }
 
-export default function RenderPresentation({data, handleValues, message, index, showExtra, forceExtra}: PresentationProps) {
+export default function RenderPresentation({data, handleValues, message, index, forceExtra}: PresentationProps) {
   const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
     handleValues(item, index)(payload);
   };
@@ -75,7 +74,7 @@ export default function RenderPresentation({data, handleValues, message, index, 
           </Grid>
         )}
       </Grid>
-      {showExtra && !forceExtra && (
+      {!forceExtra && (
         <Tooltip title="Includes phone numbers, email and address" disableHoverListener={Boolean(data?.includeExtraInfo)}>
           <FormControlLabel label="Include extra information" control={
             <Switch checked={Boolean(data?.includeExtraInfo)} inputProps={{'aria-label': 'includeExtraInfo'}}
