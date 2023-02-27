@@ -12,12 +12,9 @@ import { request } from "../../libs/utils/reguest";
 const AccountPage = () => {
 
   async function reviewingPlan() {
-    const { url } = await request({
-      url: 'billing-portal',
-      // TODO: Add emitError to notification component
-      // errorHandler: emitError,
+    request({ url: 'billing-portal', throwError: 'notify' }).then(({ url }) => {
+      window.open(url, '_blank');
     });
-    window.open(url, '_blank');
   }
 
   return (
