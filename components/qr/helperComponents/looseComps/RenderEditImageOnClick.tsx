@@ -30,15 +30,11 @@ const RenderEditImageOnClick = ({left, shape, handleEdit, renderFloating}: Props
 
   return (
     <>
-      <Box sx={{
-        position: 'absolute', width: '256px', height: '108px', borderRadius: '16px 16px 0 0'
-      }}>
-        <Tooltip title="Edit banner image" followCursor>
-          <Icon sx={{right: '5px', top: '3px'}} onClick={handler('banner')}>
-            <EditIcon fontSize="small" />
-          </Icon>
-        </Tooltip>
-      </Box>
+      <Tooltip title="Edit banner image" followCursor>
+        <Icon sx={{right: '5px', top: '5px', position: 'absolute'}} onClick={handler('banner')}>
+          <EditIcon fontSize="small" />
+        </Icon>
+      </Tooltip>
       <Box sx={{
         position: 'absolute',
         width: '54px',
