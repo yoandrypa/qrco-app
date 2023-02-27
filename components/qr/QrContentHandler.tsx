@@ -77,8 +77,12 @@ const QrContentHandler = () => { // @ts-ignore
         } else if ((typeof value === "string" && value.length) || payload) {
           if (item === 'includeExtraInfo' && !value && elementData.includeExtraInfo !== undefined) {
             delete elementData.includeExtraInfo;
-          } else { // @ts-ignore
-            elementData[item] = value;
+          } else {
+            if (typeof value === "string" && !value.trim().length) { // @ts-ignore
+              delete elementData[item];
+            } else { // @ts-ignore
+              elementData[item] = value;
+            }
           } // @ts-ignore
         } else if (elementData[item]) { // @ts-ignore
           delete elementData[item];

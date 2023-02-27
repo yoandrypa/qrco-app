@@ -65,6 +65,8 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
   const [copied, setCopied] = useState<boolean>(false);
   const [open, setOpen] = useState<HTMLButtonElement | null>(null);
   const [updating, setUpdating] = useState<boolean>(false);
+  const [isReady, setIsReady] = useState<boolean>(false);
+
   const forceHide = useRef<boolean>(false);
   const microSitesBaseUrl = process.env.MICRO_SITES_BASE_URL;
 
@@ -203,7 +205,7 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
           <RenderCellPhoneShape width={270} height={550} offlineText="The selected card has no available sample">
             {code || (selected && !NO_MICROSITE.includes(selected)) ? (
               <Suspense fallback={<PleaseWait />}>
-                {step === 1 && (
+                {step === 1 && isReady && (
                   <RenderEditImageOnClick
                     shape={data?.foregndImgType || undefined} left={data?.layout?.toLowerCase().includes('left') || false}
                     handleEdit={handlePickImage} renderFloating={!Boolean(data?.foregndImg)} />
@@ -211,7 +213,7 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
                 <RenderIframe
                   src={!code ? cleanSelectionForMicrositeURL(selected || '', isDynamic, true) : `${microSitesBaseUrl}/sample/empty`}
                   selected={selected} width="256px" height="536px" data={data} backImg={backImg} mainImg={mainImg}
-                  shareLink={shareLink} />
+                  shareLink={shareLink} notifyReady={setIsReady} />
               </Suspense>
             ) : null}
           </RenderCellPhoneShape>
