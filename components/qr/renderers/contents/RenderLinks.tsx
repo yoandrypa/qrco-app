@@ -1,6 +1,4 @@
 import Box from "@mui/material/Box";
-import Topics from "../helpers/Topics";
-import pluralize from "pluralize";
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
@@ -26,10 +24,9 @@ interface RenderLinksProps {
   index: number;
   data?: Type;
   setData: Function;
-  topics?: string;
 }
 
-export default function RenderLinks({data, setData, topics, index}: RenderLinksProps) {
+export default function RenderLinks({data, setData, index}: RenderLinksProps) {
   const onDragEnd = useCallback((result: any) => {
     if (!result?.destination) {
       return null;
@@ -105,7 +102,6 @@ export default function RenderLinks({data, setData, topics, index}: RenderLinksP
 
   return (
     <Box sx={{width: '100%'}}>
-      {topics !== undefined && <Topics message={topics} top="3px" secMessage={data?.links && `(${pluralize('link', data.links?.length || 0, true)})`}/>}
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
           {(provided: any) => (

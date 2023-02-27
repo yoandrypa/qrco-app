@@ -30,33 +30,30 @@ const RenderEditImageOnClick = ({left, shape, handleEdit, renderFloating}: Props
 
   return (
     <>
-      <Tooltip title="Edit banner image" followCursor>
-        <Box sx={{
-          position: 'absolute', width: '256px', height: '108px', borderRadius: '16px 16px 0 0', cursor: 'pointer'
-        }}
-        onClick={handler('banner')}>
+      <Box sx={{
+        position: 'absolute', width: '256px', height: '108px', borderRadius: '16px 16px 0 0'
+      }}>
+        <Tooltip title="Edit banner image" followCursor>
           <Icon sx={{right: '5px', top: '3px'}} onClick={handler('banner')}>
             <EditIcon fontSize="small" />
           </Icon>
-        </Box>
-      </Tooltip>
-      <Tooltip title="Edit profile image" followCursor>
-        <Box sx={{
-          position: 'absolute',
-          width: '54px',
-          height: '54px',
-          cursor: 'pointer',
-          background: renderFloating ? '#0a3e6c6e' : 'unset',
-          borderRadius: !shape || shape === 'circle' ? '50%' : shape === 'smooth' ? '12px' : '2px',
-          top: '81px',
-          left: !left ? '100px' : '11px'
-        }}
-        onClick={handler('profile')}>
+        </Tooltip>
+      </Box>
+      <Box sx={{
+        position: 'absolute',
+        width: '54px',
+        height: '54px',
+        background: renderFloating ? '#0a3e6c6e' : 'unset',
+        borderRadius: !shape || shape === 'circle' ? '50%' : shape === 'smooth' ? '12px' : '2px',
+        top: '81px',
+        left: !left ? '100px' : '11px'
+      }}>
+        <Tooltip title="Edit profile image" followCursor>
           <Icon sx={{right: '-7px', top: '-5px'}} onClick={handler('profile')}>
             <PhotoCameraIcon fontSize="small" />
           </Icon>
-        </Box>
-      </Tooltip>
+        </Tooltip>
+      </Box>
     </>
   );
 }
