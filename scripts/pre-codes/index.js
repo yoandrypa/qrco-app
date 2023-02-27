@@ -19,13 +19,37 @@ program
   .requiredOption('-s, --size,      [size]', 'Set length of QR-Link code', '8')
   .requiredOption('-c, --count,     [count]', 'Set the number of codes that will be generated', '10')
   .requiredOption('-o, --owner,     [owner]', 'Set the owner of codes', 'any')
-  .action(({ baseUrl, ...data }) => {
-    axios.post(`${baseUrl}/api/pre-codes`, data, { headers }).then((response) => {
-      console.log(JSON.stringify(response.data, null, 2));
-    }).catch((err) => {
-      console.error(err.message);
-      err.response?.data && console.error(err.response.data);
-    })
+  .action(async ({ baseUrl, count, ...data }) => {
+    const pgSize = 10;
+
+    let totalGenerated = 0;
+    let totalCollisions = 0;
+
+    while (count > 0) {
+      try {
+        data.count = Math.min(pgSize, count);
+        count = count - data.count;
+
+        console.log('--------------------------------------');
+        console.log(`GENERATING BLOCK OF ${data.count} QR-Codes`);
+        const response = await axios.post(`${baseUrl}/api/pre-codes`, data, { headers })
+
+        totalGenerated += data.count;
+        totalCollisions += response.data.collisions;
+
+        console.log(`CURRENT COLLISIONS: ${response.data.collisions}`);
+        console.log(`TOTAL COLLISIONS: ${totalCollisions}`);
+        console.log(`TOTAL GENERATED: ${totalGenerated}`);
+
+        if (count === 0) console.log(JSON.stringify(response.data, null, 2));
+      } catch (err) {
+        console.error(err.message);
+        err.response?.data && console.error(err.response.data);
+      } finally {
+        console.log('SLEEPING 5s...');
+        await sleep(5000);
+      }
+    }
   });
 
 program

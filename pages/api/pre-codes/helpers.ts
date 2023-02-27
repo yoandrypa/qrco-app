@@ -18,7 +18,7 @@ const MAX_ALLOW_COLLISIONS = parseInt(process.env.MAX_ALLOW_COLLISIONS || '25', 
 export function parseFromPostRequest(req: NextApiRequest) {
   const schema = Joi.object({
     size: Joi.number().min(4).max(32),
-    count: Joi.number().min(1).max(10),
+    count: Joi.number().min(1).max(50),
     owner: Joi.string().optional(),
   });
 
