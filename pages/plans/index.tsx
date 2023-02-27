@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import session from "@ebanux/ebanux-utils/sessionStorage";
 
 import { useRouter } from "next/router";
@@ -10,9 +10,9 @@ import { request } from "../../libs/utils/reguest";
 import { setWarning } from "../../components/Notification";
 
 const Plans = () => {
-  const router = useRouter();
+  const { pathname, query } = useRouter();
   const { subscription } = useContext(Context);
-  const activePlan = subscription?.metadata?.plan_type || 'free';
+  const [activePlan, setActivePlan] = useState<string>();
 
   async function reviewingPlan() {
     request({ url: 'billing-portal', throwError: 'notify' }).then(({ url }) => {
@@ -37,13 +37,13 @@ const Plans = () => {
   }
 
   useEffect(() => {
-    if (!session.isAuthenticated) {
-      const { pathname, query } = router;
-
+    if (session.isAuthenticated) {
+      setActivePlan(subscription?.metadata?.plan_type || 'free');
+    } else {
       setWarning('You need to be authenticated before buying any plan!', false);
       session.set('CALLBACK_ROUTE', { pathname, query });
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <PlanList

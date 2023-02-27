@@ -19,9 +19,7 @@ import session from "@ebanux/ebanux-utils/sessionStorage";
 import { logout } from '@ebanux/ebanux-utils/auth';
 import { iFrameDetected } from '@ebanux/ebanux-utils/utils';
 
-import Subscription from "../../models/subscription";
 import { startWaiting, releaseWaiting } from "../Waiting";
-import { setError } from "../Notification";
 
 const Generator = dynamic(() => import("../qr/Generator"));
 const PleaseWait = dynamic(() => import("../PleaseWait"));
@@ -152,22 +150,6 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     doneInitialRender.current = true;
 
     if (!structuredClone) setUpdateBrowser(true);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    const { currentUser, isAuthenticated } = session;
-
-    if (isAuthenticated && !subscription) {
-      startWaiting();
-
-      Subscription.getActiveByUser(currentUser.cognito_user_id).then((subscription: any) => {
-        setSubscription(subscription);
-      }).catch((err: any) => {
-        setError(err.message);
-      }).finally(() => {
-        releaseWaiting();
-      });
-    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (updateBrowser) return <UpdateBrowser />;
