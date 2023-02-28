@@ -12,7 +12,7 @@ interface HeadLineProps {
 }
 
 const RenderHeadline = ({index, hideHeadLine, centerHeadLine, handleValues}: HeadLineProps) => (
-  <Box sx={{display: 'flex', mt: '-5px'}}>
+  <Box sx={{display: 'flex', mt: '-5px', flexDirection: {sm: 'row', xs: 'column'}}}>
     <FormControl>
       <FormControlLabel
         control={

@@ -125,25 +125,31 @@ export default function RenderLinks({data, setData, index}: RenderLinksProps) {
                                 <DragIndicatorIcon sx={{ color: theme => theme.palette.text.disabled, mt: '8px' }} />
                               </TableCell>
                             )}
-                            {!data?.linksOnlyLinks && (<TableCell sx={{p: 0, pr: 1, width: '50%', borderBottom: 'none'}}>
-                              <RenderProposalsTextFields
-                                required
-                                index={index}
-                                options={['My website', 'My youtube channel', 'My blog', 'My portfolio', 'My podcast', 'My store']}
-                                placeholder="Label here"
-                                value={x.label || ''}
-                                handleValues={handleChangeValue('label', idx)}
-                              />
-                            </TableCell>)}
-                            <TableCell sx={{p: 0, width: !data?.linksOnlyLinks ? '50%' : '100%', borderBottom: 'none'}}>
-                              <RenderTextFields
-                                required
-                                index={index}
-                                placeholder="URL here"
-                                value={x.link}
-                                handleValues={handleChangeValue('link', idx)}
-                                isError={x.link.trim().length > 0 && !isValidUrl(x.link)}
-                              />
+                            <TableCell sx={{p: 0, width: '100%', borderBottom: 'none'}}>
+                              <Box sx={{width: '100%', display: 'flex', flexDirection: {sm: 'row', xs: 'column'}}}>
+                                {!data?.linksOnlyLinks && (
+                                  <Box sx={{width: '100%'}}>
+                                    <RenderProposalsTextFields
+                                    required
+                                    index={index}
+                                    options={['My website', 'My youtube channel', 'My blog', 'My portfolio', 'My podcast', 'My store']}
+                                    placeholder="Label here"
+                                    value={x.label || ''}
+                                    handleValues={handleChangeValue('label', idx)}
+                                  />
+                                </Box>)}
+                                {!data?.linksOnlyLinks && <Box sx={{mr: {sm: 1, xs: 0}}}/>}
+                                <Box sx={{width: '100%'}}>
+                                  <RenderTextFields
+                                    required
+                                    index={index}
+                                    placeholder="URL here"
+                                    value={x.link}
+                                    handleValues={handleChangeValue('link', idx)}
+                                    isError={x.link.trim().length > 0 && !isValidUrl(x.link)}
+                                  />
+                                </Box>
+                              </Box>
                             </TableCell>
                             <TableCell sx={{p: 0, borderBottom: 'none'}} align="right">
                               {idx + 1 === (data?.links?.length || 0) ? (
@@ -167,15 +173,15 @@ export default function RenderLinks({data, setData, index}: RenderLinksProps) {
           )}
         </Droppable>
       </DragDropContext>
-      <Box sx={{width: '100%', display: 'flex', mt: '-5px'}}>
-      <FormControl disabled={data?.linksOnlyLinks}>
-        <FormControlLabel control={<Switch onChange={handleOnly('avoidButtons')} checked={!Boolean(data?.avoidButtons)} />}
-          label="Links as buttons" />
-      </FormControl>
-      <FormControl sx={{mr: '5px'}}>
-        <FormControlLabel control={<Switch onChange={handleOnly('linksOnlyLinks')} checked={data?.linksOnlyLinks || false} />}
-          label="Only links" />
-      </FormControl>
+      <Box sx={{width: '100%', display: 'flex', mt: '-5px', flexDirection: {sm: 'row', xs: 'column'}}}>
+        <FormControl disabled={data?.linksOnlyLinks}>
+          <FormControlLabel control={<Switch onChange={handleOnly('avoidButtons')} checked={!Boolean(data?.avoidButtons)} />}
+            label="Links as buttons" />
+        </FormControl>
+        <FormControl sx={{mr: '5px'}}>
+          <FormControlLabel control={<Switch onChange={handleOnly('linksOnlyLinks')} checked={data?.linksOnlyLinks || false} />}
+            label="Only links" />
+        </FormControl>
       </Box>
     </Box>
   );
