@@ -47,7 +47,7 @@ client.send(new ExecuteStatementCommand({Statement: "SELECT * FROM " + table + "
       for (let i = 0, l = resp.Items.length; i < l; i += 1) {
         const item = unmarshall(resp.Items[i]);
         console.log('Start processing item ' + (i + 1) + ' of ' + l + '. Type ' +  item.qrType + '...');
-        // if (item.custom === undefined) {
+        if (item.custom === undefined) {
 
           // const newItem = handler(item, ['claimable', 'preGenerated', 'isDynamic', 'backgroundColor',
           //   'backgroundType', 'backgroundDirection', 'backgroundColorRight', 'primary', 'secondary', 'backgndImg',
@@ -105,9 +105,9 @@ client.send(new ExecuteStatementCommand({Statement: "SELECT * FROM " + table + "
             console.log('No data to process...\n');
           }
 
-        // } else {
-        //   console.log('Already processed. Skipping.');
-        // }
+        } else {
+          console.log('Already processed. Skipping.');
+        }
       }
       console.log('Done.');
     } else {
