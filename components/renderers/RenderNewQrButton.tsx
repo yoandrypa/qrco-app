@@ -36,7 +36,7 @@ export default function RenderNewQrButton({ light, pathname, handleNavigation }:
   return (
     <Button
       startIcon={pathname === undefined || pathname === '/' ? <QrCodeIcon /> : <FirstPageIcon />}
-      sx={{ height: '28px', my: 'auto' }}
+      sx={{ height: {sm: '28px', xs: '50px'}, my: 'auto' }}
       variant="outlined"
       color={!light ? 'primary' : 'info'}
       onClick={navigation}>
