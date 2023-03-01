@@ -47,7 +47,7 @@ export async function getSubscription(currentUser: any) {
     localRecord.features = plans[planType]?.features;
   }
 
-  return { type: 'subscription', result: localRecord }
+  return { type: 'subscription', result: localRecord || null }
 }
 
 export async function createCheckoutSession(currentUser: any, planType: string) {
