@@ -98,13 +98,13 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
     if (forcePick) {
       setSelectFile(forcePick === 'banner' ? 'backgndImg' : 'foregndImg');
     }
-  }, [forcePick]);
+  }, [forcePick]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (data?.layout?.includes('banner') && backgndImg) {
       handleValue('backgndImg')(undefined)
     }
-  }, [data?.layout]);
+  }, [data?.layout]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const shrink = isWideForPreview && !isWideEnough && (backgndImg || foregndImg);
 
