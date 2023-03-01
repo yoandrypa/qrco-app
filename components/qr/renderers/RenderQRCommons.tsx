@@ -100,6 +100,12 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
     }
   }, [forcePick]);
 
+  useEffect(() => {
+    if (data?.layout?.includes('banner') && backgndImg) {
+      handleValue('backgndImg')(undefined)
+    }
+  }, [data?.layout]);
+
   const shrink = isWideForPreview && !isWideEnough && (backgndImg || foregndImg);
 
   return (
@@ -123,7 +129,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
             flexDirection: shrink ? "column" : {md: "row", xs: "column"},
             mt: 2
           }}>
-            <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
+            {!data?.layout?.includes('banner') && <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
               <Tooltip title="Click for selecting the banner image">
                 <Button
                   sx={{width: '100%'}}
@@ -136,7 +142,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
                 </Button>
               </Tooltip>
               {backgndImg && !loading && renderOptions('backgndImg')}
-            </ButtonGroup>
+            </ButtonGroup>}
             {!omitPrimaryImg && (
               <ButtonGroup sx={{mt: shrink ? 1 : {xs: 1, md: 0}, width: '100%'}}>
                 <Tooltip title="Click for selecting the profile image">
