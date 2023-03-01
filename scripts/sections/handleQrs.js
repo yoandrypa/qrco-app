@@ -27,7 +27,7 @@ const handleQrs = async(accessKeyId, secretAccessKey, table, userId) => {
       if (resp.Items.length) {
         for (let i = 0, l = resp.Items.length; i < l; i += 1) {
           const item = unmarshall(resp.Items[i]);
-          console.log('Start processing item ' + (i + 1) + ' of ' + l + '. Type ' + item.qrType + '...');
+          console.log('Start processing item ' + (i + 1) + ' of ' + l + '. Type ' + item.qrType + '. User ' + userId + '...');
           // if (item.custom === undefined) {
 
             // const newItem = handler(item, ['claimable', 'preGenerated', 'isDynamic', 'backgroundColor',
@@ -70,7 +70,7 @@ const handleQrs = async(accessKeyId, secretAccessKey, table, userId) => {
             }
 
             if (custom.length) {
-              console.log('Attempting to update the record for item ' + (i + 1) + '...');
+              console.log('Attempting to update the record for item ' + (i + 1) + ' for the user ' + userId + '...');
 
               const updateParams = {
                 Statement: "UPDATE " + table + " SET custom='" + JSON.stringify(custom).replaceAll("'","") + "' WHERE userId='" + userId + "' AND createdAt=" + item.createdAt
@@ -78,10 +78,10 @@ const handleQrs = async(accessKeyId, secretAccessKey, table, userId) => {
 
               try {
                 await client.send(new ExecuteStatementCommand(updateParams));
-                console.log('Success updating item ' + (i + 1) + '!\n');
+                console.log('Success updating item ' + (i + 1) + ' for the user ' + userId + '!\n');
               } catch (errorUpdate) {
+                console.error('Error updating item ' + (i + 1) + ' for the user ' + userId  + '!', errorUpdate, '\n');
                 console.log('Failed statement: ', updateParams.Statement);
-                console.error('Error updating item ' + (i + 1) + '!', errorUpdate, '\n');
               }
             } else {
               console.log('No data to process...\n');
@@ -91,7 +91,6 @@ const handleQrs = async(accessKeyId, secretAccessKey, table, userId) => {
           //   console.log('Already processed. Skipping.');
           // }
         }
-        console.log('Done.');
       } else {
         console.log('No items found. Halt.');
       }
