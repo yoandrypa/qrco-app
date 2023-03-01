@@ -1,5 +1,5 @@
 const {DynamoDB, ExecuteStatementCommand} = require("@aws-sdk/client-dynamodb");
-const {unmarshall} = require("@aws-sdk/util-dynamodb");
+const {marshall, unmarshall} = require("@aws-sdk/util-dynamodb");
 const handleVcard = require("./handleVcard");
 const handleBusiness = require("./handleBusiness");
 const handleLinks = require("./handleLinks");
@@ -72,8 +72,15 @@ const handleQrs = async(accessKeyId, secretAccessKey, table, userId) => {
             if (custom.length) {
               console.log('Attempting to update the record for item ' + (i + 1) + ' for the user ' + userId + '...');
 
+              /*const updateParams = {
+                Statement: "UPDATE " + table + " SET custom='" +
+                  JSON.stringify(custom).replaceAll("'","") +
+                  "' WHERE userId='" + userId + "' AND createdAt=" + item.createdAt
+              }*/
+
               const updateParams = {
-                Statement: "UPDATE " + table + " SET custom='" + JSON.stringify(custom).replaceAll("'","") + "' WHERE userId='" + userId + "' AND createdAt=" + item.createdAt
+                Statement: "UPDATE " + table + " SET custom=? WHERE userId='" + userId + "' AND createdAt=" + item.createdAt,
+                Parameters: [{L: marshall(custom)}]
               }
 
               try {
