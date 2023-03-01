@@ -6,6 +6,7 @@ import { stripe } from "../../../libs/gateways/stripe";
 
 import * as Users from "../../../handlers/users";
 import Subscription from "../../../models/subscription";
+import plans from "../../../consts/plans";
 
 import {
   PLAN_TEST_MODE_PRICES, PLAN_LIVE_MODE_PRICES,
@@ -39,6 +40,13 @@ export function parseFromPostRequest(req: NextApiRequest) {
 
 export async function getSubscription(currentUser: any) {
   const localRecord = await Subscription.getActiveByUser(currentUser.cognito_user_id);
+
+  if (localRecord) {
+    const planType = localRecord.metadata?.plan_type || '-';
+    // @ts-ignore
+    localRecord.features = plans[planType]?.features;
+  }
+
   return { type: 'subscription', result: localRecord }
 }
 

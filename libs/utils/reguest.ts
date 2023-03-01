@@ -3,9 +3,6 @@ import { parseErrorMessage } from "../../libs/exceptions";
 import { startWaiting, releaseWaiting } from "../../components/Waiting";
 import { setError } from "../../components/Notification";
 
-import session from "@ebanux/ebanux-utils/sessionStorage";
-import Subscription from "../../models/subscription";
-
 export function request({ inBackground, throwError, ...options }: any) {
   if (inBackground !== true) startWaiting();
 
@@ -25,18 +22,11 @@ export function request({ inBackground, throwError, ...options }: any) {
 }
 
 export async function loadSubscription(): Promise<any> {
-  const { currentUser } = session;
-
-  let subscription: any = null;
-
-  startWaiting();
-  try {
-    subscription = await Subscription.getActiveByUser(currentUser.cognito_user_id);
-  } catch (err: any) {
-    setError(err.message);
-  } finally {
-    releaseWaiting();
-  }
+  const subscription = await request({
+    url: 'subscriptions',
+    method: "GET",
+    throwError: 'notify',
+  });
 
   return subscription;
 }
