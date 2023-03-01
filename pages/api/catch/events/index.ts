@@ -9,7 +9,7 @@ import Stripe from "stripe";
 
 type EventModule = { process: (event: Stripe.Event) => void }
 
-const modules: { [key: string]: () => Promise<any> } = {
+const modules: { [key: string]: () => Promise<EventModule> } = {
   'checkout.session': () => import('./checkout.session'),
   'customer.subscription': () => import('./customer.subscription'),
 }
@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     if (req.method === 'POST') {
-      const event = await parseFromEventCatchRequest(req);
+      const event: Stripe.Event = await parseFromEventCatchRequest(req);
 
       if ((event.livemode && isProductionMode) || (!event.livemode && !isProductionMode)) {
         const stripeRecord: any = event.data.object;
@@ -30,7 +30,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.info(`CATCH EVENT ( ${event.type}, ${stripeRecord.id} )`);
 
         // Dynamic and asynchronous import of the module corresponding to the event type.
-        modules[moduleName]().then((module: EventModule) => module.process(event));
+        const eventModule = await modules[moduleName]();
+        await eventModule.process(event);
       }
 
       result = { success: true };

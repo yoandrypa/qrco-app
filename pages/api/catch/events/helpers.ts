@@ -1,9 +1,10 @@
 import { NextApiRequest } from "next";
 import { buffer } from 'micro';
-import { constructEvent } from "../../../../libs/gateways/stripe";
 import { isObject, isEmpty } from "@ebanux/ebanux-utils/utils";
-
 export { NotFound, respondWithException } from "../../../../libs/exceptions";
+import { constructEvent } from "../../../../libs/gateways/stripe";
+
+import Stripe from "stripe";
 
 const reduceNullAttrs = (obj: any): any => {
   if (Array.isArray(obj)) return obj.map((v) => reduceNullAttrs(v));
@@ -38,7 +39,7 @@ export const fixNullAttrs = (obj: any) => {
  * Validate and returns the event from webhook request.
  * @param request
  */
-export const parseFromEventCatchRequest = async (req: NextApiRequest) => {
+export const parseFromEventCatchRequest = async (req: NextApiRequest): Promise<Stripe.Event> => {
   const rawBody = await buffer(req);
   const signature = req.headers['stripe-signature']?.toString() || '';
 
