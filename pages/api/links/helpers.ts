@@ -1,7 +1,8 @@
 import Joi from "joi";
 
 import { NextApiRequest } from "next";
-import { LinkModel } from "../../../models/link";
+import LinkModel from "../../../models/qr_link";
+import { PreGeneratedModel } from "../../../models/link";
 
 import * as linkHandler from "../../../handlers/links";
 
@@ -44,6 +45,18 @@ export async function fetchLinks(currentUser: any, limit: number, pageKey: strin
 
 export async function countLinks(currentUser: any) {
   return LinkModel.countByUser(currentUser.cognito_user_id);
+}
+
+export async function checkLinkStatus(code: string) {
+  const message = `The code ${code} is already in use.`;
+
+  const link = await LinkModel.query({ address: code }).count().exec();
+  if (link.count !== 0) return { available: false, existsAs: 'link', message };
+
+  const preCode = await PreGeneratedModel.query({ code }).count().exec();
+  if (preCode.count !== 0) return { available: false, existsAs: 'pre-generated-code', message };
+
+  return { available: true }
 }
 
 export async function createLink(data: any) {
