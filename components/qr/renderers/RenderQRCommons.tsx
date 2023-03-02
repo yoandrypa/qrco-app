@@ -16,7 +16,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import dynamic from "next/dynamic";
 import {DataType} from "../types/types";
-import {DEFAULT_COLORS, IS_DEV_ENV} from "../constants";
+import {DEFAULT_COLORS} from "../constants";
 import Expander from "./helpers/Expander";
 import Context from "../../context/Context";
 import RenderMainColors from "./helpers/RenderMainColors";
@@ -170,7 +170,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
             onChange={handleSelectBackground} row sx={{mb: '-12px'}}>
             <FormControlLabel value="single" control={<Radio/>} label="Color solid"/>
             <FormControlLabel value="gradient" control={<Radio/>} label="Gradient"/>
-            {IS_DEV_ENV && <FormControlLabel value="image" control={<Radio/>} label="Image"/>}
+            <FormControlLabel value="image" control={<Radio/>} label="Image"/>
           </RadioGroup>
           {(data?.backgroundType === undefined || data.backgroundType === 'single') && (
             <RenderSingleBackColor data={data} handleValue={handleValue} />
