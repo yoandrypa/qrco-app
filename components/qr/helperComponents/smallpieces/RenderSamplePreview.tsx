@@ -207,6 +207,7 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
               <Suspense fallback={<PleaseWait />}>
                 {step === 1 && isReady && (
                   <RenderEditImageOnClick
+                    hideBannerSelection={data?.layout?.includes('banner') || false}
                     shape={data?.foregndImgType || undefined} left={data?.layout?.toLowerCase().includes('left') || false}
                     handleEdit={handlePickImage} renderFloating={!Boolean(data?.foregndImg)} />
                 )}

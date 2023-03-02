@@ -138,9 +138,9 @@ export default function RenderQrListOptions({qr, handleEdit, setConfirm, handleP
               <DynamicFeedIcon color="primary"/>
               <Typography sx={{ml: '5px'}}>{'Clone'}</Typography>
             </MenuItem>
-            <MenuItem key="previewMenuItem" onClick={handlePreview}>
+            <MenuItem key="downloadMenu" onClick={handlePreview}>
               <QrCodeIcon color="primary"/>
-              <Typography sx={{ml: '5px'}}>{'Preview'}</Typography>
+              <Typography sx={{ml: '5px'}}>{'Download QR code'}</Typography>
             </MenuItem>
             {IS_DEV_ENV && qr.qrType === "donation" && !!qr.donationProductId && (
               <MenuItem component="a" target="_blank" rel="noopener noreferrer" key="goToDashBoardMenuItem" onClick={() => setAnchor(null)}
