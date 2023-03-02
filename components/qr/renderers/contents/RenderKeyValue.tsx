@@ -120,23 +120,28 @@ export default function RenderKeyValue({data, setData, topics, index}: KeyValueP
                                 <DragIndicatorIcon sx={{ color: theme => theme.palette.text.disabled, mt: '8px' }} />
                               </TableCell>
                             )}
-                            <TableCell sx={{p: 0, pr: 1, width: '50%', borderBottom: 'none'}}>
-                              <RenderTextFields
-                                required
-                                index={index}
-                                placeholder="Label here"
-                                value={x.key || ''}
-                                handleValues={handleChangeValue('key', idx)}
-                              />
-                            </TableCell>
-                            <TableCell sx={{p: 0, width: '50%', borderBottom: 'none'}}>
-                              <RenderTextFields
-                                required
-                                index={index}
-                                placeholder="Value here"
-                                value={x.value}
-                                handleValues={handleChangeValue('value', idx)}
-                              />
+                            <TableCell sx={{p: 0, pr: 1, width: '100%', borderBottom: 'none'}}>
+                              <Box sx={{width: '100%', display: 'flex', flexDirection: {sm: 'row', xs: 'column'}}}>
+                                <Box sx={{width: '100%'}}>
+                                  <RenderTextFields
+                                    required
+                                    index={index}
+                                    placeholder="Label here"
+                                    value={x.key || ''}
+                                    handleValues={handleChangeValue('key', idx)}
+                                  />
+                                </Box>
+                                <Box sx={{mr: {sm: 1, xs: 0}}}/>
+                                <Box sx={{width: '100%'}}>
+                                  <RenderTextFields
+                                    required
+                                    index={index}
+                                    placeholder="Value here"
+                                    value={x.value}
+                                    handleValues={handleChangeValue('value', idx)}
+                                  />
+                                </Box>
+                              </Box>
                             </TableCell>
                             <TableCell sx={{p: 0, borderBottom: 'none'}} align="right">
                               {idx + 1 === (data?.keyValues?.length || 0) ? (

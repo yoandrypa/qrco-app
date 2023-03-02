@@ -79,7 +79,7 @@ export const dynamicQr = {
   },
   link: {
     tip: "Add at least one link to your websites",
-    predefined: ['presentation', 'organization', 'links', 'socials']
+    predefined: ['title', 'links', 'socials']
   },
   coupon: {
     tip: "Share a coupon for promotion.",

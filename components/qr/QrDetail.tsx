@@ -4,131 +4,88 @@ import React from "react";
 import PublicIcon from "@mui/icons-material/Public";
 import PauseIcon from "@mui/icons-material/Pause";
 import Link from "next/link";
-import { humanDate } from "../helpers/generalFunctions";
-import { sanitize } from "../../utils";
-import { capitalize } from "@mui/material";
+import {humanDate} from "../helpers/generalFunctions";
+import {sanitize} from "../../utils";
+import {capitalize} from "@mui/material";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import AbcIcon from "@mui/icons-material/Abc";
 import FormatSizeIcon from "@mui/icons-material/FormatSize";
 import TodayIcon from "@mui/icons-material/Today";
 import EventIcon from "@mui/icons-material/Event";
-import { useTheme } from "@mui/system";
-import { getSx } from "../../helpers/qr/helpers";
+import {useTheme} from "@mui/system";
+import {getSx} from "../../helpers/qr/helpers";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
-const QrDetail = ({ qrData }: any) => {
+const QrDetail = ({qrData}: any) => {
   const qrLink = qrData.shortLinkId ? sanitize.link(qrData.shortLinkId) : null;
   const theme = useTheme();
 
-  return (
-    <Grid container spacing={1} columnSpacing={1}>
-      <Grid container xs={8} alignItems="center">
-        <Grid item xs={1}>
-          {/*<Avatar sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-          <AbcIcon fontSize="medium" sx={getSx(theme)}/>
-          {/*</Avatar>*/}
-        </Grid>
-        <Grid item ml={3}>
-          <Typography variant="caption">Name</Typography>
-          <Typography>{qrData.qrName}</Typography>
-        </Grid>
-      </Grid>
-      {/*-----*/}
-      <Grid container xs={8} alignItems="center" mt={0.5}>
-        <Grid item xs={1}>
-          {/*<Avatar*/}
-          {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-          <FormatSizeIcon fontSize="small" sx={getSx(theme)}/>
-          {/*</Avatar>*/}
-        </Grid>
-        <Grid item ml={3}>
-          <Typography variant="caption">Type</Typography>
-          <Typography>{capitalize(qrData.qrType || "")}</Typography>
-        </Grid>
-      </Grid>
-      {/*-----*/}
-      <Grid container xs={8} alignItems="center" mt={0.5}>
-        <Grid item xs={1}>
-          {/*<Avatar*/}
-          {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-          <ElectricBoltIcon sx={getSx(theme)}/>
-          {/*</Avatar>*/}
-        </Grid>
-        <Grid item ml={3}>
-          <Typography variant="caption">Mode</Typography>
-          <Typography>{qrData.isDynamic ? "Dynamic" : "Static"}</Typography>
-        </Grid>
-      </Grid>
-      {/*-----*/}
-      <Grid container xs={8} alignItems="center" mt={0.5}>
-        <Grid item xs={1}>
-          {/*<Avatar*/}
-          {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-          <PublicIcon sx={getSx(theme)}/>
-          {/*</Avatar>*/}
-        </Grid>
-        <Grid item alignItems="center" ml={3}>
-          <Typography variant="caption">Link</Typography>
-          {qrLink ? (<div><Link href={qrLink.link}>{qrLink.link.split(
-            "//")[1]}</Link></div>) : <div>No
-            link</div>}
-        </Grid>
-      </Grid>
-      {/*-----*/}
-      <Grid container xs={8} alignItems="center" mt={0.5}>
-        <Grid item xs={1}>
-          {/*<Avatar*/}
-          {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-          <PauseIcon sx={getSx(theme)}/>
-          {/*</Avatar>*/}
-        </Grid>
-        <Grid item xs={3} alignItems="center" ml={3}>
-          <Typography variant="caption">Paused?</Typography>
-          <Typography>{qrLink?.paused ? "Yes" : "No"}</Typography>
-        </Grid>
+  const isWide = useMediaQuery("(min-width:925px)", {noSsr: true});
 
-        {qrLink?.pausedById ?
-          <>
-            <Grid item xs={1}>
-              {/*<Avatar*/}
-              {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-              <PauseIcon sx={getSx(theme)}/>
-              {/*</Avatar>*/}
-            </Grid>
-            <Grid item xs={3} ml={1} alignItems="center">
-              <Typography variant="caption">Paused by</Typography>
-              {/*@ts-ignore*/}
-              <Typography>{qrLink.pausedById.name}</Typography>
-            </Grid>
-          </> : null
-        }
+
+  return (
+    <Grid container spacing={2}>
+      <Grid item xs={isWide ? 1 : 2}>
+        <AbcIcon fontSize="medium" sx={getSx(theme)}/>
       </Grid>
-      {/*-----*/}
-      <Grid container xs={8} alignItems="center" mt={0.5}>
-        <Grid item xs={1}>
-          {/*<Avatar*/}
-          {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-          <TodayIcon sx={getSx(theme)}/>
-          {/*</Avatar>*/}
-        </Grid>
-        <Grid item ml={3} alignItems="center">
-          <Typography variant="caption">Created at</Typography>
-          <Typography>{humanDate(
-            new Date(qrData.createdAt).getTime())}</Typography>
-        </Grid>
+      <Grid item xs={isWide ? 11 : 10}>
+        <Typography sx={{fontWeight: 'bold'}}>Name</Typography>
+        <Typography>{qrData.qrName}</Typography>
       </Grid>
-      {/*-----*/}
-      <Grid container xs={8} alignItems="center" mt={0.5}>
-        <Grid item xs={1}>
-          {/*<Avatar*/}
-          {/*  sx={{ bgcolor: themeConfig().palette.primary.main }}>*/}
-          <EventIcon sx={getSx(theme)}/>
-          {/*</Avatar>*/}
-        </Grid>
-        <Grid item ml={3} alignItems="center">
-          <Typography variant="caption">Last update</Typography>
-          <Typography>{humanDate(
-            new Date(qrData.updatedAt).getTime())}</Typography>
-        </Grid>
+      <Grid item xs={isWide ? 1 : 2}>
+        <FormatSizeIcon fontSize="small" sx={getSx(theme)}/>
+      </Grid>
+      <Grid item xs={isWide ? 11 : 10}>
+        <Typography sx={{fontWeight: 'bold'}}>Type</Typography>
+        <Typography>{capitalize(qrData.qrType || "")}</Typography>
+      </Grid>
+      <Grid item xs={isWide ? 1 : 2}>
+        <ElectricBoltIcon sx={getSx(theme)}/>
+      </Grid>
+      <Grid item xs={isWide ? 11 : 10}>
+        <Typography sx={{fontWeight: 'bold'}}>Mode</Typography>
+        <Typography>{qrData.isDynamic ? "Dynamic" : "Static"}</Typography>
+      </Grid>
+      <Grid item xs={isWide ? 1 : 2}>
+        <PublicIcon sx={getSx(theme)}/>
+      </Grid>
+      <Grid item alignItems="center" xs={isWide ? 11 : 10}>
+        <Typography sx={{fontWeight: 'bold'}}>Link</Typography>
+        {qrLink ? (<div><Link href={qrLink.link}>{qrLink.link.split("//")[1]}</Link></div>) : <div>Nolink</div>}
+      </Grid>
+      <Grid item xs={isWide ? 1 : 2}>
+        <PauseIcon sx={getSx(theme)}/>
+      </Grid>
+      <Grid item xs={isWide ? 11 : 10} alignItems="center">
+        <Typography sx={{fontWeight: 'bold'}}>Paused?</Typography>
+        <Typography>{qrLink?.paused ? "Yes" : "No"}</Typography>
+      </Grid>
+
+      {qrLink?.pausedById ?
+        <>
+          <Grid item xs={isWide ? 1 : 2}>
+            <PauseIcon sx={getSx(theme)}/>
+          </Grid>
+          <Grid item xs={isWide ? 11 : 10} alignItems="center">
+            <Typography sx={{fontWeight: 'bold'}}>Paused by</Typography>  {/* @ts-ignore */}
+            <Typography>{qrLink.pausedById.name}</Typography>
+          </Grid>
+        </> : null
+      }
+      <Grid item xs={isWide ? 1 : 2}>
+        <TodayIcon sx={getSx(theme)}/>
+      </Grid>
+      <Grid item xs={isWide ? 11 : 10} alignItems="center">
+        <Typography sx={{fontWeight: 'bold'}}>Created at</Typography>
+        <Typography>{humanDate(
+          new Date(qrData.createdAt).getTime())}</Typography>
+      </Grid>
+      <Grid item xs={isWide ? 1 : 2}>
+        <EventIcon sx={getSx(theme)}/>
+      </Grid>
+      <Grid item xs={isWide ? 11 : 10} alignItems="center">
+        <Typography sx={{fontWeight: 'bold'}}>Last update</Typography>
+        <Typography>{humanDate(new Date(qrData.updatedAt).getTime())}</Typography>
       </Grid>
     </Grid>
   );
