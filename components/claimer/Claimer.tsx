@@ -1,4 +1,4 @@
-import React, { ChangeEvent, KeyboardEvent, MouseEvent, useEffect, useRef, useState } from "react";
+import React, {ChangeEvent, KeyboardEvent, MouseEvent, useEffect, useRef, useState} from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
@@ -6,15 +6,12 @@ import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import { styled } from "@mui/material/styles";
+import {styled} from "@mui/material/styles";
 
-import { IS_DEV_ENV, MAIN_ORANGE } from "../qr/constants";
+import {MAIN_ORANGE} from "../qr/constants";
 import RenderPreview from "../qr/renderers/RenderPreview";
 import RenderDownloadPrint from "../qr/helperComponents/looseComps/RenderDownloadPrint";
-
-import { useRouter } from "next/router";
-import { findByAddress } from "../../handlers/links";
-import { iFrameDetected } from "@ebanux/ebanux-utils/utils";
+import {findByAddress} from "../../handlers/links";
 
 const Typo = styled(Typography)(({ bold }: { bold?: boolean }) => ({
   display: 'inline',
@@ -35,13 +32,6 @@ export default function Claimer({ code }: ClaimerProps) {
   const [checking, setChecking] = useState<boolean>(true);
 
   const lynk = useRef<string>(`${URL}${custom}`);
-  const embedded = iFrameDetected;
-
-  const router = useRouter();
-
-  if (!IS_DEV_ENV) {
-    router.push('/', '/');
-  }
 
   const handleCustom = (event: ChangeEvent<HTMLInputElement>) => {
     const { value }: { value: string } = event.target;
@@ -50,9 +40,7 @@ export default function Claimer({ code }: ClaimerProps) {
   }
 
   const handleClaim = (event: MouseEvent<HTMLButtonElement>) => {
-    if (!embedded) {
-      setOpen(event.currentTarget);
-    } else if (window && window.top) {
+    if (window && window.top) {
       window.top.location.href = `${window.location.origin}/qr/type?address=${custom}`;
     }
   }
@@ -79,8 +67,7 @@ export default function Claimer({ code }: ClaimerProps) {
       left: "50%",
       transform: "translate(-50%, -50%)"
     }}>
-      <Paper sx={{ p: 2, mx: 'auto', width: !embedded ? { sm: '400px', xs: '100%' } : '350px' }}
-             elevation={!embedded ? 3 : 0}>
+      <Paper sx={{ p: 2, mx: 'auto', width: { sm: '400px', xs: '100%' }}} elevation={3}>
         <Box sx={{ mb: 2, width: '100%', textAlign: 'center' }}>
           <Typo bold>QR</Typo>
           <Typo sx={{ color: MAIN_ORANGE }} bold>Lynk</Typo>
@@ -90,7 +77,7 @@ export default function Claimer({ code }: ClaimerProps) {
         </Paper>
 
         <Box sx={{ mt: '10px' }}>
-          <Box sx={{ display: 'flex', mt: '-5px', height: !embedded ? '85px' : 'unset' }}>
+          <Box sx={{ display: 'flex', mt: '-5px', height: '85px' }}>
             <TextField
               onKeyDown={(evt: KeyboardEvent<HTMLInputElement>) => !/^[a-zA-Z0-9_]+$/.test(evt.key) && evt.preventDefault()}
               label=""

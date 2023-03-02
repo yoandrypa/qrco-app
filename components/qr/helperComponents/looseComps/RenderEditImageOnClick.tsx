@@ -9,6 +9,7 @@ import {styled} from "@mui/material/styles";
 interface Props {
   left?: boolean,
   shape?: string,
+  hideBannerSelection?: boolean,
   handleEdit?: (prop: string) => void;
   renderFloating?: boolean;
 }
@@ -21,7 +22,7 @@ export const Icon = styled(IconButton)(() => ({
   '&:hover': {background: '#eef1f5c7'}
 }));
 
-const RenderEditImageOnClick = ({left, shape, handleEdit, renderFloating}: Props) => {
+const RenderEditImageOnClick = ({left, shape, handleEdit, renderFloating, hideBannerSelection}: Props) => {
   const handler = (prop: string) => () => {
     if (handleEdit) {
       handleEdit(prop);
@@ -30,11 +31,11 @@ const RenderEditImageOnClick = ({left, shape, handleEdit, renderFloating}: Props
 
   return (
     <>
-      <Tooltip title="Edit banner image" followCursor>
+      {!hideBannerSelection && (<Tooltip title="Edit banner image" followCursor>
         <Icon sx={{right: '5px', top: '5px', position: 'absolute'}} onClick={handler('banner')}>
           <EditIcon fontSize="small" />
         </Icon>
-      </Tooltip>
+      </Tooltip>)}
       <Box sx={{
         position: 'absolute',
         width: '54px',
@@ -55,5 +56,6 @@ const RenderEditImageOnClick = ({left, shape, handleEdit, renderFloating}: Props
 }
 
 export default memo(RenderEditImageOnClick, (current: Props, next: Props) =>
-  current.left === next.left && current.shape === next.shape && current.renderFloating === next.renderFloating
+  current.left === next.left && current.shape === next.shape && current.renderFloating === next.renderFloating &&
+  current.hideBannerSelection === next.hideBannerSelection
 );

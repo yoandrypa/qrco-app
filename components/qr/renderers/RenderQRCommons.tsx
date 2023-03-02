@@ -17,11 +17,11 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import dynamic from "next/dynamic";
 import {DataType} from "../types/types";
-import {DEFAULT_COLORS} from "../constants";
-import RenderGradientSelector from "./helpers/RenderGradientSelector";
+import {DEFAULT_COLORS, IS_DEV_ENV} from "../constants";
 import Expander from "./helpers/Expander";
 import Context from "../../context/Context";
 import RenderMainColors from "./helpers/RenderMainColors";
+import RenderBackgroundImageSelector from "./helpers/RenderBackgroundImageSelector";
 
 const RenderSingleBackColor = dynamic(() => import("./helpers/RenderSingleBackColor"));
 const RenderButtonsHandler = dynamic(() => import('../helperComponents/looseComps/RenderButtonHandler'));
@@ -31,6 +31,7 @@ const RenderForeImgTypePicker = dynamic(() => import ('./helpers/RenderForeImgTy
 const ImageCropper = dynamic(() => import('./helpers/ImageCropper'));
 const RenderFontsHandler = dynamic(() => import('../helperComponents/smallpieces/RenderFontsHandler'));
 const RenderLayoutHandler = dynamic(() => import("../helperComponents/smallpieces/RenderLayoutHandler"));
+const RenderGradientSelector = dynamic(() => import("./helpers/RenderGradientSelector"));
 
 interface QRCommonsProps {
   omitPrimaryImg?: boolean;
@@ -98,7 +99,13 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
     if (forcePick) {
       setSelectFile(forcePick === 'banner' ? 'backgndImg' : 'foregndImg');
     }
-  }, [forcePick]);
+  }, [forcePick]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (data?.layout?.includes('banner') && backgndImg) {
+      handleValue('backgndImg')(undefined)
+    }
+  }, [data?.layout]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const shrink = isWideForPreview && !isWideEnough && (backgndImg || foregndImg);
 
@@ -123,7 +130,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
             flexDirection: shrink ? "column" : {md: "row", xs: "column"},
             mt: 2
           }}>
-            <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
+            {!data?.layout?.includes('banner') && <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
               <Tooltip title="Click for selecting the banner image">
                 <Button
                   sx={{width: '100%'}}
@@ -136,7 +143,7 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
                 </Button>
               </Tooltip>
               {backgndImg && !loading && renderOptions('backgndImg')}
-            </ButtonGroup>
+            </ButtonGroup>}
             {!omitPrimaryImg && (
               <ButtonGroup sx={{mt: shrink ? 1 : {xs: 1, md: 0}, width: '100%'}}>
                 <Tooltip title="Click for selecting the profile image">
@@ -162,10 +169,12 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
             onChange={handleSelectBackground} row sx={{mb: '-12px'}}>
             <FormControlLabel value="single" control={<Radio/>} label="Color solid"/>
             <FormControlLabel value="gradient" control={<Radio/>} label="Gradient"/>
+            {IS_DEV_ENV && <FormControlLabel value="image" control={<Radio/>} label="Image"/>}
           </RadioGroup>
           {(data?.backgroundType === undefined || data.backgroundType === 'single') && (
             <RenderSingleBackColor data={data} handleValue={handleValue} />
           )}
+          {data?.backgroundType === 'image' && <RenderBackgroundImageSelector data={data} handleValue={handleValue} />}
           {data?.backgroundType === 'gradient' && (
             <RenderGradientSelector
               colorLeft={data?.backgroundColor || DEFAULT_COLORS.s}
