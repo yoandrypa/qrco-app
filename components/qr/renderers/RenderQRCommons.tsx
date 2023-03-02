@@ -8,7 +8,6 @@ import ImageIcon from '@mui/icons-material/Image';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 import Tooltip from "@mui/material/Tooltip";
-import CircularProgress from "@mui/material/CircularProgress";
 import Paper from "@mui/material/Paper";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -21,8 +20,8 @@ import {DEFAULT_COLORS, IS_DEV_ENV} from "../constants";
 import Expander from "./helpers/Expander";
 import Context from "../../context/Context";
 import RenderMainColors from "./helpers/RenderMainColors";
-import RenderBackgroundImageSelector from "./helpers/RenderBackgroundImageSelector";
 
+const RenderBackgroundImageSelector = dynamic(() => import("./helpers/RenderBackgroundImageSelector"));
 const RenderSingleBackColor = dynamic(() => import("./helpers/RenderSingleBackColor"));
 const RenderButtonsHandler = dynamic(() => import('../helperComponents/looseComps/RenderButtonHandler'));
 const RenderImagePicker = dynamic(() => import('./helpers/RenderImagePicker'));
@@ -32,6 +31,7 @@ const ImageCropper = dynamic(() => import('./helpers/ImageCropper'));
 const RenderFontsHandler = dynamic(() => import('../helperComponents/smallpieces/RenderFontsHandler'));
 const RenderLayoutHandler = dynamic(() => import("../helperComponents/smallpieces/RenderLayoutHandler"));
 const RenderGradientSelector = dynamic(() => import("./helpers/RenderGradientSelector"));
+const CircularProgress = dynamic(() => import("@mui/material/CircularProgress"));
 
 interface QRCommonsProps {
   omitPrimaryImg?: boolean;
@@ -40,13 +40,14 @@ interface QRCommonsProps {
   isWideForPreview?: boolean;
   backgndImg?: File | string;
   foregndImg?: File | string;
+  micrositesImg?: File | string;
   backError?: boolean;
   foreError?: boolean;
   handleValue: Function;
   forcePick?: string;
 }
 
-function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg, backError, foreError, handleValue, isWideForPreview, forcePick}: QRCommonsProps) { // @ts-ignore
+function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg, micrositesImg, backError, foreError, handleValue, isWideForPreview, forcePick}: QRCommonsProps) { // @ts-ignore
   const [selectFile, setSelectFile] = useState<string | null>(null);
   const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -174,7 +175,9 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
           {(data?.backgroundType === undefined || data.backgroundType === 'single') && (
             <RenderSingleBackColor data={data} handleValue={handleValue} />
           )}
-          {data?.backgroundType === 'image' && <RenderBackgroundImageSelector data={data} handleValue={handleValue} />}
+          {data?.backgroundType === 'image' && (
+            <RenderBackgroundImageSelector handleValue={handleValue} micrositesImg={micrositesImg} />
+          )}
           {data?.backgroundType === 'gradient' && (
             <RenderGradientSelector
               colorLeft={data?.backgroundColor || DEFAULT_COLORS.s}
@@ -208,7 +211,12 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
         <RenderImgPreview handleClose={() => setPreview(null)} file={preview === 'backgndImg' ? backgndImg : foregndImg} kind={preview} />
       )}
       {cropper !== null && (
-        <ImageCropper handleClose={() => setCropper(null)} file={cropper.file} kind={cropper.kind} handleAccept={handleSave} />
+        <ImageCropper
+          handleClose={() => setCropper(null)}
+          handleAccept={handleSave}
+          file={cropper.file}
+          kind={cropper.kind}
+          message={cropper.kind === 'backgndImg' ? 'banner' : 'profile'} />
       )}
     </>
   );
