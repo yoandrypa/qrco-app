@@ -33,6 +33,8 @@ module.exports = {
     API_BASE_PATH: process.env.API_BASE_PATH || process.env.REACT_APP_API_BASE_PATH,
     APP_ENV: process.env.APP_ENV || process.env.REACT_NODE_ENV,
 
+    REACT_APP_OVERRIDE: process.env.REACT_APP_OVERRIDE,
+
     CURRENT_USER_SERVICE_PATH: process.env.CURRENT_USER_SERVICE_PATH || process.env.REACT_APP_CURRENT_USER_SERVICE_PATH,
     DEFAULT_MAX_STATS_PER_LINK: process.env.DEFAULT_MAX_STATS_PER_LINK,
 
