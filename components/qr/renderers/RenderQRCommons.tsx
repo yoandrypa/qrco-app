@@ -17,11 +17,11 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import dynamic from "next/dynamic";
 import {DataType} from "../types/types";
-import {DEFAULT_COLORS} from "../constants";
-import RenderGradientSelector from "./helpers/RenderGradientSelector";
+import {DEFAULT_COLORS, IS_DEV_ENV} from "../constants";
 import Expander from "./helpers/Expander";
 import Context from "../../context/Context";
 import RenderMainColors from "./helpers/RenderMainColors";
+import RenderBackgroundImageSelector from "./helpers/RenderBackgroundImageSelector";
 
 const RenderSingleBackColor = dynamic(() => import("./helpers/RenderSingleBackColor"));
 const RenderButtonsHandler = dynamic(() => import('../helperComponents/looseComps/RenderButtonHandler'));
@@ -31,6 +31,7 @@ const RenderForeImgTypePicker = dynamic(() => import ('./helpers/RenderForeImgTy
 const ImageCropper = dynamic(() => import('./helpers/ImageCropper'));
 const RenderFontsHandler = dynamic(() => import('../helperComponents/smallpieces/RenderFontsHandler'));
 const RenderLayoutHandler = dynamic(() => import("../helperComponents/smallpieces/RenderLayoutHandler"));
+const RenderGradientSelector = dynamic(() => import("./helpers/RenderGradientSelector"));
 
 interface QRCommonsProps {
   omitPrimaryImg?: boolean;
@@ -168,10 +169,12 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
             onChange={handleSelectBackground} row sx={{mb: '-12px'}}>
             <FormControlLabel value="single" control={<Radio/>} label="Color solid"/>
             <FormControlLabel value="gradient" control={<Radio/>} label="Gradient"/>
+            {IS_DEV_ENV && <FormControlLabel value="image" control={<Radio/>} label="Image"/>}
           </RadioGroup>
           {(data?.backgroundType === undefined || data.backgroundType === 'single') && (
             <RenderSingleBackColor data={data} handleValue={handleValue} />
           )}
+          {data?.backgroundType === 'image' && <RenderBackgroundImageSelector data={data} handleValue={handleValue} />}
           {data?.backgroundType === 'gradient' && (
             <RenderGradientSelector
               colorLeft={data?.backgroundColor || DEFAULT_COLORS.s}
