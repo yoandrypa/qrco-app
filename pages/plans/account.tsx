@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid'
 
 import Button from "@mui/material/Button";
 
-import { request } from "../../libs/utils/reguest";
+import { request } from "../../libs/utils/request";
 
 const AccountPage = () => {
 

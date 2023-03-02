@@ -2,17 +2,19 @@ import React, { useState, useEffect } from "react";
 
 import Alert, { AlertColor } from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
+import Button from "@mui/material/Button";
 
+import parseHtml from 'html-react-parser';
 import messaging from "@ebanux/ebanux-utils/messaging";
 
 const mSubscriptions: any[] = [];
 
 interface NotificationData {
-  message: string;
+  message: string | string[];
   severity?: AlertColor;
 }
 
-type NotificationType = NotificationData | Error | string;
+type NotificationType = NotificationData | Error | string | string[];
 type CloseOptionType = boolean | number;
 
 interface NotificationState {
@@ -25,9 +27,19 @@ const Notification = () => {
   const [state, setState] = useState<NotificationState>({ notification: { message: '' }, open: false });
   const { notification: { message, severity }, open, closeOption } = state;
 
-  function onSetNotification(notification: NotificationType, closeOption: CloseOptionType) {
-    let message: string;
+  function onClose() {
+    setState(({ notification: { severity } }: NotificationState) => (
+      { notification: { message: '', severity }, open: false }
+    ));
+  }
+
+  function onSetNotification(notification: NotificationType | null, closeOption: CloseOptionType) {
+    if (!notification) return onClose();
+
+    let message: string | string[];
     let severity: AlertColor | undefined;
+
+    if (Array.isArray(notification)) notification = notification.join('<br/>');
 
     if (typeof notification === 'string') {
       message = notification;
@@ -40,13 +52,9 @@ const Notification = () => {
       severity = notification.severity;
     }
 
-    setState({ notification: { message, severity }, open: true, closeOption });
-  }
+    if (Array.isArray(message)) message = message.join('<br/>');
 
-  function onClose() {
-    setState(({ notification: { severity } }: NotificationState) => (
-      { notification: { message: '', severity }, open: false }
-    ));
+    setState({ notification: { message, severity }, open: true, closeOption });
   }
 
   useEffect(() => {
@@ -69,7 +77,7 @@ const Notification = () => {
               sx={{ zIndex: 3000 }}
               anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
       <Alert variant="standard" sx={{ width: "100%" }} severity={severity} onClose={closeHandle}>
-        {message}
+        {parseHtml(message as string)}
       </Alert>
     </Snackbar>
   );
@@ -79,20 +87,22 @@ export const setNotification = (notification: NotificationType, closeOption: Clo
   messaging.emit('setNotification', [notification, closeOption]);
 }
 
-export const setError = (message: Error | string, closeOption: CloseOptionType = 6000) => {
+export const setError = (message: Error | string | string[], closeOption: CloseOptionType = 6000) => {
   setNotification(typeof message === 'string' ? new Error(message) : message, closeOption);
 }
 
-export const setWarning = (message: string, closeOption: CloseOptionType = 6000) => {
+export const setWarning = (message: string | string[], closeOption: CloseOptionType = 6000) => {
   setNotification({ message, severity: 'warning' }, closeOption);
 }
 
-export const setInfo = (message: string, closeOption: CloseOptionType = 6000) => {
+export const setInfo = (message: string | string[], closeOption: CloseOptionType = 6000) => {
   setNotification({ message, severity: 'info' }, closeOption);
 }
 
-export const setSuccess = (message: string, closeOption: CloseOptionType = 6000) => {
+export const setSuccess = (message: string | string[], closeOption: CloseOptionType = 6000) => {
   setNotification({ message, severity: 'success' }, closeOption);
 }
+
+export const hideNotification = () => messaging.emit('setNotification', [null]);
 
 export default Notification;

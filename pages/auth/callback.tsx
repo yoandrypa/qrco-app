@@ -7,7 +7,7 @@ import { authWithAuthCode } from "@ebanux/ebanux-utils/auth";
 import Context from "../../components/context/Context";
 import { startWaiting, releaseWaiting } from "../../components/Waiting";
 import { setSuccess } from "../../components/Notification";
-import { loadSubscription } from "../../libs/utils/reguest";
+import { loadSubscription } from "../../libs/utils/request";
 
 export default function AuthCallback() {
   const router = useRouter();

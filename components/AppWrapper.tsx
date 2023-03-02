@@ -16,10 +16,11 @@ import Link from "next/link";
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
 import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
-import { loadSubscription } from "../libs/utils/reguest";
+import { loadSubscription } from "../libs/utils/request";
 
 import RenderSupport from "./wrapper/RenderSupport";
 import Context from "./context/Context";
+import ConfirmDialog from "./ConfirmDialog";
 import Notification from "./Notification";
 import Waiting from "./Waiting";
 
@@ -179,6 +180,7 @@ export default function AppWrapper(props: AppWrapperProps) {
       <Container sx={{ width: "100%" }}>
         <Box sx={{ height }} /> {/* Aims to fill the header's gap */}
         <Box sx={{ mx: "auto", minHeight: `calc(100vh - ${router.pathname === '/' ? 140 : 135}px)` }}>
+          <ConfirmDialog />
           <Notification />
           <Waiting />
           {children}

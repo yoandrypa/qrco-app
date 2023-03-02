@@ -40,6 +40,7 @@ export interface StepsProps {
   selected: string;
   data: DataType;
   userInfo: UserInfoProps;
+  subscription: any;
   options: OptionsType;
   frame: FramesType;
   background: BackgroundType;

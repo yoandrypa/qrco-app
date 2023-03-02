@@ -15,7 +15,12 @@ import RenderNextButton from "./helperComponents/smallpieces/RenderNextButton";
 import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
 
 import dynamic from "next/dynamic";
+import session from "@ebanux/ebanux-utils/sessionStorage";
 import { useRouter } from "next/router";
+import { request } from "../../libs/utils/request";
+import { setWarning, hideNotification } from "../Notification";
+import { waitConfirmation } from "../ConfirmDialog";
+import { releaseWaiting, startWaiting } from "../Waiting";
 
 const RenderConfirmDlg = dynamic(() => import("../renderers/RenderConfirmDlg"));
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
@@ -41,8 +46,11 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
 
   // @ts-ignore
-  const { selected, data, userInfo, options, frame, background, cornersData, dotsData, isWrong, loading, setOptions,
-    setLoading, setRedirecting, clearData, setData }: StepsProps = useContext(Context);
+  const {
+    selected, data, options, frame, background, cornersData, dotsData, isWrong, loading, setOptions,
+    setLoading, setRedirecting, clearData, setData,
+    subscription, userInfo,
+  }: StepsProps = useContext(Context);
 
   const router = useRouter();
 
@@ -75,7 +83,26 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     }
   };
 
+  function onConfirmUpgrade(value: boolean) {
+    hideNotification();
+    if (!value) return;
+    startWaiting();
+    router.push('/plans').finally(releaseWaiting);
+  }
+
   const handleNext = async () => {
+    if (data.isDynamic) {
+      if (!session.isAuthenticated) {
+        return setWarning('You need to be authenticated to be able to create dynamic QRs!');
+      } else if (limitReached) {
+        setWarning([
+          'You have reached the limit of Dynamic QRs for this account.',
+          'Upgrade to a paid plan to add more QRs.',
+        ], false);
+        waitConfirmation('Click accept to if you want to view or upgrade your current plan.', onConfirmUpgrade);
+        return;
+      }
+    }
     if (data.isDynamic && limitReached) {
       setShowLimitDlg(true)
       return;
@@ -142,6 +169,22 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     }
 
     return () => window.removeEventListener("resize", getWidth);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (session.isAuthenticated) {
+      let upToDynamicQR = 1;
+      let amountByAdditionalDynamicQR = 0;
+
+      if (subscription?.status === 'active') {
+        upToDynamicQR = subscription.features.upToDynamicQR;
+        amountByAdditionalDynamicQR = subscription.features.amountByAdditionalDynamicQR;
+      }
+
+      if (amountByAdditionalDynamicQR === 0) request({ url: 'links/count' }).then(({ count }: any) => {
+        setLimitReached(count >= upToDynamicQR );
+      });
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
