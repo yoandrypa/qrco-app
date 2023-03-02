@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import {
   getPreGenCodes,
+  delPreGenCodes,
   genNewCodes,
   loadNewCodes,
   parseFromPostRequest,
@@ -13,13 +14,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     if (req.method == 'POST') {
-      const { size, count, owner } = parseFromPostRequest(req);
-      result = await genNewCodes(size, count, owner);
+      const { size, count, owner, alphabet } = parseFromPostRequest(req);
+      result = await genNewCodes(size, count, owner, alphabet);
     } else if (req.method == 'PUT') {
       const { codes, owner } = parseFromPutsRequest(req);
       result = await loadNewCodes(codes, owner);
     } else if (req.method == 'GET') {
       result = await getPreGenCodes(req.query.owner as string);
+    } else if (req.method == 'DELETE') {
+      result = await delPreGenCodes(req.query.owner as string);
     } else {
       return res.status(404);
     }

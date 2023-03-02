@@ -67,6 +67,17 @@ export interface GeneratorProps {
   dotsData?: CornersAndDotsType | null;
 }
 
+export interface QrGeneratorProps {
+  options: OptionsType;
+  background?: BackgroundType | null;
+  hidden?: boolean | false;
+  overrideValue?: string | undefined;
+  command?: () => void;
+  frame?: FramesType | null;
+  cornersData?: CornersAndDotsType | null;
+  dotsData?: CornersAndDotsType | null;
+}
+
 export interface GenProps {
   forceOverride?: string | undefined;
 }

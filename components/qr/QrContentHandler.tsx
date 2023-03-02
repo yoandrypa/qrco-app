@@ -163,11 +163,14 @@ const QrContentHandler = () => { // @ts-ignore
       }
       default: { // @ts-ignore
         const item = dynamicQr[selected];
-        const handlePredefined = (pred?: string[]): string[] | undefined => options.mode === undefined ? pred : undefined;
+        const handlePredefined = (): string[] | undefined => {
+          if (data.custom?.length) { return undefined; }
+          return options.mode === undefined ? item.predefined : undefined
+        };
 
         return (
           <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected}
-                  tip={item.tip} predefined={handlePredefined(item.predefined)} />
+                  tip={item.tip} predefined={handlePredefined()} />
         );
       }
     }
