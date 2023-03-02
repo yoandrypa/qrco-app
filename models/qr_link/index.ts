@@ -3,28 +3,32 @@ import schema from "./link";
 import { ModelType, ObjectType } from "dynamoose/dist/General";
 import { Item } from "dynamoose/dist/Item";
 
-interface ILink extends Item {
-  countByUser: (userId: string) => number;
-  fetchByUser: (userId: string, limit?: number, pageKey?: string) => number;
+interface ICountByUserResponseType {
+  count: number;
 }
 
-export const Link: ModelType<ILink> = dynamoose.model<ILink>("links", schema);
+interface ILinkModel extends Item {
+  countByUser: (userId: string) => Promise<ICountByUserResponseType>;
+  fetchByUser: (userId: string, limit?: number, pageKey?: string) => Promise<any>;
+}
+
+export const Link: ModelType<ILinkModel> = dynamoose.model<ILinkModel>("links", schema);
 
 Link.methods.set("countByUser", async function (userId: string) {
-  const response = await this.query({ userId }).count().exec();
+  const response = await Link.query({ userId }).count().exec();
 
   return response;
 });
 
 Link.methods.set("fetchByUser", async function (userId: string, limit: number = 10, pageKey?: string) {
-  const query = this.query({ userId }).limit(limit);
+  const query = Link.query({ userId }).limit(limit);
 
   if (pageKey) {
     const key: ObjectType = JSON.parse(Buffer.from(pageKey, 'base64').toString('utf8'));
     query.startAt(key);
   }
 
-  const { count } = await this.query({ userId }).count().exec();
+  const { count } = await Link.query({ userId }).count().exec();
   const response = await query.exec();
 
   return {
