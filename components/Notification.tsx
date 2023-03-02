@@ -18,7 +18,7 @@ type NotificationType = NotificationData | Error | string | string[];
 type CloseOptionType = boolean | number;
 
 interface NotificationState {
-  notification?: NotificationData
+  notification: NotificationData
   open: boolean;
   closeOption?: CloseOptionType;
 }

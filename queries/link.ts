@@ -18,9 +18,8 @@ export const create = async (params: Create) => {
       encryptedPassword = await bcrypt.hash(params.password, salt);
     }
     return await LinkModel.create({
-      ...params,
-      password: encryptedPassword,
-      createdAt: params.createdAt ? params.createdAt : Date.now()
+      // @ts-ignore
+      ...params, password: encryptedPassword, createdAt: params.createdAt ? params.createdAt : Date.now()
     });
   } catch (e) {
     throw e;

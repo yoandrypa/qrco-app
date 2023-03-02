@@ -17,7 +17,7 @@ type CloseEventType = (value: boolean) => void | null;
 
 interface ConfirmData {
   content: string;
-  onClose: CloseEventType;
+  onClose: CloseEventType | null;
 }
 
 interface ConfirmState extends ConfirmData {
@@ -26,7 +26,7 @@ interface ConfirmState extends ConfirmData {
 
 const ConfirmDialog = () => {
   const [state, setState] = useState<ConfirmState>({ content: '', onClose: null, open: false });
-  const { title, content, onClose, open } = state;
+  const { content, onClose, open } = state;
 
   function onOpen(content: string, onClose: CloseEventType) {
     setState({ content, onClose, open: true });
@@ -56,17 +56,18 @@ const ConfirmDialog = () => {
     <Dialog maxWidth="sm" fullWidth open={open}>
       <DialogTitle>
         <Chip
-          variant="none" color="primary"
+          variant="filled"
+          color="primary"
           icon={<ConfirmationIcon />}
           label="Confirmation:"
         />
       </DialogTitle>
       <DialogContent dividers>{parseHtml(content)}</DialogContent>
       <DialogActions>
-        <Button color="primary" variant="outlined" onClick={onCancel} value={false} autoFocus>
+        <Button color="primary" variant="outlined" onClick={onCancel} autoFocus>
           {'Cancel'}
         </Button>
-        <Button color="primary" variant="outlined" onClick={onAccept} value={true}>
+        <Button color="primary" variant={"outlined"} onClick={onAccept}>
           {'Accept'}
         </Button>
       </DialogActions>

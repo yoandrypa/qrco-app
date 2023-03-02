@@ -83,7 +83,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     }
   };
 
-  function onConfirmUpgrade(value) {
+  function onConfirmUpgrade(value: boolean) {
     hideNotification();
     if (!value) return;
     startWaiting();
