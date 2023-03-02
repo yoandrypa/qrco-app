@@ -34,7 +34,6 @@ const Waiting = ({ text = "Please wait..." }) => {
   return (
     <Backdrop sx={{ color: "#fff", zIndex: theme => theme.zIndex.drawer + 1 }} open={waiting !== 0}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
-        <Typography align="center" sx={{ top: 32, position: 'relative' }}>{waiting}</Typography>
         <CircularProgress color="inherit" sx={{ mx: 'auto' }} />
         <Typography>{text}</Typography>
       </Box>
