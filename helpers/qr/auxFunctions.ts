@@ -5,7 +5,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
   let proceed = true;
 
   const data = structuredClone(dataInfo) as any;
-  if (selected === 'custom') {
+  if (selected === 'custom' && !data.custom?.length) {
     data.custom = [{component: 'title'}, {component: 'presentation'}, {component: 'organization'}, {component: 'address'},
       {component: 'links'}, {component: 'socials'}, {component: 'phones'}];
   }
