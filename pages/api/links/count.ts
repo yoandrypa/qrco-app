@@ -4,10 +4,7 @@ import {
   respondWithException,
   withSessionRoute,
   checkAuthorization,
-  parseFromPostRequest,
-  parseFromListRequest,
-  fetchLinks,
-  createLink,
+  countLinks,
 } from './helpers';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -19,11 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { currentUser } = req.session;
 
     if (req.method === "GET") {
-      const { limit, nextPageKey } = parseFromListRequest(req);
-      result = await fetchLinks(currentUser, limit, nextPageKey);
-    } else if (req.method === "POST") {
-      const data = parseFromPostRequest(req);
-      result = await createLink(data);
+      result = await countLinks(currentUser);
     } else {
       throw new NotFound;
     }

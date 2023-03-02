@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import Context from "../../components/context/Context";
 import PlanList from "../../components/plans/PlanList";
 
-import { request } from "../../libs/utils/reguest";
+import { request } from "../../libs/utils/request";
 import { setWarning } from "../../components/Notification";
 
 const Plans = () => {
