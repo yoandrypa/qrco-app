@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 
 import Alert, { AlertColor } from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
-import Button from "@mui/material/Button";
 
 import parseHtml from 'html-react-parser';
 import messaging from "@ebanux/ebanux-utils/messaging";

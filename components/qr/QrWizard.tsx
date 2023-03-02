@@ -181,7 +181,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
         amountByAdditionalDynamicQR = subscription.features.amountByAdditionalDynamicQR;
       }
 
-      if (amountByAdditionalDynamicQR === 0) request({ url: 'links/count' }).then(({ count }: any) => {
+      if (amountByAdditionalDynamicQR === 0 && process.env.REACT_APP_OVERRIDE !== 'dev') request({ url: 'links/count' }).then(({ count }: any) => {
         setLimitReached(count >= upToDynamicQR );
       });
     }
