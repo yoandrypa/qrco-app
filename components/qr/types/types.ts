@@ -318,8 +318,10 @@ export type DataType = {
   isDynamic?: boolean;
   prevBackImg?: string;
   prevForeImg?: string;
+  prevMicrositeImg?: string;
   backgndImg?: File | string;
   foregndImg?: File | string;
+  micrositeBackImage?: File | string;
   foregndImgType?: 'circle' | 'smooth' | 'square' | null;
   files?: File[];
   petName?: string;

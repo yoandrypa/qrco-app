@@ -81,7 +81,7 @@ export default function RenderKeyValue({data, setData, topics, index}: KeyValueP
       }
       return newData;
     });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setData((prev: DataType) => {
