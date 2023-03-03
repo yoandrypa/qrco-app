@@ -22,7 +22,6 @@ import { setWarning, hideNotification } from "../Notification";
 import { waitConfirmation } from "../ConfirmDialog";
 import { releaseWaiting, startWaiting } from "../Waiting";
 
-const RenderConfirmDlg = dynamic(() => import("../renderers/RenderConfirmDlg"));
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
 const Notifications = dynamic(() => import("../notifications/Notifications"));
 const ProcessHandler = dynamic(() => import("./renderers/ProcessHandler"));
@@ -34,7 +33,6 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   const [size, setSize] = useState<number>(0);
   const [forceDownload, setForceDownload] = useState<{ item: HTMLElement } | undefined>(undefined);
   const [, setUnusedState] = useState();
-  const [showLimitDlg, setShowLimitDlg] = useState<boolean>(false);
   const [limitReached, setLimitReached] = useState<boolean>(false);
 
   // @ts-ignore
@@ -103,10 +101,6 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
         return;
       }
     }
-    if (data.isDynamic && limitReached) {
-      setShowLimitDlg(true)
-      return;
-    }
 
     setLoading(true); // @ts-ignore
     if ([QR_TYPE_ROUTE, "/"].includes(router.pathname)) {
@@ -143,12 +137,6 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   };
 
   useEffect(() => {
-    if (router.pathname === QR_CONTENT_ROUTE && data.isDynamic && limitReached) {
-      setShowLimitDlg(true)
-    }
-  }, [router.pathname, limitReached]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
     const observer = new IntersectionObserver(
       (payload: IntersectionObserverEntry[]) => {
         setVisible(payload[0].isIntersecting || false);
@@ -156,7 +144,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
 
     observer.observe(btnRef.current);
     setSize(sizeRef.current.offsetWidth);
-    const getWidth = () => { setSize(sizeRef.current.offsetWidth); };
+    const getWidth = () => setSize(sizeRef.current.offsetWidth);
     window.addEventListener("resize", getWidth);
 
     if (router.pathname === QR_CONTENT_ROUTE && isLogged && data?.isDynamic && (!Boolean(options.id) || options.mode !== 'edit')) {
@@ -173,41 +161,23 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
 
   useEffect(() => {
     if (session.isAuthenticated) {
-      let upToDynamicQR = 1;
+      let upToDynamicQR = process.env.FREE_DYNAMIC_QRS || 1;
       let amountByAdditionalDynamicQR = 0;
 
       if (subscription?.status === 'active') {
         upToDynamicQR = subscription.features.upToDynamicQR;
         amountByAdditionalDynamicQR = subscription.features.amountByAdditionalDynamicQR;
       }
-
-      if (amountByAdditionalDynamicQR === 0 && process.env.REACT_APP_OVERRIDE !== 'dev') request({ url: 'links/count' }).then(({ count }: any) => {
-        setLimitReached(count >= upToDynamicQR );
-      });
+      if (amountByAdditionalDynamicQR === 0) {
+        request({ url: 'links/count', throwError: 'notify' }).then(({ count }: any) => {
+          setLimitReached(count >= upToDynamicQR);
+        });
+      }
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
-      {showLimitDlg &&
-        <RenderConfirmDlg
-          title="Oops"
-          message="You have reached the limit of Dynamic QRs for this account. Upgrade to a paid plan to add more QRs. Click here to upgrade now."
-          handleOk={() => {
-            router.push('/plans');
-            setShowLimitDlg(false);
-          }}
-          handleCancel={() => {
-            if (router.pathname === QR_CONTENT_ROUTE) {
-              setRedirecting(true);
-              const query = {}; // @ts-ignore
-              if (router.query.address !== undefined) { query.address = router.query.address; }
-              router.push({ pathname: QR_TYPE_ROUTE, query }, QR_TYPE_ROUTE);
-            }
-            setShowLimitDlg(false);
-          }}
-          yesMsg='Upgrade'
-        />}
       <Box ref={sizeRef} sx={{
         width: "100%",
         display: "flex",
@@ -275,8 +245,10 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
             });
           }} />
       )}
-      {isError &&
-        <Notifications autoHideDuration={3500} message="Error accessing data!" onClose={() => setIsError(false)} showProgress />}
+      {isError && <Notifications autoHideDuration={3500}
+                                 message="Error accessing data!"
+                                 onClose={() => setIsError(false)}
+                                 showProgress />}
     </>
   );
 };
