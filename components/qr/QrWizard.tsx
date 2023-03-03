@@ -33,7 +33,6 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   const [size, setSize] = useState<number>(0);
   const [forceDownload, setForceDownload] = useState<{ item: HTMLElement } | undefined>(undefined);
   const [, setUnusedState] = useState();
-  const [limitReached, setLimitReached] = useState<boolean>(false);
 
   // @ts-ignore
   const forceUpdate = useCallback(() => setUnusedState({}), []);
@@ -51,6 +50,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   }: StepsProps = useContext(Context);
 
   const router = useRouter();
+  const isFirstStep = router.pathname === QR_TYPE_ROUTE;
 
   const handleBack = () => {
     startWaiting();
@@ -96,19 +96,39 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     router.push('/plans').finally(releaseWaiting);
   }
 
-  const handleNext = async () => {
-    if (data.isDynamic) {
-      if (!session.isAuthenticated) {
-        return setWarning('You need to be authenticated to be able to create dynamic QRs!');
-      } else if (limitReached) {
+  async function allowCreate(){
+    if (!data.isDynamic || !isFirstStep) return true;
+
+    if (!session.isAuthenticated) {
+      setWarning('You need to be authenticated to be able to create dynamic QRs!');
+      return false;
+    }
+
+    let upToDynamicQR = process.env.FREE_DYNAMIC_QRS || 1;
+    let amountByAdditionalDynamicQR = 0;
+
+    if (subscription?.status === 'active') {
+      upToDynamicQR = subscription.features.upToDynamicQR;
+      amountByAdditionalDynamicQR = subscription.features.amountByAdditionalDynamicQR;
+    }
+
+    if (amountByAdditionalDynamicQR === 0) {
+      const {count}  = await request({ url: 'links/count', throwError: 'notify' });
+      if (count >= upToDynamicQR) {
         setWarning([
           'You have reached the limit of Dynamic QRs for this account.',
           'Upgrade to a paid plan to add more QRs.',
         ], false);
         waitConfirmation('Click accept to if you want to view or upgrade your current plan.', onConfirmUpgrade);
-        return;
+        return false;
       }
     }
+
+    return true;
+  }
+
+  const handleNext = async () => {
+    if (!(await allowCreate())) return;
 
     // @ts-ignore
     if ([QR_TYPE_ROUTE, "/"].includes(router.pathname)) {
@@ -170,23 +190,6 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     }
 
     return () => window.removeEventListener("resize", getWidth);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (session.isAuthenticated && data.isDynamic) {
-      let upToDynamicQR = process.env.FREE_DYNAMIC_QRS || 1;
-      let amountByAdditionalDynamicQR = 0;
-
-      if (subscription?.status === 'active') {
-        upToDynamicQR = subscription.features.upToDynamicQR;
-        amountByAdditionalDynamicQR = subscription.features.amountByAdditionalDynamicQR;
-      }
-      if (amountByAdditionalDynamicQR === 0) {
-        request({ url: 'links/count', throwError: 'notify' }).then(({ count }: any) => {
-          setLimitReached(count >= upToDynamicQR);
-        });
-      }
-    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
