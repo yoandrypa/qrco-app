@@ -13,8 +13,11 @@ export function request({ inBackground, throwError, ...options }: any) {
 
       console.error(err);
 
-      if (throwError === 'notify') setError(msg);
-      if (throwError !== false) throw new Error(msg);
+      if (throwError === 'notify') {
+        setError(msg);
+      } else if (throwError !== false) {
+        throw new Error(msg);
+      }
     })
     .finally(() => {
       if (inBackground !== true) releaseWaiting();

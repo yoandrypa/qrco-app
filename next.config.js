@@ -33,8 +33,6 @@ module.exports = {
     API_BASE_PATH: process.env.API_BASE_PATH || process.env.REACT_APP_API_BASE_PATH,
     APP_ENV: process.env.APP_ENV || process.env.REACT_NODE_ENV,
 
-    REACT_APP_OVERRIDE: process.env.REACT_APP_OVERRIDE,
-
     CURRENT_USER_SERVICE_PATH: process.env.CURRENT_USER_SERVICE_PATH || process.env.REACT_APP_CURRENT_USER_SERVICE_PATH,
     DEFAULT_MAX_STATS_PER_LINK: process.env.DEFAULT_MAX_STATS_PER_LINK,
 
@@ -65,5 +63,7 @@ module.exports = {
     STRIPE_EVENTS_SECRET: process.env.STRIPE_EVENTS_SECRET || process.env.REACT_STRIPE_WEBHOOK_SECRET,
 
     USER_LIMIT_PER_DAY: process.USER_LIMIT_PER_DAY || process.env.REACT_APP_USER_LIMIT_PER_DAY,
+
+    FREE_DYNAMIC_QRS: process.env.FREE_DYNAMIC_QRS ? parseInt(process.env.FREE_DYNAMIC_QRS, 10) : 1,
   },
 };

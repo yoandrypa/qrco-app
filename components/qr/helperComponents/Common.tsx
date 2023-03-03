@@ -220,7 +220,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   const handleSave = async () => {
     lastAction.current = 'saving the data';
     setLoading(true);
-    await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setError, (creationDate?: string) => {
+    await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setError, (creationDate?: string) => {
       setData((prev: DataType) => {
         const newData = {...prev, mode: 'edit'};
         if (newData.claim !== undefined) {

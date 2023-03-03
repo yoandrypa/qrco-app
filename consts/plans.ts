@@ -1,3 +1,5 @@
+const freeDynamicQRs = process.env.FREE_DYNAMIC_QRS;
+
 export const free = {
   title: "Free",
   description: "Upgrade to a paid plan for additional features and support",
@@ -8,7 +10,7 @@ export const free = {
   priceAmount: "$0",
   features: {
     // [ 0 is Not-Allow ] and [ -1 is Unlimited ]
-    upToDynamicQR: 1,                 // Up to 1 dynamic QR code
+    upToDynamicQR: freeDynamicQRs,    // Up to x dynamic QR code
     amountByAdditionalDynamicQR: 0,   // No additional Dynamic QR codes are allowed
     upToPreGeneratedQR: -1,           // Unlimited pre-generated QRs
     upToMicroSite: 1,                 // Up to 1 micro-site (mobile-friendly landing page)
