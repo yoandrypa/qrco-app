@@ -65,5 +65,6 @@ module.exports = {
     USER_LIMIT_PER_DAY: process.USER_LIMIT_PER_DAY || process.env.REACT_APP_USER_LIMIT_PER_DAY,
 
     FREE_DYNAMIC_QRS: process.env.FREE_DYNAMIC_QRS ? parseInt(process.env.FREE_DYNAMIC_QRS, 10) : 1,
+    INCLUDE_CUSTOM_USER_ATTRS: process.env.INCLUDE_CUSTOM_USER_ATTRS === "true",
   },
 };

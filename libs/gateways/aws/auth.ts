@@ -16,8 +16,7 @@ let currentUser: any = null;
 
 const parseCurrentUserFromValidateTokenResponse = async (user: any) => {
   /* eslint-disable camelcase */
-  const { sub, aud, 'cognito:roles': roles } = user;
-  const { email, email_verified, ...attrs } = await getUserAttrs(sub);
+  const { sub, aud, email, email_verified, 'cognito:roles': roles } = user;
 
   currentUser = {
     cognito_user_id: sub,
@@ -31,9 +30,13 @@ const parseCurrentUserFromValidateTokenResponse = async (user: any) => {
     localRecord: await Users.getOrCreate(sub),
   };
 
-  Object.entries(attrs).forEach(([k, v]) => {
-    if (k.match(/^custom:/)) currentUser.custom[k.replace(/^custom:/, '')] = v;
-  });
+  if (process.env.INCLUDE_CUSTOM_USER_ATTRS) {
+    const attrs = await getUserAttrs(sub);
+
+    Object.entries(attrs).forEach(([k, v]) => {
+      if (k.match(/^custom:/)) currentUser.custom[k.replace(/^custom:/, '')] = v;
+    });
+  }
 
   return currentUser;
   /* eslint-enable camelcase */
