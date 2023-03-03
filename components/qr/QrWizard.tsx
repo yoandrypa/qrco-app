@@ -104,6 +104,10 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
       return false;
     }
 
+    if (process.env.REACT_APP_OVERRIDE === 'dev') {
+      return true;
+    }
+
     let upToDynamicQR = process.env.FREE_DYNAMIC_QRS || 1;
     let amountByAdditionalDynamicQR = 0;
 
