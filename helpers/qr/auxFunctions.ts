@@ -105,7 +105,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
             obj.zip = '12345';
             obj.state = 'Our State';
             obj.country = 'Our Country';
-          };
+          }
           x.data = obj;
           break;
         }

@@ -167,6 +167,10 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
 
       loadingCount.current -= 1;
       setError(true);
+    } finally {
+      if (loadingCount.current === 0) {
+        setLocalLoading(false);
+      }
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -191,12 +195,6 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       }
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (loading && loadingCount.current === 0) {
-      setLocalLoading(false);
-    }
-  }, [backImg, foreImg, micrositeBackImage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (isWideForPreview && openPreview) { setOpenPreview(false); }
