@@ -46,15 +46,19 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   // @ts-ignore
   const {
     selected, data, options, frame, background, cornersData, dotsData, isWrong, loading, setOptions,
-    setLoading, setRedirecting, clearData, setData,
+    setRedirecting, clearData, setData,
     subscription, userInfo,
   }: StepsProps = useContext(Context);
 
   const router = useRouter();
 
   const handleBack = () => {
-    router.push(router.pathname === QR_DESIGN_ROUTE ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE,
-      undefined, { shallow: true }).then(() => setLoading(false));
+    startWaiting();
+    router.push(
+      router.pathname === QR_DESIGN_ROUTE ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE,
+      undefined,
+      { shallow: true }
+    ).finally(releaseWaiting);
   };
 
   const isLogged = Boolean(userInfo);
@@ -76,8 +80,12 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
       setForceDownload({ item });
     } else {
       clearData();
-      router.push(goToList ? "/" : QR_TYPE_ROUTE, undefined, { shallow: true })
-        .then(() => setLoading(false));
+      startWaiting();
+      router.push(
+        goToList ? "/" : QR_TYPE_ROUTE,
+        undefined,
+        { shallow: true }
+      ).finally(releaseWaiting);
     }
   };
 
@@ -102,17 +110,17 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
       }
     }
 
-    setLoading(true); // @ts-ignore
+    // @ts-ignore
     if ([QR_TYPE_ROUTE, "/"].includes(router.pathname)) {
+      startWaiting();
       if (data.isDynamic && !isLogged) {
-        router.push({ pathname: QR_CONTENT_ROUTE, query: { selected } })
-          .then(() => setLoading(false));
+        router.push({ pathname: QR_CONTENT_ROUTE, query: { selected } }).finally(releaseWaiting);
       } else {
-        router.push(QR_CONTENT_ROUTE, undefined, { shallow: true })
-          .then(() => setLoading(false));
+        router.push(QR_CONTENT_ROUTE, undefined, { shallow: true }).finally(releaseWaiting);
       }
     } else if (router.pathname === QR_DESIGN_ROUTE && isLogged) {
-      await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setIsError,
+      startWaiting();
+      await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setIsError,
         () => {
           setData((prev: DataType) => {
             const newData = { ...data };
@@ -128,11 +136,16 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
             return prev;
           })
         }, router, lastStep, dataInfo.current.length, updatingHandler);
+      releaseWaiting();
     } else if (router.pathname === QR_DESIGN_ROUTE && !isLogged) {
       lastStep(false);
     } else {
-      router.push(router.pathname === QR_TYPE_ROUTE ? QR_CONTENT_ROUTE : QR_DESIGN_ROUTE, undefined, { shallow: true })
-        .then(() => setLoading(false));
+      startWaiting();
+      router.push(
+        router.pathname === QR_TYPE_ROUTE ? QR_CONTENT_ROUTE : QR_DESIGN_ROUTE,
+        undefined,
+        { shallow: true },
+      ).finally(releaseWaiting);
     }
   };
 
@@ -160,7 +173,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (session.isAuthenticated) {
+    if (session.isAuthenticated && data.isDynamic) {
       let upToDynamicQR = process.env.FREE_DYNAMIC_QRS || 1;
       let amountByAdditionalDynamicQR = 0;
 
@@ -239,10 +252,10 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
           handleDone={async () => {
             setForceDownload(undefined);
             setRedirecting(true);
+            startWaiting();
             router.push("/", undefined, { shallow: true }).then(() => {
-              setLoading(false);
               setRedirecting(false);
-            });
+            }).finally(releaseWaiting);
           }} />
       )}
       {isError && <Notifications autoHideDuration={3500}
