@@ -50,7 +50,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   }: StepsProps = useContext(Context);
 
   const router = useRouter();
-  const isFirstStep = router.pathname === QR_TYPE_ROUTE;
+  const isFirstStep = [QR_TYPE_ROUTE, "/"].indexOf(router.pathname) !== -1;
 
   const handleBack = () => {
     startWaiting();
@@ -114,7 +114,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
 
     if (amountByAdditionalDynamicQR === 0) {
       const {count}  = await request({ url: 'links/count', throwError: 'notify' });
-      if (count >= upToDynamicQR) {
+      if (upToDynamicQR !== -1 && count >= upToDynamicQR) {
         setWarning([
           'You have reached the limit of Dynamic QRs for this account.',
           'Upgrade to a paid plan to add more QRs.',
@@ -130,8 +130,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   const handleNext = async () => {
     if (!(await allowCreate())) return;
 
-    // @ts-ignore
-    if ([QR_TYPE_ROUTE, "/"].includes(router.pathname)) {
+    if (isFirstStep) {
       startWaiting();
       if (data.isDynamic && !isLogged) {
         router.push({ pathname: QR_CONTENT_ROUTE, query: { selected } }).finally(releaseWaiting);
