@@ -18,6 +18,7 @@ import { logout } from '@ebanux/ebanux-utils/auth';
 
 import { startWaiting, releaseWaiting } from "../Waiting";
 
+const Claimer = dynamic(() => import("../claimer/Claimer"));
 const Generator = dynamic(() => import("../qr/Generator"));
 const PleaseWait = dynamic(() => import("../PleaseWait"));
 const UpdateBrowser = dynamic(() => import("../UpdateBrowser"));
@@ -143,12 +144,18 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
     doneInitialRender.current = true;
 
-    if (!structuredClone) setUpdateBrowser(true);
+    if (!structuredClone) {
+      setUpdateBrowser(true);
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (updateBrowser) return <UpdateBrowser />;
+  if (updateBrowser) {
+    return <UpdateBrowser/>;
+  }
 
-  if (verifying || !data) return <PleaseWait />;
+  if (verifying || !data) {
+    return <PleaseWait/>;
+  }
 
   if (router.pathname.startsWith("/qr") && ![QR_TYPE_ROUTE, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE]
     .includes(router.pathname)) {
@@ -156,6 +163,9 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const renderContent = () => {
+    if (router.pathname.startsWith('/claim')) {
+      return <Claimer code={(router.query.code || '') as string}/>;
+    }
     if (router.pathname === "/" && router.query[PARAM_QR_TEXT] !== undefined) {
       const qrText = router.query[PARAM_QR_TEXT] as string;
       if (qrText !== undefined && qrText.length) {

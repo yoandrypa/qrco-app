@@ -18,24 +18,14 @@ interface ActionButtonProps {
 export default function RenderActionButton({data, setData, handleValues, index}: ActionButtonProps) {
   const handleOptionButton = () => {
     setData((prev: DataType) => {
-      const newData = {...prev};
-      if (index === undefined || index === -1) {
-        if (newData.urlOptionLabel !== undefined) {
-          delete newData.urlOptionLabel;
-          delete newData.urlOptionLink;
-        } else {
-          newData.urlOptionLabel = '';
-          newData.urlOptionLink = '';
-        }
+      const newData = {...prev}; // @ts-ignore
+      if (newData.custom[index].data?.urlOptionLabel === undefined) { // @ts-ignore
+        if (newData.custom[index].data === undefined) { newData.custom[index].data = {}; } // @ts-ignore
+        newData.custom[index].data.urlOptionLabel = ''; // @ts-ignore
+        newData.custom[index].data.urlOptionLabel = '';
       } else { // @ts-ignore
-        if (newData.custom[index].data?.urlOptionLabel === undefined) { // @ts-ignore
-          if (newData.custom[index].data === undefined) { newData.custom[index].data = {}; } // @ts-ignore
-          newData.custom[index].data.urlOptionLabel = ''; // @ts-ignore
-          newData.custom[index].data.urlOptionLabel = '';
-        } else { // @ts-ignore
-          delete newData.custom[index].data.urlOptionLabel; // @ts-ignore
-          delete newData.custom[index].data.urlOptionLabel;
-        }
+        delete newData.custom[index].data.urlOptionLabel; // @ts-ignore
+        delete newData.custom[index].data.urlOptionLabel;
       }
       return newData;
     });

@@ -39,6 +39,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
 
   const [loading, setLocalLoading] = useState<boolean>(false);
   const [backImg, setBackImg] = useState<any>(undefined);
+  const [micrositeBackImage, setMicrositeBackImage] = useState<any>(undefined);
   const [foreImg, setForeImg] = useState<any>(undefined);
   const [error, setError] = useState<boolean>(false);
   const [tabSelected, setTabSelected] = useState<number>(0);
@@ -46,6 +47,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   const [forceOpen, setForceOpen] = useState<string | undefined>(undefined);
 
   const lastAction = useRef<string | undefined>(undefined);
+  const loadingCount = useRef<number>(0);
 
   const isWideForPreview = useMediaQuery("(min-width:720px)", { noSsr: true });
 
@@ -61,7 +63,10 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
         return tempo;
       })
     } else if (!prop.startsWith('both')) {
-      if (prop === 'backgndImg' && backImg !== undefined) {
+      if (prop === 'micrositeBackImage' && micrositeBackImage !== undefined) {
+        setMicrositeBackImage(undefined); // @ts-ignore
+        setData((prev: DataType) => ({...prev, micrositeBackImage: payload, prevMicrositeImg: prev.micrositeBackImage[0].Key}));
+      } else if (prop === 'backgndImg' && backImg !== undefined) {
         setBackImg(undefined); // @ts-ignore
         setData((prev: DataType) => ({...prev, backgndImg: payload, prevBackImg: prev.backgndImg[0].Key}));
       } else if (prop === 'foregndImg' && foreImg !== undefined) {
@@ -127,13 +132,19 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       const fileData = await download(key);
 
       if (options.mode === 'edit') {
-        if (item === 'backgndImg') { // @ts-ignore
+        if (item === 'micrositeBackImage') { // @ts-ignore
+          setMicrositeBackImage(structuredClone(fileData.content));
+        } else if (item === 'backgndImg') { // @ts-ignore
           setBackImg(structuredClone(fileData.content));
         } else { // @ts-ignore
           setForeImg(structuredClone(fileData.content));
         }
       } else if (options.mode === 'clone') {
-        if (item === 'backgndImg') {
+        if (item === 'micrositeBackImage') { // @ts-ignore
+          const {name}: {name: string} = data.micrositeBackImage[0]; // @ts-ignore
+          const file = await blobUrlToFile(fileData.content, `${generateUUID()}${name.slice(name.lastIndexOf('.'))}`);
+          setData((prev: DataType) => ({...prev, micrositeBackImage: file}))
+        } else if (item === 'backgndImg') {
           const {name}: {name: string} = data.backgndImg[0]; // @ts-ignore
           const file = await blobUrlToFile(fileData.content, `${generateUUID()}${name.slice(name.lastIndexOf('.'))}`);
           setData((prev: DataType) => ({...prev, backgndImg: file}))
@@ -143,12 +154,18 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           setData((prev: DataType) => ({...prev, foregndImg: file}))
         }
       }
+
+      loadingCount.current -= 1;
     } catch {
-      if (item === 'backgndImg') {
+      if (item === 'micrositeBackImage') {
+        setMicrositeBackImage(null);
+      } else if (item === 'backgndImg') {
         setBackImg(null);
       } else {
         setForeImg(null);
       }
+
+      loadingCount.current -= 1;
       setError(true);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -157,22 +174,29 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
 
   useEffect(() => {
     if (isEditOrClone) {
+      if (data?.micrositeBackImage?.[0]?.Key) {
+        setLocalLoading(true);
+        loadingCount.current += 1;
+        getFiles(data.micrositeBackImage[0].Key, 'micrositeBackImage');
+      }
       if (data?.backgndImg?.[0]?.Key) {
         setLocalLoading(true);
+        loadingCount.current += 1;
         getFiles(data.backgndImg[0].Key, 'backgndImg');
       }
       if (data?.foregndImg?.[0]?.Key) {
         setLocalLoading(true);
+        loadingCount.current += 1;
         getFiles(data.foregndImg[0].Key, 'foregndImg');
       }
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if ((backImg !== undefined && !data.foregndImg) || (foreImg !== undefined && !data.backgndImg) || (foreImg !== undefined && backImg !== undefined)) {
+    if (loading && loadingCount.current === 0) {
       setLocalLoading(false);
     }
-  }, [backImg, foreImg]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [backImg, foreImg, micrositeBackImage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (isWideForPreview && openPreview) { setOpenPreview(false); }
@@ -285,6 +309,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                     omitPrimaryImg={omitProfileImg}
                     backgndImg={isEditOrClone ? (Array.isArray(data?.backgndImg) ? backImg || undefined : data?.backgndImg) : data?.backgndImg}
                     foregndImg={isEditOrClone ? (Array.isArray(data?.foregndImg) ? foreImg || undefined : data?.foregndImg) : data?.foregndImg}
+                    micrositesImg={isEditOrClone ? (Array.isArray(data?.micrositeBackImage) ? micrositeBackImage || undefined : data?.micrositeBackImage) : data?.micrositeBackImage}
                     loading={loading}
                     foreError={foreImg === null}
                     backError={backImg === null}
@@ -302,7 +327,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
               qrOptions={optionsForPreview()} step={1} data={previewQRGenerator(data, selected, omitProfileImg)}
               onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
               backImg={isEditOrClone && backImg ? backImg : undefined} handlePickImage={handleImg}
-              mainImg={isEditOrClone && foreImg ? foreImg : undefined} />
+              mainImg={isEditOrClone && foreImg ? foreImg : undefined}
+              backgroundImg={isEditOrClone && micrositeBackImage ? micrositeBackImage : undefined} />
           )}
         </Box>
       ) : renderChildren()}
@@ -316,7 +342,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
             onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
             shareLink={options?.data} qrOptions={optionsForPreview()} handlePickImage={handleImg}
             backImg={isEditOrClone && backImg ? backImg : undefined}
-            mainImg={isEditOrClone && foreImg ? foreImg : undefined} />
+            mainImg={isEditOrClone && foreImg ? foreImg : undefined}
+            backgroundImg={isEditOrClone && micrositeBackImage ? micrositeBackImage : undefined} />
         </RenderPreviewDrawer>
       )}
     </>

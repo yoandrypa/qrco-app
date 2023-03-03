@@ -34,7 +34,7 @@ export default function RenderLinks({data, setData, index}: RenderLinksProps) {
 
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
-      const newLinks = Array.from((index === -1 ? newData.links : newData.custom[index].data.links) || []);
+      const newLinks = Array.from(newData.custom[index].data.links || []);
       const [removed] = newLinks.splice(result.source.index, 1);
       newLinks.splice(result.destination.index, 0, removed); // @ts-ignore
       newData.custom[index].data.links = newLinks;
@@ -65,7 +65,7 @@ export default function RenderLinks({data, setData, index}: RenderLinksProps) {
     const value = payload.target?.value !== undefined ? payload.target.value : payload;
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
-      newData.custom[index].data.links[idx][item] = value;
+      newData.custom[index].data.links[idx][item] = item === 'link' ? value.toLowerCase() : value
       return newData;
     });
   }, [index]); // eslint-disable-line react-hooks/exhaustive-deps

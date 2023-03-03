@@ -5,6 +5,10 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
   let proceed = true;
 
   const data = structuredClone(dataInfo) as any;
+  if (selected === 'custom' && !data.custom?.length) {
+    data.custom = [{component: 'title'}, {component: 'presentation'}, {component: 'organization'}, {component: 'address'},
+      {component: 'links'}, {component: 'socials'}, {component: 'phones'}];
+  }
   const custom = data?.custom || [];
 
   custom.every((x: CustomType) => {
@@ -46,16 +50,12 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
         }
         case 'socials': {
           x.data = {
-            socials: [
-              {network: 'twitter', value: 'twitter_account'}, {network: 'facebook', value: 'facebook_account'}
-            ]
-          }
+            socials: [{network: 'twitter', value: 'twitter_account'}, {network: 'facebook', value: 'facebook_account'}]
+          };
           break;
         }
         case 'easiness': {
-          x.data = {
-            easiness: {wifi: true, accessible: true, health: true}
-          }
+          x.data = {easiness: {wifi: true, accessible: true, health: true}};
           break;
         }
         case 'opening': {
@@ -68,7 +68,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
               wed: [{"ini": "1000", "end": "2200"}],
               sat: [{"ini": "1000", "end": "2300"}]
             }
-          }
+          };
           break;
         }
         case 'company': {
@@ -105,30 +105,36 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
             obj.zip = '12345';
             obj.state = 'Our State';
             obj.country = 'Our Country';
-          }
+          };
           x.data = obj;
           break;
         }
         case 'sku': {
-          x.data = { sku: "COF1234EA", quantity: 7 }
+          x.data = { sku: "COF1234EA", quantity: 7 };
           break;
         }
         case 'title': {
-          x.data = {
-            titleAbout: 'This is the sample title', descriptionAbout: 'This is the sample description'
-          }
+          x.data = {titleAbout: 'This is the sample title', descriptionAbout: 'This is the sample description'};
+          break;
+        }
+        case 'organization': {
+          x.data = {organization: 'My organization', position: 'My position'};
+          break;
+        }
+        case 'phones': {
+          x.data = {cell: "+1234567890", phone: "+1234567890", fax: "+1234567890"};
           break;
         }
         case 'links': {
           x.data = {
             links: [
-              {label: 'My website', link: 'https://www.example.com'}, {
+              { label: 'My website', link: 'https://www.example.com'}, {
                 label: 'My blog',
                 link: 'https://www.example.com'
               },
               {label: 'My portfolio', link: 'https://www.example.com'}
             ]
-          }
+          };
           break;
         }
         case 'pdf': {
@@ -137,7 +143,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
               name: 'Photoshop for beginners NEW22.pdf', // @ts-ignore
               Key: 'pdfs/Photoshop for beginners NEW22.pdf'
             }]
-          }
+          };
           break;
         }
         case 'gallery': {
@@ -146,27 +152,23 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
               {name: "0land.jpg", Key: "galleries/0land.jpg"}, {name: "1land.jpg", Key: "galleries/1land.jpg"}, // @ts-ignore
               {name: "2land.jpg", Key: "galleries/2land.jpg"}, {name: "3land.jpg", Key: "galleries/3land.jpg"}
             ]
-          }
+          };
           break;
         }
         case 'audio': {
-          x.data = {
-            files: [{ // @ts-ignore
-              name: "audio.mp3", Key: "audios/Luerod Bounce - Will i am (Orchrestral mix)mp3.mp3"
-            }]
-          }
+          x.data = { // @ts-ignore
+            files: [{ name: "audio.mp3", Key: "audios/Luerod Bounce - Will i am (Orchrestral mix)mp3.mp3" }]
+          };
           break;
         }
         case 'video': {
-          x.data = {
-            files: [{ // @ts-ignore
-              name: 'video.mp4', Key: 'videos/Facebook 0330478876988862(MP4).mp4'
-            }]
-          }
+          x.data = { // @ts-ignore
+            files: [{ name: 'video.mp4', Key: 'videos/Facebook 0330478876988862(MP4).mp4' }]
+          };
           break;
         }
         case 'tags': {
-          x.data = {tags: ['Painting', 'Clocks', 'Cars', 'Pets']}
+          x.data = {tags: ['Painting', 'Clocks', 'Cars', 'Pets']};
           break;
         }
         case "petId": {
@@ -175,7 +177,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
             petYearOfBirth: "2019",
             petGender: "male",
             petName: "Fido"
-          }
+          };
           break;
         }
         case 'keyvalue': {
@@ -186,7 +188,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
               { value: "Baseball", key: "Game" },
               { value: "Down the stairs, first door at left", key: "Location" }
             ]
-          }
+          };
           break;
         }
         case 'couponInfo': {
@@ -197,7 +199,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
             badge: "10% OFF",
             urlOptionLabel: "Buy & get a discount",
             urlOptionLink: "https://unicelectronics.com/shop"
-          }
+          };
           break;
         }
         case 'couponData': {
@@ -205,7 +207,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
             name: "SALES_10_OFF",
             text: "The coupon applies only in purchases over 100 USD",
             data: "1669834040000"
-          }
+          };
           break;
         }
       }

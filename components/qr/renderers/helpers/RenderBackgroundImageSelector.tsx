@@ -1,15 +1,22 @@
-import Box from "@mui/material/Box";
-
-import {DataType} from "../../types/types";
 import {useState} from "react";
-import Notifications from "../../../notifications/Notifications";
-import Tooltip from "@mui/material/Tooltip";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
-import ButtonGroup from "@mui/material/ButtonGroup";
+import ClearIcon from '@mui/icons-material/Clear';
+import SearchIcon from '@mui/icons-material/Search';
+
+import {DataType} from "../../types/types";
+
+import dynamic from "next/dynamic";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
+const RenderImgPreview = dynamic(() => import("./RenderImgPreview"));
+const RenderImagePicker = dynamic(() => import("./RenderImagePicker"));
+const ImageCropper = dynamic(() => import("./ImageCropper"));
+const Notifications = dynamic(() => import("../../../notifications/Notifications"));
 
 interface BackImgProps {
-  data?: DataType;
+  micrositesImg?: File | string;
   handleValue: Function;
 }
 
@@ -19,33 +26,86 @@ interface ErrorProps {
   warning?: boolean;
 }
 
-export default function RenderBackgroundImageSelector({data, handleValue}: BackImgProps) {
+export default function RenderBackgroundImageSelector({handleValue, micrositesImg}: BackImgProps) {
   const [error, setError] = useState<ErrorProps | null>(null);
+  const [selectFile, setSelectFile] = useState<boolean>(false);
+  const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
+  const [preview, setPreview] = useState<boolean>(false);
 
-  const handleAcept = (f: File) => {
+  const isWide = useMediaQuery("(min-width:570px)", { noSsr: true });
 
+  const handleAccept = (file: File) => {
+    setCropper({file, kind: 'micrositeBackImage'});
+    setSelectFile(false);
   }
 
-  const handleSelectFile = (kind: string) => () => {
+  const handleSelectFile = () => {
+    setSelectFile(true);
+  };
 
+  const handlePreview = () => {
+    setPreview(true);
+  }
+
+  const handleRemove = () => {
+    handleValue('micrositeBackImage')(undefined)
+  }
+
+  const handleSave = (newFile: File, kind: string) => {
+    handleValue(kind)(newFile);
+    setCropper(null);
   };
 
   return (
     <>
-      <Box sx={{mt: 1}}>
-        <ButtonGroup>
-          <Tooltip title="Click for selecting the microsite's background image">
+      <Box sx={{p: isWide ? 'unset' : 1, mt: '10px'}}>
+        <Button
+          sx={{width: isWide ? 'unset' : '100%'}}
+          startIcon={<WallpaperIcon/>}
+          variant="outlined"
+          color="primary"
+          onClick={handleSelectFile}>
+          {'Select Background image'}
+        </Button>
+        {micrositesImg !== undefined && (
+          <>
             <Button
-              sx={{width: '100%'}}
-              startIcon={<WallpaperIcon sx={{ color: theme => theme.palette.error.dark }}/>}
+              sx={{ml: isWide ? 1 : 0, mt: isWide ? 0 : 1, width: isWide ? 'unset' : '100%'}}
+              startIcon={<SearchIcon/>}
               variant="outlined"
               color="primary"
-              onClick={handleSelectFile('backgndImg')}>
-              {'Background image'}
+              onClick={handlePreview}>
+              {'Preview'}
             </Button>
-          </Tooltip>
-        </ButtonGroup>
+            <Button
+              sx={{ml: isWide ? 1 : 0, mt: isWide ? 0 : 1, width: isWide ? 'unset' : '100%'}}
+              startIcon={<ClearIcon color="error"/>}
+              variant="outlined"
+              color="primary"
+              onClick={handleRemove}>
+              {'Remove'}
+            </Button>
+          </>
+        )}
       </Box>
+      {selectFile && (
+        <RenderImagePicker
+          handleClose={() => setSelectFile(false)}
+          title="background"
+          kind="micrositeBackImage"
+          handleAcept={handleAccept}/>
+      )}
+      {cropper !== null && (
+        <ImageCropper
+          handleClose={() => setCropper(null)}
+          file={cropper.file}
+          kind={cropper.kind}
+          handleAccept={handleSave}
+          message="background"/>
+      )}
+      {preview && ( // @ts-ignore
+        <RenderImgPreview handleClose={() => setPreview(false)} file={micrositesImg} kind="background" />
+      )}
       {error && (
         <Notifications
           onClose={() => setError(null)}

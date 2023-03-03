@@ -26,15 +26,10 @@ interface AssetsProps {
 export default function RenderAssetsData({type, totalFiles, data, setData, index, doNotAutoOpen}: AssetsProps) {
   const handleValues = (autoOpen: boolean) => {
     setData((prev: DataType) => {
-      const newData = {...prev};
-      if (index === undefined || index === -1) {
-        newData.autoOpen = autoOpen;
-        if (newData.autoOpen !== undefined && !autoOpen) { delete newData.autoOpen; }
-      } else { // @ts-ignore
-        if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
-        newData.custom[index].data.autoOpen = autoOpen; // @ts-ignore
-        if (!autoOpen) { delete newData.custom[index].data.autoOpen; }
-      }
+      const newData = {...prev}; // @ts-ignore
+      if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
+      newData.custom[index].data.autoOpen = autoOpen; // @ts-ignore
+      if (!autoOpen) { delete newData.custom[index].data.autoOpen; }
       return newData;
     });
   };
@@ -42,13 +37,9 @@ export default function RenderAssetsData({type, totalFiles, data, setData, index
   const handleChange = (files: File[]) => {
     if (!data?.files || files.length === 0) {
       setData((prev: DataType) => {
-        const newData = {...prev};
-        if (index === -1) {
-          newData.files = files;
-        } else { // @ts-ignore
-          if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
-          newData.custom[index].data.files = files;
-        }
+        const newData = {...prev}; // @ts-ignore
+        if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
+        newData.custom[index].data.files = files;
         return newData;
       });
     } else {
@@ -65,12 +56,9 @@ export default function RenderAssetsData({type, totalFiles, data, setData, index
 
         if (C.length === 0) { C = A.concat(B); }
 
-        if (index === -1) {
-          newData.files = C;
-        } else { // @ts-ignore
-          if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
-          newData.custom[index].data.files = C;
-        }
+        // @ts-ignore
+        if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
+        newData.custom[index].data.files = C;
 
         return newData;
       });

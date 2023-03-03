@@ -202,7 +202,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   if (data.backgndImg !== undefined) {
     if (!Array.isArray(data.backgndImg)) {
-      prevUpdatingHandler("Uploading background image");
+      prevUpdatingHandler("Uploading banner image");
       try { // @ts-ignore
         data.backgndImg = await upload([data.backgndImg], `${userInfo.cognito_user_id}/${selected}s/design`);
         prevUpdatingHandler(null, true);
@@ -215,7 +215,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     }
   }
   if (data.prevBackImg !== undefined) {
-    prevUpdatingHandler("Removing previous background image");
+    prevUpdatingHandler("Removing previous banner image");
     try {
       await remove([{ Key: data.prevBackImg }]);
       delete data.prevBackImg;
@@ -245,6 +245,32 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     try {
       await remove([{ Key: data.prevForeImg }]);
       delete data.prevForeImg;
+      prevUpdatingHandler(null, true);
+    } catch {
+      prevUpdatingHandler(null, false);
+      setIsError(true);
+    }
+  }
+
+  if (data.micrositeBackImage !== undefined) {
+    if (!Array.isArray(data.micrositeBackImage)) {
+      prevUpdatingHandler("Uploading background image");
+      try { // @ts-ignore
+        data.micrositeBackImage = await upload([data.micrositeBackImage], `${userInfo.cognito_user_id}/${selected}s/design`);
+        prevUpdatingHandler(null, true);
+      } catch {
+        prevUpdatingHandler(null, false);
+        setIsError(true);
+      }
+    } else {
+      delete data.backgndImg;
+    }
+  }
+  if (data.prevMicrositeImg !== undefined) {
+    prevUpdatingHandler("Removing previous background image");
+    try {
+      await remove([{ Key: data.prevMicrositeImg }]);
+      delete data.prevMicrositeImg;
       prevUpdatingHandler(null, true);
     } catch {
       prevUpdatingHandler(null, false);

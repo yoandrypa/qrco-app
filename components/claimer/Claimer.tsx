@@ -1,4 +1,4 @@
-import React, {ChangeEvent, KeyboardEvent, MouseEvent, useEffect, useRef, useState} from "react";
+import {ChangeEvent, KeyboardEvent, MouseEvent, useEffect, useRef, useState} from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
@@ -16,7 +16,7 @@ import {findByAddress} from "../../handlers/links";
 const Typo = styled(Typography)(({ bold }: { bold?: boolean }) => ({
   display: 'inline',
   fontWeight: bold ? 'bold' : 'unset',
-  fontSize: '20px'
+  fontSize: '35px'
 }));
 
 const URL = 'https://a-qr.link/';
@@ -40,8 +40,10 @@ export default function Claimer({ code }: ClaimerProps) {
   }
 
   const handleClaim = (event: MouseEvent<HTMLButtonElement>) => {
-    if (window && window.top) {
+    if (window && window.top && window.top !== window.top) {
       window.top.location.href = `${window.location.origin}/qr/type?address=${custom}`;
+    } else {
+      setOpen(event.currentTarget);
     }
   }
 
@@ -71,6 +73,7 @@ export default function Claimer({ code }: ClaimerProps) {
         <Box sx={{ mb: 2, width: '100%', textAlign: 'center' }}>
           <Typo bold>QR</Typo>
           <Typo sx={{ color: MAIN_ORANGE }} bold>Lynk</Typo>
+          <Typography sx={{ position: 'relative', top: '-43px', right: '-67px', fontSize: '9px', fontWeight: 'bold'}}>TM</Typography>
         </Box>
         <Paper elevation={2}>
           <RenderPreview override={lynk.current} width="100%" onlyPreview />
@@ -87,7 +90,9 @@ export default function Claimer({ code }: ClaimerProps) {
               margin="dense"
               value={custom}
               error={isError || !available}
-              helperText={isError ? 'Make sure you entered a code' : (available ? '' : 'The entered code is already taken')}
+              helperText={checking && !isError ? 'Checking code availability...' :
+                (isError ? 'Make sure you entered a code' : (available ? 'The code is available' : 'The entered code is already taken'))
+              }
               sx={{ '& fieldset': { borderRadius: '5px 0 0 5px' } }}
               onChange={handleCustom}
               InputProps={{
