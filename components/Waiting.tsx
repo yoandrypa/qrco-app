@@ -8,15 +8,19 @@ import messaging from "@ebanux/ebanux-utils/messaging";
 
 const mSubscriptions: any[] = [];
 
+let waiting: number = 0;
+
 const Waiting = ({ text = "Please wait..." }) => {
-  const [waiting, setWaiting] = useState<number>(0);
+  const [active, setActive] = useState<boolean>(false);
 
   function onStartWaiting() {
-    setWaiting(waiting + 1);
+    waiting += 1;
+    setActive(waiting > 0);
   }
 
   function onReleaseWaiting() {
-    setWaiting(Math.max(waiting - 1, 0));
+    waiting = Math.max(waiting - 1, 0);
+    setActive(waiting > 0);
   }
 
   useEffect(() => {
@@ -32,7 +36,7 @@ const Waiting = ({ text = "Please wait..." }) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Backdrop sx={{ color: "#fff", zIndex: theme => theme.zIndex.drawer + 1 }} open={waiting !== 0}>
+    <Backdrop sx={{ color: "#fff", zIndex: theme => theme.zIndex.drawer + 1 }} open={active}>
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <CircularProgress color="inherit" sx={{ mx: 'auto' }} />
         <Typography>{text}</Typography>
