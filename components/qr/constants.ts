@@ -7,7 +7,6 @@ export const QR_DETAILS_ROUTE = "/qr/[id]/details";
 export const PLANS_ACCOUNT_PORTAL = "/plans/account";
 
 export const PRIVATE_ROUTES = [
-  QR_TYPE_ROUTE,
   QR_CONTENT_ROUTE,
   QR_DESIGN_ROUTE,
   QR_DETAILS_ROUTE,
