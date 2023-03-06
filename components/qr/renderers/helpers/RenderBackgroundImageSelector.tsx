@@ -4,12 +4,11 @@ import Button from "@mui/material/Button";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
 import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 import dynamic from "next/dynamic";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import Slider from "@mui/material/Slider";
-import Typography from "@mui/material/Typography";
 
+const RenderHandleOpacity = dynamic(() => import("../../helperComponents/smallpieces/RenderHandleOpacity"));
 const RenderImgPreview = dynamic(() => import("./RenderImgPreview"));
 const RenderImagePicker = dynamic(() => import("./RenderImagePicker"));
 const ImageCropper = dynamic(() => import("./ImageCropper"));
@@ -52,11 +51,6 @@ export default function RenderBackgroundImageSelector({handleValue, micrositesIm
     handleValue('micrositeBackImage')(undefined);
   };
 
-  const handleOpacity = (_: Event, newValue: number | number[]) => {
-    const value = newValue as number;
-    handleValue('micrositeBackImageOpacity')(Math.round(value)/100);
-  };
-
   const handleSave = (newFile: File, kind: string) => {
     handleValue(kind)(newFile);
     setCropper(null);
@@ -95,13 +89,7 @@ export default function RenderBackgroundImageSelector({handleValue, micrositesIm
         )}
       </Box>
       {micrositesImg !== undefined && (
-        <Box sx={{ width: isWide ? '500px' : '100%', mt: 1}}>
-          <Typography sx={{display: 'flex'}}>
-            {'Opacity'}
-            <Typography sx={{color: theme => theme.palette.text.disabled, ml: 1}}>{`(${Math.ceil(opacity * 100)} %)`}</Typography>
-          </Typography>
-          <Slider value={opacity * 100} onChange={handleOpacity} size="small" min={0} max={100} />
-        </Box>
+        <RenderHandleOpacity opacity={opacity} handleValue={handleValue} property="micrositeBackImageOpacity" />
       )}
       {selectFile && (
         <RenderImagePicker

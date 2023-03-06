@@ -1,6 +1,5 @@
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import InputLabel from "@mui/material/InputLabel";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -14,6 +13,7 @@ import SectionSelector from "../SectionSelector";
 import ColorSelector from "../ColorSelector";
 import {DEFAULT_COLORS} from "../../constants";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import RenderHandleOpacity from "../smallpieces/RenderHandleOpacity";
 
 const RenderBorders = dynamic(() => import("./RenderBorders"));
 const RenderTwoColors = dynamic(() => import("../smallpieces/RenderTwoColors"));
@@ -48,7 +48,7 @@ export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerP
   return (
     <Box sx={{mt: 1}}>
       <RenderMainFontsHandler handleValue={handleValue} data={data}/>
-      <Paper elevation={2} sx={{p: 1, my: 2, display: 'flex', flexDirection: isWide ? 'row' : 'column'}}>
+      <Box sx={{p: 1, display: 'flex', flexDirection: isWide ? 'row' : 'column'}}>
         <Box>
           <Typography>{'Shape'}</Typography>
           {[...Array(4).keys()].map(x => renderShape(x))}
@@ -58,8 +58,8 @@ export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerP
             <RenderBorders handleValue={handleValue} data={data} />
           </Box>
         )}
-      </Paper>
-      <Paper elevation={2} sx={{p: 1}}>
+      </Box>
+      <Box sx={{p: 1, mt: '-20px'}}>
         <Typography>{'Background'}</Typography>
         <Box sx={{display: 'flex', flexDirection: isWide && isWideEnough ? 'row' : 'column', width: '100%'}}>
           <FormControl sx={{m: 0, mt: 1, width: '100%'}} size="small">
@@ -84,9 +84,45 @@ export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerP
             </Box>
           )}
         </Box>
-        {data?.buttonBack === 'two' && <RenderTwoColors handleValue={handleValue} data={data}/>}
-        {data?.buttonBack === 'gradient' && <RenderTwoColors handleValue={handleValue} data={data} isGradient/>}
-      </Paper>
+        {data?.buttonBack === 'two' && <RenderTwoColors handleValue={handleValue} data={data} property="buttonBackColor"/>}
+        {data?.buttonBack === 'gradient' && <RenderTwoColors handleValue={handleValue} data={data} isGradient property="buttonBackColor"/>}
+        <Box sx={{width: 'calc(100% - 10px)'}}>
+          <RenderHandleOpacity
+            opacity={data?.buttonsOpacity !== undefined ? data?.buttonsOpacity : 1}
+            handleValue={handleValue}
+            property="buttonsOpacity"
+            message="Button's background opacity"
+            keepContainerWidth />
+        </Box>
+      </Box>
+      {/*<Box sx={{p: 1, mt: '-10px'}}>*/}
+      {/*  <Typography>{'Borders'}</Typography>*/}
+      {/*  <Box sx={{display: 'flex', flexDirection: isWide && isWideEnough ? 'row' : 'column', width: '100%'}}>*/}
+      {/*    <FormControl sx={{m: 0, mt: 1, width: '100%'}} size="small">*/}
+      {/*      <InputLabel id="buttonBackColor">Color</InputLabel>*/}
+      {/*      <Select*/}
+      {/*        labelId="buttonBorderColor"*/}
+      {/*        id="buttonBorderColor"*/}
+      {/*        value={data?.buttonBorderColor || 'default'}*/}
+      {/*        label="Color"*/}
+      {/*        onChange={handler}*/}
+      {/*      >*/}
+      {/*        <MenuItem value="default">Default border's colors</MenuItem>*/}
+      {/*        <MenuItem value="main">Use main colors as border's colors</MenuItem>*/}
+      {/*        <MenuItem value="solid">Solid color even on hover</MenuItem>*/}
+      {/*        <MenuItem value="two">Custom primary and secondary colors</MenuItem>*/}
+      {/*        <MenuItem value="noBorders">No borders</MenuItem>*/}
+      {/*      </Select>*/}
+      {/*    </FormControl>*/}
+      {/*    {data?.buttonBorderColor === 'solid' && (*/}
+      {/*      <Box sx={{width: isWide && isWideEnough ? '45%' : '100%', ml: isWide && isWideEnough ? '5px' : 0}}>*/}
+      {/*        <ColorSelector label="" color={data?.buttonBorderColor || data?.primary || DEFAULT_COLORS.p}*/}
+      {/*                       handleData={handleValue} property="buttonBackColor"/>*/}
+      {/*      </Box>*/}
+      {/*    )}*/}
+      {/*  </Box>*/}
+      {/*  {data?.buttonBorderColor === 'two' && <RenderTwoColors handleValue={handleValue} data={data} property="" />}*/}
+      {/*</Box>*/}
     </Box>
   );
 }
