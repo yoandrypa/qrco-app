@@ -47,6 +47,12 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
     }
   }, [data?.layout]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (data?.backgroundType !== 'image' && micrositesImg) {
+      handleValue('micrositesImg')(undefined);
+    }
+  }, [data?.backgroundType]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <>
       {loading && (

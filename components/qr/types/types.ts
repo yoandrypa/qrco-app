@@ -195,6 +195,7 @@ export type CustomType = {
 };
 
 export type DataType = {
+  buttonsOpacity?: number;
   micrositeBackImageOpacity?: number;
   qrType?: string;
   mode?: string;
