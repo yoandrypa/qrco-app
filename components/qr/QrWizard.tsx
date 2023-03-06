@@ -96,12 +96,13 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     router.push('/plans').finally(releaseWaiting);
   }
 
-  async function allowCreate(){
+  async function allowCreate() {
     if (!data.isDynamic || !isFirstStep) return true;
 
     if (!session.isAuthenticated) {
-      setWarning('You need to be authenticated to be able to create dynamic QRs!');
-      return false;
+      // TODO: Redirect to login and check plan after authentication
+      // setWarning('You need to be authenticated to be able to create dynamic QRs!');
+      return true;
     }
 
     if (process.env.REACT_APP_OVERRIDE === 'dev') {
@@ -117,7 +118,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     }
 
     if (amountByAdditionalDynamicQR === 0) {
-      const {count}  = await request({ url: 'links/count', throwError: 'notify' });
+      const { count } = await request({ url: 'links/count', throwError: 'notify' });
       if (upToDynamicQR !== -1 && count >= upToDynamicQR) {
         setWarning([
           'You have reached the limit of Dynamic QRs for this account.',
