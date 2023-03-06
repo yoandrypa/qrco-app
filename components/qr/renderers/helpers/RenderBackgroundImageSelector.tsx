@@ -5,10 +5,10 @@ import WallpaperIcon from "@mui/icons-material/Wallpaper";
 import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
 
-import {DataType} from "../../types/types";
-
 import dynamic from "next/dynamic";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import Slider from "@mui/material/Slider";
+import Typography from "@mui/material/Typography";
 
 const RenderImgPreview = dynamic(() => import("./RenderImgPreview"));
 const RenderImagePicker = dynamic(() => import("./RenderImagePicker"));
@@ -17,6 +17,7 @@ const Notifications = dynamic(() => import("../../../notifications/Notifications
 
 interface BackImgProps {
   micrositesImg?: File | string;
+  opacity: number;
   handleValue: Function;
 }
 
@@ -26,7 +27,7 @@ interface ErrorProps {
   warning?: boolean;
 }
 
-export default function RenderBackgroundImageSelector({handleValue, micrositesImg}: BackImgProps) {
+export default function RenderBackgroundImageSelector({handleValue, micrositesImg, opacity}: BackImgProps) {
   const [error, setError] = useState<ErrorProps | null>(null);
   const [selectFile, setSelectFile] = useState<boolean>(false);
   const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
@@ -45,11 +46,16 @@ export default function RenderBackgroundImageSelector({handleValue, micrositesIm
 
   const handlePreview = () => {
     setPreview(true);
-  }
+  };
 
   const handleRemove = () => {
-    handleValue('micrositeBackImage')(undefined)
-  }
+    handleValue('micrositeBackImage')(undefined);
+  };
+
+  const handleOpacity = (_: Event, newValue: number | number[]) => {
+    const value = newValue as number;
+    handleValue('micrositeBackImageOpacity')(Math.round(value)/100);
+  };
 
   const handleSave = (newFile: File, kind: string) => {
     handleValue(kind)(newFile);
@@ -88,6 +94,15 @@ export default function RenderBackgroundImageSelector({handleValue, micrositesIm
           </>
         )}
       </Box>
+      {micrositesImg !== undefined && (
+        <Box sx={{ width: isWide ? '500px' : '100%', mt: 1}}>
+          <Typography sx={{display: 'flex'}}>
+            {'Opacity'}
+            <Typography sx={{color: theme => theme.palette.text.disabled, ml: 1}}>{`(${Math.ceil(opacity * 100)} %)`}</Typography>
+          </Typography>
+          <Slider value={opacity * 100} onChange={handleOpacity} size="small" min={0} max={100} />
+        </Box>
+      )}
       {selectFile && (
         <RenderImagePicker
           handleClose={() => setSelectFile(false)}
