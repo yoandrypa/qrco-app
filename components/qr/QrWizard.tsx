@@ -123,7 +123,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     }
 
     if (amountByAdditionalDynamicQR === 0) {
-      const { count } = await request({ url: 'links/count', params: { pregenerated: false }, throwError: 'notify' });
+      const { count } = await request({ url: 'links/count', params: { preGenerated: false }, throwError: 'notify' });
       if (upToDynamicQR !== -1 && count >= upToDynamicQR) {
         setWarning([
           'You have reached the limit of Dynamic QRs for this account.',
