@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import {
   NotFound,
+  allowCors,
   respondWithException,
   withSessionRoute,
   checkAuthorization,
@@ -14,6 +15,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   let result;
 
   try {
+    await allowCors(req, res);
     await checkAuthorization(req);
 
     const { currentUser } = req.session;

@@ -7,7 +7,7 @@ import { PreGeneratedModel } from "../../../models/link";
 import * as linkHandler from "../../../handlers/links";
 
 export { NotFound, respondWithException } from "../../../libs/exceptions";
-export { withSessionRoute, checkAuthorization } from '../base/helpers';
+export { withSessionRoute, checkAuthorization, allowCors } from '../base/helpers';
 
 /**
  * Parse and validate the request via POST
