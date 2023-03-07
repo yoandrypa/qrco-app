@@ -1,5 +1,3 @@
-require('dotenv').config()
-
 const { Command } = require('commander');
 
 const { create, list, load, remove } = require('./actions');

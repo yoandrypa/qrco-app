@@ -143,19 +143,12 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     if (isFirstStep) {
       // Step 1: QR_TYPE_ROUTE or / ==>  QR_CONTENT_ROUTE
       startWaiting();
-      router.push({
-        pathname: QR_CONTENT_ROUTE,
-        query: { selected, address: router.query.address },
-      }).finally(releaseWaiting);
+      router.push(QR_CONTENT_ROUTE).finally(releaseWaiting);
 
     } else if (router.pathname === QR_CONTENT_ROUTE) {
       // Step 2: QR_CONTENT_ROUTE ==> QR_DESIGN_ROUTE
       startWaiting();
-      router.push(
-        { pathname: QR_DESIGN_ROUTE, query: router.query },
-        undefined,
-        { shallow: true },
-      ).finally(releaseWaiting);
+      router.push(QR_DESIGN_ROUTE, undefined, { shallow: true }).finally(releaseWaiting);
 
     } else if (router.pathname === QR_DESIGN_ROUTE) {
       // Step 3: QR_DESIGN_ROUTE    ==> PRINT | DOWNLOAD | SAVE
