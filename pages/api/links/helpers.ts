@@ -39,12 +39,24 @@ export function parseFromListRequest(req: NextApiRequest) {
   return Joi.attempt(req.query, schema, { abortEarly: false });
 }
 
+/**
+ * Parse and validate the count service parameters
+ * @param req
+ */
+export function parseFromCountRequest(req: NextApiRequest) {
+  const schema = Joi.object({
+    preGenerated: Joi.boolean().optional(),
+  });
+
+  return Joi.attempt(req.query, schema, { abortEarly: false });
+}
+
 export async function fetchLinks(currentUser: any, limit: number, pageKey: string) {
   return LinkModel.fetchByUser(currentUser.cognito_user_id, limit, pageKey);
 }
 
-export async function countLinks(currentUser: any) {
-  return LinkModel.countByUser(currentUser.cognito_user_id);
+export async function countLinks(currentUser: any, preGenerated?: boolean) {
+  return LinkModel.countByUser(currentUser.cognito_user_id, preGenerated);
 }
 
 export async function checkLinkStatus(code: string) {

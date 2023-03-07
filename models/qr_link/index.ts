@@ -8,16 +8,18 @@ interface ICountByUserResponseType {
 }
 
 interface ILinkModel extends Item {
-  countByUser: (userId: string) => Promise<ICountByUserResponseType>;
+  countByUser: (userId: string, preGenerated?: boolean) => Promise<ICountByUserResponseType>;
   fetchByUser: (userId: string, limit?: number, pageKey?: string) => Promise<any>;
 }
 
 export const Link: ModelType<ILinkModel> = dynamoose.model<ILinkModel>("links", schema);
 
-Link.methods.set("countByUser", async function (userId: string) {
-  const response = await Link.query({ userId }).count().exec();
+Link.methods.set("countByUser", async function (userId: string, preGenerated?: boolean) {
+  const query = Link.query({ userId });
 
-  return response;
+  if (preGenerated !== undefined) query.where('preGenerated').eq(preGenerated);
+
+  return await query.count().exec();
 });
 
 Link.methods.set("fetchByUser", async function (userId: string, limit: number = 10, pageKey?: string) {

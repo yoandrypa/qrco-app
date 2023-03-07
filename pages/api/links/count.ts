@@ -4,6 +4,7 @@ import {
   respondWithException,
   withSessionRoute,
   checkAuthorization,
+  parseFromCountRequest,
   countLinks,
 } from './helpers';
 
@@ -16,7 +17,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { currentUser } = req.session;
 
     if (req.method === "GET") {
-      result = await countLinks(currentUser);
+      const { preGenerated } = parseFromCountRequest(req);
+      result = await countLinks(currentUser, preGenerated);
     } else {
       throw new NotFound;
     }
