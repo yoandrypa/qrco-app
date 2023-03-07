@@ -62,8 +62,7 @@ export default function QrList({ title }: any) {
   const loadItems = useCallback(() => {
     if (userInfo) {
       startWaiting();
-      list({ userId: userInfo.cognito_user_id })
-        // @ts-ignore
+      list({ userId: userInfo.cognito_user_id }) // @ts-ignore
         .then((qrs) => setQRs(qrs))
         .finally(() => releaseWaiting());
     }
@@ -71,7 +70,8 @@ export default function QrList({ title }: any) {
 
   const handleClone = useCallback((qr: QrDataType) => {
     startWaiting();
-    setOptions({ ...qr.qrOptionsId, ...qr, mode: "clone" });
+    const qrName = `${qr.qrName} copy`;
+    setOptions({ ...qr.qrOptionsId, ...qr, mode: "clone", qrName });
     router.push(QR_CONTENT_ROUTE, undefined, { shallow: true })
       .finally(() => releaseWaiting());
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -89,9 +89,7 @@ export default function QrList({ title }: any) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDelete = async () => {
-    startWaiting();
-    // TODO: confirm is a bat parameter to remove method
-    // @ts-ignore
+    startWaiting(); // @ts-ignore
     const deleted = await remove(confirm);
     if (deleted) {
       setConfirm(null);

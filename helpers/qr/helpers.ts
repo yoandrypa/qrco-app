@@ -374,7 +374,7 @@ export const dataCleaner = (options: any, mainObj?: boolean) => {
     [...base, 'qrOptionsId', 'shortLinkId', 'qrData', 'qrDesign', 'id', 'qrType', 'userId'].forEach((x: string) => {
       if (data[x]) { delete data[x]; }
     });
-    data.custom.forEach((x: any) => { x.expand = getUuid(); });
+    data?.custom?.forEach((x: any) => { x.expand = getUuid(); });
   } else {
     const checkFor = [...base, 'id', 'userId', 'shortCode', 'qrType', 'mode', 'custom'] as string[];
     Object.keys(data).forEach((x: string) => {
