@@ -152,7 +152,7 @@ export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerP
                   >
                     <MenuItem value="thin">Thin</MenuItem>
                     <MenuItem value="normal">Medium</MenuItem>
-                    <MenuItem value="weight">Weight</MenuItem>
+                    <MenuItem value="weight">Thick</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>

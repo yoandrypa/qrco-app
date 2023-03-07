@@ -28,8 +28,7 @@ const imageLoader = (src: string) => {
   } else if (src === 'dot') {
     source = 'dots';
   }
-  const response = `/qr/${source}.png`;
-  return response;
+  return `/qr/${source}.png`;
 };
 
 const OptionsSelector = ({ handleData, options, label, property, selected }: OptionsSelProps) => {
