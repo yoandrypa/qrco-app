@@ -1,13 +1,18 @@
 import { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
+
+import session from "@ebanux/ebanux-utils/sessionStorage";
 import QrTypeSelector from "../../components/qr/QrTypeSelector";
 import QrWizard from "../../components/qr/QrWizard";
 import Context from "../../components/context/Context";
-import { useRouter } from "next/router";
-import { DEFAULT_DYNAMIC_SELECTED, QR_DESIGN_ROUTE } from "../../components/qr/constants";
+
+import { DEFAULT_DYNAMIC_SELECTED, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE } from "../../components/qr/constants";
 import { DataType } from "../../components/qr/types/types";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { findByAddress } from "../../handlers/links";
 import { get as getPreGenerated } from "../../handlers/preGenerated";
+import { startWaiting } from "../../components/Waiting";
 
 import dynamic from "next/dynamic";
 
@@ -21,7 +26,13 @@ export default function QrGen({ address, preGenerated, claimable }: InferGetServ
 
   useEffect(() => {
     if (address !== undefined) {
-      setData((prev: DataType) => ({ ...prev, claim: address as string, claimable, preGenerated }));
+      if (session.isAuthenticated) {
+        setData((prev: DataType) => ({ ...prev, claim: address as string, claimable, preGenerated }));
+      } else {
+        startWaiting();
+        session.set('CALLBACK_ROUTE', { pathname: router.pathname, query: router.query });
+        startAuthorizationFlow();
+      }
     } else if (!selected) {
       if (router.query.address !== undefined) {
         setNotClamable(true);
