@@ -195,6 +195,11 @@ export type CustomType = {
 };
 
 export type DataType = {
+  buttonBorderType?: string;
+  buttonBorderWeight?: string;
+  buttonBorderColors?: string;
+  buttonBorderColor?: string;
+  buttonBorderStyle?: string;
   buttonsOpacity?: number;
   micrositeBackImageOpacity?: number;
   qrType?: string;

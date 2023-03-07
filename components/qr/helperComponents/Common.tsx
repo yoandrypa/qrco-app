@@ -95,9 +95,14 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           return tempo;
         });
       } else if (prop === 'buttonBack') {
-        setData((prev: any) => ({ ...prev, [prop]: payload.target?.value !== undefined ? payload.target.value : payload,
-          buttonBackColor: payload === 'solid' ? DEFAULT_COLORS.p : 'unset'
-        }));
+        setData((prev: any) => {
+          const newData = {...prev, buttonBackColor: payload === 'solid' ? DEFAULT_COLORS.p : 'unset'};
+          newData[prop] = payload.target?.value !== undefined ? payload.target.value : payload;
+          if (payload === 'gradient' && newData.buttonsOpacity !== undefined) {
+            delete newData.buttonsOpacity;
+          }
+          return newData;
+        });
       } else if (prop === 'buttonShape') {
         setData((prev: any) => {
           const tempo = {...prev, [prop]: payload};
@@ -105,7 +110,21 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           return tempo;
         })
       } else {
-        setData((prev: any) => ({ ...prev, [prop]: payload.target?.value !== undefined ? payload.target.value : payload }));
+        setData((prev: any) => {
+          const newData = {...prev};
+          newData[prop] = payload.target?.value !== undefined ? payload.target.value : payload;
+          if (prop === 'buttonBorderStyle') {
+            if (payload !== 'two' && newData.buttonBorderColors !== undefined) {
+              delete newData.buttonBorderColors;
+            }
+            if (payload === 'noBorders') {
+              delete newData.buttonBorderStyle;
+              if (newData.buttonBorderWeight !== undefined) { delete newData.buttonBorderWeight; }
+              if (newData.buttonBorderType !== undefined) { delete newData.buttonBorderType; }
+            }
+          }
+          return newData;
+        });
       }
     } else if ((prop === 'both' && (payload.p !== DEFAULT_COLORS.p || payload.s !== DEFAULT_COLORS.s)) ||
       (prop === 'both-gradient' && (payload.p !== DEFAULT_COLORS.s || payload.s !== DEFAULT_COLORS.p) )) {
@@ -124,7 +143,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
         return temp;
       });
     }
-  }, [backImg, foreImg]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [backImg, foreImg, micrositeBackImage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getFiles = useCallback(async (key: string, item: string) => {
     try {
