@@ -16,6 +16,7 @@ import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
 
 import dynamic from "next/dynamic";
 import session from "@ebanux/ebanux-utils/sessionStorage";
+import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
 import { useRouter } from "next/router";
 import { request } from "../../libs/utils/request";
 import { setWarning, hideNotification } from "../Notification";
@@ -100,9 +101,11 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     if (!data.isDynamic || !isFirstStep) return true;
 
     if (!session.isAuthenticated) {
-      // TODO: Redirect to login and check plan after authentication
-      // setWarning('You need to be authenticated to be able to create dynamic QRs!');
-      return true;
+      startWaiting();
+      session.set('CONTEXT', { selected, data });
+      session.set('CALLBACK_ROUTE', { pathname: QR_CONTENT_ROUTE });
+      startAuthorizationFlow();
+      return false;
     }
 
     if (process.env.REACT_APP_OVERRIDE === 'dev') {
@@ -136,13 +139,26 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     if (!(await allowCreate())) return;
 
     if (isFirstStep) {
+      // Step 1: QR_TYPE_ROUTE or / ==>  QR_CONTENT_ROUTE
       startWaiting();
-      if (data.isDynamic && !isLogged) {
-        router.push({ pathname: QR_CONTENT_ROUTE, query: { selected } }).finally(releaseWaiting);
-      } else {
-        router.push(QR_CONTENT_ROUTE, undefined, { shallow: true }).finally(releaseWaiting);
-      }
-    } else if (router.pathname === QR_DESIGN_ROUTE && isLogged) {
+      router.push({
+        pathname: QR_CONTENT_ROUTE,
+        query: { selected, address: router.query.address },
+      }).finally(releaseWaiting);
+
+    } else if (router.pathname === QR_CONTENT_ROUTE) {
+      // Step 2: QR_CONTENT_ROUTE ==> QR_DESIGN_ROUTE
+      startWaiting();
+      router.push(
+        { pathname: QR_DESIGN_ROUTE, query: router.query },
+        undefined,
+        { shallow: true },
+      ).finally(releaseWaiting);
+
+    } else if (router.pathname === QR_DESIGN_ROUTE) {
+      // Step 3: QR_DESIGN_ROUTE    ==> PRINT | DOWNLOAD | SAVE
+      if (!session.isAuthenticated) return lastStep(false);
+
       startWaiting();
       await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setIsError,
         () => {
@@ -161,15 +177,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
           })
         }, router, lastStep, dataInfo.current.length, updatingHandler);
       releaseWaiting();
-    } else if (router.pathname === QR_DESIGN_ROUTE && !isLogged) {
-      lastStep(false);
-    } else {
-      startWaiting();
-      router.push(
-        router.pathname === QR_TYPE_ROUTE ? QR_CONTENT_ROUTE : QR_DESIGN_ROUTE,
-        undefined,
-        { shallow: true },
-      ).finally(releaseWaiting);
+
     }
   };
 
