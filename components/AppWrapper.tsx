@@ -180,7 +180,6 @@ export default function AppWrapper(props: AppWrapperProps) {
       <Container sx={{ width: "100%" }}>
         <Box sx={{ height }} /> {/* Aims to fill the header's gap */}
         <Box sx={{ mx: "auto", minHeight: `calc(100vh - ${router.pathname === '/' ? 140 : 135}px)` }}>
-          <ConfirmDialog />
           <Notification />
           <Waiting />
           {children}

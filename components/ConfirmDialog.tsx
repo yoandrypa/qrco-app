@@ -5,8 +5,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
-import Chip from '@mui/material/Chip';
-import ConfirmationIcon from '@mui/icons-material/HelpOutline';
 
 import parseHtml from 'html-react-parser';
 import messaging from "@ebanux/ebanux-utils/messaging";
@@ -55,14 +53,9 @@ const ConfirmDialog = () => {
   return (
     <Dialog maxWidth="sm" fullWidth open={open}>
       <DialogTitle>
-        <Chip
-          variant="filled"
-          color="primary"
-          icon={<ConfirmationIcon />}
-          label="Confirmation:"
-        />
+        {'Confirmation:'}
       </DialogTitle>
-      <DialogContent dividers>{parseHtml(content)}</DialogContent>
+      <DialogContent>{parseHtml(content)}</DialogContent>
       <DialogActions>
         <Button color="primary" variant="outlined" onClick={onCancel} autoFocus>
           {'Cancel'}
