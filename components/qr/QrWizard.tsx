@@ -98,7 +98,9 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   }
 
   async function allowCreate() {
-    if (!data.isDynamic || !isFirstStep) return true;
+    const { isDynamic, preGenerated } = data;
+
+    if (!isDynamic || preGenerated || !isFirstStep) return true;
 
     if (!session.isAuthenticated) {
       startWaiting();
