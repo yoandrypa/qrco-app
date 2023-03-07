@@ -6,12 +6,14 @@ import {
   withSessionRoute,
   checkAuthorization,
   getBillingPortal,
+  allowCors,
 } from './helpers';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   let result;
 
   try {
+    await allowCors(req, res);
     await checkAuthorization(req);
 
     const { currentUser } = req.session;
