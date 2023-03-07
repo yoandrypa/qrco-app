@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Context from "../context/Context";
 import Step from "@mui/material/Step";
@@ -20,7 +20,7 @@ import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
 import { useRouter } from "next/router";
 import { request } from "../../libs/utils/request";
 import { setWarning, hideNotification } from "../Notification";
-import { waitConfirmation } from "../ConfirmDialog";
+import ConfirmDialog, { waitConfirmation } from "../ConfirmDialog";
 import { releaseWaiting, startWaiting } from "../Waiting";
 
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
@@ -273,10 +273,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
             }).finally(releaseWaiting);
           }} />
       )}
-      {isError && <Notifications autoHideDuration={3500}
-                                 message="Error accessing data!"
-                                 onClose={() => setIsError(false)}
-                                 showProgress />}
+      <ConfirmDialog />
     </>
   );
 };
