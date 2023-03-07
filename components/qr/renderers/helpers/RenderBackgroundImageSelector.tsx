@@ -4,12 +4,11 @@ import Button from "@mui/material/Button";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
 import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
-
-import {DataType} from "../../types/types";
-
-import dynamic from "next/dynamic";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+import dynamic from "next/dynamic";
+
+const RenderHandleOpacity = dynamic(() => import("../../helperComponents/smallpieces/RenderHandleOpacity"));
 const RenderImgPreview = dynamic(() => import("./RenderImgPreview"));
 const RenderImagePicker = dynamic(() => import("./RenderImagePicker"));
 const ImageCropper = dynamic(() => import("./ImageCropper"));
@@ -17,6 +16,7 @@ const Notifications = dynamic(() => import("../../../notifications/Notifications
 
 interface BackImgProps {
   micrositesImg?: File | string;
+  opacity: number;
   handleValue: Function;
 }
 
@@ -26,7 +26,7 @@ interface ErrorProps {
   warning?: boolean;
 }
 
-export default function RenderBackgroundImageSelector({handleValue, micrositesImg}: BackImgProps) {
+export default function RenderBackgroundImageSelector({handleValue, micrositesImg, opacity}: BackImgProps) {
   const [error, setError] = useState<ErrorProps | null>(null);
   const [selectFile, setSelectFile] = useState<boolean>(false);
   const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
@@ -45,11 +45,11 @@ export default function RenderBackgroundImageSelector({handleValue, micrositesIm
 
   const handlePreview = () => {
     setPreview(true);
-  }
+  };
 
   const handleRemove = () => {
-    handleValue('micrositeBackImage')(undefined)
-  }
+    handleValue('micrositeBackImage')(undefined);
+  };
 
   const handleSave = (newFile: File, kind: string) => {
     handleValue(kind)(newFile);
@@ -88,6 +88,9 @@ export default function RenderBackgroundImageSelector({handleValue, micrositesIm
           </>
         )}
       </Box>
+      {micrositesImg !== undefined && (
+        <RenderHandleOpacity opacity={opacity} handleValue={handleValue} property="micrositeBackImageOpacity" />
+      )}
       {selectFile && (
         <RenderImagePicker
           handleClose={() => setSelectFile(false)}
