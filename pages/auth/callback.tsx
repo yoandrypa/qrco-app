@@ -17,7 +17,6 @@ export default function AuthCallback() {
   function onLogin() {
     const currentUser = session.currentUser;
     const callbackRoute = session.get('CALLBACK_ROUTE', '/');
-
     setSuccess(`Welcome: ${currentUser.name || currentUser.email}...`);
     setUserInfo(currentUser);
 
@@ -26,7 +25,7 @@ export default function AuthCallback() {
     } else {
       loadSubscription().then((subscription: any) => {
         setSubscription(subscription);
-        router.push(callbackRoute, callbackRoute.pathname || '/').finally(() => releaseWaiting());
+        router.push(callbackRoute).finally(() => releaseWaiting());
       });
     }
   }

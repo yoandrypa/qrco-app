@@ -17,11 +17,14 @@ import session from "@ebanux/ebanux-utils/sessionStorage";
 import { logout } from '@ebanux/ebanux-utils/auth';
 
 import { startWaiting, releaseWaiting } from "../Waiting";
+import { isBrowser } from "@ebanux/ebanux-utils/utils";
 
 const Claimer = dynamic(() => import("../claimer/Claimer"));
 const Generator = dynamic(() => import("../qr/Generator"));
 const PleaseWait = dynamic(() => import("../PleaseWait"));
 const UpdateBrowser = dynamic(() => import("../UpdateBrowser"));
+
+const contextCache: any = isBrowser() ? session.get('CONTEXT', {}, true) : {};
 
 const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [options, setOptions] = useState<OptionsType>(handleInitialData("Ebanux"));
@@ -29,10 +32,10 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [dotsData, setDotsData] = useState<CornersAndDotsType>(null);
   const [background, setBackground] = useState<BackgroundType>(initialBackground);
   const [frame, setFrame] = useState<FramesType>(initialFrame);
-  const [data, setData] = useState<DataType>(initialData);
+  const [data, setData] = useState<DataType>(contextCache.data || initialData);
   const [isTrialMode, setIsTrialMode] = useState<boolean>(false);
   const [updateBrowser, setUpdateBrowser] = useState<boolean>(false);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(contextCache.selected || null);
   const [userInfo, setUserInfo] = useState(null);
   const [subscription, setSubscription] = useState(null);
   const [verifying, setVerifying] = useState<boolean>(true);
