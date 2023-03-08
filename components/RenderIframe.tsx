@@ -46,22 +46,22 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
 
   useEffect(() => {
     if (data && isReady) {
-      const previewData = structuredClone(data);
+      const previewData = structuredClone(data) as any;
       const isInEdition = previewData.mode === 'edit' || previewData.mode === 'clone';
 
-      setTimeout(async () => { // @ts-ignore
-        if (shareLink && previewData.shortlinkurl === undefined) { // @ts-ignore
+      setTimeout(async () => {
+        if (shareLink && previewData.shortlinkurl === undefined) {
           previewData.shortlinkurl = shareLink;
         }
-        if (previewData.backgndImg || backImg) { // @ts-ignore
+        if (previewData.backgndImg || backImg) {
           previewData.backgndImg = !isInEdition || proceed(backImg, previewData.backgndImg) ?
             await getImageAsString(previewData.backgndImg) : await getImageAsString(backImg);
         }
-        if (previewData.foregndImg || mainImg) { // @ts-ignore
+        if (previewData.foregndImg || mainImg) {
           previewData.foregndImg = !isInEdition || proceed(mainImg, previewData.foregndImg) ?
             await getImageAsString(previewData.foregndImg) : await getImageAsString(mainImg);
         }
-        if (previewData.micrositeBackImage || backgroundImg) { // @ts-ignore
+        if (previewData.micrositeBackImage || backgroundImg) {
           previewData.micrositeBackImage = !isInEdition || proceed(backgroundImg, previewData.micrositeBackImage) ?
             await getImageAsString(previewData.micrositeBackImage) : await getImageAsString(backgroundImg);
         }
@@ -70,7 +70,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
           for (let idx = 0, ll = previewData.custom.length; idx < ll; idx += 1) {
             const section = previewData.custom[idx];
             if (['pdf', 'gallery', 'audio', 'video'].includes(section.component) && section.data?.files) {
-              let files: string[] = []; // @ts-ignore
+              let files: string[] = [];
               if (!previewData.isSample) {
                 for (let i = 0, l = section.data.files.length; i < l; i += 1) {
                   const x = section.data.files[i] as File | string; // @ts-ignore
@@ -82,7 +82,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
                 }
               } else { // @ts-ignore
                 files = section.data.files;
-              } // @ts-ignore
+              }
               previewData.custom[idx].data.files = files;
             }
           }
