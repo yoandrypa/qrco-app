@@ -9,31 +9,40 @@ interface HeadLineProps {
   hideHeadLine?: boolean;
   centerHeadLine?: boolean;
   handleValues: Function;
+  reverse?: boolean;
 }
 
-const RenderHeadline = ({index, hideHeadLine, centerHeadLine, handleValues}: HeadLineProps) => (
-  <Box sx={{display: 'flex', mt: '-5px', flexDirection: {sm: 'row', xs: 'column'}}}>
-    <FormControl>
-      <FormControlLabel
-        control={
-          <Switch onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            handleValues('hideHeadLine', index)(!event.target.checked)
-          } checked={hideHeadLine === undefined || !hideHeadLine} />
-        }
-        label="Show headline for this section" />
-    </FormControl>
-    <FormControl sx={{ml: '5px'}}>
-      <FormControlLabel
-        disabled={Boolean(hideHeadLine)}
-        control={
-          <Switch onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            handleValues('centerHeadLine', index)(event.target.checked)
-          } checked={centerHeadLine || false} />
-        }
-        label="Center headline" />
-    </FormControl>
-  </Box>
-);
+const RenderHeadline = ({index, hideHeadLine, centerHeadLine, handleValues, reverse}: HeadLineProps) => {
+  const handle = (event: ChangeEvent<HTMLInputElement>) => {
+    let isChecked = event.target.checked;
+    if (reverse) {
+      isChecked = !isChecked;
+    }
+    handleValues('hideHeadLine', index)(!isChecked);
+  };
+
+  let checked = hideHeadLine === undefined || !hideHeadLine;
+  if (reverse) {
+    checked = !checked;
+  }
+  return (
+    <Box sx={{display: 'flex', mt: '-5px', flexDirection: {sm: 'row', xs: 'column'}}}>
+      <FormControl>
+        <FormControlLabel control={<Switch onChange={handle} checked={checked}/>} label="Show headline for this section"/>
+      </FormControl>
+      <FormControl sx={{ml: '5px'}}>
+        <FormControlLabel
+          disabled={Boolean(hideHeadLine)}
+          control={
+            <Switch onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              handleValues('centerHeadLine', index)(event.target.checked)
+            } checked={centerHeadLine || false}/>
+          }
+          label="Center headline"/>
+      </FormControl>
+    </Box>
+  )
+};
 
 const notIf = (current: HeadLineProps, next: HeadLineProps) => (
   current.index === next.index &&
