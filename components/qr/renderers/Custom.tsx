@@ -208,7 +208,10 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                                       title={x.name || getNameStr(component, selected || '')}
                                       bold={Boolean(x.name)} editFunc={isHeadline ? handleEdit(index, component, x.name) : undefined}/>
                             {expanded !== undefined && (<>
-                              {isHeadline && <RenderHeadline index={index} handleValues={handleValues} hideHeadLine={x?.data?.hideHeadLine} centerHeadLine={x?.data?.centerHeadLine}/>}
+                              {isHeadline && (
+                                <RenderHeadline index={index} handleValues={handleValues} reverse={component === 'links'}
+                                                hideHeadLine={x?.data?.hideHeadLine} centerHeadLine={x?.data?.centerHeadLine} />
+                              )}
                               {component === components[0].type && <RenderAddressData data={x.data} handleValues={handleValues} index={index}/>}
                               {component === components[1].type && <RenderCompanyData data={x.data} handleValues={handleValues} index={index}/>}
                               {component === components[2].type && <RenderDateSelector data={x.data} handleValues={handleValues} label="Date" index={index}/>}
