@@ -40,7 +40,7 @@ type QrContentHandlerProps = {
 const QrContentHandler = () => { // @ts-ignore
   const { data, setData, selected, setIsWrong, userInfo, options }: QrContentHandlerProps = useContext(Context);
 
-  const handleValues = (item: string, index?: number) => (payload: ChangeEvent<HTMLInputElement> | string | boolean | string[]) => {
+  const handleValues = (item: string, index?: number, reversed?: boolean) => (payload: ChangeEvent<HTMLInputElement> | string | boolean | string[]) => {
     const value = Array.isArray(payload) || typeof payload === 'string' || typeof payload === 'boolean' ? payload :
       (item === 'includeExtraInfo' ? payload.target.checked : payload.target.value);
     setData((prev: DataType) => {
@@ -60,8 +60,11 @@ const QrContentHandler = () => { // @ts-ignore
             elementData.tags?.push(payload);
           }
         } else if (['hideHeadLine', 'centerHeadLine'].includes(item)) { // @ts-ignore
-          if (elementData[item] !== undefined && payload === false) { // @ts-ignore
+          if (elementData[item] !== undefined && (payload === false || reversed)) { // @ts-ignore
             delete elementData[item];
+            if (reversed && item === 'hideHeadLine' && elementData.centerHeadLine !== undefined) {
+              delete elementData.centerHeadLine;
+            }
           } else { // @ts-ignore
             element.data[item] = true;
             if (item === 'hideHeadLine' && elementData.centerHeadLine !== undefined) { delete elementData.centerHeadLine; }
@@ -75,7 +78,9 @@ const QrContentHandler = () => { // @ts-ignore
             if (!Object.keys(elementData.easiness).length) { delete elementData.easiness; }
           }
         } else if ((typeof value === "string" && value.length) || payload) {
-          if (item === 'includeExtraInfo' && !value && elementData.includeExtraInfo !== undefined) {
+          if (['topSpacing', 'bottomSpacing'].includes(item) && value === 'default') { // @ts-ignore
+            delete elementData[item];
+          } else if (item === 'includeExtraInfo' && !value && elementData.includeExtraInfo !== undefined) {
             delete elementData.includeExtraInfo;
           } else {
             if (typeof value === "string" && !value.trim().length) { // @ts-ignore

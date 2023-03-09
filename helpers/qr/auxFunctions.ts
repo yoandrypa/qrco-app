@@ -11,10 +11,10 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
   }
   const custom = data?.custom || [];
 
+  const possibles = ['hideHeadLine', 'centerHeadLine', 'topSpacing', 'bottomSpacing'];
   custom.every((x: CustomType) => {
-    const numbItems = Object.keys(x.data || {}).length;
-
-    if (numbItems > 1 || (numbItems === 1 && x.data?.hideHeadLine === undefined && x.data?.centerHeadLine === undefined)) {
+    const elements = x.data || {}; // @ts-ignore
+    if (Object.keys(x.data || {}).length !== possibles.filter(possible => elements[possible] !== undefined).length) {
       proceed = false;
       return false;
     }
@@ -35,6 +35,8 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
     custom.forEach((x: CustomType) => {
       const hideHeadLine = x.data?.hideHeadLine
       const centerHeadLine = x.data?.centerHeadLine;
+      const topSpacing = x.data?.topSpacing;
+      const bottomSpacing = x.data?.bottomSpacing;
 
       switch (x.component) {
         case 'address': {
@@ -46,6 +48,10 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
             state: 'Our State',
             country: 'Our Country'
           };
+          break;
+        }
+        case 'action': {
+          x.data = {urlOptionLabel: "View menu", urlOptionLink: "https://www.marysfood.com/menu"};
           break;
         }
         case 'socials': {
@@ -87,11 +93,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
           break;
         }
         case 'presentation': {
-          const obj = {
-            prefix: 'Sir',
-            firstName: 'Name',
-            lastName: 'Lastname'
-          } as any;
+          const obj = {prefix: 'Sir', firstName: 'Name', lastName: 'Lastname'} as any;
           if (['petId', 'vcard+', 'findMe'].includes(selected)) {
             obj.includeExtraInfo = true;
             obj.cell = '+1234567890';
@@ -110,7 +112,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
           break;
         }
         case 'sku': {
-          x.data = { sku: "COF1234EA", quantity: 7 };
+          x.data = {sku: "COF1234EA", quantity: 7};
           break;
         }
         case 'title': {
@@ -128,10 +130,8 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
         case 'links': {
           x.data = {
             links: [
-              { label: 'My website', link: 'https://www.example.com'}, {
-                label: 'My blog',
-                link: 'https://www.example.com'
-              },
+              {label: 'My website', link: 'https://www.example.com'},
+              {label: 'My blog', link: 'https://www.example.com'},
               {label: 'My portfolio', link: 'https://www.example.com'}
             ]
           };
@@ -139,10 +139,12 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
         }
         case 'pdf': {
           x.data = {
-            files: [{
-              name: 'Photoshop for beginners NEW22.pdf', // @ts-ignore
-              Key: 'pdfs/Photoshop for beginners NEW22.pdf'
-            }],
+            files: [
+              {
+                name: 'Photoshop for beginners NEW22.pdf', // @ts-ignore
+                Key: 'pdfs/Photoshop for beginners NEW22.pdf'
+              }
+            ],
             isSample: true
           };
           break;
@@ -159,14 +161,14 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
         }
         case 'audio': {
           x.data = { // @ts-ignore
-            files: [{ name: "audio.mp3", Key: "audios/Luerod Bounce - Will i am (Orchrestral mix)mp3.mp3" }],
+            files: [{name: "audio.mp3", Key: "audios/Luerod Bounce - Will i am (Orchrestral mix)mp3.mp3"}],
             isSample: true
           };
           break;
         }
         case 'video': {
           x.data = { // @ts-ignore
-            files: [{ name: 'video.mp4', Key: 'videos/Facebook 0330478876988862(MP4).mp4' }],
+            files: [{name: 'video.mp4', Key: 'videos/Facebook 0330478876988862(MP4).mp4'}],
             isSample: true
           };
           break;
@@ -187,10 +189,10 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
         case 'keyvalue': {
           x.data = {
             keyValues: [
-              { value: "To hear music", key: "Hobby" },
-              { value: "Real Madrid", key: "Team" },
-              { value: "Baseball", key: "Game" },
-              { value: "Down the stairs, first door at left", key: "Location" }
+              {value: "To hear music", key: "Hobby"},
+              {value: "Real Madrid", key: "Team"},
+              {value: "Baseball", key: "Game"},
+              {value: "Down the stairs, first door at left", key: "Location"}
             ]
           };
           break;
@@ -207,18 +209,16 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
           break;
         }
         case 'couponData': {
-          x.data = {
-            name: "SALES_10_OFF",
-            text: "The coupon applies only in purchases over 100 USD",
-            data: "1669834040000"
-          };
+          x.data = {name: "SALES_10_OFF", text: "The coupon applies only in purchases over 100 USD", data: "1669834040000"};
           break;
         }
       }
 
       if (x.data) {
-        if (hideHeadLine !== undefined) { x.data.hideHeadLine = hideHeadLine; }
-        if (centerHeadLine !== undefined) { x.data.centerHeadLine = centerHeadLine; }
+        if (hideHeadLine !== undefined) {x.data.hideHeadLine = hideHeadLine;}
+        if (centerHeadLine !== undefined) {x.data.centerHeadLine = centerHeadLine;}
+        if (topSpacing !== undefined) {x.data.topSpacing = topSpacing;}
+        if (bottomSpacing !== undefined) {x.data.bottomSpacing = bottomSpacing;}
       }
     });
   }

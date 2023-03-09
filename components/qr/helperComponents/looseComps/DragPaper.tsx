@@ -4,6 +4,7 @@ import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
+import SettingsIcon from '@mui/icons-material/Settings';
 import {blueGrey, red, blue} from "@mui/material/colors";
 
 import dynamic from "next/dynamic";
@@ -16,6 +17,7 @@ interface DragPaper extends PaperProps {
   avoidIcon?: boolean;
   removeFunc?: () => void;
   editFunc?: (event: MouseEvent<HTMLButtonElement>) => void;
+  settingsFunc?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
 const buttonStyles = (edit: boolean) => {
@@ -24,7 +26,7 @@ const buttonStyles = (edit: boolean) => {
   }
 }
 
-const DragPaper = ({children, avoidIcon, editFunc, removeFunc, ...otherProps}: DragPaper) => (
+const DragPaper = ({children, avoidIcon, editFunc, removeFunc, settingsFunc, ...otherProps}: DragPaper) => (
   <Paper {...otherProps}>
     {!avoidIcon ? (<Tooltip title="Dragging knob">
       <IconButton size="small" sx={{
@@ -33,6 +35,13 @@ const DragPaper = ({children, avoidIcon, editFunc, removeFunc, ...otherProps}: D
         <DragIndicatorIcon sx={{color: theme => theme.palette.text.disabled}} fontSize="small"/>
       </IconButton>
     </Tooltip>) : <Box sx={{height: !removeFunc ? '25px' : 0}}/>}
+    {settingsFunc !== undefined && (
+      <Tooltip title="Section's settings">
+        <IconButton size="small" onClick={settingsFunc} sx={buttonStyles(true)}>
+          <SettingsIcon sx={{color: '#fff'}} fontSize="small"/>
+        </IconButton>
+      </Tooltip>
+    )}
     {editFunc !== undefined && (
       <Tooltip title="Edit section headline">
         <IconButton size="small" onClick={editFunc} sx={buttonStyles(true)}>

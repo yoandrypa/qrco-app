@@ -92,6 +92,8 @@ export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'y
 export type SocialNetworksType = { network: SocialsType, value?: string };
 
 export type Type = {
+  topSpacing?: string;
+  bottomSpacing?: string;
   buttonText?: string;
   tags?: string[];
   splitInTwoColumns?: boolean;
