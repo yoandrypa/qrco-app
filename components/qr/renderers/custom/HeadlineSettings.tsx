@@ -7,10 +7,11 @@ import Divider from "@mui/material/Divider";
 import CheckIcon from "@mui/icons-material/Check";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import SettingsIcon from '@mui/icons-material/Settings';
+import Button from "@mui/material/Button";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
 
 import {Type} from "../../types/types";
-import Button from "@mui/material/Button";
 
 interface HeadlineProps {
   anchor: HTMLElement;
@@ -105,7 +106,10 @@ export default function HeadlineSettings({anchor, handleValues, handleClose, rev
           transformOrigin={{vertical: 'top', horizontal: 'left'}}
         >
           <Box sx={{p: 2}}>
-            <Typography>{'Section\'s spacing configuration'}</Typography>
+            <Box sx={{display: 'flex'}}>
+              <SettingsIcon sx={{color: theme => theme.palette.primary.dark, mr: '5px', mt: '-2px'}}/>
+              <Typography>{'Section\'s spacing configuration'}</Typography>
+            </Box>
             {renderOptions('topSpacing', data?.topSpacing || 'default')}
             {renderOptions('bottomSpacing', data?.bottomSpacing || 'default')}
             <Divider sx={{mt: 2, mb: 1}}/>
