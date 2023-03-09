@@ -82,23 +82,23 @@ const Notification = () => {
   );
 }
 
-export const setNotification = (notification: NotificationType, closeOption: CloseOptionType = 6000) => {
+export const setNotification = (notification: NotificationType, closeOption: CloseOptionType = 8000) => {
   messaging.emit('setNotification', [notification, closeOption]);
 }
 
-export const setError = (message: Error | string | string[], closeOption: CloseOptionType = 6000) => {
+export const setError = (message: Error | string | string[], closeOption: CloseOptionType = 8000) => {
   setNotification(typeof message === 'string' ? new Error(message) : message, closeOption);
 }
 
-export const setWarning = (message: string | string[], closeOption: CloseOptionType = 6000) => {
+export const setWarning = (message: string | string[], closeOption: CloseOptionType = 8000) => {
   setNotification({ message, severity: 'warning' }, closeOption);
 }
 
-export const setInfo = (message: string | string[], closeOption: CloseOptionType = 6000) => {
+export const setInfo = (message: string | string[], closeOption: CloseOptionType = 8000) => {
   setNotification({ message, severity: 'info' }, closeOption);
 }
 
-export const setSuccess = (message: string | string[], closeOption: CloseOptionType = 6000) => {
+export const setSuccess = (message: string | string[], closeOption: CloseOptionType = 8000) => {
   setNotification({ message, severity: 'success' }, closeOption);
 }
 
