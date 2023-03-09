@@ -1,4 +1,4 @@
-import {useCallback, useContext, useEffect, useState} from "react";
+import {useCallback, useContext, useState} from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 
@@ -40,18 +40,6 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
   const handleExpander = useCallback((item: string): void => {
     setExpander(item === expander ? null : item);
   }, [expander]);
-
-  useEffect(() => {
-    if (data?.layout?.includes('banner') && backgndImg) {
-      handleValue('backgndImg')(undefined)
-    }
-  }, [data?.layout]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (data?.backgroundType !== 'image' && micrositesImg) {
-      handleValue('micrositesImg')(undefined);
-    }
-  }, [data?.backgroundType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

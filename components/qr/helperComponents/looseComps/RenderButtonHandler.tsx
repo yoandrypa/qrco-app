@@ -85,15 +85,15 @@ export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerP
 
   const handler = (prop: string) => (event: SelectChangeEvent) => {
     handleValue(prop)(event.target.value);
-  }
+  };
 
   const handleShadow = (event: ChangeEvent<HTMLInputElement>) => {
     handleValue('buttonShadow')(event.target.checked);
-  }
+  };
 
   const handleUpcase = (event: ChangeEvent<HTMLInputElement>) => {
     handleValue('buttonCase')(event.target.checked);
-  }
+  };
 
   return (
     <Box sx={{mt: 1}}>

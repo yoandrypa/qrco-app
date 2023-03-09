@@ -92,6 +92,10 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           if (tempo.backgroundColorRight !== undefined) { delete tempo.backgroundColorRight; }
           if (tempo.backgroundDirection !== undefined) { delete tempo.backgroundDirection; }
           tempo.backgroundType = payload.target.value;
+          if (tempo.backgroundType !== 'image' && tempo.micrositeBackImage !== undefined) {
+            setMicrositeBackImage(undefined);
+            delete tempo.micrositeBackImage;
+          }
           return tempo;
         });
       } else if (prop === 'buttonBack') {
@@ -116,10 +120,12 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
         setData((prev: any) => {
           const newData = {...prev};
           newData[prop] = payload.target?.value !== undefined ? payload.target.value : payload;
-          if (['flipHorizontal', 'flipVertical', 'buttonShadow', 'buttonCase'].includes(prop) && !payload && newData[prop] !== undefined) {
+          if (prop === 'layout' && typeof payload === 'string' && payload.includes('banner') && newData.backgndImg !== undefined) {
+            delete newData.backgndImg;
+            setBackImg(undefined);
+          } else if (['flipHorizontal', 'flipVertical', 'buttonShadow', 'buttonCase'].includes(prop) && !payload && newData[prop] !== undefined) {
             delete newData[prop];
-          }
-          if (prop === 'buttonBorderStyle') {
+          } else if (prop === 'buttonBorderStyle') {
             if (payload !== 'two' && newData.buttonBorderColors !== undefined) {
               delete newData.buttonBorderColors;
             }
@@ -153,7 +159,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
 
   const getFiles = useCallback(async (key: string, item: string) => {
     try {
-      lastAction.current = 'loading the banner/profile images';
+      lastAction.current = 'loading images';
       const fileData = await download(key);
 
       if (options.mode === 'edit') {
