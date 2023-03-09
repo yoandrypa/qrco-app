@@ -11,7 +11,7 @@ import messaging from "@ebanux/ebanux-utils/messaging";
 
 const mSubscriptions: any[] = [];
 
-type CloseEventType = (value: boolean) => void | null;
+type CloseEventType = (value: boolean) => any;
 
 interface ConfirmData {
   content: string;
@@ -55,7 +55,7 @@ const ConfirmDialog = () => {
       <DialogTitle>
         {'Confirmation:'}
       </DialogTitle>
-      <DialogContent>{parseHtml(content)}</DialogContent>
+      <DialogContent dividers>{parseHtml(content)}</DialogContent>
       <DialogActions>
         <Button color="primary" variant="outlined" onClick={onCancel} autoFocus>
           {'Cancel'}

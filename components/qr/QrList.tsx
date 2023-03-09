@@ -30,7 +30,7 @@ import { startWaiting, releaseWaiting } from "../Waiting";
 import { QR_CONTENT_ROUTE, QR_DESIGN_ROUTE } from "./constants";
 
 const RenderConfirmDlg = dynamic(() => import("../renderers/RenderConfirmDlg"));
-const RenderNewQrButton = dynamic(() => import("../renderers/RenderNewQrButton"));
+const ButtonCreateQrLinks = dynamic(() => import("../menus/MainMenu/ButtonCreateQrLinks"));
 
 const dateHandler = (date: string): string => `${date.startsWith('Yesterday') || date.startsWith('Today') ? ':' : ' at:'} ${date}`;
 
@@ -206,7 +206,7 @@ export default function QrList({ title }: any) {
             <Typography sx={{ mb: '25px', color: theme => theme.palette.info.light, fontWeight: 'bold' }}>
               {'There are no QR codes.'}
             </Typography>
-            <RenderNewQrButton light />
+            <ButtonCreateQrLinks light />
           </Box>
         </Box>
       )}
