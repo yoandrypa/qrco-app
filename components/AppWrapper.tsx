@@ -82,10 +82,6 @@ export default function AppWrapper(props: AppWrapperProps) {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleLogin = useCallback(() => {
-    startAuthorizationFlow();
-  }, []);
-
   const handleNavigation = useCallback(() => {
     const isInListView = router.pathname === "/";
     const isEdit = !isInListView && mode === "edit";
