@@ -138,17 +138,9 @@ export default function AppWrapper(props: AppWrapperProps) {
   }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    // Anything in here is fired on component mount.
-    mSubscriptions.push(messaging.setListener('onNavigate', handleNavigation));
-
     if (session.isAuthenticated && !subscription) loadSubscription().then((subscription: any) => {
       setSubscription(subscription);
     });
-
-    return () => {
-      // Anything in here is fired on component unmount.
-      messaging.delListener(mSubscriptions);
-    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
