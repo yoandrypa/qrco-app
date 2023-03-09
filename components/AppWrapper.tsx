@@ -21,7 +21,6 @@ import ConfirmDialog from "./ConfirmDialog";
 import Notification from "./Notification";
 import Waiting from "./Waiting";
 
-const CountDown = dynamic(() => import("./countdown/CountDown"));
 const WideScreenMenu = dynamic(() => import("./wrapper/WideScreenMenu"));
 const NarrowScreenMenu = dynamic(() => import("./wrapper/NarrowScreenMenu"));
 
@@ -133,10 +132,8 @@ export default function AppWrapper(props: AppWrapperProps) {
                 {router.query[PARAM_QR_TEXT] === undefined && (<>
                   {isWide ? <WideScreenMenu /> : <NarrowScreenMenu />}
                 </>)}
-                {isFreeMode && <CountDown />}
               </Box>
             </Toolbar>
-            {/*{isTrialMode && startTrialDate && <CountDown startDate={startTrialDate} />}*/}
           </Container>
         </AppBar>
       </ElevationScroll>)}
