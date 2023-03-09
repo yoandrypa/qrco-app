@@ -1,5 +1,7 @@
 import React from "react";
 
+import session from "@ebanux/ebanux-utils/sessionStorage";
+
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -11,6 +13,7 @@ import classes from "./classes.sx";
 
 export default function MenuItemSupport() {
   const { iconSmall } = classes;
+  const { isAuthenticated } = session;
 
   const onOpenDocumentation = () => {
     window.open('https://docs.theqr.link', '_blank');
@@ -26,7 +29,7 @@ export default function MenuItemSupport() {
         <ListItemIcon><ContactSupportIcon sx={iconSmall} /></ListItemIcon>
         <ListItemText>Documentation</ListItemText>
       </MenuItem>
-      <MenuItem onClick={onOpenMailTo}>
+      <MenuItem onClick={onOpenMailTo} divider={isAuthenticated}>
         <ListItemIcon><EmailIcon sx={iconSmall} /></ListItemIcon>
         <ListItemText>info@ebanux.com</ListItemText>
       </MenuItem>

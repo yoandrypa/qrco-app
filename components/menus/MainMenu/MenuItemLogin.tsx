@@ -6,10 +6,9 @@ import ListItemText from '@mui/material/ListItemText';
 
 import LogoutIcon from "@mui/icons-material/Logout";
 
-import { startWaiting } from "../../Waiting";
-
 import classes from "./classes.sx";
 import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
+import { startWaiting } from "../../Waiting";
 
 export const onLogin = () => {
   startWaiting();

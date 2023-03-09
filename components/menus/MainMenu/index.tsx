@@ -43,7 +43,7 @@ export default function MainMenu({ children }: MainMenuProps) {
           aria-expanded={open ? 'true' : undefined}
           onClick={onOpen}
         >
-          {isWide ? <Avatar sx={classes.iconSmall} /> : <MenuIcon />}
+          {isWide && isAuthenticated ? <Avatar sx={classes.iconSmall} /> : <MenuIcon />}
         </IconButton>
       </Box>
       <Menu id="account-menu"
@@ -55,12 +55,12 @@ export default function MainMenu({ children }: MainMenuProps) {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        {isAuthenticated && <div><MenuItemProfile /><Divider /></div>}
+        {isAuthenticated && <MenuItemProfile />}
         {children}
         <MenuItemSubscription />
         <Divider />
         <MenuItemSupport />
-        {isAuthenticated && <div><Divider /><MenuItemLogout /></div>}
+        {isAuthenticated && <MenuItemLogout />}
       </Menu>
     </Fragment>
   );

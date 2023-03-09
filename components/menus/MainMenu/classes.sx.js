@@ -5,15 +5,28 @@ const styles = {
     color: 'primary.main'
   },
 
-  iconFree: {
-    width: 22,
-    height: 22,
-    color: 'warning.main'
+  navButton: {
+    height: 28,
+    my: 'auto',
+    mr: '5px',
   },
 
-  navButton: {
-    height: { sm: '28px', xs: '50px' },
-    my: 'auto',
+  profile: {
+    backgroundColor: 'primary.light',
+
+    '&.Mui-disabled': {
+      opacity: 1,
+    },
+
+    '& .MuiSvgIcon-root': {
+      color: 'white',
+    },
+
+    '& .MuiListItemText-root': {
+      color: 'white',
+      textAlign: 'center',
+      mr: 4
+    }
   },
 
   paperSx: {
