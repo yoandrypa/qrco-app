@@ -25,7 +25,7 @@ export default function MenuItemListQrLinks() {
   return (
     <MenuItem onClick={onClick}>
       <ListItemIcon>{<FirstPageIcon sx={iconSmall} />}</ListItemIcon>
-      <ListItemText>My QR Links</ListItemText>
+      <ListItemText>My QRLynks</ListItemText>
     </MenuItem>
   );
 }

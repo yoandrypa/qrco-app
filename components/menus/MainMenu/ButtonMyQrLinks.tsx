@@ -27,7 +27,7 @@ export default function ButtonMyQrLinks() {
             color="primary"
             onClick={onClick}
     >
-      {'My QR Links'}
+      {'My QRLynks'}
     </Button>
   );
 }

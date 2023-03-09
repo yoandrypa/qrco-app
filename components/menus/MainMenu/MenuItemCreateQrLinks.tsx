@@ -22,7 +22,7 @@ export default function MenuItemCreateQrLinks() {
   return (
     <MenuItem onClick={onClick}>
       <ListItemIcon>{<QrCodeIcon sx={iconSmall} />}</ListItemIcon>
-      <ListItemText>Create QR Link</ListItemText>
+      <ListItemText>Create QRLynks</ListItemText>
     </MenuItem>
   );
 }
