@@ -1,26 +1,28 @@
-import Button from "@mui/material/Button";
-import LoginIcon from "@mui/icons-material/Login";
-import Box from "@mui/material/Box";
-import RenderNewQrButton from "../renderers/RenderNewQrButton";
-import LogoutIcon from "@mui/icons-material/Logout";
+import React from "react";
+import session from "@ebanux/ebanux-utils/sessionStorage";
 
 import { useRouter } from "next/router";
 
-interface ButtonProps {
-  userInfo?: any;
-  handleLogout: () => void;
-  handleNavigation: () => void;
-  handleLogin: () => void;
-}
+import Button from "@mui/material/Button";
+import LoginIcon from "@mui/icons-material/Login";
+import Box from "@mui/material/Box";
 
-export default function RenderButton({ userInfo, handleLogout, handleNavigation, handleLogin }: ButtonProps) {
+import MainMenu from "../menus/MainMenu";
+import ButtonMyQrLinks from "../menus/MainMenu/ButtonMyQrLinks";
+import ButtonCreateQrLinks from "../menus/MainMenu/ButtonCreateQrLinks";
+
+import { onLogin } from "../menus/MainMenu/MenuItemLogin";
+
+export default function RenderButton() {
   const router = useRouter();
 
-  if (!userInfo) {
+  if (session.isAuthenticating) return null;
+
+  if (!session.isAuthenticated) {
     return (
       <Button
         startIcon={<LoginIcon />}
-        onClick={handleLogin}
+        onClick={onLogin}
         variant="contained"
         sx={{ height: "28px", mr: "5px", my: "auto" }}>
         {"Login"}
@@ -30,14 +32,8 @@ export default function RenderButton({ userInfo, handleLogout, handleNavigation,
 
   return (
     <Box sx={{ display: "flex" }}>
-      <RenderNewQrButton pathname={router.pathname} handleNavigation={handleNavigation} />
-      <Button
-        startIcon={<LogoutIcon />}
-        onClick={handleLogout}
-        variant="contained"
-        sx={{ height: "28px", ml: "10px", my: "auto" }}>
-        {"Logout"}
-      </Button>
+      {router.pathname === '/' ? <ButtonCreateQrLinks /> : <ButtonMyQrLinks />}
+      <MainMenu />
     </Box>
   );
 }

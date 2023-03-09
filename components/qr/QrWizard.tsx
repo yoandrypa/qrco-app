@@ -20,11 +20,10 @@ import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
 import { useRouter } from "next/router";
 import { request } from "../../libs/utils/request";
 import { setWarning, hideNotification } from "../Notification";
-import ConfirmDialog, { waitConfirmation } from "../ConfirmDialog";
+import { waitConfirmation } from "../ConfirmDialog";
 import { releaseWaiting, startWaiting } from "../Waiting";
 
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
-const Notifications = dynamic(() => import("../notifications/Notifications"));
 const ProcessHandler = dynamic(() => import("./renderers/ProcessHandler"));
 const RenderPreview = dynamic(() => import("./renderers/RenderPreview"));
 
@@ -268,7 +267,6 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
             }).finally(releaseWaiting);
           }} />
       )}
-      <ConfirmDialog />
     </>
   );
 };

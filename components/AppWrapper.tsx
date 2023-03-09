@@ -23,10 +23,13 @@ import Context from "./context/Context";
 import ConfirmDialog from "./ConfirmDialog";
 import Notification from "./Notification";
 import Waiting from "./Waiting";
+import messaging from "@ebanux/ebanux-utils/messaging";
 
 const CountDown = dynamic(() => import("./countdown/CountDown"));
 const RenderButton = dynamic(() => import("./wrapper/RenderButton"));
 const RenderMenu = dynamic(() => import("./wrapper/RenderMenu"));
+
+const mSubscriptions: any[] = [];
 
 interface Props {
   window?: () => Window;
@@ -92,6 +95,8 @@ export default function AppWrapper(props: AppWrapperProps) {
     const isInListView = router.pathname === "/";
     const isEdit = !isInListView && mode === "edit";
 
+    console.log(router.pathname, mode, isEdit, isInListView);
+
     if (setRedirecting && !isInListView) setRedirecting(true);
     if (clearData !== undefined) {
       clearData(false, isEdit || !isInListView);
@@ -102,8 +107,7 @@ export default function AppWrapper(props: AppWrapperProps) {
       navigationOptions.query = { mode };
     }
 
-    router.push(navigationOptions, isInListView ? QR_TYPE_ROUTE : "/",
-      { shallow: true }).then(() => {
+    router.push(navigationOptions, isInListView ? QR_TYPE_ROUTE : "/").then(() => {
       handleLoading(false);
       if (setRedirecting) setRedirecting(false);
     });
@@ -134,9 +138,17 @@ export default function AppWrapper(props: AppWrapperProps) {
   }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    // Anything in here is fired on component mount.
+    mSubscriptions.push(messaging.setListener('onNavigate', handleNavigation));
+
     if (session.isAuthenticated && !subscription) loadSubscription().then((subscription: any) => {
       setSubscription(subscription);
     });
+
+    return () => {
+      // Anything in here is fired on component unmount.
+      messaging.delListener(mSubscriptions);
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -156,19 +168,7 @@ export default function AppWrapper(props: AppWrapperProps) {
               </Link>
               <Box sx={{ display: "flex" }}>
                 {router.query[PARAM_QR_TEXT] === undefined && (<>
-                  {isWide ? (
-                    <RenderButton
-                      handleNavigation={handleNavigation}
-                      userInfo={userInfo}
-                      handleLogout={beforeLogout}
-                      handleLogin={handleLogin} />
-                  ) : (
-                    <RenderMenu
-                      handleLogin={handleLogin}
-                      handleNavigation={handleNavigation}
-                      handleLogout={beforeLogout}
-                      userInfo={userInfo} />
-                  )}
+                  {isWide ? <RenderButton /> : <RenderMenu />}
                 </>)}
                 {isFreeMode && <CountDown />}
               </Box>
@@ -180,6 +180,7 @@ export default function AppWrapper(props: AppWrapperProps) {
       <Container sx={{ width: "100%" }}>
         <Box sx={{ height }} /> {/* Aims to fill the header's gap */}
         <Box sx={{ mx: "auto", minHeight: `calc(100vh - ${router.pathname === '/' ? 140 : 135}px)` }}>
+          <ConfirmDialog />
           <Notification />
           <Waiting />
           {children}
