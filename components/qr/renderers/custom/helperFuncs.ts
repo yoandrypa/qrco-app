@@ -52,6 +52,12 @@ export interface CustomProps {
   setIsWrong: (isWrong: boolean) => void;
 }
 
+export interface CustomSettingsProps {
+  anchor: HTMLElement;
+  index: number;
+  reverse?: boolean;
+}
+
 export interface CustomEditProps {
   anchor: HTMLElement;
   index: number;

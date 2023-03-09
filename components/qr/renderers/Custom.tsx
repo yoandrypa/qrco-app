@@ -5,13 +5,20 @@ import Box from "@mui/material/Box";
 import Common from "../helperComponents/Common";
 import DragPaper from "../helperComponents/looseComps/DragPaper";
 import Expander from "./helpers/Expander";
-import RenderHeadline from "./custom/RenderHeadline";
-import {CustomType, DataType} from "../types/types";
+import {CustomType, DataType, Type} from "../types/types";
 
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 
 import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
-import {cleaner, components, CustomEditProps, CustomProps, getNameStr, validator} from "./custom/helperFuncs";
+import {
+  cleaner,
+  components,
+  CustomEditProps,
+  CustomProps,
+  CustomSettingsProps,
+  getNameStr,
+  validator
+} from "./custom/helperFuncs";
 import {getUuid} from "../../../helpers/qr/helpers";
 import {FILE_LIMITS} from "../../../consts";
 
@@ -47,6 +54,7 @@ const RenderWeb = dynamic(() => import("./contents/RenderWeb"));
 const RenderSku = dynamic(() => import("./contents/RenderSku"));
 const RenderTags = dynamic(() => import("./contents/RenderTags"));
 const RenderContactForm = dynamic(() => import("./contents/RenderContactForm"));
+const HeadlineSettings = dynamic(() => import("./custom/HeadlineSettings"));
 
 export default function Custom({data, setData, handleValues, setIsWrong, predefined, tip, selected}: CustomProps) {
   const [showOptions, setShowOptions] = useState<HTMLElement | null>(null);
@@ -54,6 +62,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
   const [confirm, setConfirm] = useState<{index: number, item: string} | undefined>(undefined);
   const [isVisible, setIsVisible] = useState<boolean>(true);
   const [open, setOpen] = useState<CustomEditProps | null>(null); // aims to editor
+  const [openSettings, setOpenSettings] = useState<CustomSettingsProps | null>(null);
 
   const doneFirst = useRef<boolean>(false);
   const topElement = useRef<HTMLDivElement | null>(null);
@@ -124,6 +133,10 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
     setOpen({item, index, name, anchor: event.currentTarget});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handleSettings = useCallback((index: number, reverse: boolean) => (event: MouseEvent<HTMLElement>) => {
+    setOpenSettings({index, reverse, anchor: event.currentTarget});
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handle = useCallback((item: string) => () => {
     handleAdd(item);
     setShowOptions(null);
@@ -143,7 +156,6 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
 
   useEffect(() => {
     const expand = [] as string[];
-
     if (predefined) {
       setData((prev: DataType) => {
         const newData = {...prev, custom: []};
@@ -161,14 +173,12 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
 
     if (expand.length) { setExpander(expand); }
 
-    const observer = new IntersectionObserver(
-      (payload: IntersectionObserverEntry[]) => {
-        setIsVisible(payload[0].isIntersecting || false);
-      }, { root: document.querySelector("#scrollArea"), rootMargin: "0px", threshold: [0.3] });
+    const observer = new IntersectionObserver((payload: IntersectionObserverEntry[]) => setIsVisible(payload[0].isIntersecting || false),
+      { root: document.querySelector("#scrollArea"), rootMargin: "0px", threshold: [0.3] });
 
-      // @ts-ignore
+    // @ts-ignore
     observer.observe(topElement.current);
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (data?.custom?.length && doneFirst.current) {
@@ -176,9 +186,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
     }
   }, [data?.custom?.length]);
 
-  useEffect(() => {
-    setIsWrong(validator(data, selected));
-  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {setIsWrong(validator(data, selected))}, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Common msg={tip || "Create a custom QR Link on your own, using the predefined sections."}>
@@ -190,82 +198,61 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
             {(provided: any) => (
               <Box {...provided.droppableProps} ref={provided.innerRef}>
                 {data.custom?.map((x: CustomType, index: number) => {
-                  const { component } = x;
+                  const {component} = x;
                   const expanded = expander.find(exp => exp === x.expand);
-
                   const isHeadline = !['title', 'action', 'sku'].includes(component) && !(component === 'gallery' && selected === 'inventory');
                   const key = x.expand || `tempo${index}`;
 
-                  return (
-                    <Draggable key={key} draggableId={key} index={index} isDragDisabled={data.custom?.length === 1}>
-                      {(prov: any, snap: any) => (
-                        <Box sx={{my: 4, width: '100%', ...getItemStyle(snap.isDragging, prov.draggableProps.style)}}
-                             ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
-                          <DragPaper elevation={2} sx={{p: 1}} avoidIcon={data.custom?.length === 1} removeFunc={handleRemove(index, component)}
-                                     editFunc={isHeadline ? handleEdit(index, component, x.name) : undefined}> {/* @ts-ignore */}
-                            <Expander expand={expanded || null} setExpand={handleExpander} item={x.expand} multi
-                                      index={index} handleValues={handleValues} checked={x?.data?.hideHeadLine}
-                                      title={x.name || getNameStr(component, selected || '')}
-                                      bold={Boolean(x.name)} editFunc={isHeadline ? handleEdit(index, component, x.name) : undefined}/>
-                            {expanded !== undefined && (<>
-                              {isHeadline && (
-                                <RenderHeadline index={index} handleValues={handleValues} reverse={component === 'links'}
-                                                hideHeadLine={x?.data?.hideHeadLine} centerHeadLine={x?.data?.centerHeadLine} />
-                              )}
-                              {component === components[0].type && <RenderAddressData data={x.data} handleValues={handleValues} index={index}/>}
-                              {component === components[1].type && <RenderCompanyData data={x.data} handleValues={handleValues} index={index}/>}
-                              {component === components[2].type && <RenderDateSelector data={x.data} handleValues={handleValues} label="Date" index={index}/>}
-                              {component === components[3].type && <RenderEmail data={x.data} handleValues={handleValues} index={index}/>}
-                              {component === components[4].type && <RenderEmailWeb data={x.data} handleValues={handleValues} index={index}/>}
-                              {component === components[5].type && <RenderEasiness data={x.data} handleValues={handleValues} index={index}/>}
-                              {component === components[6].type && <RenderLinks data={x.data} setData={setData} index={index}/>}
-                              {component === components[7].type && <RenderOrganization data={x.data} handleValues={handleValues} index={index}/>}
-                              {component === components[8].type && <RenderPhones data={x.data} handleValues={handleValues} index={index}/>}
-                              {component === components[9].type && (
-                                <RenderAssetsData data={x.data} setData={setData} type="gallery" index={index}
-                                                  totalFiles={predefined === undefined || selected === 'inventory' ? 3 : FILE_LIMITS['gallery'].totalFiles}/>
-                              )}
-                              {component === components[10].type && (
-                                <RenderPresentation data={x.data} handleValues={handleValues} index={index} forceExtra={['vcard+', 'petId'].includes(selected || '')} />
-                              )}
-                              {component === components[11].type && <RenderOpeningTime data={x.data} setData={setData} index={index}/>}
-                              {component === components[12].type && <RenderSocials data={x.data} setData={setData} index={index}/>}
-                              {component === components[13].type && (
-                                <RenderTitleDesc handleValues={handleValues} title={x.data?.titleAbout} noPaper sx={{mt: '5px'}}
-                                                 header="Fill at least one of these fields" description={x.data?.descriptionAbout} index={index}/>
-                              )}
-                              {component === components[14].type && (
-                                <RenderActionButton index={index} setData={setData} handleValues={handleValues} data={x.data} />
-                              )}
-                              {component === components[15].type && (
-                                <RenderSingleText text={x.data?.text || ''} index={index} handleValues={handleValues}/>
-                              )}
-                              {component === components[16].type && (
-                                <RenderAssetsData totalFiles={predefined === undefined ? 1 : FILE_LIMITS['pdf'].totalFiles}
-                                                  data={x.data} setData={setData} type="pdf" index={index}/>
-                              )}
-                              {component === components[17].type && (
-                                <RenderAssetsData data={x.data} setData={setData} type="audio" index={index}
-                                                  totalFiles={predefined === undefined ? 1 : FILE_LIMITS['audio'].totalFiles}/>
-                              )}
-                              {component === components[18].type && (
-                                <RenderAssetsData data={x.data} setData={setData} type="video" index={index}
-                                                  totalFiles={predefined === undefined ? 1 : FILE_LIMITS['video'].totalFiles}/>
-                              )}
-                              {component === components[19].type && <RenderKeyValue index={index} setData={setData} data={x.data} topics="" />}
-                              {component === components[20].type && <RenderWeb data={x.data} handleValues={handleValues} index={index} />}
-                              {component === components[21].type && <RenderContactForm index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[22].type && <RenderTags index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[23].type && <RenderCouponInfo index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[24].type && <RenderCouponData index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[25].type && <RenderPetDesc index={index} handleValues={handleValues} data={x.data} />}
-                              {component === components[26].type && <RenderSku index={index} handleValues={handleValues} data={x.data} />}
-                            </>)}
-                          </DragPaper>
-                        </Box>
-                      )}
-                    </Draggable>
-                  )
+                  return (<Draggable key={key} draggableId={key} index={index} isDragDisabled={data.custom?.length === 1}>
+                    {(prov: any, snap: any) => (
+                      <Box sx={{my: 4, width: '100%', ...getItemStyle(snap.isDragging, prov.draggableProps.style)}}
+                           ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
+                        <DragPaper elevation={2} sx={{p: 1}} avoidIcon={data.custom?.length === 1} removeFunc={handleRemove(index, component)}
+                                   editFunc={isHeadline ? handleEdit(index, component, x.name) : undefined}
+                                   settingsFunc={isHeadline ? handleSettings(index, component === 'links') : undefined}> {/* @ts-ignore */}
+                          <Expander expand={expanded || null} setExpand={handleExpander} item={x.expand} multi
+                                    index={index} handleValues={handleValues} checked={x?.data?.hideHeadLine}
+                                    title={x.name || getNameStr(component, selected || '')}
+                                    bold={Boolean(x.name)} editFunc={isHeadline ? handleEdit(index, component, x.name) : undefined}/>
+                          {expanded !== undefined && (<>
+                            {component === components[0].type && <RenderAddressData data={x.data} handleValues={handleValues} index={index}/>}
+                            {component === components[1].type && <RenderCompanyData data={x.data} handleValues={handleValues} index={index}/>}
+                            {component === components[2].type && <RenderDateSelector data={x.data} handleValues={handleValues} label="Date" index={index}/>}
+                            {component === components[3].type && <RenderEmail data={x.data} handleValues={handleValues} index={index}/>}
+                            {component === components[4].type && <RenderEmailWeb data={x.data} handleValues={handleValues} index={index}/>}
+                            {component === components[5].type && <RenderEasiness data={x.data} handleValues={handleValues} index={index}/>}
+                            {component === components[6].type && <RenderLinks data={x.data} setData={setData} index={index}/>}
+                            {component === components[7].type && <RenderOrganization data={x.data} handleValues={handleValues} index={index}/>}
+                            {component === components[8].type && <RenderPhones data={x.data} handleValues={handleValues} index={index}/>}
+                            {component === components[9].type && <RenderAssetsData data={x.data} setData={setData} type="gallery" index={index}
+                                                totalFiles={predefined === undefined || selected === 'inventory' ? 3 : FILE_LIMITS['gallery'].totalFiles}/>}
+                            {component === components[10].type && <RenderPresentation data={x.data} handleValues={handleValues} index={index}
+                                                                                      forceExtra={['vcard+', 'petId'].includes(selected || '')} />}
+                            {component === components[11].type && <RenderOpeningTime data={x.data} setData={setData} index={index}/>}
+                            {component === components[12].type && <RenderSocials data={x.data} setData={setData} index={index}/>}
+                            {component === components[13].type && <RenderTitleDesc handleValues={handleValues} title={x.data?.titleAbout} noPaper sx={{mt: '5px'}}
+                                                                                   header="Fill at least one of these fields" description={x.data?.descriptionAbout} index={index}/>}
+                            {component === components[14].type && <RenderActionButton index={index} setData={setData} handleValues={handleValues} data={x.data} />}
+                            {component === components[15].type && <RenderSingleText text={x.data?.text || ''} index={index} handleValues={handleValues}/>}
+                            {component === components[16].type && <RenderAssetsData totalFiles={predefined === undefined ? 1 : FILE_LIMITS['pdf'].totalFiles}
+                                                                                    data={x.data} setData={setData} type="pdf" index={index}/>}
+                            {component === components[17].type && <RenderAssetsData data={x.data} setData={setData} type="audio" index={index}
+                                                                                    totalFiles={predefined === undefined ? 1 : FILE_LIMITS['audio'].totalFiles}/>}
+                            {component === components[18].type && <RenderAssetsData data={x.data} setData={setData} type="video" index={index}
+                                                                                    totalFiles={predefined === undefined ? 1 : FILE_LIMITS['video'].totalFiles}/>}
+                            {component === components[19].type && <RenderKeyValue index={index} setData={setData} data={x.data} topics="" />}
+                            {component === components[20].type && <RenderWeb data={x.data} handleValues={handleValues} index={index} />}
+                            {component === components[21].type && <RenderContactForm index={index} handleValues={handleValues} data={x.data} />}
+                            {component === components[22].type && <RenderTags index={index} handleValues={handleValues} data={x.data} />}
+                            {component === components[23].type && <RenderCouponInfo index={index} handleValues={handleValues} data={x.data} />}
+                            {component === components[24].type && <RenderCouponData index={index} handleValues={handleValues} data={x.data} />}
+                            {component === components[25].type && <RenderPetDesc index={index} handleValues={handleValues} data={x.data} />}
+                            {component === components[26].type && <RenderSku index={index} handleValues={handleValues} data={x.data} />}
+                          </>)}
+                        </DragPaper>
+                      </Box>
+                    )}
+                  </Draggable>)
                 })}
               </Box>
             )}
@@ -273,22 +260,16 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
         </DragDropContext>
       </Box>
       {showOptions && <CustomMenu handle={handle} showOptions={showOptions} setShowOptions={setShowOptions} />}
-      {open && (
-        <CustomEditSection
-          handleClose={() => setOpen(null)} anchor={open.anchor} value={open.item}
-          current={open.name} handleOk={(value: string) => handleAccept(value, open.index, open.item)} />
-      )}
-      {confirm !== undefined && (
-        <RenderConfirmDlg
-          handleCancel={() => setConfirm(undefined)} handleOk={() => handleDelete(confirm.index, confirm.item)}
-          title="Confirm" noMsg="No" yesMsg="Yes" message="You are going to remove the selected section."
-          confirmationMsg="Are you sure?" />
-      )}
-      {!isVisible && (
-        <IconButton color="primary" sx={{position: 'fixed', left: '10px', bottom: '25px'}} size="large" onClick={() => window.scrollTo({behavior: 'smooth', top: 0})}>
+      {openSettings && <HeadlineSettings anchor={openSettings.anchor} handleValues={handleValues} data={data?.custom?.[openSettings.index]?.data}
+                                         handleClose={() => setOpenSettings(null)} index={openSettings.index} reverse={openSettings.reverse || false}  />}
+      {open && <CustomEditSection handleClose={() => setOpen(null)} anchor={open.anchor} value={open.item}
+                                  current={open.name} handleOk={(value: string) => handleAccept(value, open.index, open.item)} />}
+      {confirm !== undefined && <RenderConfirmDlg confirmationMsg="Are you sure?" title="Confirm" noMsg="No" yesMsg="Yes"
+                                                  handleCancel={() => setConfirm(undefined)} handleOk={() => handleDelete(confirm.index, confirm.item)}
+                                                  message="You are going to remove the selected section." />}
+      {!isVisible && <IconButton color="primary" sx={{position: 'fixed', left: '10px', bottom: '25px'}} size="large" onClick={() => window.scrollTo({behavior: 'smooth', top: 0})}>
           <ArrowCircleUpIcon fontSize="large"/>
-        </IconButton>
-      )}
+        </IconButton>}
     </Common>
   );
 }
