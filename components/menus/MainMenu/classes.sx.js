@@ -9,6 +9,7 @@ const styles = {
     height: 28,
     my: 'auto',
     mr: '5px',
+    textTransform: 'none',
   },
 
   profile: {

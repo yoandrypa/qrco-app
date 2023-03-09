@@ -16,7 +16,7 @@ export default function ButtonLogin() {
   return (
     <Button variant="contained"
             startIcon={<LoginIcon />}
-            sx={navButton}
+            sx={{ ...navButton, textTransform: 'uppercase' }}
             color="primary"
             onClick={onLogin}
     >
