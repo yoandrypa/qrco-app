@@ -11,7 +11,7 @@ import classes from "./classes.sx";
 import Context from "../../context/Context";
 import { releaseWaiting, startWaiting } from "../../Waiting";
 
-export default function MenuItemListQrLinks() {
+export default function MenuItemMyQrLynks() {
   const router = useRouter();
   const { iconSmall } = classes;
   const { clearData } = useContext(Context);

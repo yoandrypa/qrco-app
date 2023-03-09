@@ -10,7 +10,7 @@ import QrCodeIcon from "@mui/icons-material/QrCode";
 import classes from "./classes.sx";
 import { releaseWaiting, startWaiting } from "../../Waiting";
 
-export default function MenuItemCreateQrLinks() {
+export default function MenuItemCreateQrLynks() {
   const router = useRouter();
   const { iconSmall } = classes;
 
