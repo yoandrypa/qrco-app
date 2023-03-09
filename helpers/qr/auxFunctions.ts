@@ -142,7 +142,8 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
             files: [{
               name: 'Photoshop for beginners NEW22.pdf', // @ts-ignore
               Key: 'pdfs/Photoshop for beginners NEW22.pdf'
-            }]
+            }],
+            isSample: true
           };
           break;
         }
@@ -151,19 +152,22 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
             files: [ // @ts-ignore
               {name: "0land.jpg", Key: "galleries/0land.jpg"}, {name: "1land.jpg", Key: "galleries/1land.jpg"}, // @ts-ignore
               {name: "2land.jpg", Key: "galleries/2land.jpg"}, {name: "3land.jpg", Key: "galleries/3land.jpg"}
-            ]
+            ],
+            isSample: true
           };
           break;
         }
         case 'audio': {
           x.data = { // @ts-ignore
-            files: [{ name: "audio.mp3", Key: "audios/Luerod Bounce - Will i am (Orchrestral mix)mp3.mp3" }]
+            files: [{ name: "audio.mp3", Key: "audios/Luerod Bounce - Will i am (Orchrestral mix)mp3.mp3" }],
+            isSample: true
           };
           break;
         }
         case 'video': {
           x.data = { // @ts-ignore
-            files: [{ name: 'video.mp4', Key: 'videos/Facebook 0330478876988862(MP4).mp4' }]
+            files: [{ name: 'video.mp4', Key: 'videos/Facebook 0330478876988862(MP4).mp4' }],
+            isSample: true
           };
           break;
         }

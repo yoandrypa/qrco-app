@@ -105,14 +105,20 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
         });
       } else if (prop === 'buttonShape') {
         setData((prev: any) => {
-          const tempo = {...prev, [prop]: payload};
-          if (payload !== '3' && tempo.buttonBorders !== undefined) { delete tempo.buttonBorders; }
-          return tempo;
+          const newData = {...prev, [prop]: payload};
+          if (newData.flipHorizontal !== undefined) { delete newData.flipHorizontal; }
+          if (newData.flipVertical !== undefined && !['5', '6', '7'].includes(payload)) { delete newData.flipVertical; }
+          if (newData.alternate !== undefined && !['5', '6', '7'].includes(payload)) { delete newData.alternate; }
+          if (payload !== '4' && newData.buttonBorders !== undefined) { delete newData.buttonBorders; }
+          return newData;
         })
       } else {
         setData((prev: any) => {
           const newData = {...prev};
           newData[prop] = payload.target?.value !== undefined ? payload.target.value : payload;
+          if (['flipHorizontal', 'flipVertical', 'buttonShadow', 'buttonCase'].includes(prop) && !payload && newData[prop] !== undefined) {
+            delete newData[prop];
+          }
           if (prop === 'buttonBorderStyle') {
             if (payload !== 'two' && newData.buttonBorderColors !== undefined) {
               delete newData.buttonBorderColors;

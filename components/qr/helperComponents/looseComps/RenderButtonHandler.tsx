@@ -4,19 +4,24 @@ import InputLabel from "@mui/material/InputLabel";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import Grid from "@mui/material/Grid";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+import {useTheme} from "@mui/system";
 
 import dynamic from "next/dynamic";
 
 import RenderMainFontsHandler from "../smallpieces/RenderMainFontsHandler";
+import RenderHandleOpacity from "../smallpieces/RenderHandleOpacity";
 import {DataType} from "../../types/types";
 import SectionSelector from "../SectionSelector";
 import ColorSelector from "../ColorSelector";
 import {DEFAULT_COLORS} from "../../constants";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import RenderHandleOpacity from "../smallpieces/RenderHandleOpacity";
-import Grid from "@mui/material/Grid";
+import {ChangeEvent} from "react";
 
 const RenderBorders = dynamic(() => import("./RenderBorders"));
+const RenderCustButtons = dynamic(() => import("./RenderCustButtons"));
 const RenderTwoColors = dynamic(() => import("../smallpieces/RenderTwoColors"));
 
 interface ButtonsHandlerProps {
@@ -28,38 +33,98 @@ export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerP
   const isWide = useMediaQuery("(min-width:900px)", {noSsr: true});
   const isWideEnough = useMediaQuery("(min-width:815px)", {noSsr: true});
 
-  const renderShape = (item: number) => (
-    <SectionSelector
-      selected={(!data?.buttonShape && item === 1) || (data?.buttonShape === `${item}`)}
-      property={`${item}`} h={'40px'} w={'70px'} separate handleSelect={handleValue('buttonShape')}>
-      <Box sx={{
-        width: '60px',
-        height: '30px',
-        border: theme => `solid 2px ${theme.palette.primary.dark}`,
-        background: theme => theme.palette.primary.light,
-        borderRadius: item === 0 ? 'unset' : (item === 1 ? '10px' : (item === 2 ? '15px' : '25px 8px 12px 0'))
-      }}/>
-    </SectionSelector>
-  );
+  const theme = useTheme();
+
+  const renderShape = (item: number) => {
+    const sx = {
+      width: '60px',
+      height: '30px',
+      border: `solid 2px ${theme.palette.primary.dark}`,
+      background: theme.palette.primary.light
+    } as any;
+
+    if (item !== 0) {
+      if (item === 1) {
+        sx.borderRadius = '10px';
+      } else if (item === 2) {
+        sx.borderRadius = '15px';
+      } else if (item === 3) {
+        sx.borderRadius = '50%';
+      } else if (item === 4) {
+        sx.borderRadius = '25px 8px 12px 0';
+      } else if (item === 5) {
+        sx.borderRadius = !data?.flipVertical ? '25px 0' : '0 25px';
+      } else if (item === 6) {
+        let radius = '25px 0 0 25px';
+        if (data?.flipVertical && !data.flipHorizontal) {
+          radius = '25px 25px 0 0';
+        } else if (data?.flipHorizontal && !data.flipVertical) {
+          radius = '0 25px 25px 0';
+        } else if (data?.flipHorizontal && data.flipVertical) {
+          radius = '0 0 25px 25px';
+        }
+        sx.borderRadius = radius;
+      } else {
+        sx.transform = `perspective(10px) rotateX(${data?.flipVertical ? 5 : -5}deg)`;
+        sx.mt = data?.flipVertical ? '-5px' : '4px';
+      }
+    }
+
+    if (data?.buttonShadow) {
+      sx.boxShadow = '3px 3px 2px #00000099';
+    }
+
+    return (
+      <SectionSelector
+        selected={(!data?.buttonShape && item === 1) || (data?.buttonShape === `${item}`)}
+        property={`${item}`} h={'40px'} w={'70px'} separate handleSelect={handleValue('buttonShape')}>
+          <Box sx={sx}/>
+      </SectionSelector>
+    )
+  };
 
   const handler = (prop: string) => (event: SelectChangeEvent) => {
     handleValue(prop)(event.target.value);
   }
 
+  const handleShadow = (event: ChangeEvent<HTMLInputElement>) => {
+    handleValue('buttonShadow')(event.target.checked);
+  }
+
+  const handleUpcase = (event: ChangeEvent<HTMLInputElement>) => {
+    handleValue('buttonCase')(event.target.checked);
+  }
+
   return (
     <Box sx={{mt: 1}}>
       <RenderMainFontsHandler handleValue={handleValue} data={data}/>
-      <Box sx={{p: 1, display: 'flex', flexDirection: isWide ? 'row' : 'column'}}>
-        <Box>
-          <Typography>{'Shape'}</Typography>
-          {[...Array(4).keys()].map(x => renderShape(x))}
-        </Box>
-        {data?.buttonShape === `${3}` && (
-          <Box sx={{mt: isWide ? '17px' : '10px', ml: isWide ? '10px' : 0}}>
-            <RenderBorders handleValue={handleValue} data={data} />
+      <Box sx={{p: 1}}>
+        <Typography>{'Shape'}</Typography>
+        {[...Array(8).keys()].map(x => renderShape(x))}
+      </Box>
+      <Box sx={{mt: '-10px', mb: '15px', ml: 1}}>
+        {['4', '5', '6', '7'].includes(data?.buttonShape || '') && (
+          <Box sx={{display: 'inline-block'}}>
+            {data?.buttonShape === '4' && <RenderBorders handleValue={handleValue} data={data} />}
+            {data?.buttonShape === '5' && <RenderCustButtons handleValue={handleValue} data={data} />}
+            {data?.buttonShape === '6' && <RenderCustButtons handleValue={handleValue} data={data} handleHoriz />}
+            {data?.buttonShape === '7' && <RenderCustButtons handleValue={handleValue} data={data} />}
           </Box>
         )}
+        <FormControl sx={{ mt: !isWide ? 0 : (data?.buttonShape === '4' ? 1 : 0), ml: 1}}>
+          <FormControlLabel control={<Switch checked={data?.buttonShadow || false} onChange={handleShadow} />}
+                            label="Add shadow" />
+        </FormControl>
+        <FormControl sx={{ mt: !isWide ? 0 : (data?.buttonShape === '4' ? 1 : 0), ml: 1}}>
+          <FormControlLabel control={<Switch checked={data?.buttonCase || false} onChange={handleUpcase} />}
+                            label="Case sensitive" />
+        </FormControl>
       </Box>
+      {data?.alternate && (
+        <Typography sx={{ml: 1, mb: '15px', mt: '-15px', fontSize: 'smaller', color: theme => theme.palette.text.disabled}}>
+          {'Alternate will only affect those cases with several buttons in the same section'}
+        </Typography>
+      )}
       <Box sx={{p: 1, mt: '-20px'}}>
         <Typography>{'Background'}</Typography>
         <Box sx={{display: 'flex', flexDirection: isWide && isWideEnough ? 'row' : 'column', width: '100%'}}>
@@ -128,9 +193,8 @@ export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerP
                   <InputLabel id="buttonBorderTypeLabel">Style</InputLabel>
                   <Select
                     labelId="buttonBorderTypeLabel"
-                    id="buttonBorderType"
+                    id="buttonBorderType" label="Style"
                     value={data?.buttonBorderType || 'solid'}
-                    label="Weight"
                     onChange={handler('buttonBorderType')}
                   >
                     <MenuItem value="dashed">Dashed</MenuItem>
@@ -152,7 +216,7 @@ export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerP
                   >
                     <MenuItem value="thin">Thin</MenuItem>
                     <MenuItem value="normal">Medium</MenuItem>
-                    <MenuItem value="weight">Weight</MenuItem>
+                    <MenuItem value="weight">Thick</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>

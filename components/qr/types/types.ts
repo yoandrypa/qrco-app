@@ -195,6 +195,11 @@ export type CustomType = {
 };
 
 export type DataType = {
+  buttonCase?: boolean;
+  alternate?: boolean;
+  flipVertical?: boolean;
+  flipHorizontal?: boolean;
+  buttonShadow?: boolean;
   buttonBorderType?: string;
   buttonBorderWeight?: string;
   buttonBorderColors?: string;

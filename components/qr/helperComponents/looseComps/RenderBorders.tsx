@@ -11,7 +11,7 @@ interface RenderBordersProps {
 }
 
 export default function RenderBorders({data, handleValue}: RenderBordersProps) {
-  const [topL, setTopL] = useState<number>(25);
+  const [topL, setTopL] = useState<number>(50);
   const [topR, setTopR] = useState<number>(10);
   const [belowL, setBelowL] = useState<number>(0);
   const [belowR, setBelowR] = useState<number>(15);
@@ -47,7 +47,7 @@ export default function RenderBorders({data, handleValue}: RenderBordersProps) {
       label={icon}
       onKeyDown={evt => ['e', 'E', '+', '-'].includes(evt.key) && evt.preventDefault()}
       margin="dense"
-      sx={{ mr: item !== 'belowR' ? '10px' : 0, width: '70px' }}
+      sx={{ mr: item !== 'belowR' ? '10px' : 0, width: '70px', display: 'inline-flex' }}
       value={value}
       onChange={handler(item)}
       variant="outlined" // @ts-ignore
@@ -58,8 +58,6 @@ export default function RenderBorders({data, handleValue}: RenderBordersProps) {
   useEffect(() => {
     if (doneFirst.current) {
       handleValue('buttonBorders')(`${topL}px ${topR}px ${belowR}px ${belowL}px`);
-    } else {
-      doneFirst.current = true;
     }
   }, [topL, topR, belowL, belowR]);  // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -71,6 +69,7 @@ export default function RenderBorders({data, handleValue}: RenderBordersProps) {
       setBelowL(+borders[2]);
       setBelowR(+borders[3]);
     }
+    doneFirst.current = true;
   }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
   return (<>
