@@ -9,7 +9,7 @@ import Button from "@mui/material/Button";
 
 import { startWaiting, releaseWaiting } from "../../Waiting";
 
-export default function ButtonMyQrLinks() {
+export default function ButtonMyQrLynks() {
   const router = useRouter();
   const { clearData } = useContext(Context);
   const { navButton } = classes;
@@ -27,7 +27,7 @@ export default function ButtonMyQrLinks() {
             color="primary"
             onClick={onClick}
     >
-      {'My QR Links'}
+      {'My QRLynks'}
     </Button>
   );
 }

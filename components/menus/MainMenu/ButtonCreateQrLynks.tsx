@@ -12,7 +12,7 @@ interface NavButtonProps {
   light?: boolean;
 }
 
-export default function ButtonCreateQrLinks({ light }: NavButtonProps) {
+export default function ButtonCreateQrLynks({ light }: NavButtonProps) {
   const router = useRouter();
   const { navButton } = classes;
 
@@ -28,7 +28,7 @@ export default function ButtonCreateQrLinks({ light }: NavButtonProps) {
             color={light ? 'info' : 'primary'}
             onClick={onClick}
     >
-      {'Create QR Link'}
+      {'Create QRLynks'}
     </Button>
   );
 }

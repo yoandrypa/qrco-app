@@ -189,7 +189,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
   useEffect(() => {setIsWrong(validator(data, selected))}, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Common msg={tip || "Create a custom QR Link on your own, using the predefined sections."}>
+    <Common msg={tip || "Create a custom QRLynk on your own, using the predefined sections."}>
       <Box sx={{mt: 1, width: '100%'}}>
         <Button startIcon={<AddIcon />} variant="outlined" onClick={handleOptions}>{'Sections...'}</Button>
         <div ref={topElement} style={{height: '20px', width: '1px', display: 'inline-flex'}} />

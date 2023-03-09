@@ -7,15 +7,15 @@ import Box from "@mui/material/Box";
 
 import MainMenu from "../menus/MainMenu";
 import ButtonLogin from "../menus/MainMenu/ButtonLogin";
-import ButtonMyQrLinks from "../menus/MainMenu/ButtonMyQrLinks";
-import ButtonCreateQrLinks from "../menus/MainMenu/ButtonCreateQrLinks";
+import ButtonMyQrLynks from "../menus/MainMenu/ButtonMyQrLynks";
+import ButtonCreateQrLynks from "../menus/MainMenu/ButtonCreateQrLynks";
 
 function OutMenuButton() {
   const router = useRouter();
 
   if (!session.isAuthenticated) return <ButtonLogin />;
 
-  return (router.pathname === '/') ? <ButtonCreateQrLinks /> : <ButtonMyQrLinks />;
+  return (router.pathname === '/') ? <ButtonCreateQrLynks /> : <ButtonMyQrLynks />;
 }
 
 export default function WideScreenMenu() {

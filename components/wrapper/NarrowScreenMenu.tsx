@@ -5,8 +5,8 @@ import session from "@ebanux/ebanux-utils/sessionStorage";
 
 import Box from "@mui/material/Box";
 import MainMenu from "../menus/MainMenu";
-import MenuItemCreateQrLinks from "../menus/MainMenu/MenuItemCreateQrLinks";
-import MenuItemMyQrLinks from "../menus/MainMenu/MenuItemMyQrLinks";
+import MenuItemCreateQrLynks from "../menus/MainMenu/MenuItemCreateQrLynks";
+import MenuItemMyQrLynks from "../menus/MainMenu/MenuItemMyQrLynks";
 import ButtonLogin from "../menus/MainMenu/ButtonLogin";
 
 function OutMenuButton() {
@@ -19,7 +19,7 @@ export default function NarrowScreenMenu() {
   const renderMenuItems = () => {
     if (!session.isAuthenticated) return null;
 
-    return router.pathname === "/" ? <MenuItemCreateQrLinks /> : <MenuItemMyQrLinks />;
+    return router.pathname === "/" ? <MenuItemCreateQrLynks /> : <MenuItemMyQrLynks />;
   }
 
   if (session.isAuthenticating) return null;

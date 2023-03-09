@@ -10,7 +10,7 @@ export const dynamicQrTypes = {
     description: 'Share your contact and social details'
   },
   custom: {
-    description: "Custom QR link from scratch using the predefined sections"
+    description: "Custom QRlynk from scratch using the predefined sections"
   },
   business: {
     description: 'Describe your business or company'
@@ -47,7 +47,7 @@ export const dynamicQrTypes = {
     description: "Share your pet's information"
   },
   findMe: {
-    description: "Place a QR link on your stuff to make easy to find you"
+    description: "Place a QRLynk on your stuff to make easy to find you"
   },
   linkedLabel: {
     description: "Share your product's information"
@@ -91,7 +91,7 @@ export const dynamicQr = {
     predefined: ['petId', 'presentation', 'keyvalue', 'links', 'socials', 'contact']
   },
   custom: {
-    tip: "Create a custom qr link on your own from scratch."
+    tip: "Create a custom QRLynk on your own from scratch."
   },
   findMe: {
     tip: "Information to make easy to find you.",

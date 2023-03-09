@@ -10,7 +10,7 @@ import QrCodeIcon from "@mui/icons-material/QrCode";
 import classes from "./classes.sx";
 import { releaseWaiting, startWaiting } from "../../Waiting";
 
-export default function MenuItemCreateQrLinks() {
+export default function MenuItemCreateQrLynks() {
   const router = useRouter();
   const { iconSmall } = classes;
 
@@ -22,7 +22,7 @@ export default function MenuItemCreateQrLinks() {
   return (
     <MenuItem onClick={onClick}>
       <ListItemIcon>{<QrCodeIcon sx={iconSmall} />}</ListItemIcon>
-      <ListItemText>Create QR Link</ListItemText>
+      <ListItemText>Create QRLynks</ListItemText>
     </MenuItem>
   );
 }

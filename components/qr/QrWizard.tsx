@@ -16,12 +16,12 @@ import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
 
 import dynamic from "next/dynamic";
 import session from "@ebanux/ebanux-utils/sessionStorage";
-import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
 import { useRouter } from "next/router";
 import { request } from "../../libs/utils/request";
 import { setWarning, hideNotification } from "../Notification";
 import { waitConfirmation } from "../ConfirmDialog";
 import { releaseWaiting, startWaiting } from "../Waiting";
+import { startAuthorizationFlow } from "../../libs/utils/auth";
 
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
 const ProcessHandler = dynamic(() => import("./renderers/ProcessHandler"));
@@ -102,10 +102,8 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     if (!isDynamic || preGenerated || !isFirstStep) return true;
 
     if (!session.isAuthenticated) {
-      startWaiting();
       session.set('CONTEXT', { selected, data });
-      session.set('CALLBACK_ROUTE', { pathname: QR_CONTENT_ROUTE });
-      startAuthorizationFlow();
+      startAuthorizationFlow({ pathname: QR_CONTENT_ROUTE });
       return false;
     }
 

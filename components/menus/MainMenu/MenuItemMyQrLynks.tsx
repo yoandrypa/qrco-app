@@ -11,7 +11,7 @@ import classes from "./classes.sx";
 import Context from "../../context/Context";
 import { releaseWaiting, startWaiting } from "../../Waiting";
 
-export default function MenuItemListQrLinks() {
+export default function MenuItemMyQrLynks() {
   const router = useRouter();
   const { iconSmall } = classes;
   const { clearData } = useContext(Context);
@@ -25,7 +25,7 @@ export default function MenuItemListQrLinks() {
   return (
     <MenuItem onClick={onClick}>
       <ListItemIcon>{<FirstPageIcon sx={iconSmall} />}</ListItemIcon>
-      <ListItemText>My QR Links</ListItemText>
+      <ListItemText>My QRLynks</ListItemText>
     </MenuItem>
   );
 }
