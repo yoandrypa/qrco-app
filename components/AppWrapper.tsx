@@ -1,4 +1,4 @@
-import { cloneElement, ReactElement, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import React, { cloneElement, ReactElement, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -16,16 +16,20 @@ import Link from "next/link";
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
 import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
-
-import { list } from '../handlers/qrs'
+import { loadSubscription } from "../libs/utils/request";
 
 import RenderSupport from "./wrapper/RenderSupport";
-import * as Users from "../handlers/users";
 import Context from "./context/Context";
+import ConfirmDialog from "./ConfirmDialog";
+import Notification from "./Notification";
+import Waiting from "./Waiting";
+import messaging from "@ebanux/ebanux-utils/messaging";
 
 const CountDown = dynamic(() => import("./countdown/CountDown"));
 const RenderButton = dynamic(() => import("./wrapper/RenderButton"));
 const RenderMenu = dynamic(() => import("./wrapper/RenderMenu"));
+
+const mSubscriptions: any[] = [];
 
 interface Props {
   window?: () => Window;
@@ -63,7 +67,7 @@ export default function AppWrapper(props: AppWrapperProps) {
   const [freeLimitReached, setFreeLimitReached] = useState<boolean>(false)
 
   // @ts-ignore
-  const { subscription, setError, setLoading } = useContext(Context);
+  const { subscription, setSubscription, setLoading } = useContext(Context);
 
   const beforeLogout = () => {
     if (handleLogout) {
@@ -91,6 +95,8 @@ export default function AppWrapper(props: AppWrapperProps) {
     const isInListView = router.pathname === "/";
     const isEdit = !isInListView && mode === "edit";
 
+    console.log(router.pathname, mode, isEdit, isInListView);
+
     if (setRedirecting && !isInListView) setRedirecting(true);
     if (clearData !== undefined) {
       clearData(false, isEdit || !isInListView);
@@ -101,8 +107,7 @@ export default function AppWrapper(props: AppWrapperProps) {
       navigationOptions.query = { mode };
     }
 
-    router.push(navigationOptions, isInListView ? QR_TYPE_ROUTE : "/",
-      { shallow: true }).then(() => {
+    router.push(navigationOptions, isInListView ? QR_TYPE_ROUTE : "/").then(() => {
       handleLoading(false);
       if (setRedirecting) setRedirecting(false);
     });
@@ -132,6 +137,12 @@ export default function AppWrapper(props: AppWrapperProps) {
     }
   }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (session.isAuthenticated && !subscription) loadSubscription().then((subscription: any) => {
+      setSubscription(subscription);
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <>
       <CssBaseline />
@@ -149,19 +160,7 @@ export default function AppWrapper(props: AppWrapperProps) {
               </Link>
               <Box sx={{ display: "flex" }}>
                 {router.query[PARAM_QR_TEXT] === undefined && (<>
-                  {isWide ? (
-                    <RenderButton
-                      handleNavigation={handleNavigation}
-                      userInfo={userInfo}
-                      handleLogout={beforeLogout}
-                      handleLogin={handleLogin} />
-                  ) : (
-                    <RenderMenu
-                      handleLogin={handleLogin}
-                      handleNavigation={handleNavigation}
-                      handleLogout={beforeLogout}
-                      userInfo={userInfo} />
-                  )}
+                  {isWide ? <RenderButton /> : <RenderMenu />}
                 </>)}
                 {isFreeMode && <CountDown />}
               </Box>
@@ -173,6 +172,9 @@ export default function AppWrapper(props: AppWrapperProps) {
       <Container sx={{ width: "100%" }}>
         <Box sx={{ height }} /> {/* Aims to fill the header's gap */}
         <Box sx={{ mx: "auto", minHeight: `calc(100vh - ${router.pathname === '/' ? 140 : 135}px)` }}>
+          <ConfirmDialog />
+          <Notification />
+          <Waiting />
           {children}
         </Box>
         {handleLogout !== undefined && !router.query.login && (

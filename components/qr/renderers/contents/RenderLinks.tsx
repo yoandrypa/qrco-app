@@ -1,6 +1,4 @@
 import Box from "@mui/material/Box";
-import Topics from "../helpers/Topics";
-import pluralize from "pluralize";
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
@@ -26,10 +24,9 @@ interface RenderLinksProps {
   index: number;
   data?: Type;
   setData: Function;
-  topics?: string;
 }
 
-export default function RenderLinks({data, setData, topics, index}: RenderLinksProps) {
+export default function RenderLinks({data, setData, index}: RenderLinksProps) {
   const onDragEnd = useCallback((result: any) => {
     if (!result?.destination) {
       return null;
@@ -37,7 +34,7 @@ export default function RenderLinks({data, setData, topics, index}: RenderLinksP
 
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
-      const newLinks = Array.from((index === -1 ? newData.links : newData.custom[index].data.links) || []);
+      const newLinks = Array.from(newData.custom[index].data.links || []);
       const [removed] = newLinks.splice(result.source.index, 1);
       newLinks.splice(result.destination.index, 0, removed); // @ts-ignore
       newData.custom[index].data.links = newLinks;
@@ -68,7 +65,7 @@ export default function RenderLinks({data, setData, topics, index}: RenderLinksP
     const value = payload.target?.value !== undefined ? payload.target.value : payload;
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
-      newData.custom[index].data.links[idx][item] = value;
+      newData.custom[index].data.links[idx][item] = item === 'link' ? value.toLowerCase() : value
       return newData;
     });
   }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -105,7 +102,6 @@ export default function RenderLinks({data, setData, topics, index}: RenderLinksP
 
   return (
     <Box sx={{width: '100%'}}>
-      {topics !== undefined && <Topics message={topics} top="3px" secMessage={data?.links && `(${pluralize('link', data.links?.length || 0, true)})`}/>}
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
           {(provided: any) => (
@@ -129,25 +125,31 @@ export default function RenderLinks({data, setData, topics, index}: RenderLinksP
                                 <DragIndicatorIcon sx={{ color: theme => theme.palette.text.disabled, mt: '8px' }} />
                               </TableCell>
                             )}
-                            {!data?.linksOnlyLinks && (<TableCell sx={{p: 0, pr: 1, width: '50%', borderBottom: 'none'}}>
-                              <RenderProposalsTextFields
-                                required
-                                index={index}
-                                options={['My website', 'My youtube channel', 'My blog', 'My portfolio', 'My podcast', 'My store']}
-                                placeholder="Label here"
-                                value={x.label || ''}
-                                handleValues={handleChangeValue('label', idx)}
-                              />
-                            </TableCell>)}
-                            <TableCell sx={{p: 0, width: !data?.linksOnlyLinks ? '50%' : '100%', borderBottom: 'none'}}>
-                              <RenderTextFields
-                                required
-                                index={index}
-                                placeholder="URL here"
-                                value={x.link}
-                                handleValues={handleChangeValue('link', idx)}
-                                isError={x.link.trim().length > 0 && !isValidUrl(x.link)}
-                              />
+                            <TableCell sx={{p: 0, width: '100%', borderBottom: 'none'}}>
+                              <Box sx={{width: '100%', display: 'flex', flexDirection: {sm: 'row', xs: 'column'}}}>
+                                {!data?.linksOnlyLinks && (
+                                  <Box sx={{width: '100%'}}>
+                                    <RenderProposalsTextFields
+                                    required
+                                    index={index}
+                                    options={['My website', 'My youtube channel', 'My blog', 'My portfolio', 'My podcast', 'My store']}
+                                    placeholder="Label here"
+                                    value={x.label || ''}
+                                    handleValues={handleChangeValue('label', idx)}
+                                  />
+                                </Box>)}
+                                {!data?.linksOnlyLinks && <Box sx={{mr: {sm: 1, xs: 0}}}/>}
+                                <Box sx={{width: '100%'}}>
+                                  <RenderTextFields
+                                    required
+                                    index={index}
+                                    placeholder="URL here"
+                                    value={x.link}
+                                    handleValues={handleChangeValue('link', idx)}
+                                    isError={x.link.trim().length > 0 && !isValidUrl(x.link)}
+                                  />
+                                </Box>
+                              </Box>
                             </TableCell>
                             <TableCell sx={{p: 0, borderBottom: 'none'}} align="right">
                               {idx + 1 === (data?.links?.length || 0) ? (
@@ -171,15 +173,15 @@ export default function RenderLinks({data, setData, topics, index}: RenderLinksP
           )}
         </Droppable>
       </DragDropContext>
-      <Box sx={{width: '100%', display: 'flex', mt: '-5px'}}>
-      <FormControl disabled={data?.linksOnlyLinks}>
-        <FormControlLabel control={<Switch onChange={handleOnly('avoidButtons')} checked={!Boolean(data?.avoidButtons)} />}
-          label="Links as buttons" />
-      </FormControl>
-      <FormControl sx={{mr: '5px'}}>
-        <FormControlLabel control={<Switch onChange={handleOnly('linksOnlyLinks')} checked={data?.linksOnlyLinks || false} />}
-          label="Only links" />
-      </FormControl>
+      <Box sx={{width: '100%', display: 'flex', mt: '-5px', flexDirection: {sm: 'row', xs: 'column'}}}>
+        <FormControl disabled={data?.linksOnlyLinks}>
+          <FormControlLabel control={<Switch onChange={handleOnly('avoidButtons')} checked={!Boolean(data?.avoidButtons)} />}
+            label="Links as buttons" />
+        </FormControl>
+        <FormControl sx={{mr: '5px'}}>
+          <FormControlLabel control={<Switch onChange={handleOnly('linksOnlyLinks')} checked={data?.linksOnlyLinks || false} />}
+            label="Only links" />
+        </FormControl>
       </Box>
     </Box>
   );

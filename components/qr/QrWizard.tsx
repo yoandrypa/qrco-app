@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Context from "../context/Context";
 import Step from "@mui/material/Step";
@@ -15,11 +15,15 @@ import RenderNextButton from "./helperComponents/smallpieces/RenderNextButton";
 import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
 
 import dynamic from "next/dynamic";
+import session from "@ebanux/ebanux-utils/sessionStorage";
+import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
 import { useRouter } from "next/router";
+import { request } from "../../libs/utils/request";
+import { setWarning, hideNotification } from "../Notification";
+import { waitConfirmation } from "../ConfirmDialog";
+import { releaseWaiting, startWaiting } from "../Waiting";
 
-const RenderConfirmDlg = dynamic(() => import("../renderers/RenderConfirmDlg"));
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
-const Notifications = dynamic(() => import("../notifications/Notifications"));
 const ProcessHandler = dynamic(() => import("./renderers/ProcessHandler"));
 const RenderPreview = dynamic(() => import("./renderers/RenderPreview"));
 
@@ -29,8 +33,6 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   const [size, setSize] = useState<number>(0);
   const [forceDownload, setForceDownload] = useState<{ item: HTMLElement } | undefined>(undefined);
   const [, setUnusedState] = useState();
-  const [showLimitDlg, setShowLimitDlg] = useState<boolean>(false);
-  const [limitReached, setLimitReached] = useState<boolean>(false);
 
   // @ts-ignore
   const forceUpdate = useCallback(() => setUnusedState({}), []);
@@ -41,14 +43,22 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
 
   // @ts-ignore
-  const { selected, data, userInfo, options, frame, background, cornersData, dotsData, isWrong, loading, setOptions,
-    setLoading, setRedirecting, clearData, setData }: StepsProps = useContext(Context);
+  const {
+    selected, data, options, frame, background, cornersData, dotsData, isWrong, loading, setOptions,
+    setRedirecting, clearData, setData,
+    subscription, userInfo,
+  }: StepsProps = useContext(Context);
 
   const router = useRouter();
+  const isFirstStep = [QR_TYPE_ROUTE, "/"].indexOf(router.pathname) !== -1;
 
   const handleBack = () => {
-    router.push(router.pathname === QR_DESIGN_ROUTE ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE,
-      undefined, { shallow: true }).then(() => setLoading(false));
+    startWaiting();
+    router.push(
+      router.pathname === QR_DESIGN_ROUTE ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE,
+      undefined,
+      { shallow: true }
+    ).finally(releaseWaiting);
   };
 
   const isLogged = Boolean(userInfo);
@@ -70,28 +80,81 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
       setForceDownload({ item });
     } else {
       clearData();
-      router.push(goToList ? "/" : QR_TYPE_ROUTE, undefined, { shallow: true })
-        .then(() => setLoading(false));
+      startWaiting();
+      router.push(
+        goToList ? "/" : QR_TYPE_ROUTE,
+        undefined,
+        { shallow: true }
+      ).finally(releaseWaiting);
     }
   };
 
-  const handleNext = async () => {
-    if (data.isDynamic && limitReached) {
-      setShowLimitDlg(true)
-      return;
+  function onConfirmUpgrade(value: boolean) {
+    hideNotification();
+    if (!value) return;
+    startWaiting();
+    router.push('/plans').finally(releaseWaiting);
+  }
+
+  async function allowCreate() {
+    const { isDynamic, preGenerated } = data;
+
+    if (!isDynamic || preGenerated || !isFirstStep) return true;
+
+    if (!session.isAuthenticated) {
+      startWaiting();
+      session.set('CONTEXT', { selected, data });
+      session.set('CALLBACK_ROUTE', { pathname: QR_CONTENT_ROUTE });
+      startAuthorizationFlow();
+      return false;
     }
 
-    setLoading(true); // @ts-ignore
-    if ([QR_TYPE_ROUTE, "/"].includes(router.pathname)) {
-      if (data.isDynamic && !isLogged) {
-        router.push({ pathname: QR_CONTENT_ROUTE, query: { selected } })
-          .then(() => setLoading(false));
-      } else {
-        router.push(QR_CONTENT_ROUTE, undefined, { shallow: true })
-          .then(() => setLoading(false));
+    if (process.env.REACT_APP_OVERRIDE === 'dev') {
+      return true;
+    }
+
+    let upToDynamicQR = process.env.FREE_DYNAMIC_QRS || 1;
+    let amountByAdditionalDynamicQR = 0;
+
+    if (subscription?.status === 'active') {
+      upToDynamicQR = subscription.features.upToDynamicQR;
+      amountByAdditionalDynamicQR = subscription.features.amountByAdditionalDynamicQR;
+    }
+
+    if (amountByAdditionalDynamicQR === 0) {
+      const { count } = await request({ url: 'links/count', params: { preGenerated: false }, throwError: 'notify' });
+      if (upToDynamicQR !== -1 && count >= upToDynamicQR) {
+        setWarning([
+          'You have reached the limit of Dynamic QRs for this account.',
+          'Upgrade to a paid plan to add more QRs.',
+        ], false);
+        waitConfirmation('Click accept to if you want to view or upgrade your current plan.', onConfirmUpgrade);
+        return false;
       }
-    } else if (router.pathname === QR_DESIGN_ROUTE && isLogged) {
-      await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setLoading, setIsError,
+    }
+
+    return true;
+  }
+
+  const handleNext = async () => {
+    if (!(await allowCreate())) return;
+
+    if (isFirstStep) {
+      // Step 1: QR_TYPE_ROUTE or / ==>  QR_CONTENT_ROUTE
+      startWaiting();
+      router.push(QR_CONTENT_ROUTE).finally(releaseWaiting);
+
+    } else if (router.pathname === QR_CONTENT_ROUTE) {
+      // Step 2: QR_CONTENT_ROUTE ==> QR_DESIGN_ROUTE
+      startWaiting();
+      router.push(QR_DESIGN_ROUTE, undefined, { shallow: true }).finally(releaseWaiting);
+
+    } else if (router.pathname === QR_DESIGN_ROUTE) {
+      // Step 3: QR_DESIGN_ROUTE    ==> PRINT | DOWNLOAD | SAVE
+      if (!session.isAuthenticated) return lastStep(false);
+
+      startWaiting();
+      await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setIsError,
         () => {
           setData((prev: DataType) => {
             const newData = { ...data };
@@ -107,19 +170,10 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
             return prev;
           })
         }, router, lastStep, dataInfo.current.length, updatingHandler);
-    } else if (router.pathname === QR_DESIGN_ROUTE && !isLogged) {
-      lastStep(false);
-    } else {
-      router.push(router.pathname === QR_TYPE_ROUTE ? QR_CONTENT_ROUTE : QR_DESIGN_ROUTE, undefined, { shallow: true })
-        .then(() => setLoading(false));
+      releaseWaiting();
+
     }
   };
-
-  useEffect(() => {
-    if (router.pathname === QR_CONTENT_ROUTE && data.isDynamic && limitReached) {
-      setShowLimitDlg(true)
-    }
-  }, [router.pathname, limitReached]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -129,7 +183,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
 
     observer.observe(btnRef.current);
     setSize(sizeRef.current.offsetWidth);
-    const getWidth = () => { setSize(sizeRef.current.offsetWidth); };
+    const getWidth = () => setSize(sizeRef.current.offsetWidth);
     window.addEventListener("resize", getWidth);
 
     if (router.pathname === QR_CONTENT_ROUTE && isLogged && data?.isDynamic && (!Boolean(options.id) || options.mode !== 'edit')) {
@@ -146,25 +200,6 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
 
   return (
     <>
-      {showLimitDlg &&
-        <RenderConfirmDlg
-          title="Oops"
-          message="You have reached the limit of Dynamic QRs for this account. Upgrade to a paid plan to add more QRs. Click here to upgrade now."
-          handleOk={() => {
-            router.push('/plans');
-            setShowLimitDlg(false);
-          }}
-          handleCancel={() => {
-            if (router.pathname === QR_CONTENT_ROUTE) {
-              setRedirecting(true);
-              const query = {}; // @ts-ignore
-              if (router.query.address !== undefined) { query.address = router.query.address; }
-              router.push({ pathname: QR_TYPE_ROUTE, query }, QR_TYPE_ROUTE);
-            }
-            setShowLimitDlg(false);
-          }}
-          yesMsg='Upgrade'
-        />}
       <Box ref={sizeRef} sx={{
         width: "100%",
         display: "flex",
@@ -226,14 +261,12 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
           handleDone={async () => {
             setForceDownload(undefined);
             setRedirecting(true);
+            startWaiting();
             router.push("/", undefined, { shallow: true }).then(() => {
-              setLoading(false);
               setRedirecting(false);
-            });
+            }).finally(releaseWaiting);
           }} />
       )}
-      {isError &&
-        <Notifications autoHideDuration={3500} message="Error accessing data!" onClose={() => setIsError(false)} showProgress />}
     </>
   );
 };

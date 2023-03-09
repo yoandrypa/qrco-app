@@ -8,8 +8,8 @@ import { NextApiRequest } from "next";
 export { respondWithException } from "../../../libs/exceptions";
 
 const MICRO_SITES_BASE_URL = process.env.MICRO_SITES_BASE_URL || 'https://dev.a-qr.link';
-const LINK_CODE_ALPHABET = process.env.LINK_CODE_ALPHABET as string;
-const MAX_ALLOW_COLLISIONS = parseInt(process.env.MAX_ALLOW_COLLISIONS as string, 10);
+const LINK_CODE_ALPHABET = process.env.LINK_CODE_ALPHABET || 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+const MAX_ALLOW_COLLISIONS = parseInt(process.env.MAX_ALLOW_COLLISIONS || '25', 10);
 
 /**
  * Parse and validate the request via POST
@@ -18,8 +18,9 @@ const MAX_ALLOW_COLLISIONS = parseInt(process.env.MAX_ALLOW_COLLISIONS as string
 export function parseFromPostRequest(req: NextApiRequest) {
   const schema = Joi.object({
     size: Joi.number().min(4).max(32),
-    count: Joi.number().min(1).max(10),
+    count: Joi.number().min(1).max(50),
     owner: Joi.string().optional(),
+    alphabet: Joi.string().optional(),
   });
 
   return Joi.attempt(req.body, schema, { abortEarly: false });
@@ -57,8 +58,8 @@ async function exists(code: string) {
  * @param count
  * @param owner
  */
-export async function genNewCodes(size: number, count: number, owner: string = 'any') {
-  const nanoId = customAlphabet(LINK_CODE_ALPHABET, size);
+export async function genNewCodes(size: number, count: number, owner: string = 'any', alphabet?: string) {
+  const nanoId = customAlphabet(alphabet || LINK_CODE_ALPHABET, size);
   const transactions = [];
   const maxAllowCollisions = MAX_ALLOW_COLLISIONS * 100 / count;
 
@@ -124,4 +125,20 @@ export async function getPreGenCodes(owner: string = 'any') {
     codes: codes.map((item) => ({ ...item, url: `${MICRO_SITES_BASE_URL}/${item.code}` })),
     count: codes.length,
   };
+}
+
+/**
+ * Delete all codes pre-generated of the a owner.
+ * @param owner
+ */
+export async function delPreGenCodes(owner: string) {
+  const codes: any[] = await PreGeneratedModel.query({ owner }).exec();
+
+  codes.forEach(({ code }) => {
+    PreGeneratedModel.delete({ code }).then((r) => {
+      console.log(r);
+    })
+  });
+
+  return codes;
 }

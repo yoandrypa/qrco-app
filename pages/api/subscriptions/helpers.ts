@@ -6,6 +6,7 @@ import { stripe } from "../../../libs/gateways/stripe";
 
 import * as Users from "../../../handlers/users";
 import Subscription from "../../../models/subscription";
+import plans from "../../../consts/plans";
 
 import {
   PLAN_TEST_MODE_PRICES, PLAN_LIVE_MODE_PRICES,
@@ -13,7 +14,7 @@ import {
 } from '../../../consts'
 
 export { NotFound, respondWithException } from "../../../libs/exceptions";
-export { withSessionRoute, checkAuthorization } from '../base/helpers';
+export { withSessionRoute, checkAuthorization, allowCors } from '../base/helpers';
 
 function getPricesIds(type: string) {
   const [licencePlans, meteredPlans] = isProductionMode
@@ -39,7 +40,14 @@ export function parseFromPostRequest(req: NextApiRequest) {
 
 export async function getSubscription(currentUser: any) {
   const localRecord = await Subscription.getActiveByUser(currentUser.cognito_user_id);
-  return { type: 'subscription', result: localRecord }
+
+  if (localRecord) {
+    const planType = localRecord.metadata?.plan_type || '-';
+    // @ts-ignore
+    localRecord.features = plans[planType]?.features;
+  }
+
+  return { type: 'subscription', result: localRecord || null }
 }
 
 export async function createCheckoutSession(currentUser: any, planType: string) {

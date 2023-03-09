@@ -1,6 +1,5 @@
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import InputLabel from "@mui/material/InputLabel";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -14,6 +13,8 @@ import SectionSelector from "../SectionSelector";
 import ColorSelector from "../ColorSelector";
 import {DEFAULT_COLORS} from "../../constants";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import RenderHandleOpacity from "../smallpieces/RenderHandleOpacity";
+import Grid from "@mui/material/Grid";
 
 const RenderBorders = dynamic(() => import("./RenderBorders"));
 const RenderTwoColors = dynamic(() => import("../smallpieces/RenderTwoColors"));
@@ -41,14 +42,14 @@ export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerP
     </SectionSelector>
   );
 
-  const handler = (event: SelectChangeEvent) => {
-    handleValue('buttonBack')(event.target.value);
+  const handler = (prop: string) => (event: SelectChangeEvent) => {
+    handleValue(prop)(event.target.value);
   }
 
   return (
     <Box sx={{mt: 1}}>
       <RenderMainFontsHandler handleValue={handleValue} data={data}/>
-      <Paper elevation={2} sx={{p: 1, my: 2, display: 'flex', flexDirection: isWide ? 'row' : 'column'}}>
+      <Box sx={{p: 1, display: 'flex', flexDirection: isWide ? 'row' : 'column'}}>
         <Box>
           <Typography>{'Shape'}</Typography>
           {[...Array(4).keys()].map(x => renderShape(x))}
@@ -58,8 +59,8 @@ export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerP
             <RenderBorders handleValue={handleValue} data={data} />
           </Box>
         )}
-      </Paper>
-      <Paper elevation={2} sx={{p: 1}}>
+      </Box>
+      <Box sx={{p: 1, mt: '-20px'}}>
         <Typography>{'Background'}</Typography>
         <Box sx={{display: 'flex', flexDirection: isWide && isWideEnough ? 'row' : 'column', width: '100%'}}>
           <FormControl sx={{m: 0, mt: 1, width: '100%'}} size="small">
@@ -69,7 +70,7 @@ export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerP
               id="buttonBackColor"
               value={data?.buttonBack || 'default'}
               label="Behaviour"
-              onChange={handler}
+              onChange={handler('buttonBack')}
             >
               <MenuItem value="default">Use main colors as default behaviour</MenuItem>
               <MenuItem value="solid">Keep same color even on hover</MenuItem>
@@ -84,9 +85,81 @@ export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerP
             </Box>
           )}
         </Box>
-        {data?.buttonBack === 'two' && <RenderTwoColors handleValue={handleValue} data={data}/>}
-        {data?.buttonBack === 'gradient' && <RenderTwoColors handleValue={handleValue} data={data} isGradient/>}
-      </Paper>
+        {data?.buttonBack === 'two' && <RenderTwoColors handleValue={handleValue} data={data} property="buttonBackColor"/>}
+        {data?.buttonBack === 'gradient' ? <RenderTwoColors handleValue={handleValue} data={data} isGradient property="buttonBackColor"/> :
+          (
+            <Box sx={{width: 'calc(100% - 10px)'}}>
+              <RenderHandleOpacity
+                opacity={data?.buttonsOpacity !== undefined ? data?.buttonsOpacity : 1}
+                handleValue={handleValue}
+                property="buttonsOpacity"
+                message="Button's background opacity"
+                keepContainerWidth />
+            </Box>
+          )
+        }
+      </Box>
+      <Box sx={{p: 1, mt: '-20px'}}>
+        <Typography>{'Borders'}</Typography>
+        <Grid container spacing={2}>
+          <Grid item sm={data?.buttonBorderStyle && data?.buttonBorderStyle !== 'noBorders' ? 4 : 12} xs={12}>
+            <FormControl sx={{m: 0, mt: 1, width: '100%'}} size="small">
+              <InputLabel id="buttonBorderColorLabel">Color</InputLabel>
+              <Select
+                labelId="buttonBorderColorLabel"
+                id="buttonBorderStyle"
+                value={data?.buttonBorderStyle || 'noBorders'}
+                label="Color"
+                onChange={handler('buttonBorderStyle')}
+              >
+                <MenuItem value="default">Use main colors</MenuItem>
+                <MenuItem value="two">Custom colors</MenuItem>
+                <MenuItem value="noBorders">No borders</MenuItem>
+              </Select>
+            </FormControl>
+            {data?.buttonBorderStyle === 'two' && (
+              <RenderTwoColors handleValue={handleValue} data={data} property="buttonBorderColors" />
+            )}
+          </Grid>
+          {data?.buttonBorderStyle && data?.buttonBorderStyle !== 'noBorders' && (
+            <>
+              <Grid item sm={4} xs={12}>
+                <FormControl sx={{m: 0, mt: 1, width: '100%'}} size="small">
+                  <InputLabel id="buttonBorderTypeLabel">Style</InputLabel>
+                  <Select
+                    labelId="buttonBorderTypeLabel"
+                    id="buttonBorderType"
+                    value={data?.buttonBorderType || 'solid'}
+                    label="Weight"
+                    onChange={handler('buttonBorderType')}
+                  >
+                    <MenuItem value="dashed">Dashed</MenuItem>
+                    <MenuItem value="dotted">Dotted</MenuItem>
+                    <MenuItem value="double">Double</MenuItem>
+                    <MenuItem value="solid">Solid</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item sm={4} xs={12}>
+                <FormControl sx={{m: 0, mt: 1, width: '100%'}} size="small">
+                  <InputLabel id="buttonBorderWeightLabel">Weight</InputLabel>
+                  <Select
+                    labelId="buttonBorderWeightLabel"
+                    id="buttonBorderWeight"
+                    value={data?.buttonBorderWeight || 'thin'}
+                    label="Weight"
+                    onChange={handler('buttonBorderWeight')}
+                  >
+                    <MenuItem value="thin">Thin</MenuItem>
+                    <MenuItem value="normal">Medium</MenuItem>
+                    <MenuItem value="weight">Weight</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </>
+          )}
+        </Grid>
+      </Box>
     </Box>
   );
 }

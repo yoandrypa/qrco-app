@@ -7,16 +7,14 @@ export const QR_DETAILS_ROUTE = "/qr/[id]/details";
 export const PLANS_ACCOUNT_PORTAL = "/plans/account";
 
 export const PRIVATE_ROUTES = [
-  QR_TYPE_ROUTE,
   QR_CONTENT_ROUTE,
   QR_DESIGN_ROUTE,
   QR_DETAILS_ROUTE,
   PLANS_ACCOUNT_PORTAL,
-  "/plans/buy/*",
   "/links/*",
 ];
 
-export const DEFAULT_DYNAMIC_SELECTED = 'vcard+';
+export const DEFAULT_DYNAMIC_SELECTED = 'custom';
 export const DEFAULT_STATIC_SELECTED = 'vcard';
 
 export const PARAM_QR_TEXT = "qr_text" as string;

@@ -13,7 +13,10 @@ interface RenderImgPrevProps {
 const RenderImgPreview = ({handleClose, file, kind}: RenderImgPrevProps) => (
   <Dialog onClose={handleClose} open={true}>
     <DialogContent dividers>
-      <Box sx={{width: kind !== 'foregndImg' ? {xs: '100%', sm: '460px'} : '100%', overflow: 'auto'}}>
+      <Box sx={{
+        width: kind !== 'foregndImg' ? {xs: '100%', sm: kind === 'background' ? '350px' : '460px'} : '100%',
+        overflow: 'auto'}}
+      >
         <Box component="img" alt="EBANUX" src={typeof file !== 'string' ? URL.createObjectURL(file) : file} />
       </Box>
     </DialogContent>

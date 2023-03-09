@@ -1,4 +1,4 @@
-import { ChangeEvent, useContext } from 'react';
+import {ChangeEvent, useContext} from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
@@ -77,8 +77,12 @@ const QrContentHandler = () => { // @ts-ignore
         } else if ((typeof value === "string" && value.length) || payload) {
           if (item === 'includeExtraInfo' && !value && elementData.includeExtraInfo !== undefined) {
             delete elementData.includeExtraInfo;
-          } else { // @ts-ignore
-            elementData[item] = value;
+          } else {
+            if (typeof value === "string" && !value.trim().length) { // @ts-ignore
+              delete elementData[item];
+            } else { // @ts-ignore
+              elementData[item] = value;
+            }
           } // @ts-ignore
         } else if (elementData[item]) { // @ts-ignore
           delete elementData[item];
@@ -159,11 +163,14 @@ const QrContentHandler = () => { // @ts-ignore
       }
       default: { // @ts-ignore
         const item = dynamicQr[selected];
-        const handlePredefined = (pred?: string[]): string[] | undefined => options.mode === undefined ? pred : undefined;
+        const handlePredefined = (): string[] | undefined => {
+          if (data.custom?.length) { return undefined; }
+          return options.mode === undefined ? item.predefined : undefined
+        };
 
         return (
           <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected}
-                  tip={item.tip} predefined={handlePredefined(item.predefined)} />
+                  tip={item.tip} predefined={handlePredefined()} />
         );
       }
     }
@@ -174,9 +181,10 @@ const QrContentHandler = () => { // @ts-ignore
       {selected ? (
         <>
           {!Boolean(userInfo) && <Box sx={{ mb: '10px' }}><RenderNoUserWarning /></Box>}
+          {/*<SlideQrTypeSelector />*/}
           <Box sx={{ display: 'inline' }}><RenderIcon icon={selected} enabled adjust /></Box>
           <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{qrNameDisplayer(selected || '', data?.isDynamic || false)}</Typography>
-          <Typography sx={{ display: { xs: 'none', sm: 'inline' } }}>: Enter the content</Typography>
+          <Typography sx={{ display: { xs: 'none', sm: 'inline' } }}>{`: Enter the content${data?.isDynamic ? ' and page design' : ''}`}</Typography>
           <NotifyDynamic isDynamic={data?.isDynamic || false} />
           <Box sx={{ textAlign: 'left', width: '100%' }}>{renderSel()}</Box>
         </>

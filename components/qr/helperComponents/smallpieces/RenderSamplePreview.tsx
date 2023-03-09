@@ -40,6 +40,7 @@ interface SamplePrevProps {
   qrOptions?: any;
   isDynamic: boolean;
   shareLink?: string;
+  backgroundImg?: File | string;
   backImg?: File | string;
   mainImg?: File | string;
   step: number;
@@ -60,11 +61,13 @@ interface WithSCode extends SamplePrevProps {
 const clearUrl = (url: string): string => url.slice(url.indexOf('//') + 2);
 
 const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, save, code, isDrawed, saveDisabled,
-    qrOptions, backImg, mainImg, shareLink, showSampleMessage, handlePickImage }: WithSelection | WithSCode) => {
+    qrOptions, backImg, mainImg, backgroundImg, shareLink, showSampleMessage, handlePickImage }: WithSelection | WithSCode) => {
   const [prev, setPrev] = useState<string>(!onlyQr ? 'preview' : 'qr');
   const [copied, setCopied] = useState<boolean>(false);
   const [open, setOpen] = useState<HTMLButtonElement | null>(null);
   const [updating, setUpdating] = useState<boolean>(false);
+  const [isReady, setIsReady] = useState<boolean>(false);
+
   const forceHide = useRef<boolean>(false);
   const microSitesBaseUrl = process.env.MICRO_SITES_BASE_URL;
 
@@ -203,16 +206,16 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
           <RenderCellPhoneShape width={270} height={550} offlineText="The selected card has no available sample">
             {code || (selected && !NO_MICROSITE.includes(selected)) ? (
               <Suspense fallback={<PleaseWait />}>
-                {step === 1 && (
+                {step === 1 && isReady && (
                   <RenderEditImageOnClick
+                    hideBannerSelection={data?.layout?.includes('banner') || false}
                     shape={data?.foregndImgType || undefined} left={data?.layout?.toLowerCase().includes('left') || false}
-                    handleEdit={handlePickImage}
-                  />
+                    handleEdit={handlePickImage} renderFloating={!Boolean(data?.foregndImg)} />
                 )}
                 <RenderIframe
                   src={!code ? cleanSelectionForMicrositeURL(selected || '', isDynamic, true) : `${microSitesBaseUrl}/sample/empty`}
                   selected={selected} width="256px" height="536px" data={data} backImg={backImg} mainImg={mainImg}
-                  shareLink={shareLink} />
+                  shareLink={shareLink} notifyReady={setIsReady} backgroundImg={backgroundImg} />
               </Suspense>
             ) : null}
           </RenderCellPhoneShape>

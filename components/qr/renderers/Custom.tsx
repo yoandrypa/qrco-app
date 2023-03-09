@@ -51,7 +51,7 @@ const RenderContactForm = dynamic(() => import("./contents/RenderContactForm"));
 export default function Custom({data, setData, handleValues, setIsWrong, predefined, tip, selected}: CustomProps) {
   const [showOptions, setShowOptions] = useState<HTMLElement | null>(null);
   const [expander, setExpander] = useState<string[]>([]);
-  const [confirm, setConfirm] = useState<{ index: number, item: string } | undefined>(undefined);
+  const [confirm, setConfirm] = useState<{index: number, item: string} | undefined>(undefined);
   const [isVisible, setIsVisible] = useState<boolean>(true);
   const [open, setOpen] = useState<CustomEditProps | null>(null); // aims to editor
 
@@ -215,7 +215,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                               {component === components[3].type && <RenderEmail data={x.data} handleValues={handleValues} index={index}/>}
                               {component === components[4].type && <RenderEmailWeb data={x.data} handleValues={handleValues} index={index}/>}
                               {component === components[5].type && <RenderEasiness data={x.data} handleValues={handleValues} index={index}/>}
-                              {component === components[6].type && <RenderLinks data={x.data} setData={setData} index={index} topics="" />}
+                              {component === components[6].type && <RenderLinks data={x.data} setData={setData} index={index}/>}
                               {component === components[7].type && <RenderOrganization data={x.data} handleValues={handleValues} index={index}/>}
                               {component === components[8].type && <RenderPhones data={x.data} handleValues={handleValues} index={index}/>}
                               {component === components[9].type && (
@@ -223,8 +223,8 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                                                   totalFiles={predefined === undefined || selected === 'inventory' ? 3 : FILE_LIMITS['gallery'].totalFiles}/>
                               )}
                               {component === components[10].type && (
-                                <RenderPresentation data={x.data} handleValues={handleValues} index={index} showExtra={selected === 'findMe'}
-                                                    forceExtra={['vcard+', 'petId'].includes(selected || '')} />)}
+                                <RenderPresentation data={x.data} handleValues={handleValues} index={index} forceExtra={['vcard+', 'petId'].includes(selected || '')} />
+                              )}
                               {component === components[11].type && <RenderOpeningTime data={x.data} setData={setData} index={index}/>}
                               {component === components[12].type && <RenderSocials data={x.data} setData={setData} index={index}/>}
                               {component === components[13].type && (

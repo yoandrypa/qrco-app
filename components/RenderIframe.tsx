@@ -11,8 +11,10 @@ interface IframeProps {
   width: string;
   height: string;
   data?: DataType;
+  notifyReady: (isReady: boolean) => void;
   shareLink?: string;
   selected?: string;
+  backgroundImg?: File | string;
   backImg?: File | string;
   mainImg?: File | string;
 }
@@ -34,7 +36,7 @@ const proceed = (plain?: any, imgData?: any) => {
   return imgData !== undefined && (imgData instanceof File || imgData instanceof Blob);
 }
 
-const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, shareLink}: IframeProps) => {
+const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, backgroundImg, shareLink, notifyReady}: IframeProps) => {
   const [whatToRender, setWhatToRender] = useState<string | null>(null);
   const [error, setError] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -58,6 +60,10 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
         if (previewData.foregndImg || mainImg) { // @ts-ignore
           previewData.foregndImg = !isInEdition || proceed(mainImg, previewData.foregndImg) ?
             await getImageAsString(previewData.foregndImg) : await getImageAsString(mainImg);
+        }
+        if (previewData.micrositeBackImage || backgroundImg) { // @ts-ignore
+          previewData.micrositeBackImage = !isInEdition || proceed(backgroundImg, previewData.micrositeBackImage) ?
+            await getImageAsString(previewData.micrositeBackImage) : await getImageAsString(backgroundImg);
         }
 
         if (previewData.custom) {
@@ -87,7 +93,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
         }
       }, 75);
     }
-  }, [data, isReady, backImg, mainImg]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data, isReady, backImg, mainImg, backgroundImg]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const handler = (event: any) => {
@@ -96,6 +102,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
           const dataFromOutside = JSON.parse(event.data);
           if (dataFromOutside.ready && iRef.current?.contentWindow) {
             setIsReady(true);
+            notifyReady(true);
           }
         } catch (e) {
           console.error(e);
@@ -105,7 +112,10 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, sha
 
     window.addEventListener("message", handler);
 
-    return () => window.removeEventListener("message", handler);
+    return () => {
+      notifyReady(false);
+      window.removeEventListener("message", handler);
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {

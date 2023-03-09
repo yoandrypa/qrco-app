@@ -1,36 +1,21 @@
-import {ChangeEvent, useCallback, useContext, useEffect, useState} from "react";
+import {useCallback, useContext, useEffect, useState} from "react";
 import Box from "@mui/material/Box";
-import ButtonGroup from '@mui/material/ButtonGroup';
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import WallpaperIcon from '@mui/icons-material/Wallpaper';
-import ImageIcon from '@mui/icons-material/Image';
-import SearchIcon from '@mui/icons-material/Search';
-import ClearIcon from '@mui/icons-material/Clear';
-import Tooltip from "@mui/material/Tooltip";
-import CircularProgress from "@mui/material/CircularProgress";
 import Paper from "@mui/material/Paper";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
-import dynamic from "next/dynamic";
 import {DataType} from "../types/types";
-import {DEFAULT_COLORS} from "../constants";
-import RenderGradientSelector from "./helpers/RenderGradientSelector";
 import Expander from "./helpers/Expander";
 import Context from "../../context/Context";
-import RenderMainColors from "./helpers/RenderMainColors";
 
-const RenderSingleBackColor = dynamic(() => import("./helpers/RenderSingleBackColor"));
+import dynamic from "next/dynamic";
+
+const RenderHandlerBackground = dynamic(() => import ("../helperComponents/smallpieces/RenderHandlerBackground"));
+const RenderMainImgsSelector = dynamic(() => import("../helperComponents/smallpieces/RenderMainImgsSelector"));
 const RenderButtonsHandler = dynamic(() => import('../helperComponents/looseComps/RenderButtonHandler'));
-const RenderImagePicker = dynamic(() => import('./helpers/RenderImagePicker'));
-const RenderImgPreview = dynamic(() => import('./helpers/RenderImgPreview'));
-const RenderForeImgTypePicker = dynamic(() => import ('./helpers/RenderForeImgTypePicker'));
-const ImageCropper = dynamic(() => import('./helpers/ImageCropper'));
 const RenderFontsHandler = dynamic(() => import('../helperComponents/smallpieces/RenderFontsHandler'));
 const RenderLayoutHandler = dynamic(() => import("../helperComponents/smallpieces/RenderLayoutHandler"));
+const RenderMainColors = dynamic(() => import("./helpers/RenderMainColors"));
+const Typography = dynamic(() => import("@mui/material/Typography"));
+const CircularProgress = dynamic(() => import("@mui/material/CircularProgress"));
 
 interface QRCommonsProps {
   omitPrimaryImg?: boolean;
@@ -39,68 +24,34 @@ interface QRCommonsProps {
   isWideForPreview?: boolean;
   backgndImg?: File | string;
   foregndImg?: File | string;
+  micrositesImg?: File | string;
   backError?: boolean;
   foreError?: boolean;
   handleValue: Function;
   forcePick?: string;
 }
 
-function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg, backError, foreError, handleValue, isWideForPreview, forcePick}: QRCommonsProps) { // @ts-ignore
-  const [selectFile, setSelectFile] = useState<string | null>(null);
-  const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [expander, setExpander] = useState<string | null>(null);
+function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg, micrositesImg, backError, foreError, handleValue, isWideForPreview, forcePick}: QRCommonsProps) { // @ts-ignore
+  const [expander, setExpander] = useState<string | null>('mainColors');
 
   // @ts-ignore
   const {selected}: {selected: string} = useContext(Context);
-
-  const isWideEnough = useMediaQuery("(min-width:1083px)", { noSsr: true });
 
   const handleExpander = useCallback((item: string): void => {
     setExpander(item === expander ? null : item);
   }, [expander]);
 
-  const handleSelectFile = (kind: string) => () => {
-    setSelectFile(kind);
-  };
-
-  const handleAccept = (file: File, kind: string) => {
-    setCropper({file, kind});
-    setSelectFile(null);
-  };
-
-  const handleSave = (newFile: File, kind: string) => {
-    handleValue(kind)(newFile);
-    setCropper(null);
-  };
-
-  const handleSelectBackground = (event: ChangeEvent<HTMLInputElement>) => {
-    handleValue('backgroundType')(event);
-  };
-
-  const renderOptions = (kind: string) => (
-    <>
-      <Tooltip title="Preview">
-        <Button sx={{width: '40px'}} variant="contained" color="primary" onClick={() => setPreview(kind)}>
-          <SearchIcon/>
-        </Button>
-      </Tooltip> {/* @ts-ignore */}
-      {kind === 'foregndImg' && <RenderForeImgTypePicker handleValue={handleValue} foregndImgType={data?.foregndImgType} />}
-      <Tooltip title="Remove">
-        <Button sx={{width: '40px'}} variant="contained" color="error" onClick={() => handleValue(kind)(undefined)}>
-          <ClearIcon/>
-        </Button>
-      </Tooltip>
-    </>
-  );
+  useEffect(() => {
+    if (data?.layout?.includes('banner') && backgndImg) {
+      handleValue('backgndImg')(undefined)
+    }
+  }, [data?.layout]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (forcePick) {
-      setSelectFile(forcePick === 'banner' ? 'backgndImg' : 'foregndImg');
+    if (data?.backgroundType !== 'image' && micrositesImg) {
+      handleValue('micrositesImg')(undefined);
     }
-  }, [forcePick]);
-
-  const shrink = isWideForPreview && !isWideEnough && (backgndImg || foregndImg);
+  }, [data?.backgroundType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -113,70 +64,27 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
         </Box>
       )}
       <Box sx={{p: 1, mt: 1}}>
-        <RenderMainColors data={data} handleValue={handleValue} />
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}>
-          <Typography sx={{fontWeight: 'bold'}}>{'Images'}</Typography>
-          <Box sx={{
-            width: '100%',
-            display: 'flex',
-            textAlign: 'center',
-            flexDirection: shrink ? "column" : {md: "row", xs: "column"},
-            mt: 2
-          }}>
-            <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
-              <Tooltip title="Click for selecting the banner image">
-                <Button
-                  sx={{width: '100%'}}
-                  disabled={loading}
-                  startIcon={<WallpaperIcon sx={{ color: theme => backError ? theme.palette.error.dark : undefined }}/>}
-                  variant="outlined"
-                  color="primary"
-                  onClick={handleSelectFile('backgndImg')}>
-                  {`Banner image${backgndImg && !loading ? ' / Loaded' : ''}`}
-                </Button>
-              </Tooltip>
-              {backgndImg && !loading && renderOptions('backgndImg')}
-            </ButtonGroup>
-            {!omitPrimaryImg && (
-              <ButtonGroup sx={{mt: shrink ? 1 : {xs: 1, md: 0}, width: '100%'}}>
-                <Tooltip title="Click for selecting the main image">
-                  <Button
-                    sx={{width: '100%'}}
-                    startIcon={<ImageIcon sx={{ color: theme => foreError ? theme.palette.error.dark : undefined }}/>}
-                    variant="outlined"
-                    disabled={loading}
-                    onClick={handleSelectFile('foregndImg')}
-                    color="primary">
-                    {`Main image${backgndImg && !loading ? ' | Loaded' : ''}`}
-                  </Button>
-                </Tooltip>
-                {foregndImg && !loading && renderOptions('foregndImg')}
-              </ButtonGroup>
-            )}
-          </Box>
+        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+          <Expander expand={expander} setExpand={handleExpander} item="mainColors" title="Main colors" bold/>
+          {expander === 'mainColors' && <RenderMainColors data={data} handleValue={handleValue} />}
         </Paper>
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}>
-          <Typography sx={{fontWeight: 'bold'}}>{'Background'}</Typography>
-          <RadioGroup
-            aria-labelledby="backgroundType" name="backgroundType" value={data?.backgroundType || 'single'}
-            onChange={handleSelectBackground} row sx={{mb: '-12px'}}>
-            <FormControlLabel value="single" control={<Radio/>} label="Color solid"/>
-            <FormControlLabel value="gradient" control={<Radio/>} label="Gradient"/>
-          </RadioGroup>
-          {(data?.backgroundType === undefined || data.backgroundType === 'single') && (
-            <RenderSingleBackColor data={data} handleValue={handleValue} />
+        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+          <Expander expand={expander} setExpand={handleExpander} item="images" title="Banner and profile images" bold/>
+          {expander === 'images' && (
+            <RenderMainImgsSelector handleValue={handleValue} data={data} foregndImg={foregndImg} forcePick={forcePick}
+                                    backgndImg={backgndImg} isWideForPreview={isWideForPreview} backError={backError}
+                                    foreError={foreError} omitPrimaryImg={omitPrimaryImg} loading={loading} />
           )}
-          {data?.backgroundType === 'gradient' && (
-            <RenderGradientSelector
-              colorLeft={data?.backgroundColor || DEFAULT_COLORS.s}
-              colorRight={data?.backgroundColorRight || DEFAULT_COLORS.p}
-              direction={data?.backgroundDirection}
-              handleData={handleValue}/>
+        </Paper>
+        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+          <Expander expand={expander} setExpand={handleExpander} item="background" title="Background" bold/>
+          {expander === 'background' && (
+            <RenderHandlerBackground handleValue={handleValue} data={data} micrositesImg={micrositesImg}/>
           )}
         </Paper>
         <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="fonts" title="Fonts" bold/>
-          {expander === 'fonts' && <RenderFontsHandler data={data} handleValue={handleValue} selected={selected} />}
+          {expander === 'fonts' && <RenderFontsHandler data={data} handleValue={handleValue} />}
         </Paper>
         {!['social', 'petId', 'gallery'].includes(selected) && (<Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="buttons" title="Buttons" bold/>
@@ -184,23 +92,11 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
         </Paper>)}
         <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="layout" title="Layout" bold/>
-          {expander === 'layout' && <RenderLayoutHandler handleValue={handleValue} data={data} omitPrimary={omitPrimaryImg}/>}
+          {expander === 'layout' && (
+            <RenderLayoutHandler handleValue={handleValue} data={data} omitPrimary={omitPrimaryImg}/>
+          )}
         </Paper>
       </Box>
-      {selectFile !== null && (
-        <RenderImagePicker
-          handleClose={() => setSelectFile(null)}
-          title={selectFile === 'foregndImg' ? 'main' : 'banner'}
-          kind={selectFile}
-          handleAcept={handleAccept}
-          wasError={(selectFile === 'foregndImg' && foreError) || (selectFile === 'backgndImg' && backError)}/>
-      )}
-      {preview !== null && ( // @ts-ignore
-        <RenderImgPreview handleClose={() => setPreview(null)} file={preview === 'backgndImg' ? backgndImg : foregndImg} kind={preview} />
-      )}
-      {cropper !== null && (
-        <ImageCropper handleClose={() => setCropper(null)} file={cropper.file} kind={cropper.kind} handleAccept={handleSave} />
-      )}
     </>
   );
 }

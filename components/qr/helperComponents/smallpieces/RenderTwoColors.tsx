@@ -11,9 +11,10 @@ interface RenderTwoColorsProps {
   data?: DataType;
   handleValue: Function;
   isGradient?: boolean;
+  property: string;
 }
 
-export default function RenderTwoColors({data, handleValue, isGradient}: RenderTwoColorsProps) {
+export default function RenderTwoColors({data, handleValue, isGradient, property}: RenderTwoColorsProps) {
   const [prim, setPrim] = useState<string>(DEFAULT_COLORS.p);
   const [sec, setSec] = useState<string>(DEFAULT_COLORS.s);
   const [direction, setDirection] = useState<string | undefined>(undefined);
@@ -35,16 +36,16 @@ export default function RenderTwoColors({data, handleValue, isGradient}: RenderT
 
   useEffect(() => {
     if (doneFirst.current && prim && sec) {
-      handleValue('buttonBackColor')(`${prim}|${sec}${isGradient && direction ? `@${direction}` : ''}`);
+      handleValue(property)(`${prim}|${sec}${isGradient && direction ? `@${direction}` : ''}`);
     }
     if (!doneFirst.current) {
       doneFirst.current = true;
     }
   }, [prim, sec, direction]);  // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    if (data?.buttonBackColor && data.buttonBackColor.includes('|')) {
-      const colors = data.buttonBackColor.split('|');
+  useEffect(() => { // @ts-ignore
+    if (data?.[property] && data[property].includes('|')) { // @ts-ignore
+      const colors = data[property].split('|');
       let color1 = colors[1];
       if (color1.includes('@')) {
         const tempo = color1.split('@');

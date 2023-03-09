@@ -9,43 +9,17 @@ export const dynamicQrTypes = {
   'vcard+': {
     description: 'Share your contact and social details'
   },
+  custom: {
+    description: "Custom QR link from scratch using the predefined sections"
+  },
   business: {
     description: 'Describe your business or company'
-  },
-  social: {
-    description: "Share your social networks information"
   },
   link: {
     description: "Share your own links, including social info"
   },
-  coupon: {
-    description: "Share a coupon"
-  },
-  donation: {
-    description: "Get donations from your supporters worldwide"
-  },
-  petId: {
-    description: "Share your pet's information"
-  },
-  custom: {
-    description: "Custom QR link from scratch using predefined sections"
-  },
-  findMe: {
-    description: "Place a QR link on your stuff to make easy to find you"
-  },
-  linkedLabel: {
-    description: "Share your product's information"
-  },
   inventory: {
     description: "Tag your products to make easy to find them"
-  },
-  fundme: {
-    description: "Start your own charity or fundraising campaign",
-    devOnly: true
-  },
-  paylink: {
-    description: "Receive payments worldwide",
-    devOnly: true
   },
   pdf: {
     description: "Share a PDF file"
@@ -58,6 +32,33 @@ export const dynamicQrTypes = {
   },
   video: {
     description: "Share video files"
+  },
+  social: {
+    description: "Share your social networks information"
+  },
+  coupon: {
+    description: "Share a coupon"
+  },
+  donation: {
+    description: "Get donations from your supporters worldwide",
+    devOnly: true
+  },
+  petId: {
+    description: "Share your pet's information"
+  },
+  findMe: {
+    description: "Place a QR link on your stuff to make easy to find you"
+  },
+  linkedLabel: {
+    description: "Share your product's information"
+  },
+  fundme: {
+    description: "Start your own charity or fundraising campaign",
+    devOnly: true
+  },
+  paylink: {
+    description: "Receive payments worldwide",
+    devOnly: true
   }
 };
 
@@ -79,7 +80,7 @@ export const dynamicQr = {
   },
   link: {
     tip: "Add at least one link to your websites",
-    predefined: ['presentation', 'organization', 'socials']
+    predefined: ['title', 'links', 'socials']
   },
   coupon: {
     tip: "Share a coupon for promotion.",

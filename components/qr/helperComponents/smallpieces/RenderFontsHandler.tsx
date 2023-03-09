@@ -22,10 +22,9 @@ const RenderButtonsFontsHandler = dynamic(() => import("./RenderMainFontsHandler
 interface RenderFontsHandlerProps {
   data?: DataType;
   handleValue: Function;
-  selected: string;
 }
 
-export default function RenderFontsHandler({data, handleValue, selected}: RenderFontsHandlerProps) {
+export default function RenderFontsHandler({data, handleValue}: RenderFontsHandlerProps) {
   const [expander, setExpander] = useState<string>('global');
 
   const isWide = useMediaQuery("(min-width:1010px)", { noSsr: true });
@@ -85,7 +84,7 @@ export default function RenderFontsHandler({data, handleValue, selected}: Render
             </Grid>
           </Grid>
           </Paper>
-          {!['vcard+'].includes(selected) && (<Paper elevation={2} sx={{p: 1, width: '100%', mb: 2}}>
+          <Paper elevation={2} sx={{p: 1, width: '100%', mb: 2}}>
             <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Sub titles'}</Typography>
             <Grid container spacing={2}>
               <Grid item xs={isWide ? 4 : 12}>
@@ -98,8 +97,8 @@ export default function RenderFontsHandler({data, handleValue, selected}: Render
                 <RenderFontStyles value={data?.subtitlesFontStyle} property="subtitlesFontStyle" handleValue={handleValue}/>
               </Grid>
             </Grid>
-          </Paper>)}
-          {!['social', 'link'].includes(selected) && (<Paper elevation={2} sx={{p: 1, width: '100%', mb: 2}}>
+          </Paper>
+          <Paper elevation={2} sx={{p: 1, width: '100%', mb: 2}}>
             <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Messages'}</Typography>
             <Grid container spacing={2}>
               <Grid item xs={isWide ? 4 : 12}>
@@ -112,11 +111,11 @@ export default function RenderFontsHandler({data, handleValue, selected}: Render
                 <RenderFontStyles value={data?.messagesFontStyle} property="messagesFontStyle" handleValue={handleValue}/>
               </Grid>
             </Grid>
-          </Paper>)}
-          {!['social', 'gallery'].includes(selected) && (<Paper elevation={2} sx={{p: 1, width: '100%'}}>
+          </Paper>
+          <Paper elevation={2} sx={{p: 1, width: '100%'}}>
             <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Buttons'}</Typography>
             <RenderButtonsFontsHandler handleValue={handleValue} data={data} />
-          </Paper>)}
+          </Paper>
         </>)}
       </Paper>
     </>

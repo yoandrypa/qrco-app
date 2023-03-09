@@ -57,8 +57,10 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
 
   const renderLayout = (kind: string, noMore?: boolean) => {
     const selected = (data?.layout || 'default').startsWith(kind);
-
     const inverse = kind.toLowerCase().includes('inverse');
+    const gradient = kind.toLowerCase().endsWith('gradient');
+    const noBanner = kind.includes('banner');
+
     return (
       <Box
         onClick={handle(kind)}
@@ -79,7 +81,7 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
           height: `${(!isBorder ? 55 : 50) + (inverse ? 10 : 0)}px`,
           mt: !isBorder ? 0 : '5px',
           mx: 'auto',
-          background: blueGrey[300],
+          background: !noBanner ? (!gradient ? blueGrey[300] : `linear-gradient(to bottom, ${blueGrey[300]} 80%, rgba(0, 0, 0, 0) 100%)`) : 'unset',
           borderRadius: !kind.toLowerCase().includes('soft') ? '8px 8px 0 0' : '8px'
         }}/>
         {inverse && (
@@ -119,22 +121,28 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
       {renderLayout('default')}
       {renderLayout('soft')}
       {renderLayout('inverse')}
+      {renderLayout('gradient')}
       {renderLayout('sectionsSingle')}
       {renderLayout('sectionsSoft')}
       {renderLayout('sectionsInverse')}
+      {renderLayout('sectionsGradient')}
       {renderLayout('entireSingle')}
       {renderLayout('entireSoft')}
-      {renderLayout('entireInverse', true)}
+      {renderLayout('entireInverse')}
+      {renderLayout('entireGradient')}
+      {renderLayout('nobanner')}
+      {renderLayout('sectionsNobanner')}
+      {renderLayout('entireNobanner', true)}
       <Box sx={{width: '100%', display: 'flex'}}>
-      <FormControlLabel label="Border" control={
-        <Switch checked={isBorder} inputProps={{'aria-label': 'isBorder'}}
-                onChange={(event: ChangeEvent<HTMLInputElement>) => setIsBorder(event.target.checked)} />}
-      />
-      {!omitPrimary && (
-        <FormControlLabel label="Left aligned" control={
-          <Switch checked={isLeft} onChange={(event: ChangeEvent<HTMLInputElement>) => setIsLeft(event.target.checked)}
-                  inputProps={{'aria-label': 'isLeft'}} />}
-        />)}
+        <FormControlLabel label="Border" control={
+          <Switch checked={isBorder} inputProps={{'aria-label': 'isBorder'}}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => setIsBorder(event.target.checked)} />}
+        />
+        {!omitPrimary && (
+          <FormControlLabel label="Left aligned" control={
+            <Switch onChange={(event: ChangeEvent<HTMLInputElement>) => setIsLeft(event.target.checked)}
+                    inputProps={{'aria-label': 'isLeft'}} checked={isLeft} />}
+          />)}
       </Box>
     </Box>
   );

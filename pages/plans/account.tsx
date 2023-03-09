@@ -7,17 +7,14 @@ import Grid from '@mui/material/Grid'
 
 import Button from "@mui/material/Button";
 
-import { request } from "../../libs/utils/reguest";
+import { request } from "../../libs/utils/request";
 
 const AccountPage = () => {
 
   async function reviewingPlan() {
-    const { url } = await request({
-      url: 'billing-portal',
-      // TODO: Add emitError to notification component
-      // errorHandler: emitError,
+    request({ url: 'billing-portal', throwError: 'notify' }).then(({ url }) => {
+      window.open(url, '_blank');
     });
-    window.open(url, '_blank');
   }
 
   return (
@@ -28,7 +25,7 @@ const AccountPage = () => {
       <Divider></Divider>
       <Paper>
         <Typography padding={2}>
-          To make managing your billings easier, we have partnered with Stripe.
+          To make easier your billings management, we have partnered with Stripe.
           You can use the Review button below to make changes to your subscription plan, payment information,
           or view your billing history. Options include upgrading, downgrading, or canceling your subscription,
           and updating your payment methods.

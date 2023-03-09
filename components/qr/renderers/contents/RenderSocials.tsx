@@ -31,22 +31,12 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
   const handleValues = (item: SocialsType) => (event: ChangeEvent<HTMLInputElement>) => {
     setData((prev: DataType) => {
       const newData = {...prev};
-      if (index === -1) {
-        if (['titleAbout', 'descriptionAbout'].includes(item)) { // @ts-ignore
-          newData[item] = event.target.value;
-        }
-        if (newData.socials) {
-          const network = newData.socials.find((x: SocialNetworksType) => x.network === item);
-          if (network) { network.value = event.target.value; }
-        }
-      } else {
-        if (['titleAbout', 'descriptionAbout'].includes(item)) { // @ts-ignore
-          newData.custom[index].data[item] = event.target.value;
-        }
-        if (newData.custom?.[index]?.data?.socials) { // @ts-ignore
-          const network = newData.custom[index].data.socials.find((x: SocialNetworksType) => x.network === item);
-          if (network) { network.value = event.target.value; }
-        }
+      if (['titleAbout', 'descriptionAbout'].includes(item)) { // @ts-ignore
+        newData.custom[index].data[item] = event.target.value;
+      }
+      if (newData.custom?.[index]?.data?.socials) { // @ts-ignore
+        const network = newData.custom[index].data.socials.find((x: SocialNetworksType) => x.network === item);
+        if (network) { network.value = event.target.value; }
       }
       return newData;
     });
@@ -86,31 +76,17 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
   const handleSelection = (item: SocialsType) => {
     selection.current = item;
     setData((prev: DataType) => {
-      const newData = {...prev};
-      if (index === -1) {
-        if (!newData.socials || !newData.socials.some((x: SocialNetworksType) => x.network === item)) {
-          if (!newData.socials) { newData.socials = []; }
-          newData.socials.push({network: item, value: ''});
-        } else {
-          const index = newData.socials.findIndex((x: SocialNetworksType) => x.network === item);
-          newData.socials.splice(index, 1);
-          if (newData.socials.length === 0) {
-            delete newData.socials;
-            if (newData.socialsOnlyIcons !== undefined) { delete newData.socialsOnlyIcons; }
-          }
-        }
+      const newData = {...prev}; // @ts-ignore
+      if (!newData.custom?.[index]?.data?.socials || !newData.custom[index].data.socials.some((x: SocialNetworksType) => x.network === item)) { // @ts-ignore
+        if (!newData.custom?.[index]?.data) { newData.custom[index].data = {}; } // @ts-ignore
+        if (!newData.custom?.[index]?.data?.socials) { newData.custom[index].data.socials = []; } // @ts-ignore
+        newData.custom[index].data.socials.push({network: item, value: ''});
       } else { // @ts-ignore
-        if (!newData.custom?.[index]?.data?.socials || !newData.custom[index].data.socials.some((x: SocialNetworksType) => x.network === item)) { // @ts-ignore
-          if (!newData.custom?.[index]?.data) { newData.custom[index].data = {}; } // @ts-ignore
-          if (!newData.custom?.[index]?.data?.socials) { newData.custom[index].data.socials = []; } // @ts-ignore
-          newData.custom[index].data.socials.push({network: item, value: ''});
-        } else { // @ts-ignore
-          const idx = newData.custom[index].data.socials.findIndex((x: SocialNetworksType) => x.network === item); // @ts-ignore
-          newData.custom[index].data.socials.splice(idx, 1); // @ts-ignore
-          if (newData.custom[index].data.socials.length === 0) { // @ts-ignore
-            delete newData.custom[index].data.socials; // @ts-ignore
-            if (newData.custom[index].data.socialsOnlyIcons !== undefined) { delete newData.custom[index].data.socialsOnlyIcons; }
-          }
+        const idx = newData.custom[index].data.socials.findIndex((x: SocialNetworksType) => x.network === item); // @ts-ignore
+        newData.custom[index].data.socials.splice(idx, 1); // @ts-ignore
+        if (newData.custom[index].data.socials.length === 0) { // @ts-ignore
+          delete newData.custom[index].data.socials; // @ts-ignore
+          if (newData.custom[index].data.socialsOnlyIcons !== undefined) { delete newData.custom[index].data.socialsOnlyIcons; }
         }
       }
       return newData;
@@ -122,14 +98,11 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
 
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
-      const newSocials = Array.from((index === -1 ? newData.socials : newData.custom[index].data.socials) || []);
+      const newSocials = Array.from(newData.custom[index].data.socials || []);
       const [removed] = newSocials.splice(result.source.index, 1);
       newSocials.splice(result.destination.index, 0, removed);
-      if (index === -1) { // @ts-ignore
-        newData.socials = newSocials;
-      } else { // @ts-ignore
-        newData.custom[index].data.socials = newSocials;
-      }
+      // @ts-ignore
+      newData.custom[index].data.socials = newSocials;
       return newData;
     });
   }
@@ -137,19 +110,11 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
   const handleOnlyIcons = (onlyIcons: boolean) => {
     setData((prev: DataType) => {
       const newData = {...prev};
-      if (index === -1) {
-        if (onlyIcons) {
-          newData.socialsOnlyIcons = true;
-        } else {
-          delete newData.socialsOnlyIcons;
-        }
-      } else {
-        if (onlyIcons) { // @ts-ignore
-          if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
-          newData.custom[index].data.socialsOnlyIcons = true;
-        } else { // @ts-ignore
-          delete newData.custom[index].data.socialsOnlyIcons;
-        }
+      if (onlyIcons) { // @ts-ignore
+        if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
+        newData.custom[index].data.socialsOnlyIcons = true;
+      } else { // @ts-ignore
+        delete newData.custom[index].data.socialsOnlyIcons;
       }
       return newData;
     });

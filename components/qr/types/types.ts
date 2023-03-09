@@ -195,6 +195,13 @@ export type CustomType = {
 };
 
 export type DataType = {
+  buttonBorderType?: string;
+  buttonBorderWeight?: string;
+  buttonBorderColors?: string;
+  buttonBorderColor?: string;
+  buttonBorderStyle?: string;
+  buttonsOpacity?: number;
+  micrositeBackImageOpacity?: number;
   qrType?: string;
   mode?: string;
   prevNetworks?: string[];
@@ -318,8 +325,10 @@ export type DataType = {
   isDynamic?: boolean;
   prevBackImg?: string;
   prevForeImg?: string;
+  prevMicrositeImg?: string;
   backgndImg?: File | string;
   foregndImg?: File | string;
+  micrositeBackImage?: File | string;
   foregndImgType?: 'circle' | 'smooth' | 'square' | null;
   files?: File[];
   petName?: string;

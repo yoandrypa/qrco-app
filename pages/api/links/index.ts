@@ -1,33 +1,39 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
-import * as helpers from "../../../handlers/helpers";
-import * as linkHandler from "../../../handlers/links";
+import { NextApiRequest, NextApiResponse } from 'next';
+import {
+  NotFound,
+  allowCors,
+  respondWithException,
+  withSessionRoute,
+  checkAuthorization,
+  parseFromPostRequest,
+  parseFromListRequest,
+  fetchLinks,
+  createLink,
+} from './helpers';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
+  let result;
+
   try {
-    //TODO middleware for cognito
+    await allowCors(req, res);
+    await checkAuthorization(req);
+
+    const { currentUser } = req.session;
 
     if (req.method === "GET") {
-      helpers.query;
-
-      // @ts-ignore
-      res.status(200).json(await linkHandler.list(req.query));
+      const { limit, nextPageKey } = parseFromListRequest(req);
+      result = await fetchLinks(currentUser, limit, nextPageKey);
+    } else if (req.method === "POST") {
+      const data = parseFromPostRequest(req);
+      result = await createLink(data);
+    } else {
+      throw new NotFound;
     }
 
-    if (req.method === "POST") {
-      const { userId, ...body } = req.body;
-      const link = await linkHandler.create({
-        body,
-        user: { id: userId }
-      });
-      res.status(200).json(link);
-    }
-  } catch (e) {
-    // @ts-ignore
-    res.status(e.statusCode || 500).json(e);
+    res.status(200).json({ type: 'qr_link', result });
+  } catch (ex: any) {
+    respondWithException(res, ex);
   }
 }
 
+export default withSessionRoute(handler);

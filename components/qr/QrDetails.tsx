@@ -1,18 +1,23 @@
 import Box from "@mui/material/Box";
 import VisitDetailsSections from "../visit/VisitDetailsSections";
-import React from "react";
+import {ReactNode, useState} from "react";
 import QrDetail from "./QrDetail";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import QueryStatsIcon from "@mui/icons-material/QueryStats";
-import RenderSamplePreview
-  from "./helperComponents/smallpieces/RenderSamplePreview";
+import RenderSamplePreview from "./helperComponents/smallpieces/RenderSamplePreview";
 import { previewQRGenerator } from "../../helpers/qr/auxFunctions";
 import { ONLY_QR } from "./constants";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
+import dynamic from "next/dynamic";
+
+const RenderPreviewButton = dynamic(() => import("./helperComponents/smallpieces/RenderPreviewButton"));
+const RenderPreviewDrawer = dynamic(() => import("./helperComponents/smallpieces/RenderPreviewDrawer"));
 
 interface TabPanelProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   index: number;
   value: number;
 }
@@ -28,21 +33,22 @@ const TabPanel = (props: TabPanelProps) => {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 };
 
 const QrDetails = ({ visitData, qrData }: any) => {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
+  const [openPreview, setOpenPreview] = useState<boolean>(false);
+
+  const isWideForPreview = useMediaQuery("(min-width:925px)", {noSsr: true});
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+  console.log(qrData);
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -67,18 +73,32 @@ const QrDetails = ({ visitData, qrData }: any) => {
           <VisitDetailsSections visitData={visitData}/>
         </TabPanel>
       </Box>
-      <RenderSamplePreview selected={qrData.qrType} style={{
-        ml: "15px",
-        mt: "5px",
-        width: "370px",
-        position: "sticky",
-        top: "100px",
-      }} step={0} isDynamic={qrData.isDynamic || false}
-                           code={"ssswww"}
-                           onlyQr={ONLY_QR.includes(qrData.qrType) ||
-                             !qrData.isDynamic}
-                           data={previewQRGenerator(qrData, qrData.qrType)}
-                           qrOptions={qrData.qrOptionsId}/>
+      {isWideForPreview && (
+        <RenderSamplePreview
+          selected={qrData.qrType}
+          style={{
+            ml: "15px",
+            mt: "5px",
+            width: "370px",
+            position: "sticky",
+            top: "100px"
+          }}
+          step={0}
+          isDynamic={qrData.isDynamic || false}
+          code={""}
+          onlyQr={ONLY_QR.includes(qrData.qrType) || !qrData.isDynamic}
+          data={previewQRGenerator(qrData, qrData.qrType)}
+          qrOptions={qrData.qrOptionsId}/>
+      )}
+      {!openPreview && !isWideForPreview && ( // @ts-ignore
+        <RenderPreviewButton setOpenPreview={setOpenPreview} message="Sample"/>
+      )}
+      {openPreview && ( // @ts-ignore
+        <RenderPreviewDrawer setOpenPreview={setOpenPreview} border={35} height={!qrData.isDynamic ? 425 : 700} > {/* @ts-ignore */}
+          <RenderSamplePreview onlyQr={[...ONLY_QR, 'web'].includes(qrData.qrType) || !qrData.isDynamic} selected={qrData.qrType}
+                               isDrawed style={{mt: '-15px'}} step={0} isDynamic={qrData.isDynamic || false} showSampleMessage />
+        </RenderPreviewDrawer>
+      )}
     </Box>
   );
 };

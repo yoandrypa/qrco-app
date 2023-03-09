@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -11,21 +11,20 @@ import {
   QR_DETAILS_ROUTE, QR_TYPE_ROUTE
 } from "../qr/constants";
 import AppWrapper from "../AppWrapper";
-import {
-  dataCleaner, getBackgroundObject, getCornersAndDotsObject, getFrameObject, handleInitialData
-} from "../../helpers/qr/helpers";
+import { dataCleaner, getBackgroundObject, getCornersAndDotsObject, getFrameObject, handleInitialData } from "../../helpers/qr/helpers";
 
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import { logout } from '@ebanux/ebanux-utils/auth';
-import { iFrameDetected } from '@ebanux/ebanux-utils/utils';
 
-import Subscription from "../../models/subscription";
-import Waiting, { startWaiting, releaseWaiting } from "../Waiting";
+import { startWaiting, releaseWaiting } from "../Waiting";
+import { isBrowser } from "@ebanux/ebanux-utils/utils";
 
+const Claimer = dynamic(() => import("../claimer/Claimer"));
 const Generator = dynamic(() => import("../qr/Generator"));
 const PleaseWait = dynamic(() => import("../PleaseWait"));
-const Claimer = dynamic(() => import("../claimer/Claimer"));
 const UpdateBrowser = dynamic(() => import("../UpdateBrowser"));
+
+const contextCache: any = isBrowser() ? session.get('CONTEXT', {}, true) : {};
 
 const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [options, setOptions] = useState<OptionsType>(handleInitialData("Ebanux"));
@@ -33,15 +32,15 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [dotsData, setDotsData] = useState<CornersAndDotsType>(null);
   const [background, setBackground] = useState<BackgroundType>(initialBackground);
   const [frame, setFrame] = useState<FramesType>(initialFrame);
-  const [data, setData] = useState<DataType>(initialData);
+  const [data, setData] = useState<DataType>(contextCache.data || initialData);
   const [isTrialMode, setIsTrialMode] = useState<boolean>(false);
   const [updateBrowser, setUpdateBrowser] = useState<boolean>(false);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(contextCache.selected || null);
   const [userInfo, setUserInfo] = useState(null);
   const [subscription, setSubscription] = useState(null);
   const [verifying, setVerifying] = useState<boolean>(true);
   const [redirecting, setRedirecting] = useState<boolean>(false);
-  const [loading, setDeprecateLoading] = useState<boolean>(false);
+  const [loading, setHandleLoading] = useState<boolean>(false);
   const [isWrong, setIsWrong] = useState<boolean>(false);
 
   const doneInitialRender = useRef<boolean>(false);
@@ -51,11 +50,9 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
   const isUserInfo = useMemo(() => userInfo !== null, [userInfo]);
 
-  // TODO: Remove after replace all setLoading references by startWaiting or releaseWaiting.
   function setLoading(value: boolean) {
-    console.debug('Calling to deprecated method setLoading');
     value ? startWaiting() : releaseWaiting();
-    setDeprecateLoading(value);
+    setHandleLoading(value);
   }
 
   const doNotClear = useCallback(() => {
@@ -150,28 +147,18 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
     doneInitialRender.current = true;
 
-    if (!structuredClone) setUpdateBrowser(true);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    const { currentUser, isAuthenticated } = session;
-
-    if (isAuthenticated && !subscription) {
-      startWaiting();
-
-      Subscription.getActiveByUser(currentUser.cognito_user_id).then((subscription: any) => {
-        setSubscription(subscription);
-      }).finally(() => {
-        releaseWaiting();
-      });
+    if (!structuredClone) {
+      setUpdateBrowser(true);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (updateBrowser) return <UpdateBrowser />;
+  if (updateBrowser) {
+    return <UpdateBrowser/>;
+  }
 
-  if (iFrameDetected) return <Claimer code="" />;
-
-  if (verifying || !data) return <PleaseWait />;
+  if (verifying || !data) {
+    return <PleaseWait/>;
+  }
 
   if (router.pathname.startsWith("/qr") && ![QR_TYPE_ROUTE, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE]
     .includes(router.pathname)) {
@@ -179,6 +166,9 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const renderContent = () => {
+    if (router.pathname.startsWith('/claim')) {
+      return <Claimer code={(router.query.code || '') as string}/>;
+    }
     if (router.pathname === "/" && router.query[PARAM_QR_TEXT] !== undefined) {
       const qrText = router.query[PARAM_QR_TEXT] as string;
       if (qrText !== undefined && qrText.length) {
@@ -190,16 +180,8 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       }
     } else {
       return (
-        // TODO: Remover las propiedades que están contenidas en el Context y usar "const { vvv } = useContext(Context);" para acceder al recurso.
-        <AppWrapper setIsFreeMode={setIsTrialMode}
-                    handleLogout={logout}
-                    clearData={clearData}
-                    mode={data.mode}
-                    setRedirecting={setRedirecting}
-                    isTrialMode={isTrialMode}
-                    userInfo={userInfo}
-        >
-          <Waiting />
+        <AppWrapper setIsFreeMode={setIsTrialMode} handleLogout={logout} clearData={clearData}
+                    mode={data.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} userInfo={userInfo}>
           {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>
       );
@@ -211,7 +193,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       cornersData, setCornersData, dotsData, setDotsData, frame, setFrame, background, setBackground,
       options, setOptions, selected, setSelected, data, setData, isTrialMode, userInfo,
       clearData, loading, setLoading, setRedirecting, isWrong, setIsWrong, doNotClear,
-      subscription, setSubscription,
+      subscription, setSubscription, setUserInfo
     }}>
       {renderContent()}
     </Context.Provider>

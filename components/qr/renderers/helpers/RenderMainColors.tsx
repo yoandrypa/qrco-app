@@ -1,9 +1,7 @@
-import Typography from "@mui/material/Typography";
 import {COLORS, DEFAULT_COLORS} from "../../constants";
 import RenderColorPreset from "./RenderColorPreset";
 import Box from "@mui/material/Box";
 import ColorSelector from "../../helperComponents/ColorSelector";
-import Paper from "@mui/material/Paper";
 import {DataType} from "../../types/types";
 
 interface MainColorsProps {
@@ -13,8 +11,7 @@ interface MainColorsProps {
 
 export default function RenderMainColors({data, handleValue}: MainColorsProps) {
   return (
-    <Paper sx={{p: 1, mb: '10px'}} elevation={2}>
-      <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Main colors'}</Typography>
+    <>
       {COLORS.map(x => (
         <RenderColorPreset
           handleValue={handleValue}
@@ -44,6 +41,6 @@ export default function RenderMainColors({data, handleValue}: MainColorsProps) {
           />
         </Box>
       </Box>
-    </Paper>
+    </>
   );
 }

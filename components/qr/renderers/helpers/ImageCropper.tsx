@@ -19,16 +19,20 @@ interface ImageCropperProps {
   handleClose: () => void;
   handleAccept: (newFile: File, kind: string) => void;
   file: File;
+  message: string;
   kind: string;
 }
 
-export default function ImageCropper({handleAccept, handleClose, file, kind}: ImageCropperProps) {
+export default function ImageCropper({handleAccept, handleClose, file, kind, message}: ImageCropperProps) {
   const [drag, setDrag] = useState<boolean>(false);
   const [zoom, setZoom] = useState<{max: number, min: number, selected: number}>({max: 100, min: 50, selected: 100});
 
   const isWide = useMediaQuery("(min-width:570px)", { noSsr: true });
 
-  const mainDims = useRef<{width: number, height: number}>(kind === 'backgndImg' ? {width: 460, height: 200} : {width: 200, height: 200});
+  const mainDims = useRef<{width: number, height: number}>(
+    kind === 'backgndImg' ? {width: 460, height: 200} :
+      (kind === 'micrositeBackImage' ? {width: 350, height: 650} : {width: 200, height: 200})
+  );
   const dimensions = useRef<{width: number, height: number}>({width: 0, height: 0});
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const image = useRef<HTMLImageElement>();
@@ -129,10 +133,14 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
     }
   }
 
-  const getWidth = useMemo(() => kind === 'backgndImg' ? (isWide ? 460 : 250) : 200, [isWide]); // eslint-disable-line react-hooks/exhaustive-deps
+  const getWidth = useMemo(() => kind === 'backgndImg' ? (isWide ? 460 : 250) :
+    (kind === 'micrositeBackImage' ? (isWide ? 350 : 280) : 200), [isWide]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const getHeight = useMemo(() => kind === 'micrositeBackImage' ? (isWide ? 650 : 540) : mainDims.current.height, [isWide]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     mainDims.current.width = getWidth;
+    mainDims.current.height = getHeight;
     if (!initial.current) {
       updateCanvas();
     }
@@ -149,7 +157,8 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
     const img = new Image();
     img.src = URL.createObjectURL(file);
 
-    const dims = kind === 'backgndImg' ? {width: 460, height: 200} : {width: 200, height: 200};
+    const dims = kind === 'backgndImg' ? {width: 460, height: 200} :
+      (kind === 'micrositeBackImage' ? {width: 350, height: 650} : {width: 200, height: 200});
 
     img.onload = () => {
       let height = img.height;
@@ -236,12 +245,12 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
         <Box sx={{ p: '1px' }}>
           <Box sx={{ display: 'flex', mb: '10px' }}>
             <PhotoSizeSelectLargeIcon sx={{ color: theme => theme.palette.info.dark, mr: '5px' }} />
-            <Typography sx={{ fontWeight: 'bold' }}>{`Adjust the ${kind === 'backgndImg' ? 'banner' : 'main'} image for the microsite`}</Typography>
+            <Typography sx={{ fontWeight: 'bold' }}>{`Adjust the ${message} image for the microsite`}</Typography>
           </Box>
           <Box sx={{ width: '100%', textAlign: 'center' }}>
             <canvas
               width={getWidth}
-              height={mainDims.current.height}
+              height={getHeight}
               onMouseDown={() => setDrag(true)}
               onTouchStart={touchStart}
               onMouseUp={release}
@@ -262,7 +271,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind}: Im
         </Stack>
         <Box sx={{ mt: 2, display: 'flex', color: theme => theme.palette.text.disabled, width: '100%', justifyContent: 'center' }}>
           <Typography sx={{ fontSize: 'small', fontWeight: 'bold', mr: '5px' }}>{'Note:'}</Typography>
-          <Typography sx={{ fontSize: 'small'}}>{'Image might have a tiny difference on microsite. Also, image quality was reduced on porpuse.'}</Typography>
+          <Typography sx={{ fontSize: 'small'}}>{'Image might have a tiny difference on microsite.'}</Typography>
         </Box>
       </DialogContent>
       <DialogActions sx={{p: 2}}>

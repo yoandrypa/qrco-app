@@ -3,7 +3,7 @@ import { stripe } from "../../../libs/gateways/stripe";
 import Subscription from "../../../models/subscription";
 
 export { NotFound, respondWithException } from "../../../libs/exceptions";
-export { withSessionRoute, checkAuthorization } from '../base/helpers';
+export { withSessionRoute, checkAuthorization, allowCors } from '../base/helpers';
 
 export async function getBillingPortal({ cognito_user_id }: any) {
   // TODO: Save local record with billing-portal data.

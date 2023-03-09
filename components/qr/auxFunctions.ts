@@ -1,3 +1,4 @@
+// TODO: Use setError from Notification component.
 import {
   BackgroundType,
   CornersAndDotsType,
@@ -14,6 +15,7 @@ import { updateEbanuxDonationPrice, createEbanuxDonationPrice } from "../../hand
 import { getUuid } from "../../helpers/qr/helpers";
 import { generateId, generateShortLink } from "../../utils";
 import { create, edit as qrEdit } from "../../handlers/qrs";
+import { startWaiting, releaseWaiting } from "../Waiting";
 import { QR_CONTENT_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { capitalize } from "@mui/material";
 
@@ -40,6 +42,7 @@ export interface StepsProps {
   selected: string;
   data: DataType;
   userInfo: UserInfoProps;
+  subscription: any;
   options: OptionsType;
   frame: FramesType;
   background: BackgroundType;
@@ -48,7 +51,6 @@ export interface StepsProps {
   setOptions: (opt: OptionsType) => void;
   isWrong: boolean;
   loading: boolean;
-  setLoading: (isLoading: boolean) => void;
   setRedirecting: (isRedirecting: boolean) => void;
 }
 
@@ -62,6 +64,17 @@ export interface GeneratorProps {
   setFrame: Function;
   selected: string;
   userInfo: object;
+  cornersData?: CornersAndDotsType | null;
+  dotsData?: CornersAndDotsType | null;
+}
+
+export interface QrGeneratorProps {
+  options: OptionsType;
+  background?: BackgroundType | null;
+  hidden?: boolean | false;
+  overrideValue?: string | undefined;
+  command?: () => void;
+  frame?: FramesType | null;
   cornersData?: CornersAndDotsType | null;
   dotsData?: CornersAndDotsType | null;
 }
@@ -143,7 +156,6 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
  * @param cornersData
  * @param dotsData
  * @param selected
- * @param setLoading
  * @param setIsError
  * @param success
  * @param router
@@ -153,7 +165,7 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
  */
 export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps, options: OptionsType, frame: FramesType,
                                    background: BackgroundType, cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string,
-                                   setLoading: (loading: boolean) => void, setIsError: (isError: boolean) => void,
+                                   setIsError: (isError: boolean) => void,
                                    success: (creationData?: string) => void, router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
                                    updatingHandler?: (value: string | null, status?: boolean) => void) => {
 
@@ -190,7 +202,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   if (data.backgndImg !== undefined) {
     if (!Array.isArray(data.backgndImg)) {
-      prevUpdatingHandler("Uploading background image");
+      prevUpdatingHandler("Uploading banner image");
       try { // @ts-ignore
         data.backgndImg = await upload([data.backgndImg], `${userInfo.cognito_user_id}/${selected}s/design`);
         prevUpdatingHandler(null, true);
@@ -203,7 +215,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     }
   }
   if (data.prevBackImg !== undefined) {
-    prevUpdatingHandler("Removing previous background image");
+    prevUpdatingHandler("Removing previous banner image");
     try {
       await remove([{ Key: data.prevBackImg }]);
       delete data.prevBackImg;
@@ -216,7 +228,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   if (data.foregndImg !== undefined) {
     if (!Array.isArray(data.foregndImg)) {
-      prevUpdatingHandler("Uploading main image");
+      prevUpdatingHandler("Uploading profile image");
       try { // @ts-ignore
         data.foregndImg = await upload([data.foregndImg], `${userInfo.cognito_user_id}/${selected}s/design`);
         prevUpdatingHandler(null, true);
@@ -229,10 +241,36 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     }
   }
   if (data.prevForeImg !== undefined) {
-    prevUpdatingHandler("Deleting previous main image");
+    prevUpdatingHandler("Deleting previous profile image");
     try {
       await remove([{ Key: data.prevForeImg }]);
       delete data.prevForeImg;
+      prevUpdatingHandler(null, true);
+    } catch {
+      prevUpdatingHandler(null, false);
+      setIsError(true);
+    }
+  }
+
+  if (data.micrositeBackImage !== undefined) {
+    if (!Array.isArray(data.micrositeBackImage)) {
+      prevUpdatingHandler("Uploading background image");
+      try { // @ts-ignore
+        data.micrositeBackImage = await upload([data.micrositeBackImage], `${userInfo.cognito_user_id}/${selected}s/design`);
+        prevUpdatingHandler(null, true);
+      } catch {
+        prevUpdatingHandler(null, false);
+        setIsError(true);
+      }
+    } else {
+      delete data.backgndImg;
+    }
+  }
+  if (data.prevMicrositeImg !== undefined) {
+    prevUpdatingHandler("Removing previous background image");
+    try {
+      await remove([{ Key: data.prevMicrositeImg }]);
+      delete data.prevMicrositeImg;
       prevUpdatingHandler(null, true);
     } catch {
       prevUpdatingHandler(null, false);
@@ -349,19 +387,15 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       if (!edition) {
         lastStep(true);
       } else {
-        router.replace("/").then(() => setLoading(false));
+        startWaiting();
+        router.replace("/").finally(releaseWaiting);
       }
     }
   } catch {
-    if (dataLength) {
-      prevUpdatingHandler(null, false);
-    }
+    if (dataLength) prevUpdatingHandler(null, false);
     setIsError(true);
-    setLoading(false);
   }
-  if (dataLength) {
-    prevUpdatingHandler("done");
-  }
+  if (dataLength) prevUpdatingHandler("done");
 }
 
 export const readableFileSize = (size: number): string => {
