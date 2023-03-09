@@ -1,6 +1,8 @@
 import React, { useContext } from "react";
 import { useRouter } from "next/router";
 
+import session from "@ebanux/ebanux-utils/sessionStorage";
+
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -25,6 +27,8 @@ export default function MenuItemSubscription() {
   }
 
   const options = (): any => {
+    if (!session.isAuthenticated) return { text: 'Available plans' }
+
     if (subscription?.status === 'active') {
       //@ts-ignore
       const label: string = plans[subscription.metadata.plan_type].title;
@@ -47,11 +51,16 @@ export default function MenuItemSubscription() {
 
   const { text, label, title, color } = options();
 
+  const renderPlanType = () => {
+    if (!session.isAuthenticated) return null;
+    return <Chip color={color} variant="outlined" label={label} size="small" title={title} sx={{ ml: 1 }} />;
+  }
+
   return (
     <MenuItem onClick={onClick}>
       <ListItemIcon><SubscriptionIcon sx={iconSmall} /></ListItemIcon>
       <ListItemText>{text}</ListItemText>
-      <Chip color={color} variant="outlined" label={label} size="small" title={title} sx={{ ml: 1 }} />
+      {renderPlanType()}
     </MenuItem>
   );
 }

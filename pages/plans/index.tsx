@@ -40,7 +40,7 @@ const Plans = () => {
     if (session.isAuthenticated) {
       setActivePlan(subscription?.metadata?.plan_type || 'free');
     } else {
-      setWarning('You need to be authenticated before buying any plan!', false);
+      setWarning('You need to be authenticated before buying any plan!', true);
       session.set('CALLBACK_ROUTE', { pathname, query });
     }
   }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps

@@ -83,7 +83,7 @@ export const getBase64FromUrl = async (url: string) => {
 };
 
 export const convertBase64 = (file: File) => {
-  const newFile = new File([file], file.name);
+  const newFile = new File([file], file.name, { type: file.type });
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(newFile);

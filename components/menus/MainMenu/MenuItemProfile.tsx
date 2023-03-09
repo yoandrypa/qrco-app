@@ -12,12 +12,13 @@ import classes from "./classes.sx";
 
 export default function MenuItemProfile() {
   const { name, email } = session.currentUser;
-  const { iconSmall } = classes;
+  const { iconSmall, profile } = classes;
+  const text = (name || email).replace(/@.*/, '');
 
   return (
-    <MenuItem>
+    <MenuItem divider disabled sx={profile}>
       <ListItemIcon><UserIcon sx={iconSmall} /></ListItemIcon>
-      <ListItemText primaryTypographyProps={{ variant: 'subtitle2' }}>{name || email}</ListItemText>
+      <ListItemText primaryTypographyProps={{ variant: 'subtitle2' }}>{text}</ListItemText>
     </MenuItem>
   );
 }

@@ -7,29 +7,23 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
 
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
 import session from "@ebanux/ebanux-utils/sessionStorage";
-import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
 import { PARAM_QR_TEXT, QR_TYPE_ROUTE } from "./qr/constants";
 import { loadSubscription } from "../libs/utils/request";
 
-import RenderSupport from "./wrapper/RenderSupport";
 import Context from "./context/Context";
 import ConfirmDialog from "./ConfirmDialog";
 import Notification from "./Notification";
 import Waiting from "./Waiting";
-import messaging from "@ebanux/ebanux-utils/messaging";
 
 const CountDown = dynamic(() => import("./countdown/CountDown"));
-const RenderButton = dynamic(() => import("./wrapper/RenderButton"));
-const RenderMenu = dynamic(() => import("./wrapper/RenderMenu"));
-
-const mSubscriptions: any[] = [];
+const WideScreenMenu = dynamic(() => import("./wrapper/WideScreenMenu"));
+const NarrowScreenMenu = dynamic(() => import("./wrapper/NarrowScreenMenu"));
 
 interface Props {
   window?: () => Window;
@@ -64,19 +58,9 @@ export default function AppWrapper(props: AppWrapperProps) {
   } = props;
 
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
-  const [freeLimitReached, setFreeLimitReached] = useState<boolean>(false)
 
   // @ts-ignore
   const { subscription, setSubscription, setLoading } = useContext(Context);
-
-  const beforeLogout = () => {
-    if (handleLogout) {
-      setIsFreeMode?.call(null, false);
-      setStartTrialDate(null);
-      handleLoading(true);
-      handleLogout();
-    }
-  }
 
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
   const router = useRouter();
@@ -86,10 +70,6 @@ export default function AppWrapper(props: AppWrapperProps) {
       setLoading(loading !== undefined ? loading : true);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handleLogin = useCallback(() => {
-    startAuthorizationFlow();
-  }, []);
 
   const handleNavigation = useCallback(() => {
     const isInListView = router.pathname === "/";
@@ -121,15 +101,6 @@ export default function AppWrapper(props: AppWrapperProps) {
       if (subscription?.status !== "active") {
         setIsFreeMode?.call(null, true);
         setStartTrialDate(currentUser.localRecord.createdAt);
-
-        // TODO: Review setFreeLimitReached
-        // @ts-ignore
-        // list({ userId: userInfo.cognito_user_id }).then(qrs => {
-        //   // @ts-ignore
-        //   if ((qrs.items as Array<any>).some((el: any) => el.isDynamic)) {
-        //     setFreeLimitReached(true);
-        //   }
-        // });
       } else {
         setIsFreeMode?.call(null, false);
         setStartTrialDate(null);
@@ -160,7 +131,7 @@ export default function AppWrapper(props: AppWrapperProps) {
               </Link>
               <Box sx={{ display: "flex" }}>
                 {router.query[PARAM_QR_TEXT] === undefined && (<>
-                  {isWide ? <RenderButton /> : <RenderMenu />}
+                  {isWide ? <WideScreenMenu /> : <NarrowScreenMenu />}
                 </>)}
                 {isFreeMode && <CountDown />}
               </Box>
@@ -189,18 +160,6 @@ export default function AppWrapper(props: AppWrapperProps) {
               </Typography>
               <Box component="img" alt="EBANUX" src="/ebanux.svg" sx={{ width: "95px", mt: "-2px", ml: "7px" }} />
             </Box>
-            {userInfo && (
-              <Typography sx={{
-                my: "auto",
-                color: theme => theme.palette.text.disabled,
-                fontSize: "small",
-                display: "inline-flex",
-              }}>
-                {userInfo.email.replace(/@.*$/, "")}
-                <AccountBoxIcon sx={{ mt: "-1px" }} />
-              </Typography>
-            )}
-            <RenderSupport />
           </Box>)}
       </Container>
     </>
