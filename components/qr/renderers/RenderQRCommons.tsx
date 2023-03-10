@@ -16,6 +16,7 @@ const RenderLayoutHandler = dynamic(() => import("../helperComponents/smallpiece
 const RenderMainColors = dynamic(() => import("./helpers/RenderMainColors"));
 const Typography = dynamic(() => import("@mui/material/Typography"));
 const CircularProgress = dynamic(() => import("@mui/material/CircularProgress"));
+const RenderFooterHandler = dynamic(() => import("../helperComponents/smallpieces/RenderFooterHandler"));
 
 interface QRCommonsProps {
   omitPrimaryImg?: boolean;
@@ -83,6 +84,10 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
           {expander === 'layout' && (
             <RenderLayoutHandler handleValue={handleValue} data={data} omitPrimary={omitPrimaryImg}/>
           )}
+        </Paper>
+        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+          <Expander expand={expander} setExpand={handleExpander} item="footer" title="Footer" bold/>
+          {expander === 'footer' && <RenderFooterHandler data={data} handleValue={handleValue} />}
         </Paper>
       </Box>
     </>
