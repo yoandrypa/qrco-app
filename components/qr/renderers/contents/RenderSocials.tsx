@@ -2,14 +2,16 @@ import {ChangeEvent, useCallback, useRef} from "react";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import {capitalize} from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import Select, {SelectChangeEvent} from "@mui/material/Select";
+import {capitalize} from "@mui/material";
 
 import RenderIcon from "../../helperComponents/smallpieces/RenderIcon";
 import {DataType, SocialNetworksType, SocialsType, Type} from "../../types/types";
 import {PHONE} from "../../constants";
 import SectionSelector from "../../helperComponents/SectionSelector";
+import MenuItem from "@mui/material/MenuItem";
 import {getItemStyle} from "../../helperComponents/looseComps/StyledComponents";
 
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
@@ -18,6 +20,8 @@ import dynamic from "next/dynamic";
 
 const Switch = dynamic(() => import("@mui/material/Switch"));
 const FormControlLabel = dynamic(() => import("@mui/material/FormControlLabel"));
+const FormControl = dynamic(() => import("@mui/material/FormControl"));
+const InputLabel = dynamic(() => import("@mui/material/InputLabel"));
 
 interface RenderSocialsProps {
   index: number;
@@ -31,9 +35,6 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
   const handleValues = (item: SocialsType) => (event: ChangeEvent<HTMLInputElement>) => {
     setData((prev: DataType) => {
       const newData = {...prev};
-      if (['titleAbout', 'descriptionAbout'].includes(item)) { // @ts-ignore
-        newData.custom[index].data[item] = event.target.value;
-      }
       if (newData.custom?.[index]?.data?.socials) { // @ts-ignore
         const network = newData.custom[index].data.socials.find((x: SocialNetworksType) => x.network === item);
         if (network) { network.value = event.target.value; }
@@ -46,9 +47,7 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
     if (item !== undefined) {
       let isError = !item.value?.length;
 
-      if (item.network === 'whatsapp' && !isError && !PHONE.test(item.value || '')) {
-        isError = true;
-      }
+      if (item.network === 'whatsapp' && !isError && !PHONE.test(item.value || '')) { isError = true;}
 
       return (
         <Box sx={{width: '100%', display: 'flex'}}>
@@ -95,13 +94,11 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
 
   const onDragEnd = (result: any) => {
     if (!result?.destination) { return null; }
-
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
       const newSocials = Array.from(newData.custom[index].data.socials || []);
       const [removed] = newSocials.splice(result.source.index, 1);
-      newSocials.splice(result.destination.index, 0, removed);
-      // @ts-ignore
+      newSocials.splice(result.destination.index, 0, removed); // @ts-ignore
       newData.custom[index].data.socials = newSocials;
       return newData;
     });
@@ -114,7 +111,24 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
         if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
         newData.custom[index].data.socialsOnlyIcons = true;
       } else { // @ts-ignore
-        delete newData.custom[index].data.socialsOnlyIcons;
+        delete newData.custom[index].data.socialsOnlyIcons; // @ts-ignore
+        if (newData.custom[index].data.iconSize !== undefined) { // @ts-ignore
+          delete newData.custom[index].data.iconSize;
+        }
+      }
+      return newData;
+    });
+  }
+
+  const beforeSend = (event: SelectChangeEvent): void => {
+    const {value} = event.target;
+    setData((prev: DataType) => {
+      const newData = {...prev};
+      if (value !== 'default') { // @ts-ignore
+        if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
+        newData.custom[index].data.iconSize = value;
+      } else { // @ts-ignore
+        delete newData.custom[index].data.iconSize;
       }
       return newData;
     });
@@ -177,9 +191,20 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
           </Droppable>
         </DragDropContext>
         {data?.socials !== undefined && data?.socials?.length !== 0 && (
-          <FormControlLabel label="Only icons" control={
-            <Switch checked={data?.socialsOnlyIcons || false} inputProps={{'aria-label': 'onlyIcons'}}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) => handleOnlyIcons(event.target.checked)} />} />
+          <Box sx={{display: 'flex', flexDirection: {sm: 'row', xs: 'column'}}}>
+            <FormControlLabel label="Only icons" control={
+              <Switch checked={data?.socialsOnlyIcons || false} inputProps={{'aria-label': 'onlyIcons'}}
+                      onChange={(event: ChangeEvent<HTMLInputElement>) => handleOnlyIcons(event.target.checked)} />} />
+              {data?.socialsOnlyIcons && (<FormControl size='small' margin="dense" sx={{width: {xs: '100%', sm: '220px'}}}>
+                <InputLabel>{'Icon size'}</InputLabel>
+                <Select value={data?.iconSize || 'default'} label="Icon size" onChange={beforeSend}>
+                  <MenuItem value="default">Default</MenuItem>
+                  <MenuItem value="small">Small</MenuItem>
+                  <MenuItem value="medium">Medium</MenuItem>
+                  <MenuItem value="Large">Large</MenuItem>
+                </Select>
+            </FormControl>)}
+          </Box>
         )}
       </Grid>
     </Grid>
