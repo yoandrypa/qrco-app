@@ -126,6 +126,10 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
         setData((prev: any) => {
           const newData = {...prev};
           newData[prop] = payload.target?.value !== undefined ? payload.target.value : payload;
+          if (prop === 'footerKind') {
+            if (payload === 'default') { delete newData.footerKind; }
+            if (payload !== 'custom' && newData.customFooter !== undefined) { delete newData.customFooter; }
+          }
           if (prop === 'layout' && typeof payload === 'string' && payload.includes('banner') && newData.backgndImg !== undefined) {
             delete newData.backgndImg;
             setBackImg(undefined);

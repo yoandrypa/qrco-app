@@ -198,6 +198,8 @@ export type CustomType = {
 };
 
 export type DataType = {
+  customFooter?: string;
+  footerKind?: string;
   buttonCase?: boolean;
   alternate?: boolean;
   flipVertical?: boolean;
