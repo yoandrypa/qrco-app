@@ -58,10 +58,16 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   const handleValue = useCallback((prop: string) => (payload: any) => {
     if (payload === undefined) {
       setData((prev: any) => {
-        const tempo = {...prev};
-        delete tempo[prop];
-        return tempo;
-      })
+        const newData = {...prev};
+        if (prop === 'micrositeBackImage' && prev?.micrositeBackImage?.[0]?.Key) { newData.prevMicrositeImg = prev.micrositeBackImage[0].Key; }
+        if (prop === 'backgndImg' && prev?.backgndImg?.[0]?.Key) { newData.prevBackImg = prev.backgndImg[0].Key; }
+        if (prop === 'foregndImg' && prev?.foregndImg?.[0]?.Key) { newData.prevForeImg = prev.foregndImg[0].Key; }
+        delete newData[prop];
+        return newData;
+      });
+      if (prop === 'micrositeBackImage' && micrositeBackImage) { setMicrositeBackImage(undefined); }
+      if (prop === 'backgndImg' && backImg) { setBackImg(undefined); }
+      if (prop === 'foregndImg' && foreImg) { setForeImg(undefined); }
     } else if (!prop.startsWith('both')) {
       if (prop === 'micrositeBackImage' && micrositeBackImage !== undefined) {
         setMicrositeBackImage(undefined); // @ts-ignore
