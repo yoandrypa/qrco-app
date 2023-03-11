@@ -18,7 +18,7 @@ export default function RenderFooterHandler({data, handleValue}: FooterProps) {
 
   const handleMessage = (event: ChangeEvent<HTMLInputElement>) => {
     handleValue('customFooter')(event.target.value);
-  }
+  };
 
   return (
     <Box sx={{mt: 1, display: 'flex', flexDirection: {sm: 'row', xs: 'column'}}}>

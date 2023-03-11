@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
@@ -18,6 +18,8 @@ interface BackImgProps {
   micrositesImg?: File | string;
   opacity: number;
   handleValue: Function;
+  forcePick?: string;
+  releasePick: () => void;
 }
 
 interface ErrorProps {
@@ -26,7 +28,7 @@ interface ErrorProps {
   warning?: boolean;
 }
 
-export default function RenderBackgroundImageSelector({handleValue, micrositesImg, opacity}: BackImgProps) {
+export default function RenderBackgroundImageSelector({handleValue, micrositesImg, opacity, forcePick, releasePick}: BackImgProps) {
   const [error, setError] = useState<ErrorProps | null>(null);
   const [selectFile, setSelectFile] = useState<boolean>(false);
   const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
@@ -55,6 +57,14 @@ export default function RenderBackgroundImageSelector({handleValue, micrositesIm
     handleValue(kind)(newFile);
     setCropper(null);
   };
+
+  useEffect(() => {
+    if (forcePick) {
+      setSelectFile(true);
+      setTimeout(() => releasePick(), 200);
+
+    }
+  }, [forcePick]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

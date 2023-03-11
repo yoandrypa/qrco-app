@@ -55,6 +55,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     setTabSelected(newValue);
   }
 
+  const releasePick = useCallback(() => setForceOpen(undefined), []);
+
   const handleValue = useCallback((prop: string) => (payload: any) => {
     if (payload === undefined) {
       setData((prev: any) => {
@@ -97,7 +99,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           if (tempo.backgroundColor !== undefined) { delete tempo.backgroundColor; }
           if (tempo.backgroundColorRight !== undefined) { delete tempo.backgroundColorRight; }
           if (tempo.backgroundDirection !== undefined) { delete tempo.backgroundDirection; }
-          tempo.backgroundType = payload.target.value;
+          tempo.backgroundType = payload?.target?.value || payload;
           if (tempo.backgroundType !== 'image' && tempo.micrositeBackImage !== undefined) {
             setMicrositeBackImage(undefined);
             delete tempo.micrositeBackImage;
@@ -246,8 +248,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       if (tabSelected === 0) {
         setTabSelected(1);
       }
-    } else {
-      setForceOpen(undefined);
+      // setForceOpen(undefined);
     }
   }, [forceOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -343,17 +344,12 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                 )}
                 {tabSelected === 0 ? renderChildren() : (
                   <RenderQRCommons
-                    isWideForPreview={isWideForPreview}
-                    handleValue={handleValue}
-                    omitPrimaryImg={omitProfileImg}
+                    isWideForPreview={isWideForPreview} handleValue={handleValue} omitPrimaryImg={omitProfileImg}
                     backgndImg={isEditOrClone ? (Array.isArray(data?.backgndImg) ? backImg || undefined : data?.backgndImg) : data?.backgndImg}
                     foregndImg={isEditOrClone ? (Array.isArray(data?.foregndImg) ? foreImg || undefined : data?.foregndImg) : data?.foregndImg}
                     micrositesImg={isEditOrClone ? (Array.isArray(data?.micrositeBackImage) ? micrositeBackImage || undefined : data?.micrositeBackImage) : data?.micrositeBackImage}
-                    loading={loading}
-                    foreError={foreImg === null}
-                    backError={backImg === null}
-                    data={data}
-                    forcePick={forceOpen} />
+                    loading={loading} foreError={foreImg === null} backError={backImg === null}
+                    data={data} releasePick={releasePick} forcePick={forceOpen} />
                 )}
               </Box>
             ) : renderChildren()}

@@ -1,4 +1,3 @@
-import React, { useContext } from "react";
 import { useRouter } from "next/router";
 
 import QrCodeIcon from "@mui/icons-material/QrCode";

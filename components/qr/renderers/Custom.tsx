@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import Common from "../helperComponents/Common";
 import DragPaper from "../helperComponents/looseComps/DragPaper";
 import Expander from "./helpers/Expander";
-import {CustomType, DataType, Type} from "../types/types";
+import {CustomType, DataType} from "../types/types";
 
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 
@@ -20,40 +20,16 @@ import {
   validator
 } from "./custom/helperFuncs";
 import {getUuid} from "../../../helpers/qr/helpers";
-import {FILE_LIMITS} from "../../../consts";
 
 import dynamic from "next/dynamic";
+import RenderContent from "./custom/RenderContent";
 
-const RenderActionButton = dynamic(() => import("./contents/RenderActionButton"));
-const RenderSingleText = dynamic(() => import("./contents/RenderSingleText"));
-const RenderAssetsData = dynamic(() => import("./contents/RenderAssetsData"));
 const CustomEditSection = dynamic(() => import("./custom/CustomEditSection"));
-const RenderLinks = dynamic(() => import("./contents/RenderLinks"));
-const RenderTitleDesc = dynamic(() => import("./contents/RenderTitleDesc"));
 const CustomMenu = dynamic(() => import("./custom/CustomMenu"));
-const RenderOpeningTime = dynamic(() => import("./contents/RenderOpeningTime"));
-const RenderDateSelector = dynamic(() => import("./contents/RenderDateSelector"));
-const RenderSocials = dynamic(() => import("./contents/RenderSocials"));
-const RenderEasiness = dynamic(() => import("./contents/RenderEasiness"));
 const RenderConfirmDlg = dynamic(() => import("../../renderers/RenderConfirmDlg"));
-const RenderAddressData = dynamic(() => import("./contents/RenderAddressData"));
-const RenderCompanyData = dynamic(() => import("./contents/RenderCompanyData"));
-const RenderEmailWeb = dynamic(() => import("./contents/RenderEmailWeb"));
-const RenderOrganization = dynamic(() => import("./contents/RenderOrganization"));
-const RenderPhones = dynamic(() => import("./contents/RenderPhones"));
-const RenderPresentation = dynamic(() => import("./contents/RenderPresentation"));
 const Button = dynamic(() => import("@mui/material/Button"));
-const RenderCouponData = dynamic(() => import("./contents/RenderCouponData"));
-const RenderCouponInfo = dynamic(() => import("./contents/RenderCouponInfo"));
 const ArrowCircleUpIcon = dynamic(() => import("@mui/icons-material/ArrowCircleUp"));
 const IconButton = dynamic(() => import("@mui/material/IconButton"));
-const RenderPetDesc = dynamic(() => import("./contents/RenderPetDesc"));
-const RenderKeyValue = dynamic(() => import("./contents/RenderKeyValue"));
-const RenderEmail = dynamic(() => import("./contents/RenderEmail"));
-const RenderWeb = dynamic(() => import("./contents/RenderWeb"));
-const RenderSku = dynamic(() => import("./contents/RenderSku"));
-const RenderTags = dynamic(() => import("./contents/RenderTags"));
-const RenderContactForm = dynamic(() => import("./contents/RenderContactForm"));
 const HeadlineSettings = dynamic(() => import("./custom/HeadlineSettings"));
 
 export default function Custom({data, setData, handleValues, setIsWrong, predefined, tip, selected}: CustomProps) {
@@ -133,8 +109,8 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
     setOpen({item, index, name, anchor: event.currentTarget});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleSettings = useCallback((index: number, reverse: boolean) => (event: MouseEvent<HTMLElement>) => {
-    setOpenSettings({index, reverse, anchor: event.currentTarget});
+  const handleSettings = useCallback((index: number, reverse: boolean, hideHeadlineOpts: boolean) => (event: MouseEvent<HTMLElement>) => {
+    setOpenSettings({index, reverse, anchor: event.currentTarget, hideHeadlineOpts});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handle = useCallback((item: string) => () => {
@@ -209,46 +185,15 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                            ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
                         <DragPaper elevation={2} sx={{p: 1}} avoidIcon={data.custom?.length === 1} removeFunc={handleRemove(index, component)}
                                    editFunc={isHeadline ? handleEdit(index, component, x.name) : undefined}
-                                   settingsFunc={isHeadline ? handleSettings(index, component === 'links') : undefined}> {/* @ts-ignore */}
+                                   settingsFunc={handleSettings(index, component === 'links', !isHeadline)}> {/* @ts-ignore */}
                           <Expander expand={expanded || null} setExpand={handleExpander} item={x.expand} multi
                                     index={index} handleValues={handleValues} checked={x?.data?.hideHeadLine}
                                     title={x.name || getNameStr(component, selected || '')}
                                     bold={Boolean(x.name)} editFunc={isHeadline ? handleEdit(index, component, x.name) : undefined}/>
-                          {expanded !== undefined && (<>
-                            {component === components[0].type && <RenderAddressData data={x.data} handleValues={handleValues} index={index}/>}
-                            {component === components[1].type && <RenderCompanyData data={x.data} handleValues={handleValues} index={index}/>}
-                            {component === components[2].type && <RenderDateSelector data={x.data} handleValues={handleValues} label="Date" index={index}/>}
-                            {component === components[3].type && <RenderEmail data={x.data} handleValues={handleValues} index={index}/>}
-                            {component === components[4].type && <RenderEmailWeb data={x.data} handleValues={handleValues} index={index}/>}
-                            {component === components[5].type && <RenderEasiness data={x.data} handleValues={handleValues} index={index}/>}
-                            {component === components[6].type && <RenderLinks data={x.data} setData={setData} index={index}/>}
-                            {component === components[7].type && <RenderOrganization data={x.data} handleValues={handleValues} index={index}/>}
-                            {component === components[8].type && <RenderPhones data={x.data} handleValues={handleValues} index={index}/>}
-                            {component === components[9].type && <RenderAssetsData data={x.data} setData={setData} type="gallery" index={index}
-                                                totalFiles={predefined === undefined || selected === 'inventory' ? 3 : FILE_LIMITS['gallery'].totalFiles}/>}
-                            {component === components[10].type && <RenderPresentation data={x.data} handleValues={handleValues} index={index}
-                                                                                      forceExtra={['vcard+', 'petId'].includes(selected || '')} />}
-                            {component === components[11].type && <RenderOpeningTime data={x.data} setData={setData} index={index}/>}
-                            {component === components[12].type && <RenderSocials data={x.data} setData={setData} index={index}/>}
-                            {component === components[13].type && <RenderTitleDesc handleValues={handleValues} title={x.data?.titleAbout} noPaper sx={{mt: '5px'}}
-                                                                                   header="Fill at least one of these fields" description={x.data?.descriptionAbout} index={index}/>}
-                            {component === components[14].type && <RenderActionButton index={index} setData={setData} handleValues={handleValues} data={x.data} />}
-                            {component === components[15].type && <RenderSingleText text={x.data?.text || ''} index={index} handleValues={handleValues}/>}
-                            {component === components[16].type && <RenderAssetsData totalFiles={predefined === undefined ? 1 : FILE_LIMITS['pdf'].totalFiles}
-                                                                                    data={x.data} setData={setData} type="pdf" index={index}/>}
-                            {component === components[17].type && <RenderAssetsData data={x.data} setData={setData} type="audio" index={index}
-                                                                                    totalFiles={predefined === undefined ? 1 : FILE_LIMITS['audio'].totalFiles}/>}
-                            {component === components[18].type && <RenderAssetsData data={x.data} setData={setData} type="video" index={index}
-                                                                                    totalFiles={predefined === undefined ? 1 : FILE_LIMITS['video'].totalFiles}/>}
-                            {component === components[19].type && <RenderKeyValue index={index} setData={setData} data={x.data} topics="" />}
-                            {component === components[20].type && <RenderWeb data={x.data} handleValues={handleValues} index={index} />}
-                            {component === components[21].type && <RenderContactForm index={index} handleValues={handleValues} data={x.data} />}
-                            {component === components[22].type && <RenderTags index={index} handleValues={handleValues} data={x.data} />}
-                            {component === components[23].type && <RenderCouponInfo index={index} handleValues={handleValues} data={x.data} />}
-                            {component === components[24].type && <RenderCouponData index={index} handleValues={handleValues} data={x.data} />}
-                            {component === components[25].type && <RenderPetDesc index={index} handleValues={handleValues} data={x.data} />}
-                            {component === components[26].type && <RenderSku index={index} handleValues={handleValues} data={x.data} />}
-                          </>)}
+                          {expanded !== undefined && (
+                            <RenderContent component={component} handleValues={handleValues} setData={setData}
+                                           index={index} data={x.data} predefined={predefined} selected={selected} />
+                          )}
                         </DragPaper>
                       </Box>
                     )}
@@ -260,8 +205,11 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
         </DragDropContext>
       </Box>
       {showOptions && <CustomMenu handle={handle} showOptions={showOptions} setShowOptions={setShowOptions} />}
-      {openSettings && <HeadlineSettings anchor={openSettings.anchor} handleValues={handleValues} data={data?.custom?.[openSettings.index]?.data}
-                                         handleClose={() => setOpenSettings(null)} index={openSettings.index} reverse={openSettings.reverse || false}  />}
+      {openSettings && <HeadlineSettings anchor={openSettings.anchor} handleValues={handleValues}
+                                         data={data?.custom?.[openSettings.index]?.data}
+                                         hideHeadLineSettings={openSettings.hideHeadlineOpts}
+                                         handleClose={() => setOpenSettings(null)} index={openSettings.index}
+                                         reverse={openSettings.reverse || false} />}
       {open && <CustomEditSection handleClose={() => setOpen(null)} anchor={open.anchor} value={open.item}
                                   current={open.name} handleOk={(value: string) => handleAccept(value, open.index, open.item)} />}
       {confirm !== undefined && <RenderConfirmDlg confirmationMsg="Are you sure?" title="Confirm" noMsg="No" yesMsg="Yes"

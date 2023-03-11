@@ -29,11 +29,12 @@ interface MainImgSelectorProps {
   foreError?: boolean;
   handleValue: Function;
   forcePick?: string;
+  releasePick: () => void;
 }
 
 const RenderMainImgsSelector = (
   {
-    data, omitPrimaryImg, isWideForPreview, backgndImg, foregndImg, loading, backError, foreError, handleValue, forcePick
+    data, omitPrimaryImg, isWideForPreview, backgndImg, foregndImg, loading, backError, foreError, handleValue, forcePick, releasePick
   }: MainImgSelectorProps) => {
   const [selectFile, setSelectFile] = useState<string | null>(null);
   const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
@@ -43,7 +44,7 @@ const RenderMainImgsSelector = (
 
   const shrink = isWideForPreview && !isWideEnough && (backgndImg || foregndImg);
 
-  const handleSelectFile = (kind: string) => () => {
+  const handleSelectFile = (kind: 'backgndImg' | 'foregndImg') => () => {
     setSelectFile(kind);
   };
 
@@ -76,6 +77,7 @@ const RenderMainImgsSelector = (
   useEffect(() => {
     if (forcePick) {
       setSelectFile(forcePick === 'banner' ? 'backgndImg' : 'foregndImg');
+      setTimeout(() => releasePick(), 200);
     }
   }, [forcePick]); // eslint-disable-line react-hooks/exhaustive-deps
 

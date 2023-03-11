@@ -151,7 +151,7 @@ export default function AppWrapper(props: AppWrapperProps) {
             display: "flex",
             justifyContent: "space-betweem",
           }}>
-            <Box sx={{ display: "flex", width: "100%" }}>
+            <Box sx={{ display: "flex", width: "100%", mt: 1 }}>
               <Typography sx={{ my: "auto", display: { sm: "block", xs: "none" } }}>
                 {"Powered by"}
               </Typography>

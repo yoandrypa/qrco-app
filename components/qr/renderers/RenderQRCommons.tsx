@@ -1,4 +1,4 @@
-import {useCallback, useContext, useState} from "react";
+import {useCallback, useContext, useEffect, useState} from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 
@@ -30,9 +30,13 @@ interface QRCommonsProps {
   foreError?: boolean;
   handleValue: Function;
   forcePick?: string;
+  releasePick: () => void;
 }
 
-function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg, micrositesImg, backError, foreError, handleValue, isWideForPreview, forcePick}: QRCommonsProps) { // @ts-ignore
+function RenderQRCommons(
+  {
+    loading, data, omitPrimaryImg, foregndImg, backgndImg, micrositesImg, backError, foreError, handleValue, isWideForPreview, forcePick, releasePick
+  }: QRCommonsProps) { // @ts-ignore
   const [expander, setExpander] = useState<string | null>('mainColors');
 
   // @ts-ignore
@@ -41,6 +45,12 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
   const handleExpander = useCallback((item: string): void => {
     setExpander(item === expander ? null : item);
   }, [expander]);
+
+  useEffect(() => {
+    if (forcePick) {
+      setExpander(forcePick === 'background' ? 'background' : 'images');
+    }
+  }, [forcePick]);
 
   return (
     <>
@@ -62,13 +72,14 @@ function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg,
           {expander === 'images' && (
             <RenderMainImgsSelector handleValue={handleValue} data={data} foregndImg={foregndImg} forcePick={forcePick}
                                     backgndImg={backgndImg} isWideForPreview={isWideForPreview} backError={backError}
-                                    foreError={foreError} omitPrimaryImg={omitPrimaryImg} loading={loading} />
-          )}
+                                    foreError={foreError} omitPrimaryImg={omitPrimaryImg} loading={loading}
+                                    releasePick={releasePick}/>)}
         </Paper>
         <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="background" title="Background" bold/>
           {expander === 'background' && (
-            <RenderHandlerBackground handleValue={handleValue} data={data} micrositesImg={micrositesImg}/>
+            <RenderHandlerBackground handleValue={handleValue} data={data} micrositesImg={micrositesImg}
+                                     forcePick={forcePick} releasePick={releasePick}/>
           )}
         </Paper>
         <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
