@@ -20,11 +20,9 @@ interface DragPaper extends PaperProps {
   settingsFunc?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
-const buttonStyles = (edit: boolean) => {
-  return {
-    mt: '-42px', ml: '5px', background: edit ? blue[300] : red[300], '&:hover': {background: edit ? blue[500] : red[500]}
-  }
-}
+const buttonStyles = (edit: boolean) => ({
+  mt: '-42px', ml: '5px', background: edit ? blue[300] : red[300], '&:hover': {background: edit ? blue[500] : red[500]}
+});
 
 const DragPaper = ({children, avoidIcon, editFunc, removeFunc, settingsFunc, ...otherProps}: DragPaper) => (
   <Paper {...otherProps}>

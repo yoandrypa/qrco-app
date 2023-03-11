@@ -4,6 +4,7 @@ import Tooltip from "@mui/material/Tooltip";
 import EditIcon from '@mui/icons-material/Edit';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import IconButton from "@mui/material/IconButton";
+import WallpaperIcon from '@mui/icons-material/Wallpaper';
 import {styled} from "@mui/material/styles";
 
 interface Props {
@@ -36,6 +37,11 @@ const RenderEditImageOnClick = ({left, shape, handleEdit, renderFloating, hideBa
           <EditIcon fontSize="small" />
         </Icon>
       </Tooltip>)}
+      <Tooltip title="Edit background image" followCursor>
+        <Icon sx={{left: '5px', top: '5px', position: 'absolute'}} onClick={handler('background')}>
+          <WallpaperIcon fontSize="small" />
+        </Icon>
+      </Tooltip>
       <Box sx={{
         position: 'absolute',
         width: '54px',
