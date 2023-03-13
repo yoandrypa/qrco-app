@@ -6,9 +6,18 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
   if (payload === undefined) {
     setData((prev: any) => {
       const newData = {...prev};
-      if (prop === 'micrositeBackImage' && prev?.micrositeBackImage?.[0]?.Key) { newData.prevMicrositeImg = prev.micrositeBackImage[0].Key; }
       if (prop === 'backgndImg' && prev?.backgndImg?.[0]?.Key) { newData.prevBackImg = prev.backgndImg[0].Key; }
-      if (prop === 'foregndImg' && prev?.foregndImg?.[0]?.Key) { newData.prevForeImg = prev.foregndImg[0].Key; }
+      if (prop === 'foregndImg') {
+        if (prev?.foregndImg?.[0]?.Key) { newData.prevForeImg = prev.foregndImg[0].Key; }
+        if (newData.profileImageVertical !== undefined) { delete newData.profileImageVertical; }
+        if (newData.profileImageSize !== undefined) { delete newData.profileImageSize; }
+        if (newData.foregndImgType !== undefined) { delete newData.foregndImgType; }
+      }
+      if (prop === 'micrositeBackImage') {
+        if (prev?.micrositeBackImage?.[0]?.Key) { newData.prevMicrositeImg = prev.micrositeBackImage[0].Key; }
+        if (newData.micrositeBackImageBlurness !== undefined) { delete newData.micrositeBackImageBlurness; }
+        if (newData.micrositeBackImageOpacity !== undefined) { delete newData.micrositeBackImageOpacity; }
+      }
       delete newData[prop];
       return newData;
     });
@@ -83,7 +92,9 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
         if (prop === 'micrositeBackImageOpacity' && newData.micrositeBackImageOpacity && payload === 0) {
           delete newData.micrositeBackImageOpacity;
         }
-        if (prop === 'layout' && typeof payload === 'string' && payload.includes('banner') && newData.backgndImg !== undefined) {
+        if (['profileImageVertical', 'profileImageSize'].includes(prop) && payload === 'default') {
+          delete newData[prop];
+        } else if (prop === 'layout' && typeof payload === 'string' && payload.includes('banner') && newData.backgndImg !== undefined) {
           delete newData.backgndImg;
           setBackImg(undefined);
         } else if (['flipHorizontal', 'flipVertical', 'buttonShadow', 'buttonCase'].includes(prop) && !payload && newData[prop] !== undefined) {
