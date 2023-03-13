@@ -56,6 +56,7 @@ const RenderHandlerBackground = ({handleValue, data, micrositesImg, forcePick, r
           micrositesImg={micrositesImg}
           forcePick={forcePick}
           releasePick={releasePick}
+          blurness={data.micrositeBackImageBlurness !== undefined ? data.micrositeBackImageBlurness : 0}
           opacity={data.micrositeBackImageOpacity !== undefined ? data.micrositeBackImageOpacity : 1}/>
       )}
     </>

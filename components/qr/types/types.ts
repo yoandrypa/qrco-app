@@ -211,6 +211,7 @@ export type DataType = {
   buttonBorderColor?: string;
   buttonBorderStyle?: string;
   buttonsOpacity?: number;
+  micrositeBackImageBlurness?: number;
   micrositeBackImageOpacity?: number;
   qrType?: string;
   mode?: string;
