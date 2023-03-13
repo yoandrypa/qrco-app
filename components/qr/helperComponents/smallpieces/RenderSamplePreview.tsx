@@ -210,6 +210,7 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
                   <RenderEditImageOnClick
                     hideBannerSelection={data?.layout?.includes('banner') || false}
                     shape={data?.foregndImgType || undefined} left={data?.layout?.toLowerCase().includes('left') || false}
+                    size={data?.profileImageSize} pos={data?.profileImageVertical}
                     handleEdit={handlePickImage} renderFloating={!Boolean(data?.foregndImg)} />
                 )}
                 <RenderIframe

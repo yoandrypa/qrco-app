@@ -27,7 +27,7 @@ export default function ButtonCreateQrLynks({ light }: NavButtonProps) {
             color={light ? 'info' : 'primary'}
             onClick={onClick}
     >
-      {'Create QRLynks'}
+      {'Create QRLynk'}
     </Button>
   );
 }

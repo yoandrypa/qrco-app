@@ -198,6 +198,8 @@ export type CustomType = {
 };
 
 export type DataType = {
+  profileImageVertical?: string;
+  profileImageSize?: string;
   customFooter?: string;
   footerKind?: string;
   buttonCase?: boolean;

@@ -8,8 +8,8 @@ import Expander from "./helpers/Expander";
 import {CustomType, DataType} from "../types/types";
 
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
-
 import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
+
 import {
   cleaner,
   components,
