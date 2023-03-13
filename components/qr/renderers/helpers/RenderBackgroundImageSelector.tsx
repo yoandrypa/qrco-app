@@ -102,7 +102,7 @@ export default function RenderBackgroundImageSelector({handleValue, micrositesIm
       {micrositesImg !== undefined && (
         <>
           <RenderHandleOpacityBlurness value={opacity} handleValue={handleValue} property="micrositeBackImageOpacity" />
-          <RenderHandleOpacityBlurness value={blurness} handleValue={handleValue} property="micrositeBackImageBlurness" message="Blurness" maxValue={50} />
+          <RenderHandleOpacityBlurness value={blurness} handleValue={handleValue} property="micrositeBackImageBlurness" message="Blurriness" maxValue={50} />
         </>
       )}
       {selectFile && (
