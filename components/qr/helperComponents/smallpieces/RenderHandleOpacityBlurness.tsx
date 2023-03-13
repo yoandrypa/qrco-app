@@ -4,30 +4,33 @@ import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 interface OpacityProps {
-  opacity: number;
+  value: number;
+  maxValue?: number;
   handleValue: Function;
   property: string;
   message?: string;
   keepContainerWidth?: boolean;
 }
 
-const RenderHandleOpacity = ({opacity, handleValue, property, message, keepContainerWidth}: OpacityProps) => {
+const RenderHandleOpacityBlurness = ({value, handleValue, property, message, keepContainerWidth, maxValue}: OpacityProps) => {
   const isWide = useMediaQuery("(min-width:570px)", { noSsr: true });
 
   const handleOpacity = (_: Event, newValue: number | number[]) => {
     const value = newValue as number;
-    handleValue(property)(Math.round(value)/100);
+    handleValue(property)(maxValue === undefined ? Math.round(value)/100 : value);
   };
 
   return (
     <Box sx={{ width: isWide && !keepContainerWidth ? '500px' : '100%', mt: 1, ml: '5px'}}>
       <Typography sx={{display: 'flex'}}>
         {message || 'Opacity'}
-        <Typography sx={{color: theme => theme.palette.text.disabled, ml: 1}}>{`(${Math.ceil(opacity * 100)} %)`}</Typography>
+        <Typography sx={{color: theme => theme.palette.text.disabled, ml: 1}}>
+          {`(${maxValue === undefined ? Math.ceil(value * 100) : value} ${maxValue === undefined ? '%' : 'pixels'})`}
+        </Typography>
       </Typography>
-      <Slider value={opacity * 100} onChange={handleOpacity} size="small" min={0} max={100} />
+      <Slider value={maxValue === undefined ? value * 100 : value} onChange={handleOpacity} size="small" min={0} max={maxValue || 100} />
     </Box>
   );
 }
 
-export default RenderHandleOpacity;
+export default RenderHandleOpacityBlurness;

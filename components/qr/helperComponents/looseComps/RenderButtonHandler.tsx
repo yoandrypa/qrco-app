@@ -13,7 +13,7 @@ import {useTheme} from "@mui/system";
 import dynamic from "next/dynamic";
 
 import RenderMainFontsHandler from "../smallpieces/RenderMainFontsHandler";
-import RenderHandleOpacity from "../smallpieces/RenderHandleOpacity";
+import RenderHandleOpacityBlurness from "../smallpieces/RenderHandleOpacityBlurness";
 import {DataType} from "../../types/types";
 import SectionSelector from "../SectionSelector";
 import ColorSelector from "../ColorSelector";
@@ -154,8 +154,8 @@ export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerP
         {data?.buttonBack === 'gradient' ? <RenderTwoColors handleValue={handleValue} data={data} isGradient property="buttonBackColor"/> :
           (
             <Box sx={{width: 'calc(100% - 10px)'}}>
-              <RenderHandleOpacity
-                opacity={data?.buttonsOpacity !== undefined ? data?.buttonsOpacity : 1}
+              <RenderHandleOpacityBlurness
+                value={data?.buttonsOpacity !== undefined ? data?.buttonsOpacity : 1}
                 handleValue={handleValue}
                 property="buttonsOpacity"
                 message="Button's background opacity"

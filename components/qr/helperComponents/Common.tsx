@@ -13,7 +13,7 @@ import dynamic from "next/dynamic";
 
 import Context from "../../context/Context";
 import RenderQRCommons from "../renderers/RenderQRCommons";
-import {DEFAULT_COLORS, NO_MICROSITE, PROFILE_IMAGE} from "../constants";
+import {NO_MICROSITE, PROFILE_IMAGE} from "../constants";
 import {download} from "../../../handlers/storage";
 import {DataType} from "../types/types";
 import {previewQRGenerator} from "../../../helpers/qr/auxFunctions";
@@ -21,6 +21,7 @@ import {saveOrUpdate} from "../auxFunctions";
 import {blobUrlToFile, handleDesignerString} from "../../../helpers/qr/helpers";
 import {initialData} from "../../../helpers/qr/data";
 import {generateUUID} from "listr2/dist/utils/uuid";
+import valueHanler from "./valueHandler";
 
 const RenderMode = dynamic(() => import("./looseComps/RenderMode"));
 const Notifications = dynamic(() => import("../../notifications/Notifications"));
@@ -58,115 +59,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   const releasePick = useCallback(() => setForceOpen(undefined), []);
 
   const handleValue = useCallback((prop: string) => (payload: any) => {
-    if (payload === undefined) {
-      setData((prev: any) => {
-        const newData = {...prev};
-        if (prop === 'micrositeBackImage' && prev?.micrositeBackImage?.[0]?.Key) { newData.prevMicrositeImg = prev.micrositeBackImage[0].Key; }
-        if (prop === 'backgndImg' && prev?.backgndImg?.[0]?.Key) { newData.prevBackImg = prev.backgndImg[0].Key; }
-        if (prop === 'foregndImg' && prev?.foregndImg?.[0]?.Key) { newData.prevForeImg = prev.foregndImg[0].Key; }
-        delete newData[prop];
-        return newData;
-      });
-      if (prop === 'micrositeBackImage' && micrositeBackImage) { setMicrositeBackImage(undefined); }
-      if (prop === 'backgndImg' && backImg) { setBackImg(undefined); }
-      if (prop === 'foregndImg' && foreImg) { setForeImg(undefined); }
-    } else if (!prop.startsWith('both')) {
-      if (prop === 'micrositeBackImage' && micrositeBackImage !== undefined) {
-        setMicrositeBackImage(undefined); // @ts-ignore
-        setData((prev: DataType) => ({...prev, micrositeBackImage: payload, prevMicrositeImg: prev.micrositeBackImage[0].Key}));
-      } else if (prop === 'backgndImg' && backImg !== undefined) {
-        setBackImg(undefined); // @ts-ignore
-        setData((prev: DataType) => ({...prev, backgndImg: payload, prevBackImg: prev.backgndImg[0].Key}));
-      } else if (prop === 'foregndImg' && foreImg !== undefined) {
-        setForeImg(undefined); // @ts-ignore
-        setData((prev: DataType) => ({...prev, foregndImg: payload, prevForeImg: prev.foregndImg[0].Key}));
-      } else if (payload.clear || (((prop === "globalFont" && payload === "Default") ||
-          (['buttonsFont', 'titlesFont', 'messagesFont', 'titlesFontSize', 'messagesFontSize', 'buttonsFontSize',
-              'subtitlesFontSize', 'subtitlesFont', 'layout'].includes(prop) && (['none', 'default'].includes(payload))
-          )) && data[prop] === payload) || (prop === 'buttonShape' && payload === '1') ||
-        (prop === 'buttonBack' && payload === 'default') || (prop === 'autoOpen' && !payload)) {
-        setData((prev: any) => {
-          const tempo = {...prev};
-          delete tempo[prop];
-          if (prop === 'buttonBack' && payload === 'default' && tempo.buttonBackColor !== undefined) {
-            delete tempo.buttonBackColor;
-          }
-          return tempo;
-        })
-      } else if (prop === 'backgroundType') {
-        setData((prev: any) => {
-          const tempo = {...prev};
-          if (tempo.backgroundColor !== undefined) { delete tempo.backgroundColor; }
-          if (tempo.backgroundColorRight !== undefined) { delete tempo.backgroundColorRight; }
-          if (tempo.backgroundDirection !== undefined) { delete tempo.backgroundDirection; }
-          tempo.backgroundType = payload?.target?.value || payload;
-          if (tempo.backgroundType !== 'image' && tempo.micrositeBackImage !== undefined) {
-            setMicrositeBackImage(undefined);
-            delete tempo.micrositeBackImage;
-          }
-          return tempo;
-        });
-      } else if (prop === 'buttonBack') {
-        setData((prev: any) => {
-          const newData = {...prev, buttonBackColor: payload === 'solid' ? DEFAULT_COLORS.p : 'unset'};
-          newData[prop] = payload.target?.value !== undefined ? payload.target.value : payload;
-          if (payload === 'gradient' && newData.buttonsOpacity !== undefined) {
-            delete newData.buttonsOpacity;
-          }
-          return newData;
-        });
-      } else if (prop === 'buttonShape') {
-        setData((prev: any) => {
-          const newData = {...prev, [prop]: payload};
-          if (newData.flipHorizontal !== undefined) { delete newData.flipHorizontal; }
-          if (newData.flipVertical !== undefined && !['5', '6', '7'].includes(payload)) { delete newData.flipVertical; }
-          if (newData.alternate !== undefined && !['5', '6', '7'].includes(payload)) { delete newData.alternate; }
-          if (payload !== '4' && newData.buttonBorders !== undefined) { delete newData.buttonBorders; }
-          return newData;
-        })
-      } else {
-        setData((prev: any) => {
-          const newData = {...prev};
-          newData[prop] = payload.target?.value !== undefined ? payload.target.value : payload;
-          if (prop === 'footerKind') {
-            if (payload === 'default') { delete newData.footerKind; }
-            if (payload !== 'custom' && newData.customFooter !== undefined) { delete newData.customFooter; }
-          }
-          if (prop === 'layout' && typeof payload === 'string' && payload.includes('banner') && newData.backgndImg !== undefined) {
-            delete newData.backgndImg;
-            setBackImg(undefined);
-          } else if (['flipHorizontal', 'flipVertical', 'buttonShadow', 'buttonCase'].includes(prop) && !payload && newData[prop] !== undefined) {
-            delete newData[prop];
-          } else if (prop === 'buttonBorderStyle') {
-            if (payload !== 'two' && newData.buttonBorderColors !== undefined) {
-              delete newData.buttonBorderColors;
-            }
-            if (payload === 'noBorders') {
-              delete newData.buttonBorderStyle;
-              if (newData.buttonBorderWeight !== undefined) { delete newData.buttonBorderWeight; }
-              if (newData.buttonBorderType !== undefined) { delete newData.buttonBorderType; }
-            }
-          }
-          return newData;
-        });
-      }
-    } else if ((prop === 'both' && (payload.p !== DEFAULT_COLORS.p || payload.s !== DEFAULT_COLORS.s)) ||
-      (prop === 'both-gradient' && (payload.p !== DEFAULT_COLORS.s || payload.s !== DEFAULT_COLORS.p) )) {
-      const isMain = prop === 'both';
-      setData((prev: any) => ({...prev, [isMain ? 'primary' : 'backgroundColor']: payload.p, [isMain ? 'secondary' : 'backgroundColorRight']: payload.s}));
-    } else {
-      setData((prev: any) => {
-        const temp = {...prev};
-        if (prop === 'both') {
-          if (temp.primary) { delete temp.primary; }
-          if (temp.secondary) { delete temp.secondary; }
-        } else {
-          if (temp.backgroundColor) { delete temp.backgroundColor; }
-          if (temp.backgroundColorRight) { delete temp.backgroundColorRight; }
-        }
-        return temp;
-      });
-    }
+    valueHanler(prop, data, payload, foreImg, backImg, micrositeBackImage, setData, setBackImg, setForeImg, setMicrositeBackImage);
   }, [backImg, foreImg, micrositeBackImage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getFiles = useCallback(async (key: string, item: string) => {
@@ -244,11 +137,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   }, [isWideForPreview]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (forceOpen) {
-      if (tabSelected === 0) {
-        setTabSelected(1);
-      }
-      // setForceOpen(undefined);
+    if (forceOpen && tabSelected === 0) {
+      setTabSelected(1);
     }
   }, [forceOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -281,9 +171,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     });
   };
 
-  const handleImg = useCallback((prop: string) => {
-    setForceOpen(prop);
-  }, []);
+  const handleImg = useCallback((prop: string) => setForceOpen(prop), []);
 
   const optionsForPreview = useCallback(() => {
     const opts = {...options, background, frame, corners: cornersData, cornersDot: dotsData};
