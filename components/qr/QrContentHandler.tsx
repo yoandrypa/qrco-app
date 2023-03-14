@@ -4,13 +4,14 @@ import Typography from '@mui/material/Typography';
 
 import RenderIcon from './helperComponents/smallpieces/RenderIcon';
 import Context from '../context/Context';
-import {DataType, OptionsType, SocialProps, Type} from './types/types';
+import {DataType, OptionsType, SocialProps} from './types/types';
 
 import dynamic from "next/dynamic";
 
 import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
 import {qrNameDisplayer} from "../../helpers/qr/helpers";
 import {dynamicQr} from "./qrtypes";
+import valuesHanlder from "./helperFunction";
 
 const CardDataStatic = dynamic(() => import("./renderers/custom/CardDataStatic"));
 const Custom = dynamic(() => import("./renderers/Custom"));
@@ -41,74 +42,7 @@ const QrContentHandler = () => { // @ts-ignore
   const { data, setData, selected, setIsWrong, userInfo, options }: QrContentHandlerProps = useContext(Context);
 
   const handleValues = (item: string, index?: number, reversed?: boolean) => (payload: ChangeEvent<HTMLInputElement> | string | boolean | string[]) => {
-    const value = Array.isArray(payload) || typeof payload === 'string' || typeof payload === 'boolean' ? payload :
-      (item === 'includeExtraInfo' ? payload.target.checked : payload.target.value);
-    setData((prev: DataType) => {
-      const newData = {...prev};
-      if (index !== undefined && index !== -1) { // @ts-ignore
-        const element = newData.custom[index];
-        if (!element.data) { element.data = {}; }
-        const elementData = element.data as Type;
-        if (item === 'tags') {
-          if (Array.isArray(payload)) {
-            if (payload.length) {
-              elementData.tags = payload;
-            } else if (elementData.tags !== undefined) {
-              delete elementData.tags;
-            }
-          } else if (typeof payload === 'string') {
-            elementData.tags?.push(payload);
-          }
-        } else if (['hideHeadLine', 'centerHeadLine'].includes(item)) { // @ts-ignore
-          if (elementData[item] !== undefined && (payload === false || reversed)) { // @ts-ignore
-            delete elementData[item];
-            if (reversed && item === 'hideHeadLine' && elementData.centerHeadLine !== undefined) {
-              delete elementData.centerHeadLine;
-            }
-          } else { // @ts-ignore
-            element.data[item] = true;
-            if (item === 'hideHeadLine' && elementData.centerHeadLine !== undefined) { delete elementData.centerHeadLine; }
-          }
-        } else if (item === 'easiness') {
-          if (!elementData.easiness) { elementData.easiness = {}; } // @ts-ignore
-          if (!elementData.easiness[payload]) { // @ts-ignore
-            elementData.easiness[payload] = true;
-          } else { // @ts-ignore
-            delete elementData.easiness[payload];
-            if (!Object.keys(elementData.easiness).length) { delete elementData.easiness; }
-          }
-        } else if ((typeof value === "string" && value.length) || payload) {
-          if (['topSpacing', 'bottomSpacing'].includes(item) && value === 'default') { // @ts-ignore
-            delete elementData[item];
-          } else if (item === 'includeExtraInfo' && !value && elementData.includeExtraInfo !== undefined) {
-            delete elementData.includeExtraInfo;
-          } else {
-            if (typeof value === "string" && !value.trim().length) { // @ts-ignore
-              delete elementData[item];
-            } else { // @ts-ignore
-              elementData[item] = value;
-            }
-          } // @ts-ignore
-        } else if (elementData[item]) { // @ts-ignore
-          delete elementData[item];
-        }
-      } else {
-        if (item === 'easiness') {
-          if (!newData.easiness) { newData.easiness = {}; } // @ts-ignore
-          if (!newData.easiness[payload]) { // @ts-ignore
-            newData.easiness[payload] = true;
-          } else { // @ts-ignore
-            delete newData.easiness[payload];
-            if (!Object.keys(newData.easiness).length) { delete newData.easiness; }
-          }
-        } else if ((typeof value === "string" && value.length) || payload) { // @ts-ignore
-          newData[item] = value;// @ts-ignore
-        } else if (data[item]) { // @ts-ignore
-          delete newData[item];
-        }
-      }
-      return newData;
-    });
+    valuesHanlder(setData, item, payload, index, reversed);
   };
 
   const handlePayload = (payload: DataType | SocialProps) => {

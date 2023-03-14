@@ -92,7 +92,7 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
         if (prop === 'micrositeBackImageOpacity' && newData.micrositeBackImageOpacity && payload === 0) {
           delete newData.micrositeBackImageOpacity;
         }
-        if (['profileImageVertical', 'profileImageSize'].includes(prop) && payload === 'default') {
+        if (['profileImageVertical', 'profileImageSize', 'buttonsSeparation'].includes(prop) && payload === 'default') {
           delete newData[prop];
         } else if (prop === 'layout' && typeof payload === 'string' && payload.includes('banner') && newData.backgndImg !== undefined) {
           delete newData.backgndImg;

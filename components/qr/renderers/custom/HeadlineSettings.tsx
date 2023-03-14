@@ -9,9 +9,12 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import SettingsIcon from '@mui/icons-material/Settings';
 import Button from "@mui/material/Button";
-import Select, {SelectChangeEvent} from "@mui/material/Select";
 
 import {Type} from "../../types/types";
+
+import dynamic from "next/dynamic";
+
+const SpacingSelector = dynamic(() => import("../../helperComponents/looseComps/SpacingSelector"));
 
 interface HeadlineProps {
   anchor: HTMLElement;
@@ -44,27 +47,6 @@ export default function HeadlineSettings({anchor, handleValues, handleClose, rev
     const value = data?.[prop] || false;
     handleValues(prop, index)(!value);
     handleClose();
-  }
-
-  const renderOptions = (item: 'topSpacing' | 'bottomSpacing', selection: string) => {
-    return (
-      <>
-        <Typography sx={{mt: 1}}>{item === 'topSpacing' ? 'Top spacing' : 'Bottom spacing'}</Typography>
-        <Select
-          labelId="plan-calc-select-helper-label"
-          id="plan-calc-select-helper"
-          value={selection}
-          onChange={(event: SelectChangeEvent) => handleValues(item, index)(event.target.value)}
-          size='small'
-          fullWidth
-        >
-          <MenuItem value='default'>Default</MenuItem>
-          <MenuItem value='narrow'>Narrow</MenuItem>
-          <MenuItem value='medium'>Medium</MenuItem>
-          <MenuItem value='wide'>Wide</MenuItem>
-        </Select>
-      </>
-    );
   }
 
   const renderCheck1 = (checked?: boolean) => checked && <CheckIcon color="primary" sx={{ml: 2}} />;
@@ -110,8 +92,8 @@ export default function HeadlineSettings({anchor, handleValues, handleClose, rev
               <SettingsIcon sx={{color: theme => theme.palette.primary.dark, mr: '5px', mt: '-2px'}}/>
               <Typography>{'Section\'s spacing configuration'}</Typography>
             </Box>
-            {renderOptions('topSpacing', data?.topSpacing || 'default')}
-            {renderOptions('bottomSpacing', data?.bottomSpacing || 'default')}
+            <SpacingSelector selection={data?.topSpacing || 'default'} item="topSpacing" message="Top spacing" handleValues={handleValues} index={index}/>
+            <SpacingSelector selection={data?.bottomSpacing || 'default'} item="bottomSpacing" message="Bottom spacing" handleValues={handleValues} index={index}/>
             <Divider sx={{mt: 2, mb: 1}}/>
             <Box sx={{width: '100%', textAlign: 'right'}}>
               <Button onClick={handleClose} variant="outlined">Close</Button>

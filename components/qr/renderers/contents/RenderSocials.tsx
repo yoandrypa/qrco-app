@@ -104,16 +104,21 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
     });
   }
 
-  const handleOnlyIcons = (onlyIcons: boolean) => {
+  const handlerSwitch = (prop: string) => (event: ChangeEvent<HTMLInputElement>) => {
+    const isChecked = event.target.checked;
     setData((prev: DataType) => {
       const newData = {...prev};
-      if (onlyIcons) { // @ts-ignore
+      if (isChecked) { // @ts-ignore
         if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
-        newData.custom[index].data.socialsOnlyIcons = true;
+        newData.custom[index].data[prop] = true;
       } else { // @ts-ignore
-        delete newData.custom[index].data.socialsOnlyIcons; // @ts-ignore
-        if (newData.custom[index].data.iconSize !== undefined) { // @ts-ignore
-          delete newData.custom[index].data.iconSize;
+        const elementData = newData.custom[index].data as any;
+        delete elementData[prop];
+        if (prop !== 'hideNetworkIcon' && elementData.iconSize !== undefined) { // @ts-ignore
+          delete elementData.iconSize;
+        }
+        if (elementData.hideNetworkIcon !== undefined) {
+          delete elementData.hideNetworkIcon;
         }
       }
       return newData;
@@ -192,17 +197,22 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
         </DragDropContext>
         {data?.socials !== undefined && data?.socials?.length !== 0 && (
           <Box sx={{display: 'flex', flexDirection: {sm: 'row', xs: 'column'}}}>
-            <FormControlLabel label="Only icons" control={
-              <Switch checked={data?.socialsOnlyIcons || false} inputProps={{'aria-label': 'onlyIcons'}}
-                      onChange={(event: ChangeEvent<HTMLInputElement>) => handleOnlyIcons(event.target.checked)} />} />
-              {data?.socialsOnlyIcons && (<FormControl size='small' margin="dense" sx={{width: {xs: '100%', sm: '220px'}}}>
-                <InputLabel>{'Icon size'}</InputLabel>
-                <Select value={data?.iconSize || 'default'} label="Icon size" onChange={beforeSend}>
-                  <MenuItem value="default">Default</MenuItem>
-                  <MenuItem value="small">Small</MenuItem>
-                  <MenuItem value="medium">Medium</MenuItem>
-                  <MenuItem value="Large">Large</MenuItem>
-                </Select>
+            <FormControlLabel control={<Switch onChange={handlerSwitch('linksAsButtons')} />} label="As buttons" />
+            {!data.linksAsButtons ? (
+              <FormControlLabel control={<Switch checked={data?.socialsOnlyIcons || false}
+                onChange={handlerSwitch('socialsOnlyIcons')} />} label="Only icons"  />
+            ) : (
+              <FormControlLabel control={<Switch checked={data?.hideNetworkIcon || false}
+                onChange={handlerSwitch('hideNetworkIcon')} />} label="Hide network icon from button" />
+            )}
+            {data?.socialsOnlyIcons && (<FormControl size='small' margin="dense" sx={{width: {xs: '100%', sm: '220px'}}}>
+              <InputLabel>{'Icon size'}</InputLabel>
+              <Select value={data?.iconSize || 'default'} label="Icon size" onChange={beforeSend}>
+                <MenuItem value="default">Default</MenuItem>
+                <MenuItem value="small">Small</MenuItem>
+                <MenuItem value="medium">Medium</MenuItem>
+                <MenuItem value="Large">Large</MenuItem>
+              </Select>
             </FormControl>)}
           </Box>
         )}
