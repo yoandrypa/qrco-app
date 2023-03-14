@@ -14,7 +14,8 @@ export const components = [
   {type: 'action', name: 'Action button'}, {type: 'single', name: 'Single text'},
   {type: 'pdf', name: 'PDF file'}, {type: 'audio', name: 'Audio files'}, {type: 'video', name: 'Video files'},
   {type: 'keyvalue', name: 'Details'}, {type: 'web', name: 'Web'}, {type: 'contact', name: 'Contact form'},
-  {type: 'tags', name: 'Tags'}, {type: 'couponInfo', name: 'Promotion info', notInMenu: true},
+  {type: 'tags', name: 'Tags'}, {type: 'sms', name: 'Contact via SMS'},
+  {type: 'couponInfo', name: 'Promotion info', notInMenu: true},
   {type: 'couponData', name: 'Coupon data', notInMenu: true},
   {type: 'petId', name: 'Pet presentation', notInMenu: true},
   {type: 'sku', name: 'Product', notInMenu: true}, {type: 'petId', name: 'Pet presentation', notInMenu: true}

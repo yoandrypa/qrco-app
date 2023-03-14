@@ -4,6 +4,7 @@ import {components} from "./helperFuncs";
 import {FILE_LIMITS} from "../../../../consts";
 import {Type} from "../../types/types";
 
+const RenderSmsForm = dynamic(() => import("../contents/RenderSmsForm"));
 const RenderAddressData = dynamic(() => import("../contents/RenderAddressData"));
 const RenderCompanyData = dynamic(() => import("../contents/RenderCompanyData"));
 const RenderDateSelector = dynamic(() => import("../contents/RenderDateSelector"));
@@ -70,10 +71,11 @@ const RenderContent = ({component, handleValues, index, data, setData, predefine
     {component === components[20].type && <RenderWeb data={data} handleValues={handleValues} index={index} />}
     {component === components[21].type && <RenderContactForm index={index} handleValues={handleValues} data={data} />}
     {component === components[22].type && <RenderTags index={index} handleValues={handleValues} data={data} />}
-    {component === components[23].type && <RenderCouponInfo index={index} handleValues={handleValues} data={data} />}
-    {component === components[24].type && <RenderCouponData index={index} handleValues={handleValues} data={data} />}
-    {component === components[25].type && <RenderPetDesc index={index} handleValues={handleValues} data={data} />}
-    {component === components[26].type && <RenderSku index={index} handleValues={handleValues} data={data} />}
+    {component === components[23].type && <RenderSmsForm index={index} handleValues={handleValues} data={data} />}
+    {component === components[24].type && <RenderCouponInfo index={index} handleValues={handleValues} data={data} />}
+    {component === components[25].type && <RenderCouponData index={index} handleValues={handleValues} data={data} />}
+    {component === components[26].type && <RenderPetDesc index={index} handleValues={handleValues} data={data} />}
+    {component === components[27].type && <RenderSku index={index} handleValues={handleValues} data={data} />}
   </>
 );
 
