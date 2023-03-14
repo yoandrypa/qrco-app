@@ -47,7 +47,7 @@ function RenderContactForm({data, handleValues, index}: ContentProps) {
         beforeSend('email')(email);
       }
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Stack spacing={2}>
