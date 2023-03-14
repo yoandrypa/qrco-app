@@ -19,6 +19,7 @@ import SectionSelector from "../SectionSelector";
 import ColorSelector from "../ColorSelector";
 import {DEFAULT_COLORS} from "../../constants";
 import {ChangeEvent} from "react";
+import SpacingSelector from "./SpacingSelector";
 
 const RenderBorders = dynamic(() => import("./RenderBorders"));
 const RenderCustButtons = dynamic(() => import("./RenderCustButtons"));
@@ -164,7 +165,7 @@ export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerP
           )
         }
       </Box>
-      <Box sx={{p: 1, mt: '-20px'}}>
+      <Box sx={{p: 1, mt: '-25px'}}>
         <Typography>{'Borders'}</Typography>
         <Grid container spacing={2}>
           <Grid item sm={data?.buttonBorderStyle && data?.buttonBorderStyle !== 'noBorders' ? 4 : 12} xs={12}>
@@ -223,6 +224,12 @@ export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerP
             </>
           )}
         </Grid>
+      </Box>
+      <Box sx={{p:1, mt: '-15px'}}>
+        <SpacingSelector selection={data?.buttonsSeparation || 'default'} item="buttonsSeparation" message="Buttons separation" handleValues={handleValue} />
+        <Typography sx={{ml: 1, fontSize: 'smaller', color: theme => theme.palette.text.disabled}}>
+          {'Buttons separation will only affect those cases with several buttons in the same section'}
+        </Typography>
       </Box>
     </Box>
   );

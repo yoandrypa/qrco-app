@@ -92,7 +92,10 @@ export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'y
 export type SocialNetworksType = { network: SocialsType, value?: string };
 
 export type Type = {
+  visibleReceipt?: boolean;
   iconSize?: string;
+  linksAsButtons?: boolean;
+  hideNetworkIcon?: boolean;
   topSpacing?: string;
   bottomSpacing?: string;
   buttonText?: string;
@@ -198,6 +201,7 @@ export type CustomType = {
 };
 
 export type DataType = {
+  buttonsSeparation?: string;
   profileImageVertical?: string;
   profileImageSize?: string;
   customFooter?: string;
