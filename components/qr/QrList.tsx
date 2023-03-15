@@ -12,6 +12,7 @@ import Divider from "@mui/material/Divider";
 import Edit from "@mui/icons-material/Edit";
 import SyncIcon from "@mui/icons-material/Sync";
 import SyncDisabledIcon from "@mui/icons-material/SyncDisabled";
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Public from "@mui/icons-material/Public";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
@@ -159,9 +160,14 @@ export default function QrList({ title }: any) {
                              sx={{ ml: { xs: 2, sm: 0 }, my: 'auto' }}>
                         {renderStaticDynamic(qr.isDynamic)}
                         {qrLink.address ? (
-                          <Typography variant="caption" sx={{ color: "gray" }}>{/*@ts-ignore*/}
+                          <Typography variant="caption" sx={{ color: "gray" }}> {/*@ts-ignore*/}
                             <Public fontSize="inherit" sx={{ mr: '5px' }} />
-                            <Link href={qrLink.link}>{qrLink.link.split("//")[1]}</Link>
+                            <Link href={qrLink.link}>
+                              <a target="_blank" rel="noopener noreferrer"> {/*this is needed until next 13 is used*/}
+                                {qrLink.link.split("//")[1]}
+                                <OpenInNewIcon sx={{width: '17px', height: '17px', mb: '-3px', ml: '3px'}}/>
+                              </a>
+                            </Link>
                           </Typography>) : <div />}
                         <Typography variant="caption" sx={{ color: "gray" }}>
                           <Edit fontSize="inherit" sx={{ mr: '5px' }} />

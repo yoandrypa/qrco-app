@@ -47,22 +47,6 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
     setShowOptions(e.currentTarget);
   }, []);
 
-  const handleAdd = useCallback((item: string) => {
-    doneFirst.current = true;
-    setData((prev: DataType) => {
-      const newData = {...prev};
-      if (!newData.custom) { newData.custom = []; } // @ts-ignore
-      const expand = getUuid(); // @ts-ignore
-      newData.custom.push({component: item, expand});
-      setExpander((prev: string[]) => {
-        const newExpander = [...prev];
-        newExpander.push(expand);
-        return newExpander;
-      });
-      return newData;
-    });
-  }, [data?.custom?.length, expander]); // eslint-disable-line react-hooks/exhaustive-deps
-
   const handleDelete = useCallback((index: number, item: string) => {
     setConfirm(undefined);
     setData((prev: DataType) => {
@@ -109,14 +93,32 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
     setOpen({item, index, name, anchor: event.currentTarget});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleSettings = useCallback((index: number, reverse: boolean, hideHeadlineOpts: boolean) => (event: MouseEvent<HTMLElement>) => {
-    setOpenSettings({index, reverse, anchor: event.currentTarget, hideHeadlineOpts});
+  const handleSettings = useCallback((index: number, hideHeadlineOpts: boolean) => (event: MouseEvent<HTMLElement>) => {
+    setOpenSettings({index, anchor: event.currentTarget, hideHeadlineOpts});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handle = useCallback((item: string) => () => {
-    handleAdd(item);
+  const handleAdd = useCallback((item: string) => () => {
+    doneFirst.current = true;
+    setData((prev: DataType) => {
+      const newData = {...prev};
+      if (!newData.custom) { newData.custom = []; } // @ts-ignore
+      const expand = getUuid();
+      const newComponent = {component: item, expand};
+      if (item === 'socials') { // @ts-ignore
+        newComponent.data = {socialsOnlyIcons : true, hideHeadLine: true};
+      } else if (item === 'links') { // @ts-ignore
+        newComponent.data = {hideHeadLine: true};
+      }
+      newData.custom.push(newComponent);
+      setExpander((prev: string[]) => {
+        const newExpander = [...prev];
+        newExpander.push(expand);
+        return newExpander;
+      });
+      return newData;
+    });
     setShowOptions(null);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data?.custom?.length, expander]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onDragEnd = useCallback((result: any) => {
     if (!result?.destination) { return null; }
@@ -185,7 +187,7 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
                            ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
                         <DragPaper elevation={2} sx={{p: 1}} avoidIcon={data.custom?.length === 1} removeFunc={handleRemove(index, component)}
                                    editFunc={isHeadline ? handleEdit(index, component, x.name) : undefined}
-                                   settingsFunc={handleSettings(index, component === 'links', !isHeadline)}> {/* @ts-ignore */}
+                                   settingsFunc={handleSettings(index, !isHeadline)}> {/* @ts-ignore */}
                           <Expander expand={expanded || null} setExpand={handleExpander} item={x.expand} multi
                                     index={index} handleValues={handleValues} checked={x?.data?.hideHeadLine}
                                     title={x.name || getNameStr(component, selected || '')}
@@ -204,12 +206,10 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
           </Droppable>
         </DragDropContext>
       </Box>
-      {showOptions && <CustomMenu handle={handle} showOptions={showOptions} setShowOptions={setShowOptions} />}
-      {openSettings && <HeadlineSettings anchor={openSettings.anchor} handleValues={handleValues}
-                                         data={data?.custom?.[openSettings.index]?.data}
-                                         hideHeadLineSettings={openSettings.hideHeadlineOpts}
-                                         handleClose={() => setOpenSettings(null)} index={openSettings.index}
-                                         reverse={openSettings.reverse || false} />}
+      {showOptions && <CustomMenu handle={handleAdd} showOptions={showOptions} setShowOptions={setShowOptions} />}
+      {openSettings && <HeadlineSettings anchor={openSettings.anchor} handleValues={handleValues} index={openSettings.index}
+                                         data={data?.custom?.[openSettings.index]?.data} handleClose={() => setOpenSettings(null)}
+                                         hideHeadLineSettings={openSettings.hideHeadlineOpts}/>}
       {open && <CustomEditSection handleClose={() => setOpen(null)} anchor={open.anchor} value={open.item}
                                   current={open.name} handleOk={(value: string) => handleAccept(value, open.index, open.item)} />}
       {confirm !== undefined && <RenderConfirmDlg confirmationMsg="Are you sure?" title="Confirm" noMsg="No" yesMsg="Yes"

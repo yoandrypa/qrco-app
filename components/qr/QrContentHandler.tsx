@@ -41,8 +41,8 @@ type QrContentHandlerProps = {
 const QrContentHandler = () => { // @ts-ignore
   const { data, setData, selected, setIsWrong, userInfo, options }: QrContentHandlerProps = useContext(Context);
 
-  const handleValues = (item: string, index?: number, reversed?: boolean) => (payload: ChangeEvent<HTMLInputElement> | string | boolean | string[]) => {
-    valuesHanlder(setData, item, payload, index, reversed);
+  const handleValues = (item: string, index?: number) => (payload: ChangeEvent<HTMLInputElement> | string | boolean | string[]) => {
+    valuesHanlder(setData, item, payload, index);
   };
 
   const handlePayload = (payload: DataType | SocialProps) => {

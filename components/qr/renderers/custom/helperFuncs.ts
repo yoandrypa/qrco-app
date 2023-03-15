@@ -56,7 +56,6 @@ export interface CustomProps {
 export interface CustomSettingsProps {
   anchor: HTMLElement;
   index: number;
-  reverse?: boolean;
   hideHeadlineOpts: boolean;
 }
 
