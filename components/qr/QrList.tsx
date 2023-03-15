@@ -146,7 +146,7 @@ export default function QrList({ title }: any) {
                   </Box>
                   {!isWide && (<Box sx={{ display: 'grid', textAlign: 'right' }}>
                     <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink}
-                                         setConfirm={setConfirm} handleClone={handleClone} />
+                                         setConfirm={setConfirm} handleClone={handleClone} link={qrLink.link} />
                     <Box sx={{ display: 'grid', mr: '10px' }}>
                       {renderStaticDynamic(qr.isDynamic, true)}
                       <Typography variant="caption"
@@ -190,7 +190,7 @@ export default function QrList({ title }: any) {
                         </Stack>
                       ) : <div />}
                       <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink}
-                                           setConfirm={setConfirm} handleClone={handleClone} />
+                                           setConfirm={setConfirm} handleClone={handleClone} link={qrLink.link} />
                     </Box>
                   )}
                 </Stack>
