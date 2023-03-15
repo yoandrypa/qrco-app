@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import {DataType} from "./qr/types/types";
-import {convertBase64, getImageAsString} from "../helpers/qr/helpers";
+import {convertBase64, getImageData} from "../helpers/qr/helpers";
 import CircularProgress from "@mui/material/CircularProgress";
 
 interface IframeProps {
@@ -55,15 +55,15 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
         }
         if (previewData.backgndImg || backImg) {
           previewData.backgndImg = !isInEdition || proceed(backImg, previewData.backgndImg) ?
-            await getImageAsString(previewData.backgndImg) : await getImageAsString(backImg);
+            await getImageData(previewData.backgndImg) : await getImageData(backImg);
         }
         if (previewData.foregndImg || mainImg) {
           previewData.foregndImg = !isInEdition || proceed(mainImg, previewData.foregndImg) ?
-            await getImageAsString(previewData.foregndImg) : await getImageAsString(mainImg);
+            await getImageData(previewData.foregndImg) : await getImageData(mainImg);
         }
         if (previewData.micrositeBackImage || backgroundImg) {
           previewData.micrositeBackImage = !isInEdition || proceed(backgroundImg, previewData.micrositeBackImage) ?
-            await getImageAsString(previewData.micrositeBackImage) : await getImageAsString(backgroundImg);
+            await getImageData(previewData.micrositeBackImage) : await getImageData(backgroundImg);
         }
 
         if (previewData.custom) {

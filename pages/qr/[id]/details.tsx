@@ -4,6 +4,7 @@ import * as VisitHandler from "../../../handlers/visit";
 import * as QrHandler from "../../../handlers/qrs";
 import { useContext, useEffect, useState } from "react";
 import Context from "../../../components/context/Context";
+import Loading from "../../../components/Loading";
 
 const getQr = async (userId: string, createdAt: number) => {
   return await (await QrHandler.get({
@@ -34,6 +35,10 @@ export default function Details ({ id }: InferGetServerSidePropsType<typeof getS
       }).finally(() => setLoading(false));
     }
   }, []);
+
+  if (!Object.keys(data.qrData).length) {
+    return <Loading />;
+  }
 
   return <QrDetails visitData={data.visitData} qrData={data.qrData}/>;
 };

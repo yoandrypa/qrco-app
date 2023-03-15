@@ -1,7 +1,7 @@
 import {CustomType, DataType} from "../../components/qr/types/types";
 import {bannerImg, mainImg} from "./previewFiles";
 
-export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: boolean) => {
+export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: boolean, isDetailsView?: boolean) => {
   let proceed = true;
 
   const data = structuredClone(dataInfo) as any;
@@ -221,6 +221,11 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
         if (bottomSpacing !== undefined) {x.data.bottomSpacing = bottomSpacing;}
       }
     });
+  }
+
+  if (isDetailsView) {
+    if (obj.userId) { delete obj.userId; }
+    if (obj.qrOptionsId) { delete obj.qrOptionsId; }
   }
 
   return obj;

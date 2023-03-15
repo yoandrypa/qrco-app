@@ -46,6 +46,7 @@ interface SamplePrevProps {
   step: number;
   handlePickImage?: (prop: string) => void;
   showSampleMessage?: boolean;
+  noEditImages?: boolean;
 }
 
 interface WithSelection extends SamplePrevProps {
@@ -61,7 +62,7 @@ interface WithSCode extends SamplePrevProps {
 const clearUrl = (url: string): string => url.slice(url.indexOf('//') + 2);
 
 const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, save, code, isDrawed, saveDisabled,
-    qrOptions, backImg, mainImg, backgroundImg, shareLink, showSampleMessage, handlePickImage }: WithSelection | WithSCode) => {
+    qrOptions, backImg, mainImg, backgroundImg, shareLink, showSampleMessage, handlePickImage, noEditImages }: WithSelection | WithSCode) => {
   const [prev, setPrev] = useState<string>(!onlyQr ? 'preview' : 'qr');
   const [copied, setCopied] = useState<boolean>(false);
   const [open, setOpen] = useState<HTMLButtonElement | null>(null);
@@ -206,7 +207,7 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
           <RenderCellPhoneShape width={270} height={550} offlineText="The selected card has no available sample">
             {code || (selected && !NO_MICROSITE.includes(selected)) ? (
               <Suspense fallback={<PleaseWait />}>
-                {step === 1 && isReady && (
+                {step === 1 && isReady && noEditImages === undefined && (
                   <RenderEditImageOnClick
                     hideBannerSelection={data?.layout?.includes('banner') || false}
                     shape={data?.foregndImgType || undefined} left={data?.layout?.toLowerCase().includes('left') || false}
