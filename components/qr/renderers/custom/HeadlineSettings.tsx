@@ -22,26 +22,19 @@ interface HeadlineProps {
   handleClose: () => void;
   data?: Type;
   index: number;
-  reverse?: boolean;
   hideHeadLineSettings?: boolean;
 }
 
-export default function HeadlineSettings({anchor, handleValues, handleClose, reverse, index, data, hideHeadLineSettings}: HeadlineProps) {
+export default function HeadlineSettings({anchor, handleValues, handleClose, index, data, hideHeadLineSettings}: HeadlineProps) {
   const [openSpacing, setOpenSpacing] = useState<boolean>(false);
 
   const handle = () => {
     let isChecked = data?.hideHeadLine || false;
-    if (reverse) {
-      isChecked = !isChecked;
-    }
-    handleValues('hideHeadLine', index, reverse || false)(!isChecked);
+    handleValues('hideHeadLine', index)(!isChecked);
     handleClose();
   };
 
   let checked = data?.hideHeadLine === undefined || !data?.hideHeadLine;
-  if (reverse) {
-    checked = !checked;
-  }
 
   const customHandle = (prop: string) => () => { // @ts-ignore
     const value = data?.[prop] || false;

@@ -110,7 +110,8 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
       const newData = {...prev};
       if (isChecked) { // @ts-ignore
         if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
-        newData.custom[index].data[prop] = true;
+        newData.custom[index].data[prop] = true; // @ts-ignore
+        if (prop === 'linksAsButtons' && newData.custom?.[index]?.data?.socialsOnlyIcons) { delete newData.custom[index].data.socialsOnlyIcons; }
       } else { // @ts-ignore
         const elementData = newData.custom[index].data as any;
         delete elementData[prop];

@@ -1,7 +1,7 @@
 import {ChangeEvent} from "react";
 import {DataType, Type} from "./types/types";
 
-const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTMLInputElement> | string | boolean | string[], index?: number, reversed?: boolean) => {
+const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTMLInputElement> | string | boolean | string[], index?: number) => {
   const value = Array.isArray(payload) || typeof payload === 'string' || typeof payload === 'boolean' ? payload :
     (item === 'includeExtraInfo' ? payload.target.checked : payload.target.value);
 
@@ -24,9 +24,6 @@ const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTM
       } else if (['hideHeadLine', 'centerHeadLine'].includes(item)) { // @ts-ignore
         if (elementData[item] !== undefined && (payload === false || reversed)) { // @ts-ignore
           delete elementData[item];
-          if (reversed && item === 'hideHeadLine' && elementData.centerHeadLine !== undefined) {
-            delete elementData.centerHeadLine;
-          }
         } else { // @ts-ignore
           element.data[item] = true;
           if (item === 'hideHeadLine' && elementData.centerHeadLine !== undefined) { delete elementData.centerHeadLine; }
