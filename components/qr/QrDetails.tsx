@@ -93,8 +93,13 @@ const QrDetails = ({ visitData, qrData }: any) => {
       )}
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer setOpenPreview={setOpenPreview} border={35} height={!qrData.isDynamic ? 425 : 700} > {/* @ts-ignore */}
-          <RenderSamplePreview onlyQr={[...ONLY_QR, 'web'].includes(qrData.qrType) || !qrData.isDynamic} selected={qrData.qrType}
-                               isDrawed style={{mt: '-15px'}} step={0} isDynamic={qrData.isDynamic || false} />
+          <RenderSamplePreview
+            noEditImages
+            code={qrData?.shortLinkId?.address || ''}
+            onlyQr={ONLY_QR.includes(qrData.qrType) || !qrData.isDynamic}
+            data={previewQRGenerator(qrData, qrData.qrType, undefined, true)}
+            qrOptions={qrData.qrOptionsId}
+            isDrawed style={{mt: '-15px'}} step={1} isDynamic={qrData.isDynamic || false} />
         </RenderPreviewDrawer>
       )}
     </Box>
