@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import VisitDetailsSections from "../visit/VisitDetailsSections";
-import {ReactNode, useState} from "react";
+import {ReactNode, SyntheticEvent, useState} from "react";
 import QrDetail from "./QrDetail";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -44,11 +44,9 @@ const QrDetails = ({ visitData, qrData }: any) => {
 
   const isWideForPreview = useMediaQuery("(min-width:925px)", {noSsr: true});
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-
-  console.log(qrData);
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -75,7 +73,6 @@ const QrDetails = ({ visitData, qrData }: any) => {
       </Box>
       {isWideForPreview && (
         <RenderSamplePreview
-          selected={qrData.qrType}
           style={{
             ml: "15px",
             mt: "5px",
@@ -83,20 +80,26 @@ const QrDetails = ({ visitData, qrData }: any) => {
             position: "sticky",
             top: "100px"
           }}
-          step={0}
+          step={1}
+          noEditImages
           isDynamic={qrData.isDynamic || false}
-          code={""}
+          code={qrData?.shortLinkId?.address || ''}
           onlyQr={ONLY_QR.includes(qrData.qrType) || !qrData.isDynamic}
-          data={previewQRGenerator(qrData, qrData.qrType)}
-          qrOptions={qrData.qrOptionsId}/>
+          data={previewQRGenerator(qrData, qrData.qrType, undefined, true)}
+          qrOptions={qrData.qrOptionsId} />
       )}
       {!openPreview && !isWideForPreview && ( // @ts-ignore
         <RenderPreviewButton setOpenPreview={setOpenPreview} message="Sample"/>
       )}
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer setOpenPreview={setOpenPreview} border={35} height={!qrData.isDynamic ? 425 : 700} > {/* @ts-ignore */}
-          <RenderSamplePreview onlyQr={[...ONLY_QR, 'web'].includes(qrData.qrType) || !qrData.isDynamic} selected={qrData.qrType}
-                               isDrawed style={{mt: '-15px'}} step={0} isDynamic={qrData.isDynamic || false} showSampleMessage />
+          <RenderSamplePreview
+            noEditImages
+            code={qrData?.shortLinkId?.address || ''}
+            onlyQr={ONLY_QR.includes(qrData.qrType) || !qrData.isDynamic}
+            data={previewQRGenerator(qrData, qrData.qrType, undefined, true)}
+            qrOptions={qrData.qrOptionsId}
+            isDrawed style={{mt: '-15px'}} step={1} isDynamic={qrData.isDynamic || false} />
         </RenderPreviewDrawer>
       )}
     </Box>

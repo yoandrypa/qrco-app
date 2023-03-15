@@ -99,7 +99,7 @@ export default function QrList({ title }: any) {
   };
 
   useEffect(() => {
-    if (!router.query.selected) setOptions(handleInitialData("Ebanux"));
+    if (!router.query.selected) { setOptions(handleInitialData("Ebanux")); }
     loadItems();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

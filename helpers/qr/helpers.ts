@@ -104,9 +104,12 @@ export const blobUrlToFile = (url: string, name: string) => {
   })
 };
 
-export const getImageAsString = async (imageData?: File | string) => {
+export const getImageData = async (imageData?: File | string | {Key: string; name: string;}[]) => {
   if (!imageData) {
     return undefined;
+  }
+  if (Array.isArray(imageData)) {
+    return imageData;
   }
   if (typeof imageData === 'string') {
     return imageData.startsWith('blob:http') ? await getBase64FromUrl(imageData) : imageData
