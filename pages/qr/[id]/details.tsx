@@ -7,7 +7,7 @@ import Context from "../../../components/context/Context";
 
 const getQr = async (userId: string, createdAt: number) => {
   return await (await QrHandler.get({
-    userId, createdAt,
+    userId, createdAt
   })).populate({ properties: ["shortLinkId", "qrOptionsId"] });
 };
 
@@ -31,20 +31,13 @@ export default function Details ({ id }: InferGetServerSidePropsType<typeof getS
           visitData = getVisits(userInfo.cognito_user_id, createdAt);
         } // @ts-ignore
         setData({ qrData, visitData });
-      });
+      }).finally(() => setLoading(false));
     }
   }, []);
 
   return <QrDetails visitData={data.visitData} qrData={data.qrData}/>;
 };
 
-export const getServerSideProps: GetServerSideProps = async ({
-  params,
-  req,
-}) => {
-  return {
-    props: {
-      id: params?.id,
-    },
-  };
+export const getServerSideProps: GetServerSideProps = async ({params}) => {
+  return { props: { id: params?.id } };
 };
