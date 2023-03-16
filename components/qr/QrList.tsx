@@ -37,10 +37,12 @@ const ButtonCreateQrLynks = dynamic(() => import("../menus/MainMenu/ButtonCreate
 
 const dateHandler = (date: string): string => `${date.startsWith('Yesterday') || date.startsWith('Today') ? ':' : ' at:'} ${date}`;
 
+const iconsProps = {width: '17px', height: '17px', mb: '-3px'};
+
 const renderStaticDynamic = (is: boolean, avoidIcon?: boolean) => (
   <Typography variant="caption" style={{ color: "gray" }}>
-    {!avoidIcon ? (is ? <SyncIcon fontSize="inherit" sx={{ mr: '5px' }} /> :
-      <SyncDisabledIcon fontSize="inherit" sx={{ mr: '5px' }} />) : null}
+    {!avoidIcon ? (is ? <SyncIcon sx={{ ...iconsProps, mr: '5px' }} /> :
+      <SyncDisabledIcon sx={{ ...iconsProps, mr: '5px' }} />) : null}
     {is ? "Dynamic" : "Static"}
   </Typography>
 );
@@ -169,7 +171,7 @@ export default function QrList({ title }: any) {
                         {qrLink.address ? (
                           <Box sx={{display: 'flex'}}>
                             <Typography variant="caption" sx={{ color: "gray" }}> {/*@ts-ignore*/}
-                              <Public fontSize="inherit" sx={{ mr: '5px' }} />
+                              <Public sx={{ ...iconsProps, mr: '5px' }} />
                               <Link href={qrLink.link}>
                                 <a target="_blank" rel="noopener noreferrer"> {/*this is needed until next 13 is used*/}
                                   {qrLink.link.split("//")[1]}
@@ -183,7 +185,7 @@ export default function QrList({ title }: any) {
                           </Box>
                           ) : <div />}
                         <Typography variant="caption" sx={{ color: "gray" }}>
-                          <Edit fontSize="inherit" sx={{ mr: '5px' }} />
+                          <Edit sx={{ ...iconsProps, mr: '5px' }} />
                           {`Updated${dateHandler(humanDate(new Date(qr.updatedAt).getTime()))}`}
                         </Typography>
                       </Stack>
