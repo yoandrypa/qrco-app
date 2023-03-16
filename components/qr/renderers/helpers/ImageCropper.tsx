@@ -263,13 +263,13 @@ export default function ImageCropper({handleAccept, handleClose, file, kind, mes
               ref={canvasRef} />
           </Box>
         </Box>
-        <Typography sx={{ mt: 2, fontSize: 'small' }}>{'Zoom'}</Typography>
+        <Typography sx={{ mt: 1, fontSize: 'small' }}>{'Zoom'}</Typography>
         <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
           <ZoomOutIcon fontSize="small" color="primary" />
           <Slider aria-label="Zoom" max={zoom.max} min={zoom.min} value={zoom.selected} onChange={handleChange} />
           <ZoomInIcon fontSize="large" color="primary" />
         </Stack>
-        <Box sx={{ mt: 2, display: 'flex', color: theme => theme.palette.text.disabled, width: '100%', justifyContent: 'center' }}>
+        <Box sx={{ mt: 1, display: 'flex', color: theme => theme.palette.text.disabled, width: '100%', justifyContent: 'center' }}>
           <Typography sx={{ fontSize: 'small', fontWeight: 'bold', mr: '5px' }}>{'Note:'}</Typography>
           <Typography sx={{ fontSize: 'small'}}>{'Image might have a tiny difference on microsite.'}</Typography>
         </Box>

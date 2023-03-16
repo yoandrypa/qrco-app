@@ -1,4 +1,4 @@
-import { MouseEvent, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {memo, MouseEvent, Suspense, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
@@ -22,13 +22,14 @@ import { cleanSelectionForMicrositeURL, qrNameDisplayer } from "../../../../help
 import { DataType } from "../../types/types";
 
 import dynamic from "next/dynamic";
+import {areEquals, handleCopy} from "../../../helpers/generalFunctions";
 
 const PleaseWait = dynamic(() => import("../../../PleaseWait"));
 const Popover = dynamic(() => import("@mui/material/Popover"));
 const RenderIframe = dynamic(() => import('../../../RenderIframe'), { suspense: true });
-const Notifications = dynamic(() => import("../../../notifications/Notifications"));
 const RenderIcon = dynamic(() => import("./RenderIcon"));
 const RenderEditImageOnClick = dynamic(() => import("../looseComps/RenderEditImageOnClick"));
+const RenderCopiedNotification = dynamic(() => import("../looseComps/RenderCopiedNotification"));
 
 interface SamplePrevProps {
   style?: object;
@@ -159,14 +160,7 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
                 <IconButton size="small" target="_blank" component="a" href={URL} sx={{ height: '28px', width: '28px', mt: '9px' }}>
                   <OpenInNewIcon fontSize="small" />
                 </IconButton>
-                <IconButton size="small" sx={{ height: '28px', width: '28px', mt: '9px' }} onClick={() => {
-                  try {
-                    navigator.clipboard.writeText(URL || '');
-                    setCopied(true);
-                  } catch {
-                    console.log('Copy failed');
-                  }
-                }}>
+                <IconButton size="small" sx={{ height: '28px', width: '28px', mt: '9px' }} onClick={() => handleCopy(URL, setCopied)}>
                   <ContentCopyIcon fontSize="small" />
                 </IconButton>
               </>
@@ -232,15 +226,7 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
           </Box>
         ))}
       </Box>
-      {copied && (
-        <Notifications
-          autoHideDuration={2500}
-          message="Copied!"
-          vertical="bottom"
-          horizontal="center"
-          severity="success"
-          onClose={() => setCopied(false)} />
-      )}
+      {copied && <RenderCopiedNotification setCopied={setCopied} />}
       {open && (
         <Popover
           open
@@ -258,4 +244,9 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
   );
 }
 
-export default RenderSamplePreview;
+const notIf = (curr: WithSelection | WithSCode, next: WithSelection | WithSCode) =>
+  areEquals(curr.data, next.data) && areEquals(curr.style, next.style) &&
+  curr.saveDisabled === next.saveDisabled && areEquals(curr.backgroundImg, next.backgroundImg) &&
+  areEquals(curr.backImg, next.backImg) && areEquals(curr.mainImg, next.mainImg) && curr.step === next.step;
+
+export default memo(RenderSamplePreview, notIf);

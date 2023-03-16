@@ -12,7 +12,7 @@ const RenderMainImgsSelector = dynamic(() => import("../helperComponents/smallpi
 const RenderButtonHandler = dynamic(() => import('../helperComponents/looseComps/RenderButtonHandler'));
 const RenderFontsHandler = dynamic(() => import('../helperComponents/smallpieces/RenderFontsHandler'));
 const RenderLayoutHandler = dynamic(() => import("../helperComponents/smallpieces/RenderLayoutHandler"));
-const RenderMainColors = dynamic(() => import("./helpers/RenderMainColors"));
+const RenderMainColors = dynamic(() => import("../helperComponents/smallpieces/RenderMainColors"));
 const Typography = dynamic(() => import("@mui/material/Typography"));
 const CircularProgress = dynamic(() => import("@mui/material/CircularProgress"));
 const RenderFooterHandler = dynamic(() => import("../helperComponents/smallpieces/RenderFooterHandler"));
@@ -32,10 +32,10 @@ interface QRCommonsProps {
   releasePick: () => void;
 }
 
-function RenderQRCommons(
-  {
-    loading, data, omitPrimaryImg, foregndImg, backgndImg, micrositesImg, backError, foreError, handleValue, isWideForPreview, forcePick, releasePick
-  }: QRCommonsProps) { // @ts-ignore
+const sx = {p: 1, mb: '10px'};
+
+const RenderQRCommons = ({ loading, data, omitPrimaryImg, foregndImg, backgndImg, micrositesImg, backError, foreError,
+                           handleValue, isWideForPreview, forcePick, releasePick }: QRCommonsProps) => { // @ts-ignore
   const [expander, setExpander] = useState<string | null>('mainColors');
 
   const handleExpander = useCallback((item: string): void => {
@@ -59,11 +59,11 @@ function RenderQRCommons(
         </Box>
       )}
       <Box sx={{p: 1, mt: 1}}>
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="mainColors" title="Main colors" bold/>
           {expander === 'mainColors' && <RenderMainColors data={data} handleValue={handleValue} />}
         </Paper>
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="images" title="Banner and profile images" bold/>
           {expander === 'images' && (
             <RenderMainImgsSelector handleValue={handleValue} data={data} foregndImg={foregndImg} forcePick={forcePick}
@@ -71,26 +71,26 @@ function RenderQRCommons(
                                     foreError={foreError} omitPrimaryImg={omitPrimaryImg} loading={loading}
                                     releasePick={releasePick}/>)}
         </Paper>
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="background" title="Background" bold/>
           {expander === 'background' && (
             <RenderHandlerBackground handleValue={handleValue} data={data} micrositesImg={micrositesImg}
                                      forcePick={forcePick} releasePick={releasePick}/>
           )}
         </Paper>
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="fonts" title="Fonts" bold/>
           {expander === 'fonts' && <RenderFontsHandler data={data} handleValue={handleValue} />}
         </Paper>
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="buttons" title="Buttons" bold/>
           {expander === 'buttons' && <RenderButtonHandler handleValue={handleValue} data={data}/>}
         </Paper>
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="layout" title="Layout" bold/>
           {expander === 'layout' && <RenderLayoutHandler handleValue={handleValue} data={data} omitPrimary={omitPrimaryImg}/>}
         </Paper>
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
+        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="footer" title="Footer" bold/>
           {expander === 'footer' && <RenderFooterHandler data={data} handleValue={handleValue} />}
         </Paper>

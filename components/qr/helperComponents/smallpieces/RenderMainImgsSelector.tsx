@@ -9,7 +9,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import {DataType} from "../../types/types";
+import {CustomCommon} from "../../types/types";
 
 import dynamic from "next/dynamic";
 import RenderProfileImgSettings from "../looseComps/RenderProfileImgSettings";
@@ -19,8 +19,7 @@ const ImageCropper = dynamic(() => import("../../renderers/helpers/ImageCropper"
 const RenderForeImgTypePicker = dynamic(() => import("../../renderers/helpers/RenderForeImgTypePicker"));
 const RenderImgPreview = dynamic(() => import("../../renderers/helpers/RenderImgPreview"));
 
-interface MainImgSelectorProps {
-  data?: DataType;
+interface MainImgSelectorProps extends CustomCommon {
   omitPrimaryImg?: boolean;
   isWideForPreview?: boolean;
   backgndImg?: File | string;
@@ -28,7 +27,6 @@ interface MainImgSelectorProps {
   loading?: boolean;
   backError?: boolean;
   foreError?: boolean;
-  handleValue: Function;
   forcePick?: string;
   releasePick: () => void;
 }
@@ -81,8 +79,6 @@ const RenderMainImgsSelector = (
       setTimeout(() => releasePick(), 200);
     }
   }, [forcePick]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  console.log(data)
 
   return (
     <>

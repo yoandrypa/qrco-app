@@ -4,14 +4,9 @@ import Select, {SelectChangeEvent} from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
 
-import {DataType} from "../../types/types";
+import {CustomCommon} from "../../types/types";
 
-interface FooterProps {
-  data?: DataType;
-  handleValue: Function;
-}
-
-export default function RenderFooterHandler({data, handleValue}: FooterProps) {
+export default function RenderFooterHandler({data, handleValue}: CustomCommon) {
   const handler = (event: SelectChangeEvent) => {
     handleValue('footerKind')(event.target.value);
   };

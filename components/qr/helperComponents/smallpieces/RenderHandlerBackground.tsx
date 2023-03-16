@@ -5,16 +5,14 @@ import Radio from "@mui/material/Radio";
 
 import RenderSingleBackColor from "../../renderers/helpers/RenderSingleBackColor";
 import {DEFAULT_COLORS} from "../../constants";
-import {DataType} from "../../types/types";
+import {CustomCommon} from "../../types/types";
 
 import dynamic from "next/dynamic";
 
 const RenderBackgroundImageSelector = dynamic(() => import("../../renderers/helpers/RenderBackgroundImageSelector"));
 const RenderGradientSelector = dynamic(() => import("../../renderers/helpers/RenderGradientSelector"));
 
-interface HandleBackProps {
-  handleValue: Function;
-  data?: DataType;
+interface HandleBackProps extends CustomCommon {
   micrositesImg?: File | string;
   forcePick?: string;
   releasePick: () => void;

@@ -14,7 +14,7 @@ import dynamic from "next/dynamic";
 
 import RenderMainFontsHandler from "../smallpieces/RenderMainFontsHandler";
 import RenderHandleOpacityBlurness from "../smallpieces/RenderHandleOpacityBlurness";
-import {DataType} from "../../types/types";
+import {CustomCommon} from "../../types/types";
 import SectionSelector from "../SectionSelector";
 import ColorSelector from "../ColorSelector";
 import {DEFAULT_COLORS} from "../../constants";
@@ -25,12 +25,7 @@ const RenderBorders = dynamic(() => import("./RenderBorders"));
 const RenderCustButtons = dynamic(() => import("./RenderCustButtons"));
 const RenderTwoColors = dynamic(() => import("../smallpieces/RenderTwoColors"));
 
-interface ButtonsHandlerProps {
-  data?: DataType;
-  handleValue: Function;
-}
-
-export default function RenderButtonHandler({data, handleValue}: ButtonsHandlerProps) {
+export default function RenderButtonHandler({data, handleValue}: CustomCommon) {
   const isWide = useMediaQuery("(min-width:900px)", {noSsr: true});
   const isWideEnough = useMediaQuery("(min-width:815px)", {noSsr: true});
 
