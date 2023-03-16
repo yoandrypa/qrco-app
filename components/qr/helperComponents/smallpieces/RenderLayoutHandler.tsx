@@ -1,14 +1,12 @@
 import {ChangeEvent, useEffect, useRef, useState} from "react";
 import Box from "@mui/material/Box";
 import {blueGrey} from "@mui/material/colors";
-import {DataType} from "../../types/types";
+import {CustomCommon} from "../../types/types";
 import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
-interface RenderLayoutProps {
-  data?: DataType;
+interface RenderLayoutProps extends CustomCommon{
   omitPrimary?: boolean;
-  handleValue: Function;
 }
 
 export default function RenderLayoutHandler({data, handleValue, omitPrimary}: RenderLayoutProps) {

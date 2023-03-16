@@ -1,15 +1,10 @@
 import {COLORS, DEFAULT_COLORS} from "../../constants";
-import RenderColorPreset from "./RenderColorPreset";
+import RenderColorPreset from "../../renderers/helpers/RenderColorPreset";
 import Box from "@mui/material/Box";
-import ColorSelector from "../../helperComponents/ColorSelector";
-import {DataType} from "../../types/types";
+import ColorSelector from "../ColorSelector";
+import {CustomCommon} from "../../types/types";
 
-interface MainColorsProps {
-  data?: DataType;
-  handleValue: Function;
-}
-
-export default function RenderMainColors({data, handleValue}: MainColorsProps) {
+export default function RenderMainColors({data, handleValue}: CustomCommon) {
   return (
     <>
       {COLORS.map(x => (

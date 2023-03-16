@@ -453,3 +453,7 @@ export type TextField = DragField & {
 export type MediaField = DragField & {
   files?: File[];
 };
+
+export interface CustomCommon {
+  data?: DataType; handleValue: Function;
+}

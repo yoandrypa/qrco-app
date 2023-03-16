@@ -14,6 +14,8 @@ import SyncIcon from "@mui/icons-material/Sync";
 import SyncDisabledIcon from "@mui/icons-material/SyncDisabled";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Public from "@mui/icons-material/Public";
+import IconButton from "@mui/material/IconButton";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import Link from "next/link";
@@ -22,14 +24,14 @@ import dynamic from "next/dynamic";
 import RenderQrListOptions from "./helperComponents/smallpieces/RenderQrListOptions";
 import Context from "../context/Context";
 import RenderPreview from "./renderers/RenderPreview";
-
 import { sanitize } from "../../utils";
-import { humanDate } from "../helpers/generalFunctions";
+import {handleCopy, humanDate} from "../helpers/generalFunctions";
 import { handleDesignerString, handleInitialData, qrNameDisplayer } from "../../helpers/qr/helpers";
 import { list, pauseQRLink, remove } from "../../handlers/qrs";
 import { startWaiting, releaseWaiting } from "../Waiting";
 import { QR_CONTENT_ROUTE, QR_DESIGN_ROUTE } from "./constants";
 
+const RenderCopiedNotification = dynamic(() => import("./helperComponents/looseComps/RenderCopiedNotification"));
 const RenderConfirmDlg = dynamic(() => import("../renderers/RenderConfirmDlg"));
 const ButtonCreateQrLynks = dynamic(() => import("../menus/MainMenu/ButtonCreateQrLynks"));
 
@@ -54,6 +56,7 @@ const renderQr = (qr: any) => {
 
 export default function QrList({ title }: any) {
   const [confirm, setConfirm] = useState<{ createdAt: number; userId: string; } | null>(null);
+  const [copied, setCopied] = useState<boolean>(false);
   const [qrs, setQRs] = useState({ items: [] }); // @ts-ignore
   const { setOptions, userInfo } = useContext(Context);
   const router = useRouter();
@@ -87,6 +90,10 @@ export default function QrList({ title }: any) {
   const handlePauseQrLink = useCallback((shortLinkId: LinkType) => {
     startWaiting();
     pauseQRLink(shortLinkId).then(() => loadItems());
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const copyURL = useCallback((url: string) => () => {
+    handleCopy(url, setCopied);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDelete = async () => {
@@ -160,15 +167,21 @@ export default function QrList({ title }: any) {
                              sx={{ ml: { xs: 2, sm: 0 }, my: 'auto' }}>
                         {renderStaticDynamic(qr.isDynamic)}
                         {qrLink.address ? (
-                          <Typography variant="caption" sx={{ color: "gray" }}> {/*@ts-ignore*/}
-                            <Public fontSize="inherit" sx={{ mr: '5px' }} />
-                            <Link href={qrLink.link}>
-                              <a target="_blank" rel="noopener noreferrer"> {/*this is needed until next 13 is used*/}
-                                {qrLink.link.split("//")[1]}
-                                <OpenInNewIcon sx={{width: '17px', height: '17px', mb: '-3px', ml: '3px'}}/>
-                              </a>
-                            </Link>
-                          </Typography>) : <div />}
+                          <Box sx={{display: 'flex'}}>
+                            <Typography variant="caption" sx={{ color: "gray" }}> {/*@ts-ignore*/}
+                              <Public fontSize="inherit" sx={{ mr: '5px' }} />
+                              <Link href={qrLink.link}>
+                                <a target="_blank" rel="noopener noreferrer"> {/*this is needed until next 13 is used*/}
+                                  {qrLink.link.split("//")[1]}
+                                  <OpenInNewIcon sx={{width: '17px', height: '17px', mb: '-3px', ml: '3px'}}/>
+                                </a>
+                              </Link>
+                            </Typography>
+                            <IconButton size="small" sx={{mt: '-5px'}} onClick={copyURL(qrLink.link || '')}>
+                              <ContentCopyIcon sx={{width: '17px', height: '17px'}} />
+                            </IconButton>
+                          </Box>
+                          ) : <div />}
                         <Typography variant="caption" sx={{ color: "gray" }}>
                           <Edit fontSize="inherit" sx={{ mr: '5px' }} />
                           {`Updated${dateHandler(humanDate(new Date(qr.updatedAt).getTime()))}`}
@@ -190,7 +203,7 @@ export default function QrList({ title }: any) {
                         </Stack>
                       ) : <div />}
                       <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink}
-                                           setConfirm={setConfirm} handleClone={handleClone} link={qrLink.link} />
+                         setConfirm={setConfirm} handleClone={handleClone} link={qr.isDynamic ? qrLink.link : undefined} />
                     </Box>
                   )}
                 </Stack>
@@ -226,6 +239,7 @@ export default function QrList({ title }: any) {
           confirmStyle={{ color: 'orange', fontSize: 'small' }}
         />
       )}
+      {copied && <RenderCopiedNotification setCopied={setCopied} />}
     </Stack>
   );
 };

@@ -1,4 +1,4 @@
-import {MouseEvent, useContext, useEffect, useState} from "react";
+import {memo, MouseEvent, useContext, useEffect, useState} from "react";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -31,14 +31,14 @@ const PauseCircleOutlineIcon = dynamic(() => import("@mui/icons-material/PauseCi
 
 interface RenderQrOptsProps {
   qr: any;
-  link: string;
+  link?: string;
   handleEdit: (edit: QrDataType) => void;
   handleClone: (clone: QrDataType) => void;
   setConfirm: (conf: { createdAt: number; userId: string; }) => void;
   handlePauseQrLink: (id: LinkType) => void;
 }
 
-export default function RenderQrListOptions({qr, handleEdit, setConfirm, handlePauseQrLink, handleClone, link}: RenderQrOptsProps) {
+const RenderQrListOptions = ({qr, handleEdit, setConfirm, handlePauseQrLink, handleClone, link}: RenderQrOptsProps) => {
   const router = useRouter();
   // @ts-ignore
   const {loading, setLoading} = useContext(Context);
@@ -142,10 +142,12 @@ export default function RenderQrListOptions({qr, handleEdit, setConfirm, handleP
               <Typography sx={{ml: '5px'}}>{'Clone'}</Typography>
             </MenuItem>
             <Divider/>
-            <MenuItem key="openLink" target="_blank" component="a" href={link}>
-              <OpenInNewIcon color="primary"/>
-              <Typography sx={{ml: '5px'}}>{'Open microsite'}</Typography>
-            </MenuItem>
+            {link !== undefined && (
+              <MenuItem key="openLink" target="_blank" component="a" href={link}>
+                <OpenInNewIcon color="primary"/>
+                <Typography sx={{ml: '5px'}}>{'Open microsite'}</Typography>
+              </MenuItem>
+            )}
             <MenuItem key="downloadMenu" onClick={handlePreview}>
               <QrCodeIcon color="primary"/>
               <Typography sx={{ml: '5px'}}>{'Download QR code'}</Typography>
@@ -170,3 +172,5 @@ export default function RenderQrListOptions({qr, handleEdit, setConfirm, handleP
     </>
   );
 }
+
+export default memo(RenderQrListOptions, (curr: RenderQrOptsProps, next: RenderQrOptsProps) => curr.link === next.link);
