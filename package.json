@@ -7,8 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "pre-codes": "node scripts/pre-codes"
+    "lint": "next lint"
   },
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "^3.266.0",
@@ -64,8 +63,6 @@
     "@types/react": "18.0.15",
     "@types/react-beautiful-dnd": "^13.1.2",
     "@types/request-ip": "^0.0.37",
-    "axios": "^1.3.2",
-    "commander": "^10.0.0",
     "csv-parser": "^3.0.0",
     "cypress": "^11.1.0",
     "eslint": "8.20.0",
