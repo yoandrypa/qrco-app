@@ -1,6 +1,7 @@
 import {CustomType} from "./types/types";
 import {EMAIL, PHONE, YEAR, ZIP} from "./constants";
 import {isValidUrl} from "../../utils";
+import {components} from "./renderers/custom/helperFuncs";
 
 // @ts-ignore
 const exists = (x: CustomType, item: string) => x.data?.[item] !== undefined && !x.data[item].trim().length !== 0;
@@ -52,7 +53,7 @@ const validator = (custom: CustomType[], forceExtra: boolean) => {
   } else {
     custom.forEach((x: CustomType, index: number) => {
       if (isEmpty(x)) {
-        errors.push(`Make sure the ${x.component} section ${index + 1} is not empty`);
+        errors.push(`Make sure the ${components.find(xx => xx.type === x.component)?.name.toLowerCase() || x.component} section ${index + 1} is not empty`);
       } else { // @ts-ignore
         if (x.component === 'address' && exists(x, 'zip') && !ZIP.test(x.data.zip)) {
           errors.push(`The zip code is not valid in address section ${index + 1}`);
@@ -101,8 +102,7 @@ const validator = (custom: CustomType[], forceExtra: boolean) => {
             }
             if (x.data?.links.some(xx => !xx.link?.trim().length)) {
               errors.push(`Missing at least one link in section ${index + 1}`);
-            }
-            if (x.data?.links.some(xx => !isValidUrl(xx.link))) {
+            } else if (x.data?.links.some(xx => !isValidUrl(xx.link))) {
               errors.push(`There is at least one invalid link in section ${index + 1}`);
             }
           }
