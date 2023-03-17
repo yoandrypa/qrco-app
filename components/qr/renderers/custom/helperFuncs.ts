@@ -1,7 +1,4 @@
-import {CustomType, DataType, KeyValues, LinkType, Type} from "../../types/types";
-import {EMAIL, PHONE, ZIP} from "../../constants";
-import {isValidUrl} from "../../../../utils";
-import socialsAreValid from "../validator";
+import {DataType, Type} from "../../types/types";
 
 export const components = [
   {type: 'address', name: 'Address'}, {type: 'company', name: 'Company'},
@@ -18,7 +15,7 @@ export const components = [
   {type: 'couponInfo', name: 'Promotion info', notInMenu: true},
   {type: 'couponData', name: 'Coupon data', notInMenu: true},
   {type: 'petId', name: 'Pet presentation', notInMenu: true},
-  {type: 'sku', name: 'Product', notInMenu: true}, {type: 'petId', name: 'Pet presentation', notInMenu: true}
+  {type: 'sku', name: 'Product', notInMenu: true}
 ];
 
 export const getName = (index: number) => {
@@ -50,7 +47,6 @@ export interface CustomProps {
   data: DataType;
   setData: Function;
   handleValues: Function;
-  setIsWrong: (isWrong: boolean) => void;
 }
 
 export interface CustomSettingsProps {
@@ -70,77 +66,6 @@ export interface ContentProps {
   index: number;
   data?: Type;
   handleValues: Function;
-}
-
-export const validator = (dataToCheck: DataType, selected?: string): boolean => {
-  if (!dataToCheck.custom?.length) { return true; }
-
-  let errors = false;
-
-  dataToCheck.custom.every((custom: CustomType) => {
-    const data = custom.data || {};
-
-    const {component} = custom;
-    if (component === 'company' && (!data.company?.trim().length || (
-      (data.companyPhone?.trim().length && !PHONE.test(data.companyPhone)) ||
-      (data.companyCell?.trim().length && !PHONE.test(data.companyCell)) ||
-      (data.companyFax?.trim().length && !PHONE.test(data.companyFax)) ||
-      (data.companyWebSite?.trim().length && !isValidUrl(data.companyWebSite)) ||
-      (data.companyEmail?.trim().length && !EMAIL.test(data.companyEmail))
-    ))) {
-      errors = true;
-      return false;
-    }
-    if ((component === 'contact') && (!data.email?.trim().length || !EMAIL.test(data.email) || !data.message?.trim().length)) {
-      errors = true;
-      return false;
-    }
-    if ((component === 'address' && data.zip?.trim().length && !ZIP.test(data.zip)) ||
-      (component === 'justEmail' && data.email?.trim().length && !EMAIL.test(data.email)) ||
-      (component === 'web' && data.web?.trim().length && !isValidUrl(data.web)) ||
-      (component === 'tags' && !data.tags?.length)) {
-      errors = true;
-      return false;
-    }
-    if (component === 'email' && (data.email?.trim().length && !EMAIL.test(data.email)) || (data.web?.trim().length && !isValidUrl(data.web))) {
-      errors = true;
-      return false;
-    }
-    if (component === 'keyvalue' && data.keyValues?.some((x: KeyValues) => (!x.key?.trim().length || !x.value.trim().length))) {
-      errors = true;
-      return false;
-    }
-    if (component === 'links' && data.links?.some((x: LinkType) =>
-      ((!data.linksOnlyLinks && !(x.label || '').trim().length) || !x.link.trim().length || !isValidUrl(x.link)))) {
-      errors = true;
-      return false;
-    }
-    if (component === 'phones' && ((data.phone?.trim().length && !PHONE.test(data.phone)) ||
-      (data.cell?.trim().length && !PHONE.test(data.cell)) || (data.fax?.trim().length && !PHONE.test(data.fax)))) {
-      errors = true;
-      return false;
-    }
-    if (component === 'presentation' && !data.firstName?.trim().length && ((data.includeExtraInfo || ['vcard+', 'petId'].includes(selected || '')) &&
-      ((data.email?.trim() && !EMAIL.test(data.email)) || (data.web?.trim() && !isValidUrl(data.web)) ||
-      (data.phone?.trim().length && !PHONE.test(data.phone)) || (data.cell?.trim().length && !PHONE.test(data.cell)) ||
-      (data.fax?.trim().length && !PHONE.test(data.fax)) || (data.zip?.trim().length && !ZIP.test(data.zip))))) {
-      errors = true;
-      return false;
-    }
-    if (component === 'action' && data.urlOptionLabel !== undefined && data.urlOptionLink !== undefined &&
-      (!data.urlOptionLabel.trim().length || !data.urlOptionLink.trim().length || !isValidUrl(data.urlOptionLink))) {
-        errors = true;
-        return false;
-    }
-    if ((['gallery', 'pdf', 'audio', 'video'].includes(component) && !data.files?.length) ||
-      (component === 'title' && !data.titleAbout?.trim().length && !data.descriptionAbout?.trim().length) ||
-      (component === 'socials' && !socialsAreValid(data))) {
-      errors = true;
-      return false;
-    }
-  });
-
-  return errors;
 }
 
 export const cleaner = (data: DataType, item: string): void => {

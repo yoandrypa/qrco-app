@@ -27,6 +27,7 @@ function RenderContactForm({data, handleValues, index}: ContentProps) {
       isError={isError}
       value={value}
       handleValues={beforeSend}
+      required={item === 'cell'}
       index={index}
       placeholder={placeHolder}/>;
   };

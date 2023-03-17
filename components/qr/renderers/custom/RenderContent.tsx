@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 
 import {components} from "./helperFuncs";
-import {FILE_LIMITS} from "../../../../consts";
+import {FILE_LIMITS, FORCE_EXTRA} from "../../../../consts";
 import {Type} from "../../types/types";
 
 const RenderSmsForm = dynamic(() => import("../contents/RenderSmsForm"));
@@ -54,7 +54,7 @@ const RenderContent = ({component, handleValues, index, data, setData, predefine
     {component === components[9].type && <RenderAssetsData data={data} setData={setData} type="gallery" index={index}
                                                            totalFiles={predefined === undefined || selected === 'inventory' ? 3 : FILE_LIMITS['gallery'].totalFiles}/>}
     {component === components[10].type && <RenderPresentation data={data} handleValues={handleValues} index={index}
-                                                              forceExtra={['vcard+', 'petId'].includes(selected || '')} />}
+                                                              forceExtra={FORCE_EXTRA.includes(selected || '')} />}
     {component === components[11].type && <RenderOpeningTime data={data} setData={setData} index={index}/>}
     {component === components[12].type && <RenderSocials data={data} setData={setData} index={index}/>}
     {component === components[13].type && <RenderTitleDesc handleValues={handleValues} title={data?.titleAbout} noPaper sx={{mt: '5px'}}

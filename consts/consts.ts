@@ -3,10 +3,14 @@ export const THEMES_VARIANTS = { light: "light", dark: "dark" };
 export const HEADER_HEIGHT = 60;
 export const PRIMARY_LIGHT_COLOR = "#3f51b5";
 export const PRIMARY_DARK_COLOR = "#272727";
+
 export const MAIN_CONFIG = {
   locale: LANGUAGES[0],
   theme: THEMES_VARIANTS.light
 };
+
+export const FORCE_EXTRA = ['vcard+', 'petId'];
+
 export const PLAN_TEST_MODE_PRICES = {
   basic: "price_1MW7e3CHh3XhfaZrmbwkowKM",
   business: "price_1MW7zlCHh3XhfaZrLZt73L1S",
@@ -15,6 +19,7 @@ export const PLAN_TEST_MODE_PRICES = {
   businessAnnual: "price_1MW7zlCHh3XhfaZrlsF9vsw5",
   premiumAnnual: "price_1MWDH7CHh3XhfaZrFR42Ax1o"
 };
+
 export const PLAN_LIVE_MODE_PRICES = {
   basic: "price_1MW7mACHh3XhfaZrU2nwdQKe",
   business: "price_1MW809CHh3XhfaZrfwW8Whqo",

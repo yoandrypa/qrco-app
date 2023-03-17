@@ -17,7 +17,6 @@ import {
   CustomProps,
   CustomSettingsProps,
   getNameStr,
-  validator
 } from "./custom/helperFuncs";
 import {getUuid} from "../../../helpers/qr/helpers";
 
@@ -32,7 +31,7 @@ const ArrowCircleUpIcon = dynamic(() => import("@mui/icons-material/ArrowCircleU
 const IconButton = dynamic(() => import("@mui/material/IconButton"));
 const HeadlineSettings = dynamic(() => import("./custom/HeadlineSettings"));
 
-export default function Custom({data, setData, handleValues, setIsWrong, predefined, tip, selected}: CustomProps) {
+export default function Custom({data, setData, handleValues, predefined, tip, selected}: CustomProps) {
   const [showOptions, setShowOptions] = useState<HTMLElement | null>(null);
   const [expander, setExpander] = useState<string[]>([]);
   const [confirm, setConfirm] = useState<{index: number, item: string} | undefined>(undefined);
@@ -163,8 +162,6 @@ export default function Custom({data, setData, handleValues, setIsWrong, predefi
       setTimeout(() => window.scrollTo({behavior: 'smooth', top: document.documentElement.scrollHeight}), 100);
     }
   }, [data?.custom?.length]);
-
-  useEffect(() => {setIsWrong(validator(data, selected))}, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Common msg={tip || "Create a custom QRLynk on your own, using the predefined sections."}>

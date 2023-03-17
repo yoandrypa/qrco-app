@@ -19,7 +19,7 @@ function RenderContactForm({data, handleValues, index}: ContentProps) {
     handleValues('visibleReceipt', index)(event.target.checked);
   }
 
-  const renderItem = (item: string, label: string, placeHolder?: string) => { // @ts-ignore
+  const renderItem = (item: string, label: string, placeHolder?: string, required?: boolean) => { // @ts-ignore
     const value = data?.[item] || '' as string;
 
     let isError = false;
@@ -32,6 +32,7 @@ function RenderContactForm({data, handleValues, index}: ContentProps) {
         item={item}
         label={label}
         isError={isError}
+        required={required}
         value={value}
         multiline={item === 'message'}
         placeholder={placeHolder}
@@ -55,7 +56,7 @@ function RenderContactForm({data, handleValues, index}: ContentProps) {
         Use this address to receive the message from your contact form.
       </Typography>
       <Box sx={{width: '100%'}}>
-        {renderItem('email', 'Receipt email', 'Enter your email address here')}
+        {renderItem('email', 'Receipt email', 'Enter your email address here', true)}
         <FormControlLabel control={<Switch checked={data?.visibleReceipt || false} onChange={handleReceipt} />}
                           label="Visible receipt's email in in microsite" sx={{mt: '-5px'}}/>
       </Box>
