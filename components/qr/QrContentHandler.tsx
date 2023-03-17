@@ -108,8 +108,8 @@ const QrContentHandler = () => { // @ts-ignore
         };
 
         return (
-          <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected}
-                  tip={item.tip} predefined={handlePredefined()} />
+          <Custom data={data} setData={setData} handleValues={handleValues} selected={selected} tip={item.tip}
+                  predefined={handlePredefined()} />
         );
       }
     }
@@ -120,7 +120,6 @@ const QrContentHandler = () => { // @ts-ignore
       {selected ? (
         <>
           {!Boolean(userInfo) && <Box sx={{ mb: '10px' }}><RenderNoUserWarning /></Box>}
-          {/*<SlideQrTypeSelector />*/}
           <Box sx={{ display: 'inline' }}><RenderIcon icon={selected} enabled adjust /></Box>
           <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{qrNameDisplayer(selected || '', data?.isDynamic || false)}</Typography>
           <Typography sx={{ display: { xs: 'none', sm: 'inline' } }}>{`: Enter the content${data?.isDynamic ? ' and page design' : ''}`}</Typography>

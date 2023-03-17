@@ -22,7 +22,10 @@ import {blobUrlToFile, handleDesignerString} from "../../../helpers/qr/helpers";
 import {initialData} from "../../../helpers/qr/data";
 import {generateUUID} from "listr2/dist/utils/uuid";
 import valueHanler from "./valueHandler";
+import validator from "../validator";
+import {FORCE_EXTRA} from "../../../consts";
 
+const ErrorsDialog = dynamic(() => import("./looseComps/ErrorsDialog"));
 const RenderMode = dynamic(() => import("./looseComps/RenderMode"));
 const Notifications = dynamic(() => import("../../notifications/Notifications"));
 const RenderPreviewDrawer = dynamic(() => import("./smallpieces/RenderPreviewDrawer"));
@@ -46,6 +49,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   const [tabSelected, setTabSelected] = useState<number>(0);
   const [openPreview, setOpenPreview] = useState<boolean>(false);
   const [forceOpen, setForceOpen] = useState<string | undefined>(undefined);
+  const [validationErrors, setValidationErrors] = useState<string[] | undefined>(undefined);
 
   const lastAction = useRef<string | undefined>(undefined);
   const loadingCount = useRef<number>(0);
@@ -148,27 +152,32 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   </>);
 
   const handleSave = async () => {
-    lastAction.current = 'saving the data';
-    setLoading(true);
-    await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setError, (creationDate?: string) => {
-      setData((prev: DataType) => {
-        const newData = {...prev, mode: 'edit'};
-        if (newData.claim !== undefined) {
-          delete newData.claim;
-        }
-        if (newData.preGenerated !== undefined) {
-          delete newData.preGenerated;
-        }
-        if (newData.claimable !== undefined) {
-          delete newData.claimable;
-        }
-        if (creationDate) { // @ts-ignore
-          newData.createdAt = creationDate;
-        }
-        return newData;
+    const validate = validator(data.custom || [], FORCE_EXTRA.includes(selected));
+    if (validate.length) {
+      setValidationErrors(validate);
+    } else {
+      lastAction.current = 'saving the data';
+      setLoading(true);
+      await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setError, (creationDate?: string) => {
+        setData((prev: DataType) => {
+          const newData = {...prev, mode: 'edit'};
+          if (newData.claim !== undefined) {
+            delete newData.claim;
+          }
+          if (newData.preGenerated !== undefined) {
+            delete newData.preGenerated;
+          }
+          if (newData.claimable !== undefined) {
+            delete newData.claimable;
+          }
+          if (creationDate) { // @ts-ignore
+            newData.createdAt = creationDate;
+          }
+          return newData;
+        });
+        setLoading(false);
       });
-      setLoading(false);
-    });
+    }
   };
 
   const handleImg = useCallback((prop: string) => setForceOpen(prop), []);
@@ -268,6 +277,9 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
             mainImg={isEditOrClone && foreImg ? foreImg : undefined}
             backgroundImg={isEditOrClone && micrositeBackImage ? micrositeBackImage : undefined} />
         </RenderPreviewDrawer>
+      )}
+      {validationErrors !== undefined && (
+        <ErrorsDialog errors={validationErrors} handleClose={() => setValidationErrors(undefined)} />
       )}
     </>
   );

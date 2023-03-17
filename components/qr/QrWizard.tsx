@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Context from "../context/Context";
 import Step from "@mui/material/Step";
@@ -22,7 +22,10 @@ import { setWarning, hideNotification } from "../Notification";
 import { waitConfirmation } from "../ConfirmDialog";
 import { releaseWaiting, startWaiting } from "../Waiting";
 import { startAuthorizationFlow } from "../../libs/utils/auth";
+import validator from "./validator";
+import {FORCE_EXTRA} from "../../consts";
 
+const ErrorsDialog = dynamic(() => import("./helperComponents/looseComps/ErrorsDialog"));
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
 const ProcessHandler = dynamic(() => import("./renderers/ProcessHandler"));
 const RenderPreview = dynamic(() => import("./renderers/RenderPreview"));
@@ -32,6 +35,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [size, setSize] = useState<number>(0);
   const [forceDownload, setForceDownload] = useState<{ item: HTMLElement } | undefined>(undefined);
+  const [validationErrors, setValidationErrors] = useState<string[] | undefined>(undefined);
   const [, setUnusedState] = useState();
 
   // @ts-ignore
@@ -130,12 +134,19 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
         return false;
       }
     }
-
     return true;
   }
 
   const handleNext = async () => {
     if (!(await allowCreate())) return;
+
+    if (router.pathname === QR_CONTENT_ROUTE) {
+      const validation = validator(data.custom || [], FORCE_EXTRA.includes(selected));
+      if (validation.length) {
+        setValidationErrors(validation);
+        return;
+      }
+    }
 
     if (isFirstStep) {
       // Step 1: QR_TYPE_ROUTE or / ==>  QR_CONTENT_ROUTE
@@ -264,6 +275,9 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
               setRedirecting(false);
             }).finally(releaseWaiting);
           }} />
+      )}
+      {validationErrors !== undefined && (
+        <ErrorsDialog errors={validationErrors} handleClose={() => setValidationErrors(undefined)} />
       )}
     </>
   );

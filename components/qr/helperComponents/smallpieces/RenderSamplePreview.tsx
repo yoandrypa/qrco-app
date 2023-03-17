@@ -245,8 +245,9 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
 }
 
 const notIf = (curr: WithSelection | WithSCode, next: WithSelection | WithSCode) =>
-  areEquals(curr.data, next.data) && areEquals(curr.style, next.style) &&
-  curr.saveDisabled === next.saveDisabled && areEquals(curr.backgroundImg, next.backgroundImg) &&
-  areEquals(curr.backImg, next.backImg) && areEquals(curr.mainImg, next.mainImg) && curr.step === next.step;
+  areEquals(curr.data, next.data) && areEquals(curr.style, next.style) && curr.selected === next.selected &&
+  curr.code === next.code && curr.saveDisabled === next.saveDisabled  && curr.step === next.step &&
+  areEquals(curr.backgroundImg, next.backgroundImg) &&
+  areEquals(curr.backImg, next.backImg) && areEquals(curr.mainImg, next.mainImg);
 
 export default memo(RenderSamplePreview, notIf);
