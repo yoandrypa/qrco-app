@@ -17,7 +17,7 @@ function RenderContactForm({data, handleValues, index}: ContentProps) {
     let isError = false as boolean; // @ts-ignore
     const value = data?.[item] || '' as string;
 
-    if (value.trim().length && !PHONE.test(value)) {
+    if (item === 'cell' && value.trim().length && !PHONE.test(value)) {
       isError = true;
     }
 
