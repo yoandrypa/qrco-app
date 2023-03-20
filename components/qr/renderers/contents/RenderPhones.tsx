@@ -24,20 +24,23 @@ export default function RenderPhones({data, handleValues, isCompany, index, mess
       isError = true;
     }
 
-    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={beforeSend} index={index}/>;
+    return <RenderTextFields item={item} label={label} isError={isError} value={value} handleValues={beforeSend} index={index} includeIcon/>;
   };
 
   return (
     <Box sx={{width: '100%'}}>
       {message && <Topics message={message}/>}
       <Grid container spacing={1}>
-        <Grid item sm={4} xs={12} style={{paddingTop: 0}}>
+        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
           {renderItem(!isCompany ? 'cell' : 'companyCell', 'Cell number')}
         </Grid>
-        <Grid item sm={4} xs={12} style={{paddingTop: 0}}>
+        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
           {renderItem(!isCompany ? 'phone' : 'companyPhone', `${!isCompany ? 'Alternative p' : 'P'}hone number`)}
         </Grid>
-        <Grid item sm={4} xs={12} style={{paddingTop: 0}}>
+        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
+          {renderItem('whatsapp', 'Whatsapp')}
+        </Grid>
+        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
           {renderItem(!isCompany ? 'fax' : 'companyFax', 'Fax')}
         </Grid>
       </Grid>

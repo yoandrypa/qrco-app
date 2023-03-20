@@ -132,7 +132,6 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const expand = [] as string[];
     if (predefined) {
       setData((prev: DataType) => {
         const newData = {...prev, custom: []};
@@ -140,15 +139,13 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
           const newComponent = {component: item, expand: getUuid()}; // @ts-ignore
           if (selected === 'petId') { newComponent.data = {linksOnlyLinks: true}; } // @ts-ignore
           newData.custom.push(newComponent); // @ts-ignore
-          if (index === 0) { expand.push(newData.custom[0].expand); }
+          if (index === 0) { setExpander([newData.custom[0].expand]); }
         });
         return newData;
       });
     } else if (data.custom?.length && data.custom[0].expand !== undefined) {
-      expand.push(data.custom[0].expand);
+      setExpander([data.custom[0].expand]);
     }
-
-    if (expand.length) { setExpander(expand); }
 
     const observer = new IntersectionObserver((payload: IntersectionObserverEntry[]) => setIsVisible(payload[0].isIntersecting || false),
       { root: document.querySelector("#scrollArea"), rootMargin: "0px", threshold: [0.3] });

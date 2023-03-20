@@ -4,6 +4,7 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import DialogTitle from "@mui/material/DialogTitle";
 import Typography from "@mui/material/Typography";
+import PanToolIcon from '@mui/icons-material/PanTool';
 
 interface ErrorsDlgProps {
   errors: string[];
@@ -16,10 +17,11 @@ export default function ErrorsDialog({errors, handleClose}: ErrorsDlgProps) {
   return (
     <Dialog onClose={handleClose} open={true}>
       <DialogTitle>
+        <PanToolIcon fontSize="small" sx={{mr: '5px', ml: '-5px', mn: '-1px', color: theme => theme.palette.error.dark}}/>
         {`Before moving on, solve th${length === 1 ? 'is' : `ese ${length} `} error${length === 1 ? '' : 's'}`}
       </DialogTitle>
-      <DialogContent dividers sx={{maxHeight: '350px', p: '0 24px 0 0'}}>
-        <ul>
+      <DialogContent dividers sx={{maxHeight: '350px'}}>
+        <ul style={{padding: '0 16px'}}>
           {errors.map(x => <li key={x}><Typography>{x}</Typography></li>)}
         </ul>
         {errors.some(x => x.includes('not empty')) && (

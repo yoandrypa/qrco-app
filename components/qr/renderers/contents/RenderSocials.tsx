@@ -118,9 +118,8 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
         if (prop !== 'hideNetworkIcon' && elementData.iconSize !== undefined) { // @ts-ignore
           delete elementData.iconSize;
         }
-        if (elementData.hideNetworkIcon !== undefined) {
-          delete elementData.hideNetworkIcon;
-        }
+        if (elementData.hideNetworkIcon !== undefined) { delete elementData.hideNetworkIcon; }
+        if (elementData.showOnlyNetworkName !== undefined) { delete elementData.showOnlyNetworkName; }
       }
       return newData;
     });
@@ -203,8 +202,12 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
               <FormControlLabel control={<Switch checked={data?.socialsOnlyIcons || false}
                 onChange={handlerSwitch('socialsOnlyIcons')} />} label="Only icons"  />
             ) : (
-              <FormControlLabel control={<Switch checked={data?.hideNetworkIcon || false}
-                onChange={handlerSwitch('hideNetworkIcon')} />} label="Hide network icon from button" />
+              <>
+                <FormControlLabel control={<Switch checked={data?.hideNetworkIcon || false}
+                  onChange={handlerSwitch('hideNetworkIcon')} />} label="Hide network icon from button" />
+                <FormControlLabel control={<Switch checked={data?.showOnlyNetworkName || false}
+                  onChange={handlerSwitch('showOnlyNetworkName')} />} label="Show only network name" />
+              </>
             )}
             {data?.socialsOnlyIcons && (<FormControl size='small' margin="dense" sx={{width: {xs: '100%', sm: '220px'}}}>
               <InputLabel>{'Icon size'}</InputLabel>
