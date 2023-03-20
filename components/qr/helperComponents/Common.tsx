@@ -23,7 +23,7 @@ import {initialData} from "../../../helpers/qr/data";
 import {generateUUID} from "listr2/dist/utils/uuid";
 import valueHanler from "./valueHandler";
 import validator from "../validator";
-import {FORCE_EXTRA} from "../../../consts";
+import {FORCE_EXTRA, IGNORE_VALIDATOR} from "../../../consts";
 
 const ErrorsDialog = dynamic(() => import("./looseComps/ErrorsDialog"));
 const RenderMode = dynamic(() => import("./looseComps/RenderMode"));
@@ -152,7 +152,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   </>);
 
   const handleSave = async () => {
-    const validate = validator(data.custom || [], FORCE_EXTRA.includes(selected));
+    const validate = validator(data.custom || [], FORCE_EXTRA.includes(selected), IGNORE_VALIDATOR.includes(selected));
     if (validate.length) {
       setValidationErrors(validate);
     } else {

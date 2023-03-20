@@ -10,6 +10,7 @@ export const MAIN_CONFIG = {
 };
 
 export const FORCE_EXTRA = ['vcard+', 'petId'];
+export const IGNORE_VALIDATOR = ['donation', 'paylink', 'crypto', 'fundme'];
 
 export const PLAN_TEST_MODE_PRICES = {
   basic: "price_1MW7e3CHh3XhfaZrmbwkowKM",

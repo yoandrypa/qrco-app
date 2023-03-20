@@ -46,7 +46,10 @@ const handleAction = (x: CustomType, index: number, other?: string) => {
   return errors;
 }
 
-const validator = (custom: CustomType[], forceExtra: boolean) => {
+const validator = (custom: CustomType[], forceExtra: boolean, ignore?: boolean) => {
+  if (ignore) {
+    return [];
+  }
   let errors = [] as string[];
   if (!custom.length) {
     errors.push('Add at least one section');
