@@ -2,6 +2,7 @@ import {memo} from "react";
 import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
+import RenderIcon from "../../helperComponents/smallpieces/RenderIcon";
 
 interface RenderTextFieldsProps {
   label?: string;
@@ -14,9 +15,10 @@ interface RenderTextFieldsProps {
   item?: string;
   sx?: any;
   index?: number;
+  includeIcon?: boolean;
 }
 
-const RenderTextFields = ({value, handleValues, placeholder, label, item, required, isError, multiline, sx}: RenderTextFieldsProps) => (
+const RenderTextFields = ({value, handleValues, placeholder, label, item, required, isError, multiline, sx, includeIcon}: RenderTextFieldsProps) => (
   <TextField
     sx={{...sx}}
     label={label}
@@ -30,6 +32,9 @@ const RenderTextFields = ({value, handleValues, placeholder, label, item, requir
     placeholder={placeholder}
     onChange={item !== undefined ? handleValues(item) : handleValues}
     InputProps={{
+      startAdornment: includeIcon && (
+        <RenderIcon icon={item || ''} enabled color={'#717171'} sx={{ mr: includeIcon ? '5px' : 'unset' }} />
+      ),
       endAdornment: (
         required && !value.trim().length ? (
           <InputAdornment position="end">

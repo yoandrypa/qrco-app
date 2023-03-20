@@ -76,7 +76,8 @@ export const dynamicQr = {
     predefined: ['company', 'action', 'address', 'opening', 'easiness', 'socials']
   },
   social: {
-    description: "Share your social networks information"
+    description: "Share your social networks information",
+    predefined: ['title', 'socials']
   },
   link: {
     tip: "Add at least one link to your websites",

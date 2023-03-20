@@ -34,6 +34,7 @@ const EmailIcon = dynamic(() => import('@mui/icons-material/Email'));
 const PetsIcon = dynamic(() => import('@mui/icons-material/Pets'));
 const LocalParkingIcon = dynamic(() => import('@mui/icons-material/LocalParking'));
 const ParkIcon = dynamic(() => import('@mui/icons-material/Park'));
+const FaxIcon = dynamic(() => import('@mui/icons-material/Fax'));
 const TrainIcon = dynamic(() => import('@mui/icons-material/Train'));
 const DirectionsBusIcon = dynamic(() => import('@mui/icons-material/DirectionsBus'));
 const LocalTaxiIcon = dynamic(() => import('@mui/icons-material/LocalTaxi'));
@@ -66,78 +67,82 @@ const InventoryIcon = dynamic(() => import('@mui/icons-material/Inventory'));
 type RenderIconProp = {
   icon: string;
   enabled: boolean;
-  adjust?: boolean;
   color?: string;
+  sx?: Object;
 };
 
-export default function RenderIcon({ icon, color, enabled, adjust }: RenderIconProp) {
+export default function RenderIcon({ icon, color, enabled, sx }: RenderIconProp) {
   const theme = useTheme();
   const renderIcon = () => {
-    const sx = { mb: adjust ? '-5px' : 0, color: enabled ? color || theme.palette.primary.dark : grey[600] };
+    const sxStyling = { ...sx, color: enabled ? color || theme.palette.primary.dark : grey[600] };
     switch (icon) {
-      case 'custom': { return <CustomizeIcon sx={sx} />; }
-      case 'copy': { return <ContentCopyIcon sx={sx} />; }
-      case 'phone': { return <PhoneIcon sx={sx} />; }
-      case 'cell': { return <SmartphoneIcon sx={sx} />; }
-      case 'location': { return <LocationOnIcon sx={sx} />; }
-      case 'email': { return <AlternateEmailIcon sx={sx} />; }
-      case 'emailIcon': { return <EmailIcon sx={sx} />; }
-      case 'facebook': { return <FacebookIcon sx={sx} /> }
-      case 'sms': { return <SmsOutlinedIcon sx={sx} />; }
-      case 'twitter': { return <TwitterIcon sx={sx} /> }
-      case 'vcard': { return <ContactPhoneOutlinedIcon sx={sx} />; }
+      case 'custom': { return <CustomizeIcon sx={sxStyling} />; }
+      case 'copy': { return <ContentCopyIcon sx={sxStyling} />; }
+      case 'companyPhone':
+      case 'phone': { return <PhoneIcon sx={sxStyling} />; }
+      case 'companyCell':
+      case 'cell': { return <SmartphoneIcon sx={sxStyling} />; }
+      case 'companyFax':
+      case 'fax': { return <FaxIcon sx={sxStyling} />; }
+      case 'location': { return <LocationOnIcon sx={sxStyling} />; }
+      case 'email': { return <AlternateEmailIcon sx={sxStyling} />; }
+      case 'emailIcon': { return <EmailIcon sx={sxStyling} />; }
+      case 'facebook': { return <FacebookIcon sx={sxStyling} /> }
+      case 'sms': { return <SmsOutlinedIcon sx={sxStyling} />; }
+      case 'twitter': { return <TwitterIcon sx={sxStyling} /> }
+      case 'vcard': { return <ContactPhoneOutlinedIcon sx={sxStyling} />; }
       case 'contact':
-      case 'vcard+': { return <ContactPhoneIcon sx={sx} />; }
-      case 'web': { return <WebIcon sx={sx} />; }
-      case 'whatsapp': { return <WhatsAppIcon sx={sx} />; }
-      case 'pinterest': { return <PinterestIcon sx={sx} />; }
-      case 'linkedin': { return <LinkedInIcon sx={sx} />; }
-      case 'telegram': { return <TelegramIcon sx={sx} />; }
-      case 'instagram': { return <InstagramIcon sx={sx} />; }
-      case 'youtube': { return <YouTubeIcon sx={sx} />; }
-      case 'wifi': { return <WifiIcon sx={sx} />; }
-      case 'pdf': { return <PictureAsPdfIcon sx={sx} />; }
-      case 'audio': { return <VolumeUpIcon sx={sx} />; }
-      case 'video': { return <MovieIcon sx={sx} />; }
+      case 'vcard+': { return <ContactPhoneIcon sx={sxStyling} />; }
+      case 'web': { return <WebIcon sx={sxStyling} />; }
+      case 'whatsapp': { return <WhatsAppIcon sx={sxStyling} />; }
+      case 'pinterest': { return <PinterestIcon sx={sxStyling} />; }
+      case 'linkedin': { return <LinkedInIcon sx={sxStyling} />; }
+      case 'telegram': { return <TelegramIcon sx={sxStyling} />; }
+      case 'instagram': { return <InstagramIcon sx={sxStyling} />; }
+      case 'youtube': { return <YouTubeIcon sx={sxStyling} />; }
+      case 'wifi': { return <WifiIcon sx={sxStyling} />; }
+      case 'pdf': { return <PictureAsPdfIcon sx={sxStyling} />; }
+      case 'audio': { return <VolumeUpIcon sx={sxStyling} />; }
+      case 'video': { return <MovieIcon sx={sxStyling} />; }
       case 'gallery':
-      case 'image': { return <PhotoIcon sx={sx} />; }
-      case 'business': { return <BusinessIcon sx={sx} />; }
-      case 'health': { return <LocalHospitalIcon sx={sx} />; }
-      case 'seat': { return <ChairIcon sx={sx} />; }
-      case 'accessible': { return <AccessibleIcon sx={sx} />; }
-      case 'toilet': { return <WcIcon sx={sx} />; }
-      case 'restaurant': { return <RestaurantIcon sx={sx} />; }
-      case 'social': { return <ShareIcon sx={sx} />; }
-      case 'child': { return <ChildFriendlyIcon sx={sx} />; }
-      case 'pets': { return <PetsIcon sx={sx} />; }
-      case 'petId': { return <PetsIcon sx={sx} />; }
-      case 'parking': { return <LocalParkingIcon sx={sx} />; }
-      case 'park': { return <ParkIcon sx={sx} />; }
-      case 'train': { return <TrainIcon sx={sx} />; }
-      case 'bus': { return <DirectionsBusIcon sx={sx} />; }
-      case 'taxi': { return <LocalTaxiIcon sx={sx} />; }
-      case 'cafe': { return <LocalCafeIcon sx={sx} />; }
-      case 'bed': { return <HotelIcon sx={sx} />; }
-      case 'smoking': { return <SmokingRoomsIcon sx={sx} />; }
-      case 'bar': { return <LocalBarIcon sx={sx} />; }
-      case 'coupon': { return <ConfirmationNumberIcon sx={sx} />; }
-      case 'fastfood': { return <FastfoodIcon sx={sx} />; }
-      case 'gym': { return <FitnessCenterIcon sx={sx} />; }
-      case 'climate': { return <AcUnitIcon sx={sx} />; }
-      case 'shower': { return <ShowerIcon sx={sx} />; }
-      case 'training': { return <SchoolIcon sx={sx} />; }
-      case 'http': { return <HttpIcon sx={sx} />; }
-      case 'donation': { return <Coffee sx={sx} />; }
-      case 'about': { return <InfoIcon sx={sx} />; }
-      case 'world': { return <PublicIcon sx={sx} />; }
-      case 'link': { return <LinkIcon sx={sx} />; }
-      case 'fundme': { return <VolunteerActivism sx={sx} />; }
-      case 'paylink': { return <CreditCard sx={sx} />; }
-      case 'crypto': { return <CurrencyBitcoinIcon sx={sx} />; }
-      case 'linkedLabel': { return <QrCode sx={sx} />; }
-      case 'findMe': {{ return <PersonSearchIcon sx={sx} />; }}
-      case 'inventory': { return <InventoryIcon sx={sx} />; }
-      default: { return <TextSnippetOutlinedIcon sx={sx} />; }
+      case 'image': { return <PhotoIcon sx={sxStyling} />; }
+      case 'business': { return <BusinessIcon sx={sxStyling} />; }
+      case 'health': { return <LocalHospitalIcon sx={sxStyling} />; }
+      case 'seat': { return <ChairIcon sx={sxStyling} />; }
+      case 'accessible': { return <AccessibleIcon sx={sxStyling} />; }
+      case 'toilet': { return <WcIcon sx={sxStyling} />; }
+      case 'restaurant': { return <RestaurantIcon sx={sxStyling} />; }
+      case 'social': { return <ShareIcon sx={sxStyling} />; }
+      case 'child': { return <ChildFriendlyIcon sx={sxStyling} />; }
+      case 'pets': { return <PetsIcon sx={sxStyling} />; }
+      case 'petId': { return <PetsIcon sx={sxStyling} />; }
+      case 'parking': { return <LocalParkingIcon sx={sxStyling} />; }
+      case 'park': { return <ParkIcon sx={sxStyling} />; }
+      case 'train': { return <TrainIcon sx={sxStyling} />; }
+      case 'bus': { return <DirectionsBusIcon sx={sxStyling} />; }
+      case 'taxi': { return <LocalTaxiIcon sx={sxStyling} />; }
+      case 'cafe': { return <LocalCafeIcon sx={sxStyling} />; }
+      case 'bed': { return <HotelIcon sx={sxStyling} />; }
+      case 'smoking': { return <SmokingRoomsIcon sx={sxStyling} />; }
+      case 'bar': { return <LocalBarIcon sx={sxStyling} />; }
+      case 'coupon': { return <ConfirmationNumberIcon sx={sxStyling} />; }
+      case 'fastfood': { return <FastfoodIcon sx={sxStyling} />; }
+      case 'gym': { return <FitnessCenterIcon sx={sxStyling} />; }
+      case 'climate': { return <AcUnitIcon sx={sxStyling} />; }
+      case 'shower': { return <ShowerIcon sx={sxStyling} />; }
+      case 'training': { return <SchoolIcon sx={sxStyling} />; }
+      case 'http': { return <HttpIcon sx={sxStyling} />; }
+      case 'donation': { return <Coffee sx={sxStyling} />; }
+      case 'about': { return <InfoIcon sx={sxStyling} />; }
+      case 'world': { return <PublicIcon sx={sxStyling} />; }
+      case 'link': { return <LinkIcon sx={sxStyling} />; }
+      case 'fundme': { return <VolunteerActivism sx={sxStyling} />; }
+      case 'paylink': { return <CreditCard sx={sxStyling} />; }
+      case 'crypto': { return <CurrencyBitcoinIcon sx={sxStyling} />; }
+      case 'linkedLabel': { return <QrCode sx={sxStyling} />; }
+      case 'findMe': {{ return <PersonSearchIcon sx={sxStyling} />; }}
+      case 'inventory': { return <InventoryIcon sx={sxStyling} />; }
+      default: { return <TextSnippetOutlinedIcon sx={sxStyling} />; }
     }
   };
 

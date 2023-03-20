@@ -2,21 +2,26 @@ import {CustomType} from "./types/types";
 import {EMAIL, PHONE, YEAR, ZIP} from "./constants";
 import {isValidUrl} from "../../utils";
 import {components} from "./renderers/custom/helperFuncs";
+import {capitalize} from "@mui/material";
 
 // @ts-ignore
 const exists = (x: CustomType, item: string) => x.data?.[item] !== undefined && !x.data[item].trim().length !== 0;
 
 const isEmpty = (x: CustomType) => !Object.keys(x.data || {}).length;
 
-const handlePhones = (x: CustomType, index: number, other?: string) => {
+const handlePhones = (x: CustomType, index: number, other?: string, company?: boolean) => {
   const errors = [] as string[];
-  if (exists(x, 'cell') && !PHONE.test(x.data?.cell || '')) {
+  const getItem = (item: string): string => `${!company ? '' : 'company'}${!company ? item : capitalize(item)}`; // @ts-ignore
+  if (exists(x, getItem('cell')) && !PHONE.test(x.data?.[getItem('cell')] || '')) {
     errors.push(`Enter a valid cell number in ${other ? `${other} ` : ''}section ${index + 1}`);
-  }
-  if (exists(x, 'phone') && !PHONE.test(x.data?.phone || '')) {
+  } // @ts-ignore
+  if (exists(x, getItem('phone')) && !PHONE.test(x.data?.[getItem('phone')] || '')) {
     errors.push(`Enter a valid phone number in ${other ? `${other} ` : ''}section ${index + 1}`);
   }
-  if (exists(x, 'fax') && !PHONE.test(x.data?.fax || '')) {
+  if (exists(x, 'whatsapp') && !PHONE.test(x.data?.fax || '')) {
+    errors.push(`Enter a valid whatsapp number in ${other ? `${other} ` : ''}section ${index + 1}`);
+  } // @ts-ignore
+  if (exists(x,  getItem('fax')) && !PHONE.test(x.data?.[getItem('fax')] || '')) {
     errors.push(`Enter a valid fax number in ${other ? `${other} ` : ''}section ${index + 1}`);
   }
   return errors;

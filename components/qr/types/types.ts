@@ -92,6 +92,7 @@ export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'y
 export type SocialNetworksType = { network: SocialsType, value?: string };
 
 export type Type = {
+  showOnlyNetworkName?: boolean;
   visibleReceipt?: boolean;
   iconSize?: string;
   linksAsButtons?: boolean;
