@@ -23,7 +23,7 @@ import { waitConfirmation } from "../ConfirmDialog";
 import { releaseWaiting, startWaiting } from "../Waiting";
 import { startAuthorizationFlow } from "../../libs/utils/auth";
 import validator from "./validator";
-import {FORCE_EXTRA} from "../../consts";
+import {FORCE_EXTRA, IGNORE_VALIDATOR} from "../../consts";
 
 const ErrorsDialog = dynamic(() => import("./helperComponents/looseComps/ErrorsDialog"));
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
@@ -141,7 +141,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     if (!(await allowCreate())) return;
 
     if (router.pathname === QR_CONTENT_ROUTE) {
-      const validation = validator(data.custom || [], FORCE_EXTRA.includes(selected));
+      const validation = validator(data.custom || [], FORCE_EXTRA.includes(selected), IGNORE_VALIDATOR.includes(selected));
       if (validation.length) {
         setValidationErrors(validation);
         return;
