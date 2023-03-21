@@ -17,6 +17,7 @@ import Expander from "../../renderers/helpers/Expander";
 
 import dynamic from "next/dynamic";
 
+const RenderTitleDescFontsHandler = dynamic(() => import("./RenderTitleDescFontsHanlder"));
 const RenderButtonsFontsHandler = dynamic(() => import("./RenderMainFontsHandler"));
 
 interface RenderFontsHandlerProps {
@@ -111,6 +112,10 @@ export default function RenderFontsHandler({data, handleValue}: RenderFontsHandl
                 <RenderFontStyles value={data?.messagesFontStyle} property="messagesFontStyle" handleValue={handleValue}/>
               </Grid>
             </Grid>
+          </Paper>
+          <Paper elevation={2} sx={{p: 1, width: '100%', mb: 2}}>
+            <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Section title and description'}</Typography>
+            <RenderTitleDescFontsHandler handleValue={handleValue} data={data} />
           </Paper>
           <Paper elevation={2} sx={{p: 1, width: '100%'}}>
             <Typography sx={{fontWeight: 'bold', mb: '5px'}}>{'Buttons'}</Typography>

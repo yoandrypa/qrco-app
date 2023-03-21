@@ -327,6 +327,12 @@ export type DataType = {
   buttonBorders?: string;
   buttonBackColor?: string;
   layout?: string;
+  sectionTitleFont?: string;
+  sectionTitleFontSize?: string;
+  sectionTitleFontStyle?: string;
+  sectionDescFont?: string;
+  sectionDescFontSize?: string;
+  sectionDescFontStyle?: string;
   titlesFont?: string;
   subtitlesFont?: string;
   messagesFont?: string;
