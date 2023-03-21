@@ -203,10 +203,8 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
               <Suspense fallback={<PleaseWait />}>
                 {step === 1 && isReady && noEditImages === undefined && (
                   <RenderEditImageOnClick
-                    hideBannerSelection={data?.layout?.includes('banner') || false}
-                    shape={data?.foregndImgType || undefined} left={data?.layout?.toLowerCase().includes('left') || false}
-                    size={data?.profileImageSize} pos={data?.profileImageVertical}
-                    handleEdit={handlePickImage} renderFloating={!Boolean(data?.foregndImg)} />
+                    handleEdit={handlePickImage}
+                    hideBannerSelection={data?.layout?.includes('banner') || false} />
                 )}
                 <RenderIframe
                   src={!code ? cleanSelectionForMicrositeURL(selected || '', isDynamic, true) : `${microSitesBaseUrl}/sample/empty`}
