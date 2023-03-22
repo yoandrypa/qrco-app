@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 
-import {DataType, OpeningDaysType, OpeningType} from "../../types/types";
+import {Type, OpeningType, DataType, OpeningObjType} from "../../types/types";
 import {DAYS} from "../../constants";
 import RenderTimeSelector from "../helpers/RenderTimeSelector";
 import IconButton from "@mui/material/IconButton";
@@ -17,7 +17,7 @@ const getInitial = () => ({ini: getHM(new Date()), end: getHM(new Date())});
 
 interface OpeningTimeProps {
   index: number;
-  data?: DataType;
+  data?: Type;
   setData: Function;
 }
 
@@ -25,19 +25,11 @@ export default function RenderOpeningTime({data, setData, index}: OpeningTimePro
   const handleFormat = (is: boolean) => () => {
     setData((prev: DataType) => {
       const newData = {...prev};
-      if (is) {
-        if (index === -1) {
-          newData.is12hours = is;
-        } else { // @ts-ignore
-          if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
-          newData.custom[index].data.is12hours = is;
-        }
-      } else if (data?.is12hours !== undefined) {
-        if (index === -1) {
-          delete newData.is12hours;
-        } else { // @ts-ignore
-          delete newData.custom[index].data.is12hours;
-        }
+      if (is) { // @ts-ignore
+        if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
+        newData.custom[index].data.is12hours = is;
+      } else if (data?.is12hours !== undefined) { // @ts-ignore
+        delete newData.custom[index].data.is12hours;
       }
       return newData;
     });
@@ -45,22 +37,13 @@ export default function RenderOpeningTime({data, setData, index}: OpeningTimePro
 
   const handleWorkingDay = (day: string) => () => {
     setData((prev: DataType) => {
-      const newData = {...prev};
-      if (index === -1) {
-        if (!newData.openingTime) { newData.openingTime = {}; } // @ts-ignore
-        if (!newData.openingTime[day]) { // @ts-ignore
-          newData.openingTime[day] = [getInitial()];
-        } else { // @ts-ignore
-          delete newData.openingTime[day];
-        }
+      const newData = {...prev}; // @ts-ignore
+      if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
+      if (!newData.custom[index].data.openingTime) { newData.custom[index].data.openingTime = {}; } // @ts-ignore
+      if (!newData.custom[index].data.openingTime[day]) { // @ts-ignore
+        newData.custom[index].data.openingTime[day] = [getInitial()];
       } else { // @ts-ignore
-        if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
-        if (!newData.custom[index].data.openingTime) { newData.custom[index].data.openingTime = {}; } // @ts-ignore
-        if (!newData.custom[index].data.openingTime[day]) { // @ts-ignore
-          newData.custom[index].data.openingTime[day] = [getInitial()];
-        } else { // @ts-ignore
-          delete newData.custom[index].data.openingTime[day];
-        }
+        delete newData.custom[index].data.openingTime[day];
       }
       return newData;
     });
@@ -69,18 +52,10 @@ export default function RenderOpeningTime({data, setData, index}: OpeningTimePro
   const handleOption = (x: string, idx: number) => () => { // idx = 0 aims to add
     setData((prev: DataType) => {
       const newData = {...prev};
-      if (index === -1) {
-        if (idx === 0) { // @ts-ignore
-          newData.openingTime[x].push(getInitial());
-        } else { // @ts-ignore
-          newData.openingTime[x].splice(idx, 1);
-        }
-      } else {
-        if (idx === 0) { // @ts-ignore
-          newData.custom[index].data.openingTime[x].push(getInitial());
-        } else { // @ts-ignore
-          newData.custom[index].data.openingTime[x].splice(idx, 1);
-        }
+      if (idx === 0) { // @ts-ignore
+        newData.custom[index].data.openingTime[x].push(getInitial());
+      } else { // @ts-ignore
+        newData.custom[index].data.openingTime[x].splice(idx, 1);
       }
       return newData;
     })
@@ -128,15 +103,31 @@ export default function RenderOpeningTime({data, setData, index}: OpeningTimePro
               return (
                 <Paper elevation={2} sx={{mr: '10px', mb: '5px', p: 1, minWidth: '318px', maxWidth: 'calc(50% - 15px)'}} key={`day${day}`}>
                   <Typography sx={{fontWeight: 'bold'}}>{day}</Typography>
-                  {values.map((timing: OpeningDaysType, idx: number) => {
-                    const disabled = idx === 0 && values.length === 2;
+                  {values.map((timing: OpeningObjType, idx: number) => {
+                    const disabled = idx === 0 && values.length === 4;
                     return (
                       <Box sx={{width: '100%', display: 'flex'}} key={`item${day}`}>
                         <Box sx={{width: 'calc(50% - 20px)'}}>
-                          <RenderTimeSelector data={data} setData={setData} day={x} ini index={idx}/>
+                          <RenderTimeSelector // Time Selector component handles the new data by itself, notice the setData func
+                            time={timing.ini}
+                            setData={setData}
+                            day={x}
+                            ini
+                            idx={idx}
+                            index={index}
+                            is12hours={data?.is12hours}
+                          />
                         </Box>
                         <Box sx={{width: 'calc(50% - 20px)', ml: '5px'}}>
-                          <RenderTimeSelector data={data} setData={setData} day={x} ini={false} index={idx}/>
+                          <RenderTimeSelector
+                            time={timing.end}
+                            setData={setData}
+                            day={x}
+                            ini={false}
+                            idx={idx}
+                            index={index}
+                            is12hours={data?.is12hours}
+                          />
                         </Box>
                         <Box sx={{width: '30px', ml: '5px'}}>
                           <IconButton disabled={disabled} onClick={handleOption(x, idx)} sx={{mt: '5px'}}>
