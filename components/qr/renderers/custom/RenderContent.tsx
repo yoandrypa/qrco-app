@@ -58,7 +58,9 @@ const RenderContent = ({component, handleValues, index, data, setData, predefine
     {component === components[11].type && <RenderOpeningTime data={data} setData={setData} index={index}/>}
     {component === components[12].type && <RenderSocials data={data} setData={setData} index={index}/>}
     {component === components[13].type && <RenderTitleDesc handleValues={handleValues} title={data?.titleAbout} noPaper sx={{mt: '5px'}}
-                                                           header="Fill at least one of these fields" description={data?.descriptionAbout} index={index}/>}
+                                                           description={data?.descriptionAbout} index={index}
+                                                           noHeader={Boolean(data?.titleAbout?.trim().length) || Boolean(data?.descriptionAbout?.trim().length)}
+                                                           header="Fill at least one of these fields" />}
     {component === components[14].type && <RenderActionButton index={index} setData={setData} handleValues={handleValues} data={data} />}
     {component === components[15].type && <RenderSingleText text={data?.text || ''} index={index} handleValues={handleValues}/>}
     {component === components[16].type && <RenderAssetsData totalFiles={predefined === undefined ? 1 : FILE_LIMITS['pdf'].totalFiles}
