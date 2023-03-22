@@ -82,6 +82,7 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
       setData((prev: any) => {
         const newData = {...prev};
         newData[prop] = payload.target?.value !== undefined ? payload.target.value : payload;
+        if (['micrositeBackImage','backgndImg','foregndImg'].includes(prop)) { newData.forceChange = !Boolean(newData.forceChange); }
         if (prop === 'footerKind') {
           if (payload === 'default') { delete newData.footerKind; }
           if (payload !== 'custom' && newData.customFooter !== undefined) { delete newData.customFooter; }

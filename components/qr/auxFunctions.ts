@@ -198,6 +198,10 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     delete data.claim;
   }
 
+  if (data.forceChange) {
+    delete data.forceChange;
+  }
+
   const dataLength = updatingHandler !== undefined && dataInfo !== undefined && dataInfo > 0;
 
   if (data.backgndImg !== undefined) {
