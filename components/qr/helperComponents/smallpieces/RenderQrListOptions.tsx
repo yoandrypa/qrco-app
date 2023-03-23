@@ -152,7 +152,7 @@ const RenderQrListOptions = ({qr, handleEdit, setConfirm, handlePauseQrLink, han
               <QrCodeIcon color="primary"/>
               <Typography sx={{ml: '5px'}}>{'Download QR code'}</Typography>
             </MenuItem>
-            {IS_DEV_ENV && qr.qrType === "donation" && !!qr.donationProductId && (
+            {IS_DEV_ENV && qr.qrType === "donation" && (
               <MenuItem component="a" target="_blank" rel="noopener noreferrer" key="goToDashBoardMenuItem" onClick={() => setAnchor(null)}
                         href={IS_DEV_ENV ? "https://dev-app.ebanux.com/checkouts" : "https://app.ebanux.com/checkouts"}>
                 <DashboardIcon color="info" />
