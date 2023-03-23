@@ -12,18 +12,19 @@ import {useTheme} from "@mui/system";
 
 import dynamic from "next/dynamic";
 
-import RenderMainFontsHandler from "../smallpieces/RenderMainFontsHandler";
-import RenderHandleOpacityBlurness from "../smallpieces/RenderHandleOpacityBlurness";
+import RenderMainFontsHandler from "./RenderMainFontsHandler";
+import RenderHandleOpacityBlurness from "./RenderHandleOpacityBlurness";
 import {CustomCommon} from "../../types/types";
 import SectionSelector from "../SectionSelector";
 import ColorSelector from "../ColorSelector";
 import {DEFAULT_COLORS} from "../../constants";
 import {ChangeEvent} from "react";
-import SpacingSelector from "./SpacingSelector";
+import SpacingSelector from "../looseComps/SpacingSelector";
+import RenderDisplacement from "../looseComps/RenderDisplacement";
 
-const RenderBorders = dynamic(() => import("./RenderBorders"));
-const RenderCustButtons = dynamic(() => import("./RenderCustButtons"));
-const RenderTwoColors = dynamic(() => import("../smallpieces/RenderTwoColors"));
+const RenderBorders = dynamic(() => import("../looseComps/RenderBorders"));
+const RenderCustButtons = dynamic(() => import("../looseComps/RenderCustButtons"));
+const RenderTwoColors = dynamic(() => import("./RenderTwoColors"));
 
 export default function RenderButtonHandler({data, handleValue}: CustomCommon) {
   const isWide = useMediaQuery("(min-width:900px)", {noSsr: true});
@@ -147,7 +148,8 @@ export default function RenderButtonHandler({data, handleValue}: CustomCommon) {
           )}
         </Box>
         {data?.buttonBack === 'two' && <RenderTwoColors handleValue={handleValue} data={data} property="buttonBackColor"/>}
-        {data?.buttonBack === 'gradient' ? <RenderTwoColors handleValue={handleValue} data={data} isGradient property="buttonBackColor"/> :
+        {data?.buttonBack === 'gradient' && <RenderTwoColors handleValue={handleValue} data={data} isGradient property="buttonBackColor"/>}
+        {data?.buttonBack !== 'gradient' && !data?.buttonShadowDisplacement &&
           (
             <Box sx={{width: 'calc(100% - 10px)'}}>
               <RenderHandleOpacityBlurness
@@ -160,7 +162,7 @@ export default function RenderButtonHandler({data, handleValue}: CustomCommon) {
           )
         }
       </Box>
-      <Box sx={{p: 1, mt: '-25px'}}>
+      <Box sx={{p: 1, mt: '-15px'}}>
         <Typography>{'Borders'}</Typography>
         <Grid container spacing={2}>
           <Grid item sm={data?.buttonBorderStyle && data?.buttonBorderStyle !== 'noBorders' ? 4 : 12} xs={12}>
@@ -178,9 +180,6 @@ export default function RenderButtonHandler({data, handleValue}: CustomCommon) {
                 <MenuItem value="noBorders">No borders</MenuItem>
               </Select>
             </FormControl>
-            {data?.buttonBorderStyle === 'two' && (
-              <RenderTwoColors handleValue={handleValue} data={data} property="buttonBorderColors" />
-            )}
           </Grid>
           {data?.buttonBorderStyle && data?.buttonBorderStyle !== 'noBorders' && (
             <>
@@ -217,6 +216,21 @@ export default function RenderButtonHandler({data, handleValue}: CustomCommon) {
                 </FormControl>
               </Grid>
             </>
+          )}
+          {data?.buttonBorderStyle && data?.buttonBorderStyle !== 'noBorders' && (
+            <Grid item xs={12}>
+              <Grid container spacing={2}>
+              {data?.buttonBorderStyle === 'two' && (
+                <Grid item sm={4} xs={12}>
+                  <RenderTwoColors handleValue={handleValue} data={data} property="buttonBorderColors" />
+                </Grid>
+              )}
+              <Grid item xs={12} sm={data?.buttonBorderStyle === 'two' ? 8 : 12}>
+                <Typography sx={{fontSize: 'smaller', color: theme => theme.palette.text.disabled, mt: '-10px', mb: '2px'}}>{'Displacement direction'}</Typography>
+                <RenderDisplacement handleValue={handleValue} direction={data?.buttonShadowDisplacement} />
+              </Grid>
+              </Grid>
+            </Grid>
           )}
         </Grid>
       </Box>

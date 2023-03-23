@@ -78,6 +78,13 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
         if (payload !== '4' && newData.buttonBorders !== undefined) { delete newData.buttonBorders; }
         return newData;
       });
+    } else if (prop === 'buttonShadowDisplacement') {
+      setData((prev: any) => {
+        const newData = {...prev, buttonShadowDisplacement: payload};
+        if (newData.buttonShadow !== undefined) { delete newData.buttonShadow; }
+        if (newData.buttonsOpacity !== undefined) { delete newData.buttonsOpacity; }
+        return newData;
+      });
     } else {
       setData((prev: any) => {
         const newData = {...prev};
