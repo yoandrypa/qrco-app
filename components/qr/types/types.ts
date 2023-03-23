@@ -202,6 +202,7 @@ export type CustomType = {
 };
 
 export type DataType = {
+  buttonShadowDisplacement?: string;
   forceChange?: boolean;
   buttonsSeparation?: string;
   profileImageVertical?: string;

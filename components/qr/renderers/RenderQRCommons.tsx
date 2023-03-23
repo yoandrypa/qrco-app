@@ -9,7 +9,7 @@ import dynamic from "next/dynamic";
 
 const RenderHandlerBackground = dynamic(() => import ("../helperComponents/smallpieces/RenderHandlerBackground"));
 const RenderMainImgsSelector = dynamic(() => import("../helperComponents/smallpieces/RenderMainImgsSelector"));
-const RenderButtonHandler = dynamic(() => import('../helperComponents/looseComps/RenderButtonHandler'));
+const RenderButtonHandler = dynamic(() => import('../helperComponents/smallpieces/RenderButtonHandler'));
 const RenderFontsHandler = dynamic(() => import('../helperComponents/smallpieces/RenderFontsHandler'));
 const RenderLayoutHandler = dynamic(() => import("../helperComponents/smallpieces/RenderLayoutHandler"));
 const RenderMainColors = dynamic(() => import("../helperComponents/smallpieces/RenderMainColors"));
