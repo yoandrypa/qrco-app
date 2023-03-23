@@ -1,3 +1,4 @@
+import session from "@ebanux/ebanux-utils/sessionStorage";
 import { createAxiosInstance } from "@ebanux/ebanux-utils/request";
 
 export async function createQrDonationPayLynk(data: any, shortLink: string) {
@@ -11,6 +12,7 @@ export async function createQrDonationPayLynk(data: any, shortLink: string) {
   });
 
   data.priceId = priceId;
+  data.ownerId = session.currentUser?.cognito_user_id;
 
   return data;
 }
