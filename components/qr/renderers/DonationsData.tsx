@@ -16,9 +16,8 @@ export interface DonationsProps {
     avatarImage?: string,
     message?: string,
     web?: string,
-    donationUnitAmount?: number,
-    donationPriceId?: string,
-    donationProductId?: string,
+    unitAmount?: number,
+    priceId?: string,
     urlOptionLabel?: string,
     email?: string
   },
@@ -28,7 +27,7 @@ export interface DonationsProps {
 }
 
 type Options = 'message' | 'title' | 'avatarImage' |
-  'web' | 'donationUnitAmount' | 'urlOptionLabel'
+  'web' | 'unitAmount' | 'urlOptionLabel'
 
 const options = ['Donate', 'Contribute', 'Give'];
 
@@ -43,13 +42,13 @@ const DonationsData = ({ data, setData, setIsWrong, handleValues }: DonationsPro
     const temp = { ...data }
     if (coffeePrice < 1) {
       setCoffeePrice(1)
-      temp["donationUnitAmount"] = 1
+      temp["unitAmount"] = 1
     } else if (coffeePrice > 100) {
       setCoffeePrice(100)
-      temp["donationUnitAmount"] = 100
+      temp["unitAmount"] = 100
 
     } else {
-      temp["donationUnitAmount"] = coffeePrice
+      temp["unitAmount"] = coffeePrice
     }
 
   }
@@ -74,7 +73,7 @@ const DonationsData = ({ data, setData, setIsWrong, handleValues }: DonationsPro
 
     }
     if (value.length) {
-      if (item === 'donationUnitAmount') {
+      if (item === 'unitAmount') {
         setCoffeePrice(parseFloat(value))
         if (parseFloat(value) < 1) {
           setIsWrong(true)
@@ -185,7 +184,7 @@ const DonationsData = ({ data, setData, setIsWrong, handleValues }: DonationsPro
                   placeholder='10'
                   size='small'
                   value={coffeePrice}
-                  onChange={handleValuesBefore('donationUnitAmount')}
+                  onChange={handleValuesBefore('unitAmount')}
                 />
               </Grid>
             </Grid>

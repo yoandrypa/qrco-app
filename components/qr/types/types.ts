@@ -237,9 +237,8 @@ export type DataType = {
   number?: string;
   avatarImage?: string;
   bannerImage?: string;
-  donationUnitAmount?: number;
-  donationPriceId?: string;
-  donationProductId?: string;
+  unitAmount?: number;
+  priceId?: string;
   message?: string;
   subject?: string;
   body?: string;
