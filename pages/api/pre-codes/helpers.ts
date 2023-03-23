@@ -4,10 +4,10 @@ import dynamoose from "../../../libs/dynamoose";
 import { customAlphabet } from "nanoid";
 import { LinkModel, PreGeneratedModel } from "../../../models/link";
 import { NextApiRequest } from "next";
+import { microSitesBaseUrl } from "../base/helpers";
 
 export { respondWithException } from "../../../libs/exceptions";
 
-const MICRO_SITES_BASE_URL = process.env.MICRO_SITES_BASE_URL || 'https://dev.a-qr.link';
 const LINK_CODE_ALPHABET = process.env.LINK_CODE_ALPHABET || 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 const MAX_ALLOW_COLLISIONS = parseInt(process.env.MAX_ALLOW_COLLISIONS || '25', 10);
 
@@ -122,7 +122,7 @@ export async function getPreGenCodes(owner: string = 'any') {
   const codes: any[] = await PreGeneratedModel.query({ owner }).exec();
 
   return {
-    codes: codes.map((item) => ({ ...item, url: `${MICRO_SITES_BASE_URL}/${item.code}` })),
+    codes: codes.map((item) => ({ ...item, url: `${microSitesBaseUrl}/${item.code}` })),
     count: codes.length,
   };
 }

@@ -3,7 +3,6 @@ import {
   BackgroundType,
   CornersAndDotsType,
   DataType,
-  EbanuxDonationPriceData,
   EditType,
   FramesType,
   OptionsType
@@ -11,15 +10,13 @@ import {
 import { areEquals } from "../helpers/generalFunctions";
 import { initialBackground, initialFrame } from "../../helpers/qr/data";
 import { upload, remove } from "../../handlers/storage";
-import { updateEbanuxDonationPrice, createEbanuxDonationPrice } from "../../handlers/ebanux";
 import { getUuid } from "../../helpers/qr/helpers";
 import { generateId, generateShortLink } from "../../utils";
 import { create, edit as qrEdit } from "../../handlers/qrs";
 import { startWaiting, releaseWaiting } from "../Waiting";
 import { QR_CONTENT_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { capitalize } from "@mui/material";
-
-import session from "@ebanux/ebanux-utils/sessionStorage";
+import { createQrDonationPayLynk } from "../../libs/utils/donations";
 
 interface UserInfoProps {
   attributes: { sub: string, email: string },
@@ -93,8 +90,8 @@ const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame: Frame
 
   if (!areEquals(background, initialBackground)) {
     qrDesign.background = background;
-    if (qrDesign.background.file === null) { qrDesign.background.file = ''; }
-    if (qrDesign.background.backColor === null) { qrDesign.background.backColor = '#fff'; }
+    if (qrDesign.background.file === null) qrDesign.background.file = '';
+    if (qrDesign.background.backColor === null) qrDesign.background.backColor = '#fff';
   } else if (edit) { // @ts-ignore
     qrDesign.background = initialBackground;
   }
@@ -124,9 +121,9 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
     qrName: qrData.qrName
   } as EditType;
 
-  if (objToEdit.updatedAt) { delete objToEdit.updatedAt; }
-  if (data.isDynamic) { objToEdit.isDynamic = true; }
-  if (objToEdit.mode) { delete objToEdit.mode; }
+  if (objToEdit.updatedAt) delete objToEdit.updatedAt;
+  if (data.isDynamic) objToEdit.isDynamic = true;
+  if (objToEdit.mode) delete objToEdit.mode;
 
   objToEdit.qrOptionsId = qrDesign;
 
@@ -170,16 +167,15 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
                                    updatingHandler?: (value: string | null, status?: boolean) => void) => {
 
   const prevUpdatingHandler = (value: string | null, status?: boolean) => {
-    if (updatingHandler) {
-      updatingHandler(value, status);
-    }
+    if (updatingHandler) updatingHandler(value, status);
   }
 
   const data = structuredClone(dataSource);
+
   if (data.custom?.length) {
     for (let idx = 0, len = data.custom?.length || 0; idx < len; idx += 1) {
       const x = data.custom[idx]; // @ts-ignore
-      if (x.expand !== undefined) { delete x.expand; }
+      if (x.expand !== undefined) delete x.expand;
       if (["pdf", "audio", "gallery", "video"].includes(x.component) && x.data?.files?.length) {
         prevUpdatingHandler(`Uploading assets for ${capitalize(x.component)} section`);
         try {
@@ -194,9 +190,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     }
   }
 
-  if (data.claim) {
-    delete data.claim;
-  }
+  if (data.claim) delete data.claim;
 
   if (data.forceChange) {
     delete data.forceChange;
@@ -218,6 +212,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       delete data.backgndImg;
     }
   }
+
   if (data.prevBackImg !== undefined) {
     prevUpdatingHandler("Removing previous banner image");
     try {
@@ -244,6 +239,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       delete data.foregndImg;
     }
   }
+
   if (data.prevForeImg !== undefined) {
     prevUpdatingHandler("Deleting previous profile image");
     try {
@@ -270,6 +266,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       delete data.backgndImg;
     }
   }
+
   if (data.prevMicrositeImg !== undefined) {
     prevUpdatingHandler("Removing previous background image");
     try {
@@ -282,63 +279,23 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     }
   }
 
-  if (selected === "donation") {
-    data["email"] = session.currentUser.account.email;
-    let priceData: EbanuxDonationPriceData;
-    priceData = {
-      name: `Donate ${data["title"]}` || "Donation",
-      unitAmountUSD: data["donationUnitAmount"] || 1,
-      redirectUrl: data["web"] || ""
-    };
-    if (data["donationPriceId"]) {
-      try {
-        prevUpdatingHandler("Updating donation microsite");
-        const updatedPrice = await updateEbanuxDonationPrice(
-          userInfo.cognito_user_id,
-          data["donationPriceId"],
-          priceData);
-        console.log("updated price", updatedPrice)
-        prevUpdatingHandler(null, true);
-      } catch (error) {
-        setIsError(true);
-        prevUpdatingHandler(null, false);
-      }
-
-    } else {
-      try {
-        prevUpdatingHandler("Creating Donation microsite");
-        const price = await createEbanuxDonationPrice(userInfo.cognito_user_id, priceData);
-        console.log("the price is")
-        //@ts-ignore
-        data["donationPriceId"] = price.result.price.id;
-        //@ts-ignore
-        data["donationProductId"] = price.result.product.id;
-        prevUpdatingHandler(null, true)
-      } catch (error) {
-        setIsError(true);
-        console.log(error)
-        prevUpdatingHandler(null, false)
-      }
-    }
-  }
-
   let shortLink;
-  const qrData = { ...data, qrType: selected };
+  const qrData: any = { ...data, qrType: selected };
   const qrDesign = { ...options };
 
   if (data.mode !== 'edit') {
     const qrDesignId = getUuid();
-    const qrId = options.id || getUuid(); // @ts-ignore
+    const qrId = options.id || getUuid();
     qrData.qrOptionsId = qrDesignId;
     qrData.userId = userInfo.cognito_user_id;
 
     if (data.isDynamic) { // @ts-ignore
       qrData.shortLinkId = { userId: userInfo.cognito_user_id, createdAt: Date.now() };
       shortLink = {
+        address: options.shortCode || await generateId(),
         target: generateShortLink(`qr/${qrId}`),
-        address: options.shortCode || await generateId(), // @ts-ignore
-        claimable: data.claimable, // @ts-ignore
-        preGenerated: data.preGenerated, // @ts-ignore
+        claimable: data.claimable,
+        preGenerated: data.preGenerated,
         ...qrData.shortLinkId
       };
 
@@ -360,31 +317,37 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     qrDesign.id = qrDesignId;
   }
 
+  if (selected === "donation") {
+    try {
+      prevUpdatingHandler('Setting donation micro-site')
+      await createQrDonationPayLynk(qrData, qrDesign.data);
+    } catch (error) {
+      setIsError(true);
+      prevUpdatingHandler(null, false);
+    }
+  }
+
   cleaner(qrDesign, background, frame, cornersData, dotsData, data.mode === 'edit');
 
   try {
     let edition = false;
+
     if (data.mode !== 'edit') {
-      if (dataLength) {
-        prevUpdatingHandler("Saving QR Code data");
-      }
+      if (dataLength) prevUpdatingHandler("Saving QR Code data");
       const response = await create({ shortLink, qrDesign, qrData });
-      if (success && response?.creationDate) { success(response.creationDate); }
+      if (success && response?.creationDate) success(response.creationDate);
     } else {
       edition = true;
-      if (dataLength) {
-        prevUpdatingHandler("Updating QR Code data");
-      }
+      if (dataLength) prevUpdatingHandler("Updating QR Code data");
 
       const objToEdit = generateObjectToEdit(qrData, data, qrDesign);
 
-      if (!objToEdit.userId) {
-        objToEdit.userId = userInfo.cognito_user_id;
-      }
+      if (!objToEdit.userId) objToEdit.userId = userInfo.cognito_user_id;
 
       await qrEdit(objToEdit);
       if (success) success();
     }
+
     if (dataLength) {
       prevUpdatingHandler(null, true);
     } else if (lastStep !== undefined && router !== undefined) {
