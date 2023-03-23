@@ -45,7 +45,7 @@ const SendMeMoneyData = ({ data, handleValues, setIsWrong, setData }: SendMeMone
 
     const amountChange = (event: ChangeEvent<HTMLInputElement>) => {
         setAmountValue((Number.parseFloat(event.target.value)).toFixed(2))
-        handleValues('donationUnitAmount')(event);
+        handleValues('unitAmount')(event);
     }
 
     const toogleTransactionFee = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
@@ -108,7 +108,7 @@ const SendMeMoneyData = ({ data, handleValues, setIsWrong, setData }: SendMeMone
                                     size='small'
                                     type='number'
                                     inputProps={{ step: '0.01', max: 100, min: 1 }}
-                                    value={data.donationUnitAmount || 3.00}
+                                    value={data.unitAmount || 3.00}
                                     onChange={amountChange}
                                     startAdornment={<InputAdornment position="start">(USD)$</InputAdornment>}
                                     label="Amount"
