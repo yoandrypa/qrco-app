@@ -116,6 +116,7 @@ export default function RenderButtonHandler({data, handleValue}: CustomCommon) {
           <FormControlLabel control={<Switch checked={data?.buttonCase || false} onChange={handleUpcase} />}
                             label="Case sensitive" />
         </FormControl>
+
       </Box>
       {data?.alternate && (
         <Typography sx={{ml: 1, mb: '15px', mt: '-15px', fontSize: 'smaller', color: theme => theme.palette.text.disabled}}>
@@ -227,7 +228,9 @@ export default function RenderButtonHandler({data, handleValue}: CustomCommon) {
               )}
               <Grid item xs={12} sm={data?.buttonBorderStyle === 'two' ? 8 : 12}>
                 <Typography sx={{fontSize: 'smaller', color: theme => theme.palette.text.disabled, mt: '-10px', mb: '2px'}}>{'Displacement direction'}</Typography>
-                <RenderDisplacement handleValue={handleValue} direction={data?.buttonShadowDisplacement} />
+                <RenderDisplacement handleValue={handleValue} direction={data?.buttonShadowDisplacement}
+                                    property="buttonShadowDisplacement"
+                                    disabled={data?.buttonBorderWeight === 'weight' ? ['upLeft', 'upRight', 'downLeft'] : []}/>
               </Grid>
               </Grid>
             </Grid>

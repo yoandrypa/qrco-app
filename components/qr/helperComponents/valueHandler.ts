@@ -83,6 +83,7 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
         const newData = {...prev, buttonShadowDisplacement: payload};
         if (newData.buttonShadow !== undefined) { delete newData.buttonShadow; }
         if (newData.buttonsOpacity !== undefined) { delete newData.buttonsOpacity; }
+        if (newData.buttonBorderWeight === 'weight') { newData.buttonShadowDisplacement = 'downRight'; }
         return newData;
       });
     } else {
@@ -102,6 +103,9 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
         }
         if (prop.toUpperCase().includes('FONT') && payload === 'default') {
           delete newData[prop];
+        }
+        if (prop === 'buttonBorderWeight' && newData.buttonShadowDisplacement !== undefined && payload === 'weight') {
+          newData.buttonShadowDisplacement = 'downRight';
         }
         if (['profileImageVertical', 'profileImageSize', 'buttonsSeparation'].includes(prop) && payload === 'default') {
           delete newData[prop];
