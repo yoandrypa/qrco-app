@@ -20,31 +20,38 @@ const IconBtn = styled(IconButton)(({selected}: {
 interface DisplacementProps {
   direction?: string;
   sx?: any;
-  handleValue: Function
+  disabled?: string[];
+  hideClear?: boolean;
+  property: string;
+  handleValue: Function;
 }
 
-export default function RenderDisplacement({direction, handleValue, sx}: DisplacementProps) {
+const RenderDisplacement = ({direction, handleValue, sx, property, disabled, hideClear}: DisplacementProps) => {
   const handleDirection = (item?: string) => () => {
-    handleValue('buttonShadowDisplacement')(item);
+    handleValue(property)(item);
   }
+
+  const isDisabled = (item: string) => !!disabled?.includes(item);
 
   return (
     <Stack direction="row" spacing={2} sx={{...sx}}>
-      <IconBtn selected={direction === undefined} onClick={handleDirection(undefined)}>
-        <ClearIcon />
-      </IconBtn>
-      <IconBtn selected={direction === 'upLeft'} onClick={handleDirection('upLeft')}>
+      {!hideClear && (<IconBtn selected={direction === undefined} onClick={handleDirection(undefined)}>
+        <ClearIcon/>
+      </IconBtn>)}
+      <IconBtn selected={direction === 'upLeft'} onClick={handleDirection('upLeft')} disabled={isDisabled('upLeft')}>
         <NorthWestIcon />
       </IconBtn>
-      <IconBtn selected={direction === 'upRight'} onClick={handleDirection('upRight')}>
+      <IconBtn selected={direction === 'upRight'} onClick={handleDirection('upRight')} disabled={isDisabled('upRight')}>
         <NorthEastIcon />
       </IconBtn>
-      <IconBtn selected={direction === 'downRight'} onClick={handleDirection('downRight')}>
+      <IconBtn selected={direction === 'downRight'} onClick={handleDirection('downRight')} disabled={isDisabled('downRight')}>
         <SouthEastIcon />
       </IconBtn>
-      <IconBtn selected={direction === 'downLeft'} onClick={handleDirection('downLeft')}>
+      <IconBtn selected={direction === 'downLeft'} onClick={handleDirection('downLeft')} disabled={isDisabled('downLeft')}>
         <SouthWestIcon />
       </IconBtn>
     </Stack>
   );
 }
+
+export default RenderDisplacement;
