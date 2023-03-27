@@ -201,9 +201,9 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
         </DragDropContext>
       </Box>
       {showOptions && <CustomMenu handle={handleAdd} showOptions={showOptions} setShowOptions={setShowOptions} />}
-      {openSettings && <HeadlineSettings anchor={openSettings.anchor} handleValues={handleValues} index={openSettings.index}
-                                         data={data?.custom?.[openSettings.index]?.data} handleClose={() => setOpenSettings(null)}
-                                         hideHeadLineSettings={openSettings.hideHeadlineOpts}/>}
+      {openSettings && !openSettings.hideHeadlineOpts && (<HeadlineSettings
+        anchor={openSettings.anchor} handleValues={handleValues} index={openSettings.index}
+        data={data?.custom?.[openSettings.index]?.data} handleClose={() => setOpenSettings(null)}/>)}
       {open && <CustomEditSection handleClose={() => setOpen(null)} anchor={open.anchor} value={open.item}
                                   current={open.name} handleOk={(value: string) => handleAccept(value, open.index, open.item)} />}
       {confirm !== undefined && <RenderConfirmDlg confirmationMsg="Are you sure?" title="Confirm" noMsg="No" yesMsg="Yes"
