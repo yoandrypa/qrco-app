@@ -37,6 +37,7 @@ const RenderFontStyles = ({handleValue, property, value}: RenderFontStylesProps)
   const [colorAnchor, setColorAnchor] = useState<boolean>(false);
 
   const doneInitialRender = useRef<boolean>(false);
+  const allow = useRef<boolean>(false);
 
   const handleColorValue = (payload: { hex: any; }) => {
     setColor(payload.hex);
@@ -61,20 +62,24 @@ const RenderFontStyles = ({handleValue, property, value}: RenderFontStylesProps)
 
   useEffect(() => {
     if (doneInitialRender.current) {
-      let response = '';
-      if (formats.includes('b')) {
-        response = 'b';
+      if (allow.current) {
+        let response = '';
+        if (formats.includes('b')) {
+          response = 'b';
+        }
+        if (formats.includes('i')) {
+          response += 'i';
+        }
+        if (formats.includes('u')) {
+          response += 'u';
+        }
+        if (color !== '#000000') {
+          response += color;
+        }
+        handleValue(property)(response);
+      } else {
+        allow.current = true;
       }
-      if (formats.includes('i')) {
-        response += 'i';
-      }
-      if (formats.includes('u')) {
-        response += 'u';
-      }
-      if (color !== '#000000') {
-        response += color;
-      }
-      handleValue(property)(response);
     }
   }, [color, formats]); // eslint-disable-line react-hooks/exhaustive-deps
 

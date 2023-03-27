@@ -21,12 +21,15 @@ const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTM
         } else if (typeof payload === 'string') {
           elementData.tags?.push(payload);
         }
-      } else if (['hideHeadLine', 'centerHeadLine'].includes(item)) { // @ts-ignore
-        if (elementData[item] !== undefined && (payload === false || reversed)) { // @ts-ignore
+      } else if (['hideHeadLine', 'centerHeadLine', 'hideHeadLineIcon'].includes(item)) { // @ts-ignore
+        if (elementData[item] !== undefined && payload === false) { // @ts-ignore
           delete elementData[item];
         } else { // @ts-ignore
           element.data[item] = true;
-          if (item === 'hideHeadLine' && elementData.centerHeadLine !== undefined) { delete elementData.centerHeadLine; }
+          if (item === 'hideHeadLine') {
+            if (elementData.centerHeadLine !== undefined) { delete elementData.centerHeadLine; }
+            if (elementData.hideHeadLineIcon !== undefined) { delete elementData.hideHeadLineIcon; }
+          }
         }
       } else if (item === 'easiness') {
         if (!elementData.easiness) { elementData.easiness = {}; } // @ts-ignore
@@ -37,7 +40,9 @@ const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTM
           if (!Object.keys(elementData.easiness).length) { delete elementData.easiness; }
         }
       } else if ((typeof value === "string" && value.length) || payload) {
-        if (['topSpacing', 'bottomSpacing'].includes(item) && value === 'default') { // @ts-ignore
+        if ((['topSpacing', 'bottomSpacing', 'headlineFontSize', 'headlineFont'].includes(item) &&
+          typeof value === "string" && value.toLowerCase() === 'default') ||
+          (item === 'headlineFont' && value === 'none') || (item === 'headLineFontStyle' && value === '')) { // @ts-ignore
           delete elementData[item];
         } else if (item === 'includeExtraInfo' && !value && elementData.includeExtraInfo !== undefined) {
           delete elementData.includeExtraInfo;
@@ -48,7 +53,12 @@ const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTM
             elementData[item] = value;
           }
         } // @ts-ignore
-      } else if (elementData[item]) { // @ts-ignore
+      } else if (elementData[item]) {
+        if (item === 'customFont') {
+          if (elementData.headlineFont !== undefined) { delete elementData.headlineFont; }
+          if (elementData.headlineFontSize !== undefined) { delete elementData.headlineFontSize; }
+          if (elementData.headLineFontStyle !== undefined) { delete elementData.headLineFontStyle; }
+        } // @ts-ignore
         delete elementData[item];
       }
     } else {

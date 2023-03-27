@@ -11,7 +11,8 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
   }
   const custom = data?.custom || [];
 
-  const possibles = ['hideHeadLine', 'centerHeadLine', 'topSpacing', 'bottomSpacing'];
+  const possibles = ['hideHeadLine', 'centerHeadLine', 'topSpacing', 'bottomSpacing', 'customFont', 'hideHeadLineIcon',
+    'headlineFont', 'headlineFontSize', 'headLineFontStyle'];
   custom.every((x: CustomType) => {
     const elements = x.data || {}; // @ts-ignore
     if (Object.keys(x.data || {}).length !== possibles.filter(possible => elements[possible] !== undefined).length) {
@@ -37,6 +38,11 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
       const centerHeadLine = x.data?.centerHeadLine;
       const topSpacing = x.data?.topSpacing;
       const bottomSpacing = x.data?.bottomSpacing;
+      const customFont = x.data?.customFont;
+      const headlineFont = x.data?.headlineFont;
+      const headlineFontSize = x.data?.headlineFontSize;
+      const headLineFontStyle = x.data?.headLineFontStyle;
+      const hideHeadLineIcon = x.data?.hideHeadLineIcon;
 
       switch (x.component) {
         case 'address': {
@@ -219,6 +225,11 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
         if (centerHeadLine !== undefined) {x.data.centerHeadLine = centerHeadLine;}
         if (topSpacing !== undefined) {x.data.topSpacing = topSpacing;}
         if (bottomSpacing !== undefined) {x.data.bottomSpacing = bottomSpacing;}
+        if (customFont !== undefined) {x.data.customFont = customFont;}
+        if (headlineFont !== undefined) {x.data.headlineFont = headlineFont;}
+        if (headlineFontSize !== undefined) {x.data.headlineFontSize = headlineFontSize;}
+        if (headLineFontStyle !== undefined) {x.data.headLineFontStyle = headLineFontStyle;}
+        if (hideHeadLineIcon !== undefined) {x.data.hideHeadLineIcon = hideHeadLineIcon;}
       }
     });
   }

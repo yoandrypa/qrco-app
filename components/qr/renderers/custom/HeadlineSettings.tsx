@@ -3,18 +3,17 @@ import Popover from "@mui/material/Popover";
 import MenuList from "@mui/material/MenuList";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
 import CheckIcon from "@mui/icons-material/Check";
 import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import SettingsIcon from '@mui/icons-material/Settings';
-import Button from "@mui/material/Button";
 
 import {Type} from "../../types/types";
 
 import dynamic from "next/dynamic";
+import RenderHeadlineSettings from "./RenderHeadlineSettings";
 
-const SpacingSelector = dynamic(() => import("../../helperComponents/looseComps/SpacingSelector"));
+const SettingsIcon = dynamic(() => import("@mui/icons-material/Settings"));
 
 interface HeadlineProps {
   anchor: HTMLElement;
@@ -22,11 +21,10 @@ interface HeadlineProps {
   handleClose: () => void;
   data?: Type;
   index: number;
-  hideHeadLineSettings?: boolean;
 }
 
-export default function HeadlineSettings({anchor, handleValues, handleClose, index, data, hideHeadLineSettings}: HeadlineProps) {
-  const [openSpacing, setOpenSpacing] = useState<boolean>(false);
+export default function HeadlineSettings({anchor, handleValues, handleClose, index, data}: HeadlineProps) {
+  const [openSettings, setOpenSettings] = useState<boolean>(false);
 
   const handle = () => {
     let isChecked = data?.hideHeadLine || false;
@@ -54,45 +52,27 @@ export default function HeadlineSettings({anchor, handleValues, handleClose, ind
         transformOrigin={{vertical: 'top', horizontal: 'left'}}
       >
         <MenuList>
-          {!hideHeadLineSettings && (
-            <MenuItem onClick={handle}>
-              <ListItemText><Typography>Show headline</Typography></ListItemText>
-              {renderCheck1(checked)}
-            </MenuItem>
-          )}
-          {!hideHeadLineSettings && (
-            <MenuItem onClick={customHandle('centerHeadLine')} disabled={!checked}>
-              <ListItemText><Typography>Center headline</Typography></ListItemText>
-              {renderCheck1(data?.centerHeadLine)}
-            </MenuItem>
-          )}
-          {!hideHeadLineSettings && <Divider />}
-          <MenuItem onClick={() => setOpenSpacing(true)}>
-            <ListItemText><Typography>{'Section\'s spacing...'}</Typography></ListItemText>
+          <MenuItem onClick={handle}>
+            <ListItemText><Typography>Show headline</Typography></ListItemText>
+            {renderCheck1(checked)}
+          </MenuItem>
+          <MenuItem onClick={customHandle('centerHeadLine')} disabled={!checked}>
+            <ListItemText><Typography>Center headline</Typography></ListItemText>
+            {renderCheck1(data?.centerHeadLine)}
+          </MenuItem>
+          <MenuItem onClick={customHandle('hideHeadLineIcon')} disabled={!checked}>
+            <ListItemText><Typography>Hide headline icon</Typography></ListItemText>
+            {renderCheck1(data?.hideHeadLineIcon)}
+          </MenuItem>
+          <Divider />
+          <MenuItem onClick={() => setOpenSettings(true)} disabled={!checked}>
+            <ListItemIcon><SettingsIcon/></ListItemIcon>
+            <ListItemText><Typography>{'Section settings...'}</Typography></ListItemText>
           </MenuItem>
         </MenuList>
       </Popover>
-      {openSpacing && (
-        <Popover
-          open
-          anchorEl={anchor}
-          onClose={handleClose}
-          anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
-          transformOrigin={{vertical: 'top', horizontal: 'left'}}
-        >
-          <Box sx={{p: 2}}>
-            <Box sx={{display: 'flex'}}>
-              <SettingsIcon sx={{color: theme => theme.palette.primary.dark, mr: '5px', mt: '-2px'}}/>
-              <Typography>{'Section\'s spacing configuration'}</Typography>
-            </Box>
-            <SpacingSelector selection={data?.topSpacing || 'default'} item="topSpacing" message="Top spacing" handleValues={handleValues} index={index}/>
-            <SpacingSelector selection={data?.bottomSpacing || 'default'} item="bottomSpacing" message="Bottom spacing" handleValues={handleValues} index={index}/>
-            <Divider sx={{mt: 2, mb: 1}}/>
-            <Box sx={{width: '100%', textAlign: 'right'}}>
-              <Button onClick={handleClose} variant="outlined">Close</Button>
-            </Box>
-          </Box>
-        </Popover>
+      {openSettings && (
+        <RenderHeadlineSettings handleValues={handleValues} handleClose={handleClose} index={index} data={data} anchor={anchor} />
       )}
     </>
   );

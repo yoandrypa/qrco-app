@@ -92,6 +92,11 @@ export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'y
 export type SocialNetworksType = { network: SocialsType, value?: string };
 
 export type Type = {
+  customFont?: boolean;
+  headLineFontStyle?: string;
+  headlineFontSize?: string;
+  headlineFont?: string;
+  hideHeadLineIcon?: boolean;
   showOnlyNetworkName?: boolean;
   visibleReceipt?: boolean;
   iconSize?: string;
