@@ -12,7 +12,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
   const custom = data?.custom || [];
 
   const possibles = ['hideHeadLine', 'centerHeadLine', 'topSpacing', 'bottomSpacing', 'customFont', 'hideHeadLineIcon',
-    'headlineFont', 'headlineFontSize', 'headLineFontStyle'];
+    'headlineFont', 'headlineFontSize', 'headLineFontStyle', 'socialsOnlyIcons', 'linksOnlyLinks'];
   custom.every((x: CustomType) => {
     const elements = x.data || {}; // @ts-ignore
     if (Object.keys(x.data || {}).length !== possibles.filter(possible => elements[possible] !== undefined).length) {
@@ -43,6 +43,8 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
       const headlineFontSize = x.data?.headlineFontSize;
       const headLineFontStyle = x.data?.headLineFontStyle;
       const hideHeadLineIcon = x.data?.hideHeadLineIcon;
+      const socialsOnlyIcons = x.data?.socialsOnlyIcons;
+      const linksOnlyLinks = x.data?.linksOnlyLinks;
 
       switch (x.component) {
         case 'address': {
@@ -62,7 +64,8 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
         }
         case 'socials': {
           x.data = {
-            socials: [{network: 'twitter', value: 'twitter_account'}, {network: 'facebook', value: 'facebook_account'}]
+            socials: [{network: 'twitter', value: 'twitter_account'}, {network: 'facebook', value: 'facebook_account'}],
+            socialsOnlyIcons: selected === 'link'
           };
           break;
         }
@@ -145,12 +148,10 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
         }
         case 'pdf': {
           x.data = {
-            files: [
-              {
-                name: 'Photoshop for beginners NEW22.pdf', // @ts-ignore
-                Key: 'pdfs/Photoshop for beginners NEW22.pdf'
-              }
-            ],
+            files: [{
+              name: 'Photoshop for beginners NEW22.pdf', // @ts-ignore
+              Key: 'pdfs/Photoshop for beginners NEW22.pdf'
+            }],
             isSample: true
           };
           break;
@@ -205,7 +206,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
         }
         case 'couponInfo': {
           x.data = {
-            company: "Unic Electronics",
+            company: "Uniq Electronics",
             title: "Get a 100% discount",
             description: "100% discount in purchases over 100 USD",
             badge: "10% OFF",
@@ -230,6 +231,8 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
         if (headlineFontSize !== undefined) {x.data.headlineFontSize = headlineFontSize;}
         if (headLineFontStyle !== undefined) {x.data.headLineFontStyle = headLineFontStyle;}
         if (hideHeadLineIcon !== undefined) {x.data.hideHeadLineIcon = hideHeadLineIcon;}
+        if (socialsOnlyIcons !== undefined) {x.data.hideHeadLineIcon = socialsOnlyIcons;}
+        if (linksOnlyLinks !== undefined) {x.data.hideHeadLineIcon = linksOnlyLinks;}
       }
     });
   }

@@ -148,8 +148,12 @@ export default function RenderButtonHandler({data, handleValue}: CustomCommon) {
             </Box>
           )}
         </Box>
-        {data?.buttonBack === 'two' && <RenderTwoColors handleValue={handleValue} data={data} property="buttonBackColor"/>}
-        {data?.buttonBack === 'gradient' && <RenderTwoColors handleValue={handleValue} data={data} isGradient property="buttonBackColor"/>}
+        {data?.buttonBack === 'two' && (
+          <RenderTwoColors handleValue={handleValue} data={data} property="buttonBackColor" colorPrim={data?.primary} colorSec={data?.secondary}/>
+        )}
+        {data?.buttonBack === 'gradient' && (
+          <RenderTwoColors handleValue={handleValue} data={data} isGradient property="buttonBackColor" colorPrim={data?.primary} colorSec={data?.secondary}/>
+        )}
         {data?.buttonBack !== 'gradient' && !data?.buttonShadowDisplacement &&
           (
             <Box sx={{width: 'calc(100% - 10px)'}}>
@@ -168,12 +172,12 @@ export default function RenderButtonHandler({data, handleValue}: CustomCommon) {
         <Grid container spacing={2}>
           <Grid item sm={data?.buttonBorderStyle && data?.buttonBorderStyle !== 'noBorders' ? 4 : 12} xs={12}>
             <FormControl sx={{m: 0, mt: 1, width: '100%'}} size="small">
-              <InputLabel id="buttonBorderColorLabel">Color</InputLabel>
+              <InputLabel id="buttonBorderColorLabel">Border color</InputLabel>
               <Select
                 labelId="buttonBorderColorLabel"
                 id="buttonBorderStyle"
                 value={data?.buttonBorderStyle || 'noBorders'}
-                label="Color"
+                label="Border color"
                 onChange={handler('buttonBorderStyle')}
               >
                 <MenuItem value="default">Use main colors</MenuItem>
@@ -186,10 +190,10 @@ export default function RenderButtonHandler({data, handleValue}: CustomCommon) {
             <>
               <Grid item sm={4} xs={12}>
                 <FormControl sx={{m: 0, mt: 1, width: '100%'}} size="small">
-                  <InputLabel id="buttonBorderTypeLabel">Style</InputLabel>
+                  <InputLabel id="buttonBorderTypeLabel">Border style</InputLabel>
                   <Select
                     labelId="buttonBorderTypeLabel"
-                    id="buttonBorderType" label="Style"
+                    id="buttonBorderType" label="Border style"
                     value={data?.buttonBorderType || 'solid'}
                     onChange={handler('buttonBorderType')}
                   >
@@ -202,12 +206,12 @@ export default function RenderButtonHandler({data, handleValue}: CustomCommon) {
               </Grid>
               <Grid item sm={4} xs={12}>
                 <FormControl sx={{m: 0, mt: 1, width: '100%'}} size="small">
-                  <InputLabel id="buttonBorderWeightLabel">Weight</InputLabel>
+                  <InputLabel id="buttonBorderWeightLabel">Border weight</InputLabel>
                   <Select
                     labelId="buttonBorderWeightLabel"
                     id="buttonBorderWeight"
                     value={data?.buttonBorderWeight || 'thin'}
-                    label="Weight"
+                    label="Border weight"
                     onChange={handler('buttonBorderWeight')}
                   >
                     <MenuItem value="thin">Thin</MenuItem>
@@ -223,7 +227,7 @@ export default function RenderButtonHandler({data, handleValue}: CustomCommon) {
               <Grid container spacing={2}>
               {data?.buttonBorderStyle === 'two' && (
                 <Grid item sm={4} xs={12}>
-                  <RenderTwoColors handleValue={handleValue} data={data} property="buttonBorderColors" />
+                  <RenderTwoColors handleValue={handleValue} data={data} property="buttonBorderColors" colorPrim={data?.primary} colorSec={data?.secondary}/>
                 </Grid>
               )}
               <Grid item xs={12} sm={data?.buttonBorderStyle === 'two' ? 8 : 12}>

@@ -1,6 +1,5 @@
 import dynamic from "next/dynamic";
 
-import {components} from "./helperFuncs";
 import {FILE_LIMITS, FORCE_EXTRA} from "../../../../consts";
 import {Type} from "../../types/types";
 
@@ -42,42 +41,42 @@ interface RenderContentProps {
 
 const RenderContent = ({component, handleValues, index, data, setData, predefined, selected}: RenderContentProps) => (
   <>
-    {component === components[0].type && <RenderAddressData data={data} handleValues={handleValues} index={index}/>}
-    {component === components[1].type && <RenderCompanyData data={data} handleValues={handleValues} index={index}/>}
-    {component === components[2].type && <RenderDateSelector data={data} handleValues={handleValues} label="Date" index={index}/>}
-    {component === components[3].type && <RenderEmail data={data} handleValues={handleValues} index={index}/>}
-    {component === components[4].type && <RenderEmailWeb data={data} handleValues={handleValues} index={index}/>}
-    {component === components[5].type && <RenderEasiness data={data} handleValues={handleValues} index={index}/>}
-    {component === components[6].type && <RenderLinks data={data} setData={setData} index={index}/>}
-    {component === components[7].type && <RenderOrganization data={data} handleValues={handleValues} index={index}/>}
-    {component === components[8].type && <RenderPhones data={data} handleValues={handleValues} index={index}/>}
-    {component === components[9].type && <RenderAssetsData data={data} setData={setData} type="gallery" index={index}
-                                                           totalFiles={predefined === undefined || selected === 'inventory' ? 3 : FILE_LIMITS['gallery'].totalFiles}/>}
-    {component === components[10].type && <RenderPresentation data={data} handleValues={handleValues} index={index}
-                                                              forceExtra={FORCE_EXTRA.includes(selected || '')} />}
-    {component === components[11].type && <RenderOpeningTime data={data} setData={setData} index={index}/>}
-    {component === components[12].type && <RenderSocials data={data} setData={setData} index={index}/>}
-    {component === components[13].type && <RenderTitleDesc handleValues={handleValues} title={data?.titleAbout} noPaper sx={{mt: '5px'}}
-                                                           description={data?.descriptionAbout} index={index}
-                                                           noHeader={Boolean(data?.titleAbout?.trim().length) || Boolean(data?.descriptionAbout?.trim().length)}
-                                                           header="Fill at least one of these fields" />}
-    {component === components[14].type && <RenderActionButton index={index} setData={setData} handleValues={handleValues} data={data} />}
-    {component === components[15].type && <RenderSingleText text={data?.text || ''} index={index} handleValues={handleValues}/>}
-    {component === components[16].type && <RenderAssetsData totalFiles={predefined === undefined ? 1 : FILE_LIMITS['pdf'].totalFiles}
-                                                            data={data} setData={setData} type="pdf" index={index}/>}
-    {component === components[17].type && <RenderAssetsData data={data} setData={setData} type="audio" index={index}
-                                                            totalFiles={predefined === undefined ? 1 : FILE_LIMITS['audio'].totalFiles}/>}
-    {component === components[18].type && <RenderAssetsData data={data} setData={setData} type="video" index={index}
-                                                            totalFiles={predefined === undefined ? 1 : FILE_LIMITS['video'].totalFiles}/>}
-    {component === components[19].type && <RenderKeyValue index={index} setData={setData} data={data} topics="" />}
-    {component === components[20].type && <RenderWeb data={data} handleValues={handleValues} index={index} />}
-    {component === components[21].type && <RenderContactForm index={index} handleValues={handleValues} data={data} />}
-    {component === components[22].type && <RenderTags index={index} handleValues={handleValues} data={data} />}
-    {component === components[23].type && <RenderSmsForm index={index} handleValues={handleValues} data={data} />}
-    {component === components[24].type && <RenderCouponInfo index={index} handleValues={handleValues} data={data} />}
-    {component === components[25].type && <RenderCouponData index={index} handleValues={handleValues} data={data} />}
-    {component === components[26].type && <RenderPetDesc index={index} handleValues={handleValues} data={data} />}
-    {component === components[27].type && <RenderSku index={index} handleValues={handleValues} data={data} />}
+    {component === 'address' && <RenderAddressData data={data} handleValues={handleValues} index={index}/>}
+    {component === 'company' && <RenderCompanyData data={data} handleValues={handleValues} index={index}/>}
+    {component === 'date' && <RenderDateSelector data={data} handleValues={handleValues} label="Date" index={index}/>}
+    {component === 'justEmail' && <RenderEmail data={data} handleValues={handleValues} index={index}/>}
+    {component === 'email' && <RenderEmailWeb data={data} handleValues={handleValues} index={index}/>}
+    {component === 'easiness' && <RenderEasiness data={data} handleValues={handleValues} index={index}/>}
+    {component === 'links' && <RenderLinks data={data} setData={setData} index={index}/>}
+    {component === 'organization' && <RenderOrganization data={data} handleValues={handleValues} index={index}/>}
+    {component === 'phones' && <RenderPhones data={data} handleValues={handleValues} index={index}/>}
+    {component === 'gallery' && <RenderAssetsData data={data} setData={setData} type="gallery" index={index}
+                                                  totalFiles={predefined === undefined || selected === 'inventory' ? 3 : FILE_LIMITS['gallery'].totalFiles}/>}
+    {component === 'presentation' && <RenderPresentation data={data} handleValues={handleValues} index={index}
+                                                         forceExtra={FORCE_EXTRA.includes(selected || '')} />}
+    {component === 'opening' && <RenderOpeningTime data={data} setData={setData} index={index}/>}
+    {component === 'socials' && <RenderSocials data={data} setData={setData} index={index}/>}
+    {component === 'title' && <RenderTitleDesc handleValues={handleValues} title={data?.titleAbout} noPaper sx={{mt: '5px'}}
+                                               description={data?.descriptionAbout} index={index}
+                                               noHeader={Boolean(data?.titleAbout?.trim().length) || Boolean(data?.descriptionAbout?.trim().length)}
+                                               header="Fill at least one of these fields" />}
+    {component === 'action' && <RenderActionButton index={index} setData={setData} handleValues={handleValues} data={data} />}
+    {component === 'single' && <RenderSingleText text={data?.text || ''} index={index} handleValues={handleValues}/>}
+    {component === 'pdf' && <RenderAssetsData totalFiles={predefined === undefined ? 1 : FILE_LIMITS['pdf'].totalFiles}
+                                              data={data} setData={setData} type="pdf" index={index}/>}
+    {component === 'audio' && <RenderAssetsData data={data} setData={setData} type="audio" index={index}
+                                                totalFiles={predefined === undefined ? 1 : FILE_LIMITS['audio'].totalFiles}/>}
+    {component === 'video' && <RenderAssetsData data={data} setData={setData} type="video" index={index}
+                                                totalFiles={predefined === undefined ? 1 : FILE_LIMITS['video'].totalFiles}/>}
+    {component === 'keyvalue' && <RenderKeyValue index={index} setData={setData} data={data} topics="" />}
+    {component === 'web' && <RenderWeb data={data} handleValues={handleValues} index={index} />}
+    {component === 'contact' && <RenderContactForm index={index} handleValues={handleValues} data={data} />}
+    {component === 'tags' && <RenderTags index={index} handleValues={handleValues} data={data} />}
+    {component === 'sms' && <RenderSmsForm index={index} handleValues={handleValues} data={data} />}
+    {component === 'couponInfo' && <RenderCouponInfo index={index} handleValues={handleValues} data={data} />}
+    {component === 'couponData' && <RenderCouponData index={index} handleValues={handleValues} data={data} />}
+    {component === 'petId' && <RenderPetDesc index={index} handleValues={handleValues} data={data} />}
+    {component === 'sku' && <RenderSku index={index} handleValues={handleValues} data={data} />}
   </>
 );
 

@@ -16,7 +16,7 @@ import {
   CustomEditProps,
   CustomProps,
   CustomSettingsProps,
-  getNameStr,
+  getNameStr, sectionPreConfig,
 } from "./custom/helperFuncs";
 import {getUuid} from "../../../helpers/qr/helpers";
 
@@ -77,8 +77,8 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
   const handleAccept = useCallback((value: string, index: number, item: string) => {
     setOpen(null);
     setData((prev: DataType) => {
-      const newData = {...prev};
-      const original = components.find(x => x.type === item);
+      const newData = {...prev}; // @ts-ignore
+      const original = components[item];
       if (original?.name === value && newData?.custom?.[index]?.name !== undefined) {
         delete newData.custom[index].name;
       } else if (newData?.custom?.[index]) {
@@ -102,12 +102,9 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
       const newData = {...prev};
       if (!newData.custom) { newData.custom = []; } // @ts-ignore
       const expand = getUuid();
-      const newComponent = {component: item, expand};
-      if (item === 'socials') { // @ts-ignore
-        newComponent.data = {socialsOnlyIcons : true, hideHeadLine: true};
-      } else if (item === 'links') { // @ts-ignore
-        newComponent.data = {hideHeadLine: true};
-      }
+      const newComponent = {component: item, expand} as any;
+      const sectionPreData = sectionPreConfig(item, selected);
+      if (sectionPreData) { newComponent.data = sectionPreData; }
       newData.custom.push(newComponent);
       setExpander((prev: string[]) => {
         const newExpander = [...prev];
@@ -136,8 +133,9 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
       setData((prev: DataType) => {
         const newData = {...prev, custom: []};
         predefined.forEach((item, index) => { // @ts-ignore
-          const newComponent = {component: item, expand: getUuid()}; // @ts-ignore
-          if (selected === 'petId') { newComponent.data = {linksOnlyLinks: true}; } // @ts-ignore
+          const newComponent = {component: item, expand: getUuid()} as any;
+          const sectionPreData = sectionPreConfig(item, selected);
+          if (sectionPreData) { newComponent.data = sectionPreData; } // @ts-ignore
           newData.custom.push(newComponent); // @ts-ignore
           if (index === 0) { setExpander([newData.custom[0].expand]); }
         });

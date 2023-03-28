@@ -35,11 +35,12 @@ export default function CustomEditSection({handleClose, value, anchor, current, 
     handleOk(data);
   };
 
-  useEffect(() => {
-    const orig = components.find(x => x.type === value) || {name: value};
-    original.current = orig.name;
+  useEffect(() => { // @ts-ignore
+    const orig = components[value]?.name || value;
+    original.current = orig;
+
     if (!current) {
-      setData(orig.name);
+      setData(orig);
     } else {
       setData(current);
     }

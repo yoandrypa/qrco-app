@@ -1,31 +1,20 @@
 import {DataType, Type} from "../../types/types";
 
-export const components = [
-  {type: 'address', name: 'Address'}, {type: 'company', name: 'Company'},
-  {type: 'date', name: 'Date'}, {type: 'justEmail', name: 'Email address'},
-  {type: 'email', name: 'Email and web'}, {type: 'easiness', name: 'Easiness'},
-  {type: 'links', name: 'Links'}, {type: 'organization', name: 'Organization'},
-  {type: 'phones', name: 'Phones'}, {type: 'gallery', name: 'Gallery'},
-  {type: 'presentation', name: 'Presentation'}, {type: 'opening', name: 'Opening time'},
-  {type: 'socials', name: 'Social networks'}, {type: 'title', name: 'Title and description'},
-  {type: 'action', name: 'Action button'}, {type: 'single', name: 'Single text'},
-  {type: 'pdf', name: 'PDF file'}, {type: 'audio', name: 'Audio files'}, {type: 'video', name: 'Video files'},
-  {type: 'keyvalue', name: 'Details'}, {type: 'web', name: 'Web'}, {type: 'contact', name: 'Contact form'},
-  {type: 'tags', name: 'Tags'}, {type: 'sms', name: 'Contact via SMS'},
-  {type: 'couponInfo', name: 'Promotion info', notInMenu: true},
-  {type: 'couponData', name: 'Coupon data', notInMenu: true},
-  {type: 'petId', name: 'Pet presentation', notInMenu: true},
-  {type: 'sku', name: 'Product', notInMenu: true}
-];
+export const components = {
+  address: {name: 'Address'}, company: {name: 'Company'}, date: {name: 'Date'}, justEmail: {name: 'Email address'},
+  email: {name: 'Email and web'}, easiness: {name: 'Easiness'},  links: {name: 'Links'},
+  organization: {name: 'Organization'}, phones: {name: 'Phones'}, gallery: {name: 'Gallery'},
+  presentation: {name: 'Presentation'}, opening: {name: 'Opening time'}, socials: {name: 'Social networks'},
+  title: {name: 'Title and description'}, action: {name: 'Action button'}, single: {name: 'Single text'},
+  pdf: {name: 'PDF file'}, audio: {name: 'Audio files'}, video: {name: 'Video files'},
+  keyvalue: {name: 'Details'}, web: {name: 'Web'}, contact: {name: 'Contact form'}, tags: {name: 'Tags'},
+  sms: {name: 'Contact via SMS'}, couponInfo: {name: 'Promotion info', notInMenu: true},
+  couponData: {name: 'Coupon data', notInMenu: true}, petId: {name: 'Pet presentation', notInMenu: true},
+  sku: {name: 'Product', notInMenu: true}
+};
 
-export const getName = (index: number) => {
-  return components[index].name;
-}
-
-const lookFor = (type: string): string => {
-  const index = components.findIndex(x => x.type === type);
-  return getName(index);
-}
+// @ts-ignore
+const getName = (type: string) => components[type].name;
 
 export const getNameStr = (type: string, selected: string): string => {
   if (['inventory'].includes(selected)) {
@@ -35,9 +24,9 @@ export const getNameStr = (type: string, selected: string): string => {
       case 'sku': { return 'Product SKU and quantity'; }
       case 'keyvalue': { return 'Location'; }
     }
-    return lookFor(type);
+    return getName(type);
   }
-  return lookFor(type);
+  return getName(type);
 }
 
 export interface CustomProps {
@@ -116,4 +105,17 @@ export const cleaner = (data: DataType, item: string): void => {
     deleteItem('titleAbout');
     deleteItem('descriptionAbout');
   }
+}
+
+export const sectionPreConfig = (item: string, selected?: string) => {
+  let data = undefined as any;
+  if (item === 'socials') {
+    data = {socialsOnlyIcons : true, hideHeadLine: true};
+  } else if (item === 'links') {
+    data = {hideHeadLine: true};
+  }
+  if (selected === 'petId') {
+    data = {...data, linksOnlyLinks: true};
+  }
+  return data;
 }
