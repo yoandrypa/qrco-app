@@ -20,10 +20,11 @@ interface HeadlineProps {
   handleValues: Function;
   handleClose: () => void;
   data?: Type;
+  hideHeadline: boolean;
   index: number;
 }
 
-export default function HeadlineSettings({anchor, handleValues, handleClose, index, data}: HeadlineProps) {
+export default function HeadlineSettings({anchor, handleValues, handleClose, index, data, hideHeadline}: HeadlineProps) {
   const [openSettings, setOpenSettings] = useState<boolean>(false);
 
   const handle = () => {
@@ -52,27 +53,34 @@ export default function HeadlineSettings({anchor, handleValues, handleClose, ind
         transformOrigin={{vertical: 'top', horizontal: 'left'}}
       >
         <MenuList>
-          <MenuItem onClick={handle}>
+          {!hideHeadline && <MenuItem onClick={handle}>
             <ListItemText><Typography>Show headline</Typography></ListItemText>
             {renderCheck1(checked)}
-          </MenuItem>
-          <MenuItem onClick={customHandle('centerHeadLine')} disabled={!checked}>
+          </MenuItem>}
+          {!hideHeadline && <MenuItem onClick={customHandle('centerHeadLine')} disabled={!checked}>
             <ListItemText><Typography>Center headline</Typography></ListItemText>
             {renderCheck1(data?.centerHeadLine)}
-          </MenuItem>
-          <MenuItem onClick={customHandle('hideHeadLineIcon')} disabled={!checked}>
+          </MenuItem>}
+          {!hideHeadline && <MenuItem onClick={customHandle('hideHeadLineIcon')} disabled={!checked}>
             <ListItemText><Typography>Hide headline icon</Typography></ListItemText>
             {renderCheck1(data?.hideHeadLineIcon)}
-          </MenuItem>
-          <Divider />
-          <MenuItem onClick={() => setOpenSettings(true)} disabled={!checked}>
+          </MenuItem>}
+          {!hideHeadline && <Divider />}
+          <MenuItem onClick={() => setOpenSettings(true)}>
             <ListItemIcon><SettingsIcon/></ListItemIcon>
             <ListItemText><Typography>{'Section settings...'}</Typography></ListItemText>
           </MenuItem>
         </MenuList>
       </Popover>
       {openSettings && (
-        <RenderHeadlineSettings handleValues={handleValues} handleClose={handleClose} index={index} data={data} anchor={anchor} />
+        <RenderHeadlineSettings
+          handleValues={handleValues}
+          handleClose={handleClose}
+          index={index}
+          data={data}
+          anchor={anchor}
+          allowFonts={checked && !hideHeadline}
+        />
       )}
     </>
   );

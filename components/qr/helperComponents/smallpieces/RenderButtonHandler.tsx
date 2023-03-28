@@ -20,8 +20,8 @@ import ColorSelector from "../ColorSelector";
 import {DEFAULT_COLORS} from "../../constants";
 import {ChangeEvent} from "react";
 import SpacingSelector from "../looseComps/SpacingSelector";
-import RenderDisplacement from "../looseComps/RenderDisplacement";
 
+const RenderDisplacement = dynamic(() => import("../looseComps/RenderDisplacement"));
 const RenderBorders = dynamic(() => import("../looseComps/RenderBorders"));
 const RenderCustButtons = dynamic(() => import("../looseComps/RenderCustButtons"));
 const RenderTwoColors = dynamic(() => import("./RenderTwoColors"));

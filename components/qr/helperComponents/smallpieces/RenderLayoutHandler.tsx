@@ -46,12 +46,14 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
     if (data?.layout) {
       if (data.layout.includes('Left')) {
         setIsLeft(true);
+      } else if (isLeft) {
+        setIsLeft(false);
       }
       if (data.layout.includes('Border')) {
         setIsBorder(true);
       }
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data?.layout]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderLayout = (kind: string, noMore?: boolean) => {
     const selected = (data?.layout || 'default').startsWith(kind);
@@ -74,19 +76,19 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
           border: `solid 1px ${blueGrey[400]}`,
           boxShadow: selected ? '0 0 4px 3px #286ED6' : 'none',
           '&:hover': {boxShadow: !selected ? '0 0 2px 2px #849abb' : '0 0 2px 2px #286ED6'} }}>
-        <Box sx={{
+        {kind !== 'empty' && (<Box sx={{
           width: `calc(100% - ${!isBorder ? 0 : '10px'})`,
           height: `${(!isBorder ? 55 : 50) + (inverse ? 10 : 0)}px`,
           mt: !isBorder ? 0 : '5px',
           mx: 'auto',
           background: !noBanner ? (!gradient ? blueGrey[300] : `linear-gradient(to bottom, ${blueGrey[300]} 80%, rgba(0, 0, 0, 0) 100%)`) : 'unset',
           borderRadius: !kind.toLowerCase().includes('soft') ? '8px 8px 0 0' : '8px'
-        }}/>
+        }}/>)}
         {inverse && (
           <Box sx={{width: `calc(100% - ${!isBorder ? 0 : 10}px)`, height: '20px', background: blueGrey[50],
             position: 'absolute', borderRadius: '8px', mt: '-10px', ml: isBorder ? '5px' : 0}}/>
         )}
-        {!omitPrimary ? (
+        {!omitPrimary && kind !== 'empty' ? (
           <Box sx={{
             width: '38px',
             height: '38px',
@@ -128,6 +130,7 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
       {renderLayout('entireSoft')}
       {renderLayout('entireInverse')}
       {renderLayout('entireGradient')}
+      {renderLayout('empty')}
       {renderLayout('nobanner')}
       {renderLayout('sectionsNobanner')}
       {renderLayout('entireNobanner', true)}
@@ -139,7 +142,7 @@ export default function RenderLayoutHandler({data, handleValue, omitPrimary}: Re
         {!omitPrimary && (
           <FormControlLabel label="Left aligned" control={
             <Switch onChange={(event: ChangeEvent<HTMLInputElement>) => setIsLeft(event.target.checked)}
-                    inputProps={{'aria-label': 'isLeft'}} checked={isLeft} />}
+                    inputProps={{'aria-label': 'isLeft'}} checked={isLeft} disabled={data?.layout === 'empty'} />}
           />)}
       </Box>
     </Box>

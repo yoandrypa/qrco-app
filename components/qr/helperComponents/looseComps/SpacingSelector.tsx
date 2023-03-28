@@ -1,16 +1,20 @@
 import Typography from "@mui/material/Typography";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import {ReactNode} from "react";
+import Box from "@mui/material/Box";
 
 interface SpacingProps {
   selection: string;
-  item: string
+  item: string;
+  icon?: ReactNode;
   message: string;
   handleValues: Function;
   index?: number;
+  noNarrow?: boolean;
 }
 
-export default function SpacingSelector({selection, item, message, handleValues, index}: SpacingProps) {
+export default function SpacingSelector({selection, item, message, handleValues, index, icon, noNarrow}: SpacingProps) {
   const handler = (event: SelectChangeEvent) => {
     if (index !== undefined) {
       handleValues(item, index)(event.target.value);
@@ -21,7 +25,10 @@ export default function SpacingSelector({selection, item, message, handleValues,
 
   return (
     <>
-      <Typography sx={{mt: 1}}>{message}</Typography>
+      <Box sx={{display: 'flex', mt: 1}}>
+        {icon}
+        <Typography>{message}</Typography>
+      </Box>
       <Select
         value={selection}
         onChange={handler}
@@ -29,7 +36,7 @@ export default function SpacingSelector({selection, item, message, handleValues,
         fullWidth
       >
         <MenuItem value='default'>Default</MenuItem>
-        <MenuItem value='narrow'>Narrow</MenuItem>
+        {!noNarrow && <MenuItem value='narrow'>Narrow</MenuItem>}
         <MenuItem value='medium'>Medium</MenuItem>
         <MenuItem value='wide'>Wide</MenuItem>
       </Select>

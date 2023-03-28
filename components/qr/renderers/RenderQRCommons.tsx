@@ -7,6 +7,7 @@ import Expander from "./helpers/Expander";
 
 import dynamic from "next/dynamic";
 
+const RenderUpperSectionHeight = dynamic(() => import ("../helperComponents/smallpieces/RenderUpperSectionHeightAndSharer"));
 const RenderHandlerBackground = dynamic(() => import ("../helperComponents/smallpieces/RenderHandlerBackground"));
 const RenderMainImgsSelector = dynamic(() => import("../helperComponents/smallpieces/RenderMainImgsSelector"));
 const RenderButtonHandler = dynamic(() => import('../helperComponents/smallpieces/RenderButtonHandler'));
@@ -62,6 +63,10 @@ const RenderQRCommons = ({ loading, data, omitPrimaryImg, foregndImg, backgndImg
         <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="mainColors" title="Main colors" bold/>
           {expander === 'mainColors' && <RenderMainColors data={data} handleValue={handleValue} />}
+        </Paper>
+        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+          <Expander expand={expander} setExpand={handleExpander} item="upperSection" title="Top margin and sharer position" bold/>
+          {expander === 'upperSection' && <RenderUpperSectionHeight data={data} handleValue={handleValue} includeSharerConfig />}
         </Paper>
         <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
           <Expander expand={expander} setExpand={handleExpander} item="images" title="Banner and profile images" bold/>

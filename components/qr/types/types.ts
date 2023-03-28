@@ -207,6 +207,8 @@ export type CustomType = {
 };
 
 export type DataType = {
+  sharerPosition?: string;
+  upperHeight?: string;
   buttonShadowDisplacement?: string;
   forceChange?: boolean;
   buttonsSeparation?: string;
