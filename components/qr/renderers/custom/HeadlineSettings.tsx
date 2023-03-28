@@ -65,14 +65,21 @@ export default function HeadlineSettings({anchor, handleValues, handleClose, ind
             {renderCheck1(data?.hideHeadLineIcon)}
           </MenuItem>
           <Divider />
-          <MenuItem onClick={() => setOpenSettings(true)} disabled={!checked}>
+          <MenuItem onClick={() => setOpenSettings(true)}>
             <ListItemIcon><SettingsIcon/></ListItemIcon>
             <ListItemText><Typography>{'Section settings...'}</Typography></ListItemText>
           </MenuItem>
         </MenuList>
       </Popover>
       {openSettings && (
-        <RenderHeadlineSettings handleValues={handleValues} handleClose={handleClose} index={index} data={data} anchor={anchor} />
+        <RenderHeadlineSettings
+          handleValues={handleValues}
+          handleClose={handleClose}
+          index={index}
+          data={data}
+          anchor={anchor}
+          allowFonts={checked}
+        />
       )}
     </>
   );

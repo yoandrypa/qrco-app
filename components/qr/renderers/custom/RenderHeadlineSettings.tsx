@@ -28,9 +28,10 @@ interface HeadStngsProps {
   anchor: HTMLElement;
   data?: Type;
   index: number;
+  allowFonts: boolean;
 }
 
-export default function RenderHeadlineSettings({handleValues, handleClose, data, index, anchor}: HeadStngsProps) {
+export default function RenderHeadlineSettings({handleValues, handleClose, data, index, anchor, allowFonts}: HeadStngsProps) {
   const isWide = useMediaQuery("(min-width:1010px)", { noSsr: true });
   const isWideEnough = useMediaQuery("(min-width:483px)", { noSsr: true });
 
@@ -55,15 +56,17 @@ export default function RenderHeadlineSettings({handleValues, handleClose, data,
           <Settings sx={{color: theme => theme.palette.primary.dark, mr: '5px', mt: '-2px'}}/>
           <Typography sx={{fontWeight: 'bold', mb: 2}}>{'Section settings'}</Typography>
         </Box>
-        <Divider sx={{my: 1}}/>
-        <Box sx={{display: 'flex'}}>
-          <TextFieldsIcon sx={{color: theme => theme.palette.primary.dark, mr: '5px', mt: '-2px'}}/>
-          <Typography>{'Headline font'}</Typography>
-        </Box>
-        <FormControl>
-          <FormControlLabel control={<Switch checked={data?.customFont || false} onChange={handleCustomFont} />}
-                            label="Use custom headline font" />
-        </FormControl>
+        {allowFonts && (<>
+          <Divider sx={{my: 1}}/>
+          <Box sx={{display: 'flex'}}>
+            <TextFieldsIcon sx={{color: theme => theme.palette.primary.dark, mr: '5px', mt: '-2px'}}/>
+            <Typography>{'Headline font'}</Typography>
+          </Box>
+          <FormControl>
+            <FormControlLabel control={<Switch checked={data?.customFont || false} onChange={handleCustomFont} />}
+            label="Use custom headline font" />
+          </FormControl>
+        </>)}
         {data?.customFont && (
           <Box sx={{mt: 2}}>
             <Grid container spacing={2}>
@@ -79,7 +82,7 @@ export default function RenderHeadlineSettings({handleValues, handleClose, data,
             </Grid>
           </Box>
         )}
-        <Divider sx={{mb: 1, mt: 2}}/>
+        <Divider sx={{mb: 1, mt: allowFonts ? 2 : 0}}/>
         <Box sx={{display: 'flex'}}>
           <Height sx={{color: theme => theme.palette.primary.dark, mr: '5px', mt: '-2px'}}/>
           <Typography>{'Section spacing'}</Typography>
