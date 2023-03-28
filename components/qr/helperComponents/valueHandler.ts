@@ -120,6 +120,7 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
             delete newData.buttonBorderStyle;
             if (newData.buttonBorderWeight !== undefined) { delete newData.buttonBorderWeight; }
             if (newData.buttonBorderType !== undefined) { delete newData.buttonBorderType; }
+            if (newData.buttonShadowDisplacement !== undefined) { delete newData.buttonShadowDisplacement; }
           }
         }
         return newData;

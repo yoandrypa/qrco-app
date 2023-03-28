@@ -12,11 +12,13 @@ interface RenderTwoColorsProps {
   handleValue: Function;
   isGradient?: boolean;
   property: string;
+  colorPrim?: string;
+  colorSec?: string;
 }
 
-export default function RenderTwoColors({data, handleValue, isGradient, property}: RenderTwoColorsProps) {
-  const [prim, setPrim] = useState<string>(DEFAULT_COLORS.p);
-  const [sec, setSec] = useState<string>(DEFAULT_COLORS.s);
+export default function RenderTwoColors({data, handleValue, isGradient, property, colorPrim, colorSec}: RenderTwoColorsProps) {
+  const [prim, setPrim] = useState<string>(colorPrim || DEFAULT_COLORS.p);
+  const [sec, setSec] = useState<string>(colorSec || DEFAULT_COLORS.s);
   const [direction, setDirection] = useState<string | undefined>(undefined);
   const doneFirst = useRef<boolean>(false);
 

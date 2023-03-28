@@ -23,12 +23,13 @@ export default function CustomMenu({handle, showOptions, setShowOptions}: Custom
     setFilter('');
   }
 
-  const render = () => {
-    const list = components.filter(x => x.name.toUpperCase().includes(filter.toUpperCase()));
-    return list.map(x => {
-      return !x.notInMenu ? (
-        <MenuItem onClick={handle(x.type)} key={x.type}>
-          <ListItemText>{x.name}</ListItemText>
+  const render = () => { // @ts-ignore
+    const list = Object.keys(components).filter(x => components[x]?.name.toUpperCase().includes(filter.toUpperCase()));
+    return list.map((x: string) => { // @ts-ignore
+      const item = components[x];
+      return !item?.notInMenu ? (
+        <MenuItem onClick={handle(x)} key={x}>
+          <ListItemText>{item.name}</ListItemText>
         </MenuItem>
       ) : null;
     })

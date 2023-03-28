@@ -60,8 +60,8 @@ const validator = (custom: CustomType[], forceExtra: boolean, ignore?: boolean) 
     errors.push('Add at least one section');
   } else {
     custom.forEach((x: CustomType, index: number) => {
-      if (isEmpty(x)) {
-        errors.push(`Make sure the ${components.find(xx => xx.type === x.component)?.name.toLowerCase() || x.component} section ${index + 1} is not empty`);
+      if (isEmpty(x)) { // @ts-ignore
+        errors.push(`Make sure the ${components[x.component]?.name.toLowerCase() || x.component} section ${index + 1} is not empty`);
       } else { // @ts-ignore
         if (x.component === 'address' && exists(x, 'zip') && !ZIP.test(x.data.zip)) {
           errors.push(`The zip code is not valid in address section ${index + 1}`);
