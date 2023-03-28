@@ -86,6 +86,27 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
         if (newData.buttonBorderWeight === 'weight') { newData.buttonShadowDisplacement = 'downRight'; }
         return newData;
       });
+    } else if (prop === 'layout' && typeof payload === 'string') {
+      setData((prev: any) => {
+        const newData = {...prev};
+        newData.layout = payload;
+        if (payload.startsWith('empty')) {
+          if (payload.endsWith('Left')) { newData.layout = 'empty'; }
+          if (newData.backgndImg) { delete newData.backgndImg; }
+          if (newData.foregndImg) { delete newData.foregndImg; }
+          if (newData.foregndImgType !== undefined) { delete newData.foregndImgType; }
+          if (newData.profileImageSize) { delete newData.profileImageSize; }
+          if (newData.profileImageVertical) { delete newData.profileImageVertical; }
+          if (newData.micrositeBackImage) { delete newData.micrositeBackImage; }
+          setBackImg(undefined);
+          setForeImg(undefined);
+          setMicrositeBackImage(undefined);
+        } else if (payload.includes('banner') && newData.backgndImg) {
+          delete newData.backgndImg;
+          setBackImg(undefined);
+        }
+        return newData;
+      });
     } else {
       setData((prev: any) => {
         const newData = {...prev};
@@ -107,11 +128,8 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
         if (prop === 'buttonBorderWeight' && newData.buttonShadowDisplacement !== undefined && payload === 'weight') {
           newData.buttonShadowDisplacement = 'downRight';
         }
-        if (['profileImageVertical', 'profileImageSize', 'buttonsSeparation'].includes(prop) && payload === 'default') {
+        if (['profileImageVertical', 'profileImageSize', 'buttonsSeparation', 'upperHeight', 'sharerPosition'].includes(prop) && payload === 'default') {
           delete newData[prop];
-        } else if (prop === 'layout' && typeof payload === 'string' && payload.includes('banner') && newData.backgndImg !== undefined) {
-          delete newData.backgndImg;
-          setBackImg(undefined);
         } else if (['flipHorizontal', 'flipVertical', 'buttonShadow', 'buttonCase'].includes(prop) && !payload && newData[prop] !== undefined) {
           delete newData[prop];
         } else if (prop === 'buttonBorderStyle') {

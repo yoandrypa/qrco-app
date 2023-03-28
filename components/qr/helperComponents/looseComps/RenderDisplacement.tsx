@@ -2,9 +2,11 @@ import NorthWestIcon from "@mui/icons-material/NorthWest";
 import NorthEastIcon from "@mui/icons-material/NorthEast";
 import SouthEastIcon from "@mui/icons-material/SouthEast";
 import SouthWestIcon from "@mui/icons-material/SouthWest";
+import ReplayIcon from '@mui/icons-material/Replay';
 import ClearIcon from "@mui/icons-material/Clear";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
 import {styled} from "@mui/material/styles";
 
@@ -22,11 +24,13 @@ interface DisplacementProps {
   sx?: any;
   disabled?: string[];
   hideClear?: boolean;
+  includeDefault?: boolean;
+  includeNo?: boolean;
   property: string;
   handleValue: Function;
 }
 
-const RenderDisplacement = ({direction, handleValue, sx, property, disabled, hideClear}: DisplacementProps) => {
+const RenderDisplacement = ({direction, handleValue, sx, property, disabled, hideClear, includeNo, includeDefault}: DisplacementProps) => {
   const handleDirection = (item?: string) => () => {
     handleValue(property)(item);
   }
@@ -35,21 +39,46 @@ const RenderDisplacement = ({direction, handleValue, sx, property, disabled, hid
 
   return (
     <Stack direction="row" spacing={2} sx={{...sx}}>
-      {!hideClear && (<IconBtn selected={direction === undefined} onClick={handleDirection(undefined)}>
-        <ClearIcon/>
-      </IconBtn>)}
-      <IconBtn selected={direction === 'upLeft'} onClick={handleDirection('upLeft')} disabled={isDisabled('upLeft')}>
-        <NorthWestIcon />
-      </IconBtn>
-      <IconBtn selected={direction === 'upRight'} onClick={handleDirection('upRight')} disabled={isDisabled('upRight')}>
-        <NorthEastIcon />
-      </IconBtn>
-      <IconBtn selected={direction === 'downRight'} onClick={handleDirection('downRight')} disabled={isDisabled('downRight')}>
-        <SouthEastIcon />
-      </IconBtn>
-      <IconBtn selected={direction === 'downLeft'} onClick={handleDirection('downLeft')} disabled={isDisabled('downLeft')}>
-        <SouthWestIcon />
-      </IconBtn>
+      {!hideClear && (
+        <Tooltip title="Clear">
+          <IconBtn selected={direction === undefined} onClick={handleDirection(undefined)}>
+            <ClearIcon/>
+          </IconBtn>
+        </Tooltip>)}
+      {includeNo && (
+        <Tooltip title="No sharer">
+          <IconBtn selected={direction === 'no'} onClick={handleDirection('no')}>
+            <ClearIcon/>
+          </IconBtn>
+        </Tooltip>
+      )}
+      {includeDefault && (
+        <Tooltip title="Default position">
+          <IconBtn selected={direction === undefined || direction === 'default'} onClick={handleDirection('default')}>
+            <ReplayIcon/>
+          </IconBtn>
+        </Tooltip>
+      )}
+      <Tooltip title="Up left">
+        <IconBtn selected={direction === 'upLeft'} onClick={handleDirection('upLeft')} disabled={isDisabled('upLeft')}>
+          <NorthWestIcon />
+        </IconBtn>
+      </Tooltip>
+      <Tooltip title="Up right">
+        <IconBtn selected={direction === 'upRight'} onClick={handleDirection('upRight')} disabled={isDisabled('upRight')}>
+          <NorthEastIcon />
+        </IconBtn>
+      </Tooltip>
+      <Tooltip title="Bottom left">
+        <IconBtn selected={direction === 'downLeft'} onClick={handleDirection('downLeft')} disabled={isDisabled('downLeft')}>
+          <SouthWestIcon />
+        </IconBtn>
+      </Tooltip>
+      <Tooltip title="Bottom right">
+        <IconBtn selected={direction === 'downRight'} onClick={handleDirection('downRight')} disabled={isDisabled('downRight')}>
+          <SouthEastIcon />
+        </IconBtn>
+      </Tooltip>
     </Stack>
   );
 }

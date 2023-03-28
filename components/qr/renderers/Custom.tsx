@@ -199,8 +199,8 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
         </DragDropContext>
       </Box>
       {showOptions && <CustomMenu handle={handleAdd} showOptions={showOptions} setShowOptions={setShowOptions} />}
-      {openSettings && !openSettings.hideHeadlineOpts && (<HeadlineSettings
-        anchor={openSettings.anchor} handleValues={handleValues} index={openSettings.index}
+      {openSettings && (<HeadlineSettings
+        anchor={openSettings.anchor} handleValues={handleValues} index={openSettings.index} hideHeadline={openSettings.hideHeadlineOpts || false}
         data={data?.custom?.[openSettings.index]?.data} handleClose={() => setOpenSettings(null)}/>)}
       {open && <CustomEditSection handleClose={() => setOpen(null)} anchor={open.anchor} value={open.item}
                                   current={open.name} handleOk={(value: string) => handleAccept(value, open.index, open.item)} />}

@@ -51,7 +51,7 @@ const RenderContent = ({component, handleValues, index, data, setData, predefine
     {component === 'organization' && <RenderOrganization data={data} handleValues={handleValues} index={index}/>}
     {component === 'phones' && <RenderPhones data={data} handleValues={handleValues} index={index}/>}
     {component === 'gallery' && <RenderAssetsData data={data} setData={setData} type="gallery" index={index}
-                                                  totalFiles={predefined === undefined || selected === 'inventory' ? 3 : FILE_LIMITS['gallery'].totalFiles}/>}
+                                                  totalFiles={selected === 'inventory' ? 3 : FILE_LIMITS['gallery'].totalFiles}/>}
     {component === 'presentation' && <RenderPresentation data={data} handleValues={handleValues} index={index}
                                                          forceExtra={FORCE_EXTRA.includes(selected || '')} />}
     {component === 'opening' && <RenderOpeningTime data={data} setData={setData} index={index}/>}
