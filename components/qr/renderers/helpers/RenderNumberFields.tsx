@@ -35,7 +35,7 @@ const RenderNumberFields = (props: RenderTextFieldsProps) => {
     item ? handleValues(item)(newValue) : handleValues(newValue);
   }
 
-  const valid = checkValidity(value, required, 'number', (value: number) => {
+  const valid = checkValidity(value, !!required, 'number', (value: number) => {
     const { min = Number.MIN_VALUE, max = Number.MAX_VALUE } = props;
     return (value >= min && value <= max);
   });

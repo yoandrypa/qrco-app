@@ -3,7 +3,7 @@ import { isEmpty, isObject } from "@ebanux/ebanux-utils/utils";
 export type FormatType = any[] | RegExp | Function | null;
 export type KlassType = string | Function | null;
 
-function checkRequired(value: any, required: boolean = true) {
+function checkRequired(value: any, required: boolean) {
   return !required || !isEmpty(value);
 }
 
@@ -26,7 +26,7 @@ function checkFormat(value: any, format?: FormatType) {
   return false;
 }
 
-export function checkValidity(value: any, required: boolean = true, type?: KlassType, format?: FormatType) {
+export function checkValidity(value: any, required: boolean, type?: KlassType, format?: FormatType) {
   return checkRequired(value, required)
     && checkType(value, type)
     && checkFormat(value, format)

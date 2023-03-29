@@ -34,7 +34,7 @@ const RenderTextFields = (props: RenderTextFieldsProps) => {
     item ? handleValues(item)(newValue) : handleValues(newValue);
   }
 
-  const valid = checkValidity(value, required, 'string', format);
+  const valid = checkValidity(value, !!required, 'string', format);
 
   return (
     <TextField
