@@ -1,8 +1,7 @@
-import {memo} from "react";
-import InputAdornment from "@mui/material/InputAdornment";
-import Typography from "@mui/material/Typography";
+import React, { memo, ReactElement } from "react";
 import TextField from "@mui/material/TextField";
 import RenderIcon from "../../helperComponents/smallpieces/RenderIcon";
+import RequiredAdornment from "./RequiredAdornment";
 
 interface RenderTextFieldsProps {
   label?: string;
@@ -16,32 +15,26 @@ interface RenderTextFieldsProps {
   sx?: any;
   index?: number;
   includeIcon?: boolean;
+  rows?: number;
 }
 
-const RenderTextFields = ({value, handleValues, placeholder, label, item, required, isError, multiline, sx, includeIcon}: RenderTextFieldsProps) => (
+const RenderTextFields = ({ value, handleValues, placeholder, label, item, required, isError, multiline, sx, includeIcon, rows }: RenderTextFieldsProps) => (
   <TextField
-    sx={{...sx}}
+    sx={{ ...sx }}
     label={label}
     size="small"
     fullWidth
     required={required || false}
     error={isError || false}
     margin="dense"
-    multiline={multiline || false}
+    multiline={multiline || (rows && rows > 1) || false}
+    rows={rows}
     value={value || ''}
     placeholder={placeholder}
     onChange={item !== undefined ? handleValues(item) : handleValues}
     InputProps={{
-      startAdornment: includeIcon && (
-        <RenderIcon icon={item || ''} enabled color={'#717171'} sx={{ mr: includeIcon ? '5px' : 'unset' }} />
-      ),
-      endAdornment: (
-        required && !value.trim().length ? (
-          <InputAdornment position="end">
-            <Typography color="error">{'REQUIRED'}</Typography>
-          </InputAdornment>
-        ) : null
-      )
+      startAdornment: includeIcon && <RenderIcon icon={item || ''} enabled color={'#717171'} sx={{ mr: '5px' }} />,
+      endAdornment: required && <RequiredAdornment value={value} />,
     }}
   />
 );

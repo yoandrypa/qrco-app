@@ -1,8 +1,7 @@
-import {memo} from "react";
-import InputAdornment from "@mui/material/InputAdornment";
-import Typography from "@mui/material/Typography";
+import React, {memo} from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import RequiredAdornment from "./RequiredAdornment";
 
 interface RenderTextFieldsProps {
   label?: string;
@@ -46,13 +45,7 @@ const RenderProposalsTextFields = ({ value, handleValues, placeholder, label, it
           error={isError}
           InputProps={{
             ...params.InputProps,
-            endAdornment: (
-              required && !value.trim().length ? (
-                <InputAdornment position="end">
-                  <Typography color="error" sx={{ mr: '7px' }}>{'REQUIRED'}</Typography>
-                </InputAdornment>
-              ) : null
-            )
+            endAdornment: (required && <RequiredAdornment value={value} />),
           }}
         />
       )}
