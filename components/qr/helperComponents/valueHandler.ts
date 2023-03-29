@@ -89,9 +89,17 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
     } else if (prop === 'layout' && typeof payload === 'string') {
       setData((prev: any) => {
         const newData = {...prev};
-        newData.layout = payload;
+        let newPayload = `${payload}`;
+        if (!newPayload.includes('entire') && !newPayload.includes('sections')) {
+          let index = newPayload.indexOf('#');
+          if (index !== -1) { newPayload = newPayload.slice(0, index); }
+          index = newPayload.indexOf('%');
+          if (index !== -1) { newPayload = newPayload.slice(0, index); }
+        }
+
+        newData.layout = newPayload;
         if (payload.startsWith('empty')) {
-          if (payload.endsWith('Left')) { newData.layout = 'empty'; }
+          if (payload.includes('Left')) { newData.layout = 'empty'; }
           if (newData.backgndImg) { delete newData.backgndImg; }
           if (newData.foregndImg) { delete newData.foregndImg; }
           if (newData.foregndImgType !== undefined) { delete newData.foregndImgType; }
@@ -101,7 +109,7 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
           setBackImg(undefined);
           setForeImg(undefined);
           setMicrositeBackImage(undefined);
-        } else if (payload.includes('banner') && newData.backgndImg) {
+        } else if (newPayload.includes('banner') && newData.backgndImg) {
           delete newData.backgndImg;
           setBackImg(undefined);
         }

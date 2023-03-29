@@ -10,9 +10,10 @@ interface OpacityProps {
   property: string;
   message?: string;
   keepContainerWidth?: boolean;
+  width?: Object;
 }
 
-const RenderHandleOpacityBlurness = ({value, handleValue, property, message, keepContainerWidth, maxValue}: OpacityProps) => {
+const RenderHandleOpacityBlurness = ({value, handleValue, property, message, keepContainerWidth, maxValue, width}: OpacityProps) => {
   const isWide = useMediaQuery("(min-width:570px)", { noSsr: true });
 
   const handleOpacity = (_: Event, newValue: number | number[]) => {
@@ -21,7 +22,7 @@ const RenderHandleOpacityBlurness = ({value, handleValue, property, message, kee
   };
 
   return (
-    <Box sx={{ width: isWide && !keepContainerWidth ? '500px' : '100%', mt: 1, ml: '5px'}}>
+    <Box sx={{ width: width || (isWide && !keepContainerWidth ? '500px' : '100%'), mt: 1, ml: '5px'}}>
       <Typography sx={{display: 'flex'}}>
         {message || 'Opacity'}
         <Typography sx={{color: theme => theme.palette.text.disabled, ml: 1}}>
