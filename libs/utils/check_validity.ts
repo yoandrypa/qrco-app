@@ -1,7 +1,7 @@
 import { isEmpty, isObject } from "@ebanux/ebanux-utils/utils";
 
-type FormatType = any[] | RegExp | Function | null;
-type KlassType = string | Function | null;
+export type FormatType = any[] | RegExp | Function | null;
+export type KlassType = string | Function | null;
 
 function checkRequired(value: any, required: boolean = true) {
   return !required || !isEmpty(value);
