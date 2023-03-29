@@ -25,12 +25,14 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
   const obj = {...data, qrType: selected};
 
   if (proceed) {
-    if (!data.foregndImg && !omit) {
-      obj.foregndImg = mainImg;
-    }
+    if (data.layout !== 'empty') {
+      if (!data.foregndImg && !omit) {
+        obj.foregndImg = mainImg;
+      }
 
-    if (!data.backgndImg) {
-      obj.backgndImg = bannerImg;
+      if (!data.backgndImg) {
+        obj.backgndImg = bannerImg;
+      }
     }
 
     custom.forEach((x: CustomType) => {

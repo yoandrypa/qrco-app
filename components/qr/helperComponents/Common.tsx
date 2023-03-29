@@ -152,7 +152,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   </>);
 
   const handleSave = async () => {
-    const validate = validator(data.custom || [], FORCE_EXTRA.includes(selected), IGNORE_VALIDATOR.includes(selected));
+    const validate = validator(data.custom || [], FORCE_EXTRA.includes(selected), IGNORE_VALIDATOR.includes(selected) || !data.isDynamic);
     if (validate.length) {
       setValidationErrors(validate);
     } else {
@@ -212,7 +212,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
         <Box sx={{ display: 'flex' }}>
           <Box sx={{ width: '100%' }}>
             <TextField
-              label="QR name"
+              label="QRLynk name"
               required
               size="small"
               fullWidth
