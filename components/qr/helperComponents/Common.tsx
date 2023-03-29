@@ -212,7 +212,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
         <Box sx={{ display: 'flex' }}>
           <Box sx={{ width: '100%' }}>
             <TextField
-              label="QR name"
+              label="QRLynk name"
               required
               size="small"
               fullWidth
