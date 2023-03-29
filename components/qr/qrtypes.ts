@@ -101,9 +101,9 @@ export const dynamicQr = {
     tip: "Smart labels.",
     predefined: ['title', 'tags', 'gallery']
   },
-  inventory: {
-    tip: "Inventory tracking information.",
-    predefined: ['title', 'gallery', 'sku', 'keyvalue']
+  donation: {
+    tip: "Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.",
+    predefined: ['donation']
   },
   pdf: {
     tip: handleAssetDesc('pdf'),
