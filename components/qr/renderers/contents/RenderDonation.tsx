@@ -6,7 +6,7 @@ import Grid from "@mui/material/Grid";
 import Alert from "@mui/material/Alert";
 import Coffee from "@mui/icons-material/Coffee";
 
-import { checkValidity, UrlFormat } from "../../../../libs/utils/check_validity";
+import { UrlFormat } from "../../../../libs/utils/check_validity";
 
 import RenderTextFields from "../helpers/RenderTextFields";
 import RenderNumberFields from "../helpers/RenderNumberFields";
@@ -24,13 +24,13 @@ export interface DataType {
 
 export interface PropsType {
   index: number;
-  data?: DataType;
-  handleValues: Function;
+  data: DataType;
 }
 
-function RenderDonation({ data, handleValues, index }: PropsType) {
-  const onChange = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string) => {
-    handleValues(item, index)(payload);
+function RenderDonation({ data, index }: PropsType) {
+  const onChange = (item: string) => (value: any) => {
+    // @ts-ignore
+    data[item] = value;
   }
 
   useEffect(() => {
@@ -48,7 +48,6 @@ function RenderDonation({ data, handleValues, index }: PropsType) {
             index={index} item="title" label="Title" value={title}
             placeholder="Enter the donation section title"
             handleValues={onChange}
-            isError={!checkValidity(title, true)}
             required
           />
         </Grid>
@@ -57,7 +56,6 @@ function RenderDonation({ data, handleValues, index }: PropsType) {
             index={index} item="buttonText" label="Button text" value={buttonText}
             options={['Donate', 'Give', 'Contribute']}
             handleValues={onChange}
-            isError={!checkValidity(buttonText, true)}
             required
           />
         </Grid>
@@ -67,7 +65,6 @@ function RenderDonation({ data, handleValues, index }: PropsType) {
             index={index} item="message" label="Message" value={message}
             placeholder="Would you like to buy me a coffee?"
             handleValues={onChange}
-            isError={!checkValidity(message, true)}
             rows={5}
             required
           />
@@ -84,7 +81,7 @@ function RenderDonation({ data, handleValues, index }: PropsType) {
             index={index} item="website" label="Website or social link" value={website}
             placeholder="Enter your website or social link"
             handleValues={onChange}
-            isError={!checkValidity(website, false, 'string', UrlFormat)}
+            format={UrlFormat}
           />
         </Grid>
         <Grid item xs={12} sm={4}>
@@ -93,7 +90,6 @@ function RenderDonation({ data, handleValues, index }: PropsType) {
             min={1} max={100}
             placeholder="5"
             handleValues={onChange}
-            isError={!checkValidity(unitAmount, true)}
             startAdornment={<Coffee sx={{ color: 'primary.main' }} />}
             required
           />

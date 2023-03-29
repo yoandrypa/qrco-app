@@ -1,7 +1,10 @@
-import React, {memo} from "react";
+import React, { useState, SyntheticEvent } from "react";
+
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import RequiredAdornment from "./RequiredAdornment";
+
+import { checkValidity, FormatType } from "../../../../libs/utils/check_validity";
 
 interface RenderTextFieldsProps {
   label?: string;
@@ -13,26 +16,31 @@ interface RenderTextFieldsProps {
   item?: string;
   index?: number;
   options: string[];
+  format?: FormatType;
 }
 
-const RenderProposalsTextFields = ({ value, handleValues, placeholder, label, item, required, isError, options, index }: RenderTextFieldsProps) => {
-  const handleBefore = (newValue: string | null) => {
-    const value = newValue || '';
-    if (item !== undefined) {
-      handleValues(item)(value);
-    } else {
-      handleValues(value || '');
-    }
+const RenderProposalsTextFields = (props: RenderTextFieldsProps) => {
+  const { value: initValue, placeholder, label, item, options } = props;
+  const { handleValues, required, format, isError } = props;
+
+  const [value, setValue] = useState<string>(initValue);
+
+  const onChange = (event: SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+    item ? handleValues(item)(newValue) : handleValues(newValue);
   }
+
+  const valid = checkValidity(value, required, 'string', format);
 
   return (
     <Autocomplete
       freeSolo
       value={value}
-      onChange={(event: any, newValue: string | null) => { handleBefore(newValue); }}
+      onChange={onChange}
       inputValue={value}
-      onInputChange={(event, newInputValue) => { handleBefore(newInputValue); }}
+      onInputChange={onChange}
       disableClearable
+      options={options}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -42,20 +50,14 @@ const RenderProposalsTextFields = ({ value, handleValues, placeholder, label, it
           margin="dense"
           placeholder={placeholder}
           label={label}
-          error={isError}
+          error={isError || !valid}
           InputProps={{
             ...params.InputProps,
             endAdornment: (required && <RequiredAdornment value={value} />),
           }}
         />
       )}
-      options={options}
     />);
 };
 
-// @ts-ignore
-function notIf(current, next) {
-  return current.value === next.value && current.isError === next.isError && current.index === next.index;
-}
-
-export default memo(RenderProposalsTextFields, notIf);
+export default RenderProposalsTextFields;
