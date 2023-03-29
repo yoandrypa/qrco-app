@@ -141,7 +141,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     if (!(await allowCreate())) return;
 
     if (router.pathname === QR_CONTENT_ROUTE) {
-      const validation = validator(data.custom || [], FORCE_EXTRA.includes(selected), IGNORE_VALIDATOR.includes(selected));
+      const validation = validator(data.custom || [], FORCE_EXTRA.includes(selected), IGNORE_VALIDATOR.includes(selected) || !data.isDynamic);
       if (validation.length) {
         setValidationErrors(validation);
         return;
