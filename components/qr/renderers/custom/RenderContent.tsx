@@ -28,6 +28,7 @@ const RenderCouponInfo = dynamic(() => import("../contents/RenderCouponInfo"));
 const RenderCouponData = dynamic(() => import("../contents/RenderCouponData"));
 const RenderPetDesc = dynamic(() => import("../contents/RenderPetDesc"));
 const RenderSku = dynamic(() => import("../contents/RenderSku"));
+const RenderDonation = dynamic(() => import("../contents/RenderDonation"));
 
 interface RenderContentProps {
   component: string;
@@ -36,7 +37,7 @@ interface RenderContentProps {
   index: number;
   predefined?: string[];
   selected?: string;
-  data?: Type;
+  data: any;
 }
 
 const RenderContent = ({component, handleValues, index, data, setData, predefined, selected}: RenderContentProps) => (
@@ -77,6 +78,7 @@ const RenderContent = ({component, handleValues, index, data, setData, predefine
     {component === 'couponData' && <RenderCouponData index={index} handleValues={handleValues} data={data} />}
     {component === 'petId' && <RenderPetDesc index={index} handleValues={handleValues} data={data} />}
     {component === 'sku' && <RenderSku index={index} handleValues={handleValues} data={data} />}
+    {component === 'donation' && <RenderDonation index={index} handleValues={handleValues} data={data} />}
   </>
 );
 

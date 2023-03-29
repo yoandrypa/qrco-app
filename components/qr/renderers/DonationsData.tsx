@@ -1,8 +1,9 @@
+// TODO: Deprecate...
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { Autocomplete, SvgIcon, Tooltip } from '@mui/material';
+import { SvgIcon, Tooltip } from '@mui/material';
 import Common from '../helperComponents/Common'
 import Alert from '@mui/material/Alert';
 import { isValidUrl } from "../../../utils";
@@ -26,42 +27,22 @@ export interface DonationsProps {
   handleValues: Function
 }
 
-type Options = 'message' | 'title' | 'avatarImage' |
-  'web' | 'unitAmount' | 'urlOptionLabel'
-
-const options = ['Donate', 'Contribute', 'Give'];
+type Options = 'message' | 'title' | 'avatarImage' | 'web' | 'unitAmount' | 'urlOptionLabel'
 
 const DonationsData = ({ data, setData, setIsWrong, handleValues }: DonationsProps) => {
-
-  const [webError, setWebError] = useState<boolean>(false)
-  const [coffeePrice, setCoffeePrice] = useState<number>(1)
+  const [webError, setWebError] = useState<boolean>(false);
+  const [coffeePrice, setCoffeePrice] = useState<number>(data.unitAmount || 1);
   const [inputButtonValue, setInputButtonValue] = React.useState('');
 
-
   useEffect(() => {
-    const temp = { ...data }
-    if (coffeePrice < 1) {
-      setCoffeePrice(1)
-      temp["unitAmount"] = 1
-    } else if (coffeePrice > 100) {
-      setCoffeePrice(100)
-      temp["unitAmount"] = 100
-
-    } else {
-      temp["unitAmount"] = coffeePrice
-    }
-
-  }
-    , [coffeePrice, data, inputButtonValue])
-
-  useEffect(() => {
-    const temp = { ...data }
-    temp["urlOptionLabel"] = inputButtonValue
-  }, [inputButtonValue, data])
+    if (coffeePrice < 1) setCoffeePrice(1);
+    if (coffeePrice > 100) setCoffeePrice(100);
+  }, [coffeePrice, data, inputButtonValue])
 
   const handleValuesBefore = (item: Options) => (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const temp = { ...data };
+
     if (item === "web") {
       if (value.length > 0) {
         setWebError(!isValidUrl(value))
@@ -70,8 +51,8 @@ const DonationsData = ({ data, setData, setIsWrong, handleValues }: DonationsPro
         setIsWrong(false);
         setWebError(false);
       }
-
     }
+
     if (value.length) {
       if (item === 'unitAmount') {
         setCoffeePrice(parseFloat(value))
@@ -81,8 +62,8 @@ const DonationsData = ({ data, setData, setIsWrong, handleValues }: DonationsPro
           temp[item] = parseFloat(value)
           setIsWrong(false)
         }
-
       }
+
       // @ts-ignore
       temp[item] = value;
       // @ts-ignore
@@ -103,17 +84,18 @@ const DonationsData = ({ data, setData, setIsWrong, handleValues }: DonationsPro
   }
 
   return (
-    <Common msg='Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.'>
+    <Common
+      msg='Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.'>
       <Typography variant='h6' marginTop={2}>Customize your donation page</Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <TextField label='Your Name'
-            fullWidth
-            sx={{ marginTop: 2 }}
-            placeholder='Paul Smith'
-            value={data?.title || ''}
-            onChange={handleValuesBefore('title')}
-            size='small'
+                     fullWidth
+                     sx={{ marginTop: 2 }}
+                     placeholder='Paul Smith'
+                     value={data?.title || ''}
+                     onChange={handleValuesBefore('title')}
+                     size='small'
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -130,7 +112,7 @@ const DonationsData = ({ data, setData, setIsWrong, handleValues }: DonationsPro
         </Grid>
       </Grid>
       <Typography marginTop={2}>Add a small text here</Typography>
-      <Grid >
+      <Grid>
         <TextField
           label="Make a good one"
           size="small"
@@ -144,24 +126,24 @@ const DonationsData = ({ data, setData, setIsWrong, handleValues }: DonationsPro
         >
         </TextField>
       </Grid>
-      <Grid >
+      <Grid>
         <Alert severity='info' sx={{ mt: 2 }}>
           Note: When you receive a donation, your supporters will be redirected to this website or social link page,
           you can use this to provide some content as a sign of appreciation or just leave it blank and they
           will be redirected to a &quot;thank you page&quot;.
         </Alert>
       </Grid>
-      <Grid container spacing={2} >
+      <Grid container spacing={2}>
         <Grid item sm={8} xs={12}>
           <Tooltip title={webError ? 'If set, the URL must be valid' : ''}>
             <TextField label='Website or social link'
-              fullWidth
-              sx={{ marginTop: 2 }}
-              value={data?.web || ''}
-              onChange={handleValuesBefore('web')}
-              onBlur={handleWebInputBlur}
-              error={webError}
-              size='small'
+                       fullWidth
+                       sx={{ marginTop: 2 }}
+                       value={data?.web || ''}
+                       onChange={handleValuesBefore('web')}
+                       onBlur={handleWebInputBlur}
+                       error={webError}
+                       size='small'
             />
           </Tooltip>
 

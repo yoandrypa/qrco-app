@@ -41,7 +41,6 @@ export const dynamicQrTypes = {
   },
   donation: {
     description: "Get donations from your supporters worldwide",
-    devOnly: true
   },
   petId: {
     description: "Share your pet's information"

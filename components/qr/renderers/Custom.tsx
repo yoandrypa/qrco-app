@@ -186,7 +186,7 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
                                     bold={Boolean(x.name)} editFunc={isHeadline ? handleEdit(index, component, x.name) : undefined}/>
                           {expanded !== undefined && (
                             <RenderContent component={component} handleValues={handleValues} setData={setData}
-                                           index={index} data={x.data} predefined={predefined} selected={selected} />
+                                           index={index} data={x.data || {}} predefined={predefined} selected={selected} />
                           )}
                         </DragPaper>
                       </Box>
