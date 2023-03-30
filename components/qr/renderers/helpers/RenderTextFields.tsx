@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import {checkValidity, FormatType} from "../../../../libs/utils/check_validity";
 
 const MenuItem = dynamic(() => import("@mui/material/MenuItem"));
 const Popover = dynamic(() => import("@mui/material/Popover"));
@@ -31,15 +32,19 @@ interface RenderTextFieldsProps {
   index?: number;
   includeIcon?: boolean;
   options?: boolean;
+  rows?: number;
+  format?: FormatType;
 }
 
-const RenderTextFields = ({value, customValue, handleValues, placeholder, label, item, required, isError, multiline, sx, includeIcon, options}: RenderTextFieldsProps) => {
+const RenderTextFields = ({rows, format, value, customValue, handleValues, placeholder, label, item, required, isError, multiline, sx, includeIcon, options}: RenderTextFieldsProps) => {
   const [anchor, setAnchor] = useState<Element | undefined>(undefined);
   const [openCustom, setOpenCustom] = useState<boolean>(false);
 
   useEffect(() => {
     if (!anchor && openCustom) { setOpenCustom(false); }
   }, [anchor]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const valid = format ? checkValidity(value, !!required, 'string', format) : isError || false;
 
   return (
     <>
@@ -48,10 +53,11 @@ const RenderTextFields = ({value, customValue, handleValues, placeholder, label,
         label={label}
         size="small"
         fullWidth
-        required={required || false}
-        error={isError || false}
+        required={valid}
+        error={isError || !valid}
+        rows={rows}
         margin="dense"
-        multiline={multiline || false}
+        multiline={multiline || (rows && rows > 1) || false}
         value={value || ''}
         placeholder={placeholder}
         onChange={item !== undefined ? handleValues(item) : handleValues}
