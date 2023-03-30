@@ -20,6 +20,7 @@ export interface DataType {
   website: string;
   unitAmount: number;
   email: string;
+  ownerId: string;
 }
 
 export interface PropsType {
@@ -34,7 +35,8 @@ function RenderDonation({ data, index }: PropsType) {
   }
 
   useEffect(() => {
-    if (data?.email === undefined) onChange('email')(session.currentUser.email);
+    if (data.email === undefined) data.email = session.currentUser.email;
+    if (data.ownerId === undefined) data.ownerId = session.currentUser.cognito_user_id;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { title = '', buttonText = '', message = '', website = '', unitAmount = 1 } = data || {};

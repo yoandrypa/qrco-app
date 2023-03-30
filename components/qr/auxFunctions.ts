@@ -174,17 +174,25 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   if (data.custom?.length) {
     for (let idx = 0, len = data.custom?.length || 0; idx < len; idx += 1) {
-      const x = data.custom[idx]; // @ts-ignore
-      if (x.expand !== undefined) delete x.expand;
-      if (["pdf", "audio", "gallery", "video"].includes(x.component) && x.data?.files?.length) {
-        prevUpdatingHandler(`Uploading assets for ${capitalize(x.component)} section`);
+      const section = data.custom[idx]; // @ts-ignore
+      if (section.expand !== undefined) delete section.expand;
+      if (["pdf", "audio", "gallery", "video"].includes(section.component) && section.data?.files?.length) {
+        prevUpdatingHandler(`Uploading assets for ${capitalize(section.component)} section`);
         try {
           // upload will handle only File instances, others are ignored
-          x.data.files = await upload(x.data.files, `${userInfo.cognito_user_id}/${selected}s`);
+          section.data.files = await upload(section.data.files, `${userInfo.cognito_user_id}/${selected}s`);
           prevUpdatingHandler(null, true);
         } catch {
           prevUpdatingHandler(null, false);
           setIsError(true);
+        }
+      } else if (section.component === 'donation') {
+        try {
+          prevUpdatingHandler('Setting donation micro-site')
+          await createQrDonationPayLynk(section.data, options.data);
+        } catch (error) {
+          setIsError(true);
+          prevUpdatingHandler(null, false);
         }
       }
     }
