@@ -325,16 +325,6 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     qrDesign.id = qrDesignId;
   }
 
-  if (selected === "donation") {
-    try {
-      prevUpdatingHandler('Setting donation micro-site')
-      await createQrDonationPayLynk(qrData, qrDesign.data);
-    } catch (error) {
-      setIsError(true);
-      prevUpdatingHandler(null, false);
-    }
-  }
-
   cleaner(qrDesign, background, frame, cornersData, dotsData, data.mode === 'edit');
 
   try {
