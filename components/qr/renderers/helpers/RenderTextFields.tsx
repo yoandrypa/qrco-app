@@ -44,7 +44,7 @@ const RenderTextFields = ({rows, format, value, customValue, handleValues, place
     if (!anchor && openCustom) { setOpenCustom(false); }
   }, [anchor]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const valid = format ? checkValidity(value, !!required, 'string', format) : isError || false;
+  const valid = value.trim().length ? checkValidity(value, !!required, 'string', format) : true;
 
   return (
     <>
@@ -53,7 +53,7 @@ const RenderTextFields = ({rows, format, value, customValue, handleValues, place
         label={label}
         size="small"
         fullWidth
-        required={valid}
+        required={required || false}
         error={isError || !valid}
         rows={rows}
         margin="dense"
