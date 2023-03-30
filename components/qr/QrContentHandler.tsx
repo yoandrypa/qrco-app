@@ -27,7 +27,6 @@ const SendMeMoneyData = dynamic(() => import('./renderers/SendMeMoneyData'));
 const FundMe = dynamic(() => import('./renderers/FundMeData'));
 const PleaseWait = dynamic(() => import('../PleaseWait'));
 const RenderNoUserWarning = dynamic(() => import('./helperComponents/smallpieces/RenderNoUserWarning'));
-const DonationsData = dynamic(() => import('./renderers/DonationsData'));
 
 type QrContentHandlerProps = {
   data: DataType;
@@ -87,9 +86,6 @@ const QrContentHandler = () => { // @ts-ignore
       }
       case 'twitter': {
         return <TwitterData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
-      }
-      case 'donation': {
-        return <DonationsData data={data} handleValues={handleValues} setData={(payload: DataType) => setData(payload)} setIsWrong={setIsWrong} />
       }
       case 'paylink': {
         return <SendMeMoneyData data={data} setData={handlePayload} handleValues={handleValues} setIsWrong={setIsWrong} />

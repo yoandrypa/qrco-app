@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -11,7 +11,13 @@ import {
   QR_DETAILS_ROUTE, QR_TYPE_ROUTE
 } from "../qr/constants";
 import AppWrapper from "../AppWrapper";
-import { dataCleaner, getBackgroundObject, getCornersAndDotsObject, getFrameObject, handleInitialData } from "../../helpers/qr/helpers";
+import {
+  dataCleaner,
+  getBackgroundObject,
+  getCornersAndDotsObject,
+  getFrameObject,
+  handleInitialData,
+} from "../../helpers/qr/helpers";
 
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import { logout } from '@ebanux/ebanux-utils/auth';
@@ -24,7 +30,7 @@ const Generator = dynamic(() => import("../qr/Generator"));
 const PleaseWait = dynamic(() => import("../PleaseWait"));
 const UpdateBrowser = dynamic(() => import("../UpdateBrowser"));
 
-const contextCache: any = isBrowser() ? session.get('CONTEXT', {}, true) : {};
+const contextCache: any = isBrowser() ? session.get('CONTEXT', { custom: [] }, true) : { custom: [] };
 
 const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const [options, setOptions] = useState<OptionsType>(handleInitialData("Ebanux"));
@@ -153,11 +159,11 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (updateBrowser) {
-    return <UpdateBrowser/>;
+    return <UpdateBrowser />;
   }
 
   if (verifying || !data) {
-    return <PleaseWait/>;
+    return <PleaseWait />;
   }
 
   if (router.pathname.startsWith("/qr") && ![QR_TYPE_ROUTE, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE]
@@ -167,7 +173,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
   const renderContent = () => {
     if (router.pathname.startsWith('/claim')) {
-      return <Claimer code={(router.query.code || '') as string}/>;
+      return <Claimer code={(router.query.code || '') as string} />;
     }
     if (router.pathname === "/" && router.query[PARAM_QR_TEXT] !== undefined) {
       const qrText = router.query[PARAM_QR_TEXT] as string;

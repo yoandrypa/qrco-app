@@ -1,16 +1,35 @@
-import {DataType, Type} from "../../types/types";
+import { DataType, Type } from "../../types/types";
 
 export const components = {
-  address: {name: 'Address'}, company: {name: 'Company'}, date: {name: 'Date'}, justEmail: {name: 'Email address'},
-  email: {name: 'Email and web'}, easiness: {name: 'Easiness'},  links: {name: 'Links'},
-  organization: {name: 'Organization'}, phones: {name: 'Phones'}, gallery: {name: 'Gallery'},
-  presentation: {name: 'Presentation'}, opening: {name: 'Opening time'}, socials: {name: 'Social networks'},
-  title: {name: 'Title and description'}, action: {name: 'Action button'}, single: {name: 'Single text'},
-  pdf: {name: 'PDF file'}, audio: {name: 'Audio files'}, video: {name: 'Video files'},
-  keyvalue: {name: 'Details'}, web: {name: 'Web'}, contact: {name: 'Contact form'}, tags: {name: 'Tags'},
-  sms: {name: 'Contact via SMS'}, couponInfo: {name: 'Promotion info', notInMenu: true},
-  couponData: {name: 'Coupon data', notInMenu: true}, petId: {name: 'Pet presentation', notInMenu: true},
-  sku: {name: 'Product', notInMenu: true}
+  address: { name: 'Address' },
+  company: { name: 'Company' },
+  date: { name: 'Date' },
+  justEmail: { name: 'Email address' },
+  email: { name: 'Email and web' },
+  easiness: { name: 'Easiness' },
+  links: { name: 'Links' },
+  organization: { name: 'Organization' },
+  phones: { name: 'Phones' },
+  gallery: { name: 'Gallery' },
+  presentation: { name: 'Presentation' },
+  opening: { name: 'Opening time' },
+  socials: { name: 'Social networks' },
+  title: { name: 'Title and description' },
+  action: { name: 'Action button' },
+  single: { name: 'Single text' },
+  pdf: { name: 'PDF file' },
+  audio: { name: 'Audio files' },
+  video: { name: 'Video files' },
+  keyvalue: { name: 'Details' },
+  web: { name: 'Web' },
+  contact: { name: 'Contact form' },
+  tags: { name: 'Tags' },
+  sms: { name: 'Contact via SMS' },
+  donation: { name: 'Donation' },
+  couponInfo: { name: 'Promotion info', notInMenu: true },
+  couponData: { name: 'Coupon data', notInMenu: true },
+  petId: { name: 'Pet presentation', notInMenu: true },
+  sku: { name: 'Product', notInMenu: true },
 };
 
 // @ts-ignore
@@ -19,10 +38,14 @@ const getName = (type: string) => components[type].name;
 export const getNameStr = (type: string, selected: string): string => {
   if (['inventory'].includes(selected)) {
     switch (type) {
-      case 'title': { return 'Product information'; }
-      case 'gallery': { return 'Images'; }
-      case 'sku': { return 'Product SKU and quantity'; }
-      case 'keyvalue': { return 'Location'; }
+      case 'title':
+        return 'Product information';
+      case 'gallery':
+        return 'Images';
+      case 'sku':
+        return 'Product SKU and quantity';
+      case 'keyvalue':
+        return 'Location';
     }
     return getName(type);
   }
@@ -59,7 +82,7 @@ export interface ContentProps {
 
 export const cleaner = (data: DataType, item: string): void => {
   const deleteItem = (item: string): void => { // @ts-ignore
-    if (data[item] !== undefined) { delete data[item]; }
+    if (data[item] !== undefined) delete data[item];
   }
   if (item === 'easiness' && data.easiness !== undefined) {
     delete data.easiness;
@@ -110,12 +133,12 @@ export const cleaner = (data: DataType, item: string): void => {
 export const sectionPreConfig = (item: string, selected?: string) => {
   let data = undefined as any;
   if (item === 'socials') {
-    data = {socialsOnlyIcons : true, hideHeadLine: true};
+    data = { socialsOnlyIcons: true, hideHeadLine: true };
   } else if (item === 'links') {
-    data = {hideHeadLine: true};
+    data = { hideHeadLine: true };
   }
   if (selected === 'petId') {
-    data = {...data, linksOnlyLinks: true};
+    data = { ...data, linksOnlyLinks: true };
   }
   return data;
 }

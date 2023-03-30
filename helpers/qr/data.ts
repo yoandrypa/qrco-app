@@ -18,7 +18,8 @@ export const initialFrame = {
 export const originalDimensions = 280;
 
 export const initialData = {
-  isDynamic: true
+  isDynamic: true,
+  custom: [],
 }
 
 const initialOptions = {

@@ -50,8 +50,7 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
     setConfirm(undefined);
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
-      newData.custom.splice(index, 1); // @ts-ignore
-      if (!newData.custom.length) { delete newData.custom; }
+      newData.custom.splice(index, 1);
       cleaner(newData, item);
       return newData;
     });
@@ -173,6 +172,8 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
                   const isHeadline = !['title', 'action', 'sku'].includes(component) && !(component === 'gallery' && selected === 'inventory');
                   const key = x.expand || `tempo${index}`;
 
+                  x.data = x.data || {};
+
                   return (<Draggable key={key} draggableId={key} index={index} isDragDisabled={data.custom?.length === 1}>
                     {(prov: any, snap: any) => (
                       <Box sx={{my: 4, width: '100%', ...getItemStyle(snap.isDragging, prov.draggableProps.style)}}
@@ -181,7 +182,7 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
                                    editFunc={isHeadline ? handleEdit(index, component, x.name) : undefined}
                                    settingsFunc={handleSettings(index, !isHeadline)}> {/* @ts-ignore */}
                           <Expander expand={expanded || null} setExpand={handleExpander} item={x.expand} multi
-                                    index={index} handleValues={handleValues} checked={x?.data?.hideHeadLine}
+                                    index={index} handleValues={handleValues} checked={x.data.hideHeadLine}
                                     title={x.name || getNameStr(component, selected || '')}
                                     bold={Boolean(x.name)} editFunc={isHeadline ? handleEdit(index, component, x.name) : undefined}/>
                           {expanded !== undefined && (

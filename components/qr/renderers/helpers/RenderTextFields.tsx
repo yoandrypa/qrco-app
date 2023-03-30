@@ -1,8 +1,10 @@
-import {memo} from "react";
-import InputAdornment from "@mui/material/InputAdornment";
-import Typography from "@mui/material/Typography";
+import React, { ChangeEvent, memo, useState } from "react";
+
 import TextField from "@mui/material/TextField";
 import RenderIcon from "../../helperComponents/smallpieces/RenderIcon";
+import RequiredAdornment from "./RequiredAdornment";
+
+import { checkValidity, FormatType } from "../../../../libs/utils/check_validity";
 
 interface RenderTextFieldsProps {
   label?: string;
@@ -16,35 +18,45 @@ interface RenderTextFieldsProps {
   sx?: any;
   index?: number;
   includeIcon?: boolean;
+  rows?: number;
+  format?: FormatType;
 }
 
-const RenderTextFields = ({value, handleValues, placeholder, label, item, required, isError, multiline, sx, includeIcon}: RenderTextFieldsProps) => (
-  <TextField
-    sx={{...sx}}
-    label={label}
-    size="small"
-    fullWidth
-    required={required || false}
-    error={isError || false}
-    margin="dense"
-    multiline={multiline || false}
-    value={value || ''}
-    placeholder={placeholder}
-    onChange={item !== undefined ? handleValues(item) : handleValues}
-    InputProps={{
-      startAdornment: includeIcon && (
-        <RenderIcon icon={item || ''} enabled color={'#717171'} sx={{ mr: includeIcon ? '5px' : 'unset' }} />
-      ),
-      endAdornment: (
-        required && !value.trim().length ? (
-          <InputAdornment position="end">
-            <Typography color="error">{'REQUIRED'}</Typography>
-          </InputAdornment>
-        ) : null
-      )
-    }}
-  />
-);
+const RenderTextFields = (props: RenderTextFieldsProps) => {
+  const { value: initValue, placeholder, label, item, multiline, rows } = props;
+  const { handleValues, sx, includeIcon, required, format, isError } = props;
+
+  const [value, setValue] = useState<string>(initValue);
+
+  const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    setValue(newValue);
+    item ? handleValues(item)(newValue) : handleValues(newValue);
+  }
+
+  const valid = checkValidity(value, !!required, 'string', format);
+
+  return (
+    <TextField
+      value={value || ''}
+      label={label}
+      placeholder={placeholder}
+      required={required || false}
+      error={isError || !valid}
+      multiline={multiline || (rows && rows > 1) || false}
+      rows={rows}
+      fullWidth
+      margin="dense"
+      size="small"
+      sx={{ ...sx }}
+      onChange={onChange}
+      InputProps={{
+        startAdornment: includeIcon && <RenderIcon icon={item || ''} enabled color={'#717171'} sx={{ mr: '5px' }} />,
+        endAdornment: required && <RequiredAdornment value={value} />,
+      }}
+    />
+  );
+}
 
 // @ts-ignore
 function notIf(current, next) {
