@@ -78,7 +78,7 @@ const RenderContent = ({component, handleValues, index, data, setData, predefine
     {component === 'couponData' && <RenderCouponData index={index} handleValues={handleValues} data={data} />}
     {component === 'petId' && <RenderPetDesc index={index} handleValues={handleValues} data={data} />}
     {component === 'sku' && <RenderSku index={index} handleValues={handleValues} data={data} />}
-    {component === 'donation' && <RenderDonation index={index} handleValues={handleValues} data={data} />}
+    {component === 'donation' && <RenderDonation index={index} data={data} />}
   </>
 );
 
