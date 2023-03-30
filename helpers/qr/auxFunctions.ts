@@ -12,7 +12,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
   const custom = data?.custom || [];
 
   const possibles = ['hideHeadLine', 'centerHeadLine', 'topSpacing', 'bottomSpacing', 'customFont', 'hideHeadLineIcon',
-    'headlineFont', 'headlineFontSize', 'headLineFontStyle', 'socialsOnlyIcons', 'linksOnlyLinks'];
+    'headlineFont', 'headlineFontSize', 'headLineFontStyle', 'socialsOnlyIcons', 'linksOnlyLinks', 'extras'];
   custom.every((x: CustomType) => {
     const elements = x.data || {}; // @ts-ignore
     if (Object.keys(x.data || {}).length !== possibles.filter(possible => elements[possible] !== undefined).length) {
@@ -47,6 +47,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
       const hideHeadLineIcon = x.data?.hideHeadLineIcon;
       const socialsOnlyIcons = x.data?.socialsOnlyIcons;
       const linksOnlyLinks = x.data?.linksOnlyLinks;
+      const extras = x.data?.extras;
 
       switch (x.component) {
         case 'address': {
@@ -235,6 +236,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
         if (hideHeadLineIcon !== undefined) {x.data.hideHeadLineIcon = hideHeadLineIcon;}
         if (socialsOnlyIcons !== undefined) {x.data.hideHeadLineIcon = socialsOnlyIcons;}
         if (linksOnlyLinks !== undefined) {x.data.hideHeadLineIcon = linksOnlyLinks;}
+        if (extras !== undefined) {x.data.extras = extras;}
       }
     });
   }
