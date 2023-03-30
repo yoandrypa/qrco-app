@@ -11,7 +11,22 @@ const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTM
       const element = newData.custom[index];
       if (!element.data) { element.data = {}; }
       const elementData = element.data as Type;
-      if (item === 'tags') {
+      if (item.includes('.')) {
+        const data = item.split('.');
+        const obj = data[0];
+        const prop = data[1];
+        if ((typeof payload === 'boolean' && payload) || (typeof payload === 'string' && payload.trim().length)) { // @ts-ignore
+          if (!elementData[obj]) { elementData[obj] = {} as any; } // @ts-ignore
+          elementData[obj][prop] = payload;
+        } else { // @ts-ignore
+          delete elementData[obj][prop]; // @ts-ignore
+          if (elementData[obj][`${prop}Icon`]) { delete elementData[obj][`${prop}Icon`]; } // @ts-ignore
+          if (!Object.keys(elementData[obj]).length) { delete elementData[obj]; }
+          Object.keys(elementData).forEach(x => { // @ts-ignore
+            if (x.endsWith('_Custom')) { delete elementData[x]; }
+          });
+        }
+      } else if (item === 'tags') {
         if (Array.isArray(payload)) {
           if (payload.length) {
             elementData.tags = payload;
@@ -48,7 +63,8 @@ const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTM
           delete elementData.includeExtraInfo;
         } else {
           if (typeof value === "string" && !value.trim().length) { // @ts-ignore
-            delete elementData[item];
+            delete elementData[item]; // @ts-ignore
+            if (elementData[`${item}_Custom`] !== undefined) { delete elementData[`${item}_Custom`]; }
           } else { // @ts-ignore
             elementData[item] = value;
           }

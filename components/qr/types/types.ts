@@ -102,6 +102,7 @@ export type SocialsType =
 export type SocialNetworksType = { network: SocialsType, value?: string };
 
 export type Type = {
+  extras?: any;
   customFont?: boolean;
   headLineFontStyle?: string;
   headlineFontSize?: string;

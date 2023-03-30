@@ -8,6 +8,7 @@ import {EMAIL} from "../../constants";
 import RenderTextFields from "../helpers/RenderTextFields";
 import RenderPhones from "./RenderPhones";
 import {ContentProps} from "../custom/helperFuncs";
+import RenderEmailWeb from "./RenderEmailWeb";
 
 export default function RenderCompanyData({data, handleValues, index}: ContentProps) {
   const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string) => {
@@ -31,7 +32,8 @@ export default function RenderCompanyData({data, handleValues, index}: ContentPr
         isError={isError}
         value={value}
         handleValues={beforeSend}
-        required={required} />
+        required={required}
+        multiline={item === 'about'} />
     );
   };
 
@@ -41,8 +43,9 @@ export default function RenderCompanyData({data, handleValues, index}: ContentPr
         <Grid item xs={12} style={{paddingTop: 0}}>{renderItem('company', 'Company', true)}</Grid>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>{renderItem('title', 'Title')}</Grid>
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>{renderItem('subtitle', 'Subtitle')}</Grid>
-        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>{renderItem('companyWebSite', 'Web')}</Grid>
-        <Grid item sm={6} xs={12} style={{paddingTop: 0}}>{renderItem('companyEmail', 'Email')}</Grid>
+        <Grid item xs={12} sx={{pt: 1}}>
+          <RenderEmailWeb data={data} handleValues={handleValues} isCompany index={index} />
+        </Grid>
         <Grid item xs={12} style={{paddingTop: 0}}>{renderItem('contact', 'Contact name')}</Grid>
         <Grid item xs={12} sx={{pt: 1}}>
           <RenderPhones data={data} handleValues={handleValues} isCompany index={index} />
