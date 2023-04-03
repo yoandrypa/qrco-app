@@ -88,17 +88,7 @@ export type SocialProps = {
   isDynamic?: boolean;
 };
 
-export type SocialsType =
-  'facebook'
-  | 'whatsapp'
-  | 'twitter'
-  | 'instagram'
-  | 'youtube'
-  | 'linkedin'
-  | 'pinterest'
-  | 'telegram'
-  | 'title'
-  | 'about';
+export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram' | 'tiktok' | 'title' | 'about' | string;
 export type SocialNetworksType = { network: SocialsType, value?: string };
 
 export type Type = {

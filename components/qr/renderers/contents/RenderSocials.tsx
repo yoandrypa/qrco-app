@@ -4,14 +4,15 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import MenuItem from "@mui/material/MenuItem";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
 import {capitalize} from "@mui/material";
 
+import RenderSocial from "../../helperComponents/smallpieces/RenderSocial";
 import RenderIcon from "../../helperComponents/smallpieces/RenderIcon";
 import {DataType, SocialNetworksType, SocialsType, Type} from "../../types/types";
 import {PHONE} from "../../constants";
-import SectionSelector from "../../helperComponents/SectionSelector";
-import MenuItem from "@mui/material/MenuItem";
+
 import {getItemStyle} from "../../helperComponents/looseComps/StyledComponents";
 
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
@@ -28,6 +29,12 @@ interface RenderSocialsProps {
   data?: Type;
   setData: Function;
 }
+
+const NETWORKS = [{property: "facebook", tooltip:"Facebook"}, {property:"whatsapp", tooltip: "Whatsapp"},
+  {property:"twitter", tooltip:"Twitter"}, {property: "instagram", tooltip: "Instagram"},
+  {property: "youtube", tooltip: "YouTube"}, {property: "linkedin", tooltip: "LinkedIn"},
+  {property: "pinterest", tooltip: "Pinterest"}, {property: "telegram", tooltip: "Telegram"},
+  {property: "tiktok", tooltip: "TikTok"}];
 
 const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
   const selection = useRef<SocialsType | null>(null);
@@ -147,30 +154,9 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
     <Grid container spacing={1}>
       <Grid item xs={12}>
         <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: 'fit-content', margin: '0 auto'}}>
-          <SectionSelector
-            icon="_" separate h='50px' w='55px' mw='55px' property="facebook" selected={exists('facebook')}
-            handleSelect={handleSelection} tooltip="Facebook" />
-          <SectionSelector
-            icon="_" separate h='50px' w='55px' mw='55px' property="whatsapp" selected={exists('whatsapp')}
-            handleSelect={handleSelection} tooltip="Whatsapp" />
-          <SectionSelector
-            icon="_" separate h='50px' w='55px' mw='55px' property="twitter" selected={exists('twitter')}
-            handleSelect={handleSelection} tooltip="Twitter" />
-          <SectionSelector
-            icon="_" separate h='50px' w='55px' mw='55px' property="instagram" selected={exists('instagram')}
-            handleSelect={handleSelection} tooltip="Instagram" />
-          <SectionSelector
-            icon="_" separate h='50px' w='55px' mw='55px' property="youtube" selected={exists('youtube')}
-            handleSelect={handleSelection} tooltip="YouTube" />
-          <SectionSelector
-            icon="_" separate h='50px' w='55px' mw='55px' property="linkedin" selected={exists('linkedin')}
-            handleSelect={handleSelection} tooltip="LinkedIn" />
-          <SectionSelector
-            icon="_" separate h='50px' w='55px' mw='55px' property="pinterest" selected={exists('pinterest')}
-            handleSelect={handleSelection} tooltip="Pinterest" />
-          <SectionSelector
-            icon="_" separate h='50px' w='55px' mw='55px' property="telegram" selected={exists('telegram')}
-            handleSelect={handleSelection} tooltip="Telegram" />
+          {NETWORKS.map(x => (
+            <RenderSocial property={x.property} selected={exists(x.property)} tooltip={x.tooltip} handleSelection={handleSelection} />
+          ))}
         </Box>
       </Grid>
       <Grid item xs={12} sx={{pl: '12px'}}>
