@@ -155,7 +155,7 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
       <Grid item xs={12}>
         <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: 'fit-content', margin: '0 auto'}}>
           {NETWORKS.map(x => (
-            <RenderSocial property={x.property} selected={exists(x.property)} tooltip={x.tooltip} handleSelection={handleSelection} />
+            <RenderSocial key={x.property} property={x.property} selected={exists(x.property)} tooltip={x.tooltip} handleSelection={handleSelection} />
           ))}
         </Box>
       </Grid>
