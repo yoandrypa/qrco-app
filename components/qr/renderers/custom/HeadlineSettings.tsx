@@ -41,7 +41,7 @@ export default function HeadlineSettings({anchor, handleValues, handleClose, ind
     handleClose();
   }
 
-  const renderCheck1 = (checked?: boolean) => checked && <CheckIcon color="primary" sx={{ml: 2}} />;
+  const rennderCheck = (checked?: boolean) => checked && <CheckIcon color="primary" sx={{ml: 2}} />;
 
   return (
     <>
@@ -55,15 +55,15 @@ export default function HeadlineSettings({anchor, handleValues, handleClose, ind
         <MenuList>
           {!hideHeadline && <MenuItem onClick={handle}>
             <ListItemText><Typography>Show headline</Typography></ListItemText>
-            {renderCheck1(checked)}
+            {rennderCheck(checked)}
           </MenuItem>}
           {!hideHeadline && <MenuItem onClick={customHandle('centerHeadLine')} disabled={!checked}>
             <ListItemText><Typography>Center headline</Typography></ListItemText>
-            {renderCheck1(data?.centerHeadLine)}
+            {rennderCheck(data?.centerHeadLine)}
           </MenuItem>}
           {!hideHeadline && <MenuItem onClick={customHandle('hideHeadLineIcon')} disabled={!checked}>
             <ListItemText><Typography>Hide headline icon</Typography></ListItemText>
-            {renderCheck1(data?.hideHeadLineIcon)}
+            {rennderCheck(data?.hideHeadLineIcon)}
           </MenuItem>}
           {!hideHeadline && <Divider />}
           <MenuItem onClick={() => setOpenSettings(true)}>
