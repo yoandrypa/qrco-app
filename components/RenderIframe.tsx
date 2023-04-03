@@ -1,10 +1,13 @@
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
+import messaging from "@ebanux/ebanux-utils/messaging";
+
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
-import {DataType} from "./qr/types/types";
-import {convertBase64, getImageData} from "../helpers/qr/helpers";
 import CircularProgress from "@mui/material/CircularProgress";
+
+import { DataType } from "./qr/types/types";
+import { convertBase64, getImageData } from "../helpers/qr/helpers";
 
 interface IframeProps {
   src: string;
@@ -36,6 +39,8 @@ const proceed = (plain?: any, imgData?: any) => {
   return imgData !== undefined && (imgData instanceof File || imgData instanceof Blob);
 }
 
+const mSubscriptions: any[] = [];
+
 const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, backgroundImg, shareLink, notifyReady}: IframeProps) => {
   const [whatToRender, setWhatToRender] = useState<string | null>(null);
   const [error, setError] = useState<boolean>(false);
@@ -44,7 +49,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
 
   const iRef = useRef<HTMLIFrameElement | null>(null);
 
-  useEffect(() => {
+  function updatePreview(){
     if (data && isReady) {
       const previewData = structuredClone(data) as any;
       const isInEdition = previewData.mode === 'edit' || previewData.mode === 'clone';
@@ -93,6 +98,10 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
         }
       }, 75);
     }
+  }
+
+  useEffect(() => {
+    updatePreview();
   }, [data, isReady, backImg, mainImg, backgroundImg]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -116,6 +125,16 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
       notifyReady(false);
       window.removeEventListener("message", handler);
     };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    // Anything in here is fired on component mount.
+    mSubscriptions.push(messaging.setListener('onChangeQrData', updatePreview));
+
+    return () => {
+      // Anything in here is fired on component unmount.
+      messaging.delListener(mSubscriptions);
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
