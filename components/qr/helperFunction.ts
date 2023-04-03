@@ -4,7 +4,6 @@ import {DataType, Type} from "./types/types";
 const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTMLInputElement> | string | boolean | string[], index?: number) => {
   const value = Array.isArray(payload) || typeof payload === 'string' || typeof payload === 'boolean' ? payload :
     (item === 'includeExtraInfo' ? payload.target.checked : payload.target.value);
-
   setData((prev: DataType) => {
     const newData = {...prev};
     if (index !== undefined && index !== -1) { // @ts-ignore
@@ -44,6 +43,10 @@ const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTM
           if (item === 'hideHeadLine') {
             if (elementData.centerHeadLine !== undefined) { delete elementData.centerHeadLine; }
             if (elementData.hideHeadLineIcon !== undefined) { delete elementData.hideHeadLineIcon; }
+            if (elementData.customFont !== undefined) { delete elementData.customFont; }
+            if (elementData.headLineFontStyle !== undefined) { delete elementData.headLineFontStyle; }
+            if (elementData.headlineFont !== undefined) { delete elementData.headlineFont; }
+            if (elementData.headlineFontSize !== undefined) { delete elementData.headlineFontSize; }
           }
         }
       } else if (item === 'easiness') {
