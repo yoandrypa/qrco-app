@@ -64,6 +64,13 @@ const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTM
           delete elementData[item];
         } else if (item === 'includeExtraInfo' && !value && elementData.includeExtraInfo !== undefined) {
           delete elementData.includeExtraInfo;
+        } else if (item === 'reset' && payload==='reset') {
+          if (elementData.headlineFont !== undefined) { delete elementData.headlineFont; }
+          if (elementData.headlineFontSize !== undefined) { delete elementData.headlineFontSize; }
+          if (elementData.headLineFontStyle !== undefined) { delete elementData.headLineFontStyle; }
+          if (elementData.topSpacing !== undefined) { delete elementData.topSpacing; }
+          if (elementData.bottomSpacing !== undefined) { delete elementData.bottomSpacing; }
+          if (elementData.customFont !== undefined) { delete elementData.customFont; }
         } else {
           if (typeof value === "string" && !value.trim().length) { // @ts-ignore
             delete elementData[item]; // @ts-ignore
