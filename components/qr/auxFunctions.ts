@@ -173,13 +173,13 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
   const data = structuredClone(dataSource) as any;
 
   // cleaning layout data, does not affect the original object
-  if (data.layout.startsWith('empty')) {
+  if (data.layout?.startsWith('empty')) {
     if (data.backgndImg) { delete data.backgndImg; }
     if (data.foregndImg) { delete data.foregndImg; }
     if (data.foregndImgType !== undefined) { delete data.foregndImgType; }
     if (data.profileImageSize) { delete data.profileImageSize; }
     if (data.profileImageVertical) { delete data.profileImageVertical; }
-  } else if (data.layout.includes('banner') && data.backgndImg) {
+  } else if (data.layout?.includes('banner') && data.backgndImg) {
     delete data.backgndImg;
   }
 
