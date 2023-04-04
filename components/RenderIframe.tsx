@@ -13,7 +13,7 @@ interface IframeProps {
   src: string;
   width: string;
   height: string;
-  data?: DataType;
+  data: DataType;
   notifyReady: (isReady: boolean) => void;
   shareLink?: string;
   selected?: string;
@@ -41,7 +41,8 @@ const proceed = (plain?: any, imgData?: any) => {
 
 const mSubscriptions: any[] = [];
 
-const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, backgroundImg, shareLink, notifyReady}: IframeProps) => {
+const RenderIframe = ({src, width, height, data: initData, selected, backImg, mainImg, backgroundImg, shareLink, notifyReady}: IframeProps) => {
+  const [newData, setNewData] = useState<DataType>(initData);
   const [whatToRender, setWhatToRender] = useState<string | null>(null);
   const [error, setError] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -49,8 +50,8 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
 
   const iRef = useRef<HTMLIFrameElement | null>(null);
 
-  function updatePreview(){
-    if (data && isReady) {
+  function updatePreview(data: DataType){
+    if (isReady) {
       const previewData = structuredClone(data) as any;
       const isInEdition = previewData.mode === 'edit' || previewData.mode === 'clone';
 
@@ -101,8 +102,12 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
   }
 
   useEffect(() => {
-    updatePreview();
-  }, [data, isReady, backImg, mainImg, backgroundImg]); // eslint-disable-line react-hooks/exhaustive-deps
+    updatePreview(initData);
+  }, [initData, isReady, backImg, mainImg, backgroundImg]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    updatePreview(newData);
+  }, [newData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const handler = (event: any) => {
@@ -129,7 +134,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
 
   useEffect(() => {
     // Anything in here is fired on component mount.
-    mSubscriptions.push(messaging.setListener('onChangeQrData', updatePreview));
+    mSubscriptions.push(messaging.setListener('onChangePreviewQrData', setNewData));
 
     return () => {
       // Anything in here is fired on component unmount.
@@ -138,9 +143,9 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (whatToRender !== null) { setWhatToRender(null); }
-    if (error) { setError(false); }
-  },[src]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (whatToRender !== null) setWhatToRender(null);
+    if (error) setError(false);
+  }, [src]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setIsLoading(true);
@@ -158,20 +163,21 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
   if (whatToRender !== null || error) {
     return (
       <Box sx={style}>
-        <Typography sx={{fontWeight: 'bold'}}>
+        <Typography sx={{ fontWeight: 'bold' }}>
           {'The requested example failed to load'}
         </Typography>
-        <Divider sx={{mt: '10px'}}/>
-        <Typography sx={{fontSize: 'small'}}>
+        <Divider sx={{ mt: '10px' }} />
+        <Typography sx={{ fontSize: 'small' }}>
           {whatToRender === 'IO Error' ? 'Containing file was not found or is offline' : (
             whatToRender === 'offline' ? 'Current example is offline' : 'Unknown cause'
           )}
         </Typography>
-        <Divider/>
+        <Divider />
         <Typography
-          sx={{color: theme => theme.palette.text.disabled, mx: 'auto', mt: '10px', fontSize: 'small'}}>
+          sx={{ color: theme => theme.palette.text.disabled, mx: 'auto', mt: '10px', fontSize: 'small' }}>
           {"Please, contact support by clicking "}
-          <a target="_blank" href="mailto:info@ebanux.com" rel="noopener noreferrer" style={{color: "royalblue"}}>{"here"}</a>
+          <a target="_blank" href="mailto:info@ebanux.com" rel="noopener noreferrer"
+             style={{ color: "royalblue" }}>{"here"}</a>
           {"."}
         </Typography>
       </Box>
@@ -182,7 +188,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
     <>
       {isLoading && (<Box sx={style}>
         <Typography sx={{ p: 2 }}>{'Loading...'}</Typography>
-        <CircularProgress color="primary" size={25}/>
+        <CircularProgress color="primary" size={25} />
       </Box>)}
       <iframe
         src={src}
@@ -191,7 +197,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
         ref={iRef}
         onLoad={handleLoad}
         onError={handleError}
-        style={{border: 'none', borderRadius: 'inherit'}}/>
+        style={{ border: 'none', borderRadius: 'inherit' }} />
     </>
   );
 }
