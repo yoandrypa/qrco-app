@@ -34,7 +34,7 @@ const NETWORKS = [{property: "facebook", tooltip:"Facebook"}, {property:"whatsap
   {property:"twitter", tooltip:"Twitter"}, {property: "instagram", tooltip: "Instagram"},
   {property: "youtube", tooltip: "YouTube"}, {property: "linkedin", tooltip: "LinkedIn"},
   {property: "pinterest", tooltip: "Pinterest"}, {property: "telegram", tooltip: "Telegram"},
-  {property: "tiktok", tooltip: "TikTok"}];
+  {property: "tiktok", tooltip: "TikTok"}, {property: "reddit", tooltip: "Reddit"}, {property: "quora", tooltip: "Quora"}];
 
 const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
   const selection = useRef<SocialsType | null>(null);
