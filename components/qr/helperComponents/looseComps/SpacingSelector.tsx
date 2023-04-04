@@ -35,8 +35,8 @@ export default function SpacingSelector({selection, item, message, handleValues,
         size='small'
         fullWidth
       >
-        <MenuItem value='default'>Default</MenuItem>
         {!noNarrow && <MenuItem value='narrow'>Narrow</MenuItem>}
+        <MenuItem value='default'>Default</MenuItem>
         <MenuItem value='medium'>Medium</MenuItem>
         <MenuItem value='wide'>Wide</MenuItem>
       </Select>

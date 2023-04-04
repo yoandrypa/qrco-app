@@ -12,6 +12,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import FormControl from "@mui/material/FormControl";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import ReplayIcon from "@mui/icons-material/Replay";
 
 import dynamic from 'next/dynamic';
 import {Type} from "../../types/types";
@@ -41,6 +42,10 @@ export default function RenderHeadlineSettings({handleValues, handleClose, data,
 
   const handleCustomFont = (event: ChangeEvent<HTMLInputElement>) => {
     handleValues('customFont', index)(event.target.checked);
+  }
+
+  const handleReset = () => {
+    handleValue('reset')('reset');
   }
 
   return (
@@ -90,8 +95,13 @@ export default function RenderHeadlineSettings({handleValues, handleClose, data,
         <SpacingSelector selection={data?.topSpacing || 'default'} item="topSpacing" message="Top spacing" handleValues={handleValues} index={index}/>
         <SpacingSelector selection={data?.bottomSpacing || 'default'} item="bottomSpacing" message="Bottom spacing" handleValues={handleValues} index={index}/>
         <Divider sx={{mt: 2, mb: 1}}/>
-        <Box sx={{width: '100%', textAlign: 'right'}}>
-          <Button onClick={handleClose} variant="outlined">Close</Button>
+        <Box sx={{width: '100%', display: 'flex', justifyContent: 'space-between'}}>
+          <Button onClick={handleReset} variant="outlined"
+                  startIcon={<ReplayIcon />}
+                  disabled={!(data?.topSpacing !== undefined || data?.bottomSpacing !== undefined || data?.customFont !== undefined)}>
+            {'Reset'}
+          </Button>
+          <Button onClick={handleClose} variant="outlined">{'Close'}</Button>
         </Box>
       </Box>
     </Popover>
