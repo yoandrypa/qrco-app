@@ -32,6 +32,14 @@ export const components = {
   sku: { name: 'Product', notInMenu: true },
 };
 
+export interface RenderSocialsProps { index: number; data?: Type; setData: Function; isSolidButton?: boolean; }
+
+export const NETWORKS = [{property: "facebook", tooltip:"Facebook"}, {property:"whatsapp", tooltip: "Whatsapp"},
+  {property:"twitter", tooltip:"Twitter"}, {property: "instagram", tooltip: "Instagram"},
+  {property: "youtube", tooltip: "YouTube"}, {property: "linkedin", tooltip: "LinkedIn"},
+  {property: "pinterest", tooltip: "Pinterest"}, {property: "telegram", tooltip: "Telegram"},
+  {property: "tiktok", tooltip: "TikTok"}, {property: "reddit", tooltip: "Reddit"}, {property: "quora", tooltip: "Quora"}];
+
 // @ts-ignore
 const getName = (type: string) => components[type].name;
 

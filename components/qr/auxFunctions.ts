@@ -121,9 +121,9 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
     qrName: qrData.qrName
   } as EditType;
 
-  if (objToEdit.updatedAt) delete objToEdit.updatedAt;
-  if (data.isDynamic) objToEdit.isDynamic = true;
-  if (objToEdit.mode) delete objToEdit.mode;
+  if (objToEdit.updatedAt) { delete objToEdit.updatedAt; }
+  if (data.isDynamic) { objToEdit.isDynamic = true; }
+  if (objToEdit.mode) { delete objToEdit.mode; }
 
   objToEdit.qrOptionsId = qrDesign;
 
@@ -167,10 +167,25 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
                                    updatingHandler?: (value: string | null, status?: boolean) => void) => {
 
   const prevUpdatingHandler = (value: string | null, status?: boolean) => {
-    if (updatingHandler) updatingHandler(value, status);
+    if (updatingHandler) { updatingHandler(value, status); }
   }
 
-  const data = structuredClone(dataSource);
+  const data = structuredClone(dataSource) as any;
+
+  // cleaning layout data, does not affect the original object
+  if (data.layout.startsWith('empty')) {
+    if (data.backgndImg) { delete data.backgndImg; }
+    if (data.foregndImg) { delete data.foregndImg; }
+    if (data.foregndImgType !== undefined) { delete data.foregndImgType; }
+    if (data.profileImageSize) { delete data.profileImageSize; }
+    if (data.profileImageVertical) { delete data.profileImageVertical; }
+  } else if (data.layout.includes('banner') && data.backgndImg) {
+    delete data.backgndImg;
+  }
+
+  // cleaning, same as above
+  if (data.claim) { delete data.claim; }
+  if (data.forceChange) { delete data.forceChange; }
 
   if (data.custom?.length) {
     for (let idx = 0, len = data.custom?.length || 0; idx < len; idx += 1) {
@@ -196,12 +211,6 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
         }
       }
     }
-  }
-
-  if (data.claim) delete data.claim;
-
-  if (data.forceChange) {
-    delete data.forceChange;
   }
 
   const dataLength = updatingHandler !== undefined && dataInfo !== undefined && dataInfo > 0;
@@ -331,16 +340,16 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     let edition = false;
 
     if (data.mode !== 'edit') {
-      if (dataLength) prevUpdatingHandler("Saving QR Code data");
+      if (dataLength) { prevUpdatingHandler("Saving QR Code data"); }
       const response = await create({ shortLink, qrDesign, qrData });
       if (success && response?.creationDate) success(response.creationDate);
     } else {
       edition = true;
-      if (dataLength) prevUpdatingHandler("Updating QR Code data");
+      if (dataLength) { prevUpdatingHandler("Updating QR Code data"); }
 
       const objToEdit = generateObjectToEdit(qrData, data, qrDesign);
 
-      if (!objToEdit.userId) objToEdit.userId = userInfo.cognito_user_id;
+      if (!objToEdit.userId) { objToEdit.userId = userInfo.cognito_user_id; }
 
       await qrEdit(objToEdit);
       if (success) success();
@@ -357,7 +366,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       }
     }
   } catch {
-    if (dataLength) prevUpdatingHandler(null, false);
+    if (dataLength) { prevUpdatingHandler(null, false); }
     setIsError(true);
   }
   if (dataLength) prevUpdatingHandler("done");
