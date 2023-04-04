@@ -13,7 +13,7 @@ interface IframeProps {
   src: string;
   width: string;
   height: string;
-  data: DataType;
+  data?: DataType;
   notifyReady: (isReady: boolean) => void;
   shareLink?: string;
   selected?: string;
@@ -41,8 +41,8 @@ const proceed = (plain?: any, imgData?: any) => {
 
 const mSubscriptions: any[] = [];
 
-const RenderIframe = ({src, width, height, data: initData, selected, backImg, mainImg, backgroundImg, shareLink, notifyReady}: IframeProps) => {
-  const [newData, setNewData] = useState<DataType>(initData);
+const RenderIframe = ({ src, width, height, data: initData, selected, backImg, mainImg, backgroundImg, shareLink, notifyReady }: IframeProps) => {
+  const [newData, setNewData] = useState<DataType | undefined>(initData);
   const [whatToRender, setWhatToRender] = useState<string | null>(null);
   const [error, setError] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -50,7 +50,7 @@ const RenderIframe = ({src, width, height, data: initData, selected, backImg, ma
 
   const iRef = useRef<HTMLIFrameElement | null>(null);
 
-  function updatePreview(data: DataType){
+  function updatePreview(data: DataType) {
     if (isReady) {
       const previewData = structuredClone(data) as any;
       const isInEdition = previewData.mode === 'edit' || previewData.mode === 'clone';
@@ -95,18 +95,18 @@ const RenderIframe = ({src, width, height, data: initData, selected, backImg, ma
         }
 
         if (iRef.current?.contentWindow) { // @ts-ignore
-          iRef.current.contentWindow.postMessage(JSON.stringify({previewData}), process.env.MICRO_SITES_BASE_URL);
+          iRef.current.contentWindow.postMessage(JSON.stringify({ previewData }), process.env.MICRO_SITES_BASE_URL);
         }
       }, 75);
     }
   }
 
   useEffect(() => {
-    updatePreview(initData);
+    initData && updatePreview(initData);
   }, [initData, isReady, backImg, mainImg, backgroundImg]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    updatePreview(newData);
+    newData && updatePreview(newData);
   }, [newData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
