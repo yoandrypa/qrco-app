@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import { grey } from "@mui/material/colors";
 import {useTheme} from "@mui/system";
-import TikTokIcon from "../TikTokIcon";
+import QuoraIcon from "../QuoraIcon";
 
 const WebIcon = dynamic(() => import('@mui/icons-material/Web'));
 const AlternateEmailIcon = dynamic(() => import('@mui/icons-material/AlternateEmail'));
@@ -64,6 +64,8 @@ const QrCode = dynamic(() => import('@mui/icons-material/QrCode'));
 const CustomizeIcon = dynamic(() => import('@mui/icons-material/DashboardCustomize'));
 const PersonSearchIcon = dynamic(() => import('@mui/icons-material/PersonSearch'));
 const InventoryIcon = dynamic(() => import('@mui/icons-material/Inventory'));
+const RedditIcon = dynamic(() => import('@mui/icons-material/Reddit'));
+const TikTokIcon = dynamic(() => import("../TikTokIcon"));
 
 type RenderIconProp = {
   icon: string;
@@ -77,9 +79,6 @@ export default function RenderIcon({ icon, color, enabled, sx }: RenderIconProp)
 
   const renderIcon = () => {
     const sxStyling = { ...sx, color: enabled ? color || theme.palette.primary.dark : grey[600] };
-    if (icon === 'tiktok') {
-      return <TikTokIcon />
-    }
     switch (icon) {
       case 'custom': { return <CustomizeIcon sx={sxStyling} />; }
       case 'copy': { return <ContentCopyIcon sx={sxStyling} />; }
@@ -145,8 +144,11 @@ export default function RenderIcon({ icon, color, enabled, sx }: RenderIconProp)
       case 'paylink': { return <CreditCard sx={sxStyling} />; }
       case 'crypto': { return <CurrencyBitcoinIcon sx={sxStyling} />; }
       case 'linkedLabel': { return <QrCode sx={sxStyling} />; }
-      case 'findMe': {{ return <PersonSearchIcon sx={sxStyling} />; }}
+      case 'findMe': { return <PersonSearchIcon sx={sxStyling} />; }
       case 'inventory': { return <InventoryIcon sx={sxStyling} />; }
+      case 'reddit': { return <RedditIcon sx={sxStyling} />; }
+      case 'tiktok': { return <TikTokIcon sx={sxStyling} />; }
+      case 'quora': { return <QuoraIcon sx={sxStyling} />; }
       default: { return <TextSnippetOutlinedIcon sx={sxStyling} />; }
     }
   };
