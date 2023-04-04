@@ -10,9 +10,9 @@ import {capitalize} from "@mui/material";
 
 import RenderSocial from "../../helperComponents/smallpieces/RenderSocial";
 import RenderIcon from "../../helperComponents/smallpieces/RenderIcon";
-import {DataType, SocialNetworksType, SocialsType, Type} from "../../types/types";
+import {DataType, SocialNetworksType, SocialsType} from "../../types/types";
 import {PHONE} from "../../constants";
-
+import {NETWORKS, RenderSocialsProps} from "../custom/helperFuncs";
 import {getItemStyle} from "../../helperComponents/looseComps/StyledComponents";
 
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
@@ -24,19 +24,7 @@ const FormControlLabel = dynamic(() => import("@mui/material/FormControlLabel"))
 const FormControl = dynamic(() => import("@mui/material/FormControl"));
 const InputLabel = dynamic(() => import("@mui/material/InputLabel"));
 
-interface RenderSocialsProps {
-  index: number;
-  data?: Type;
-  setData: Function;
-}
-
-const NETWORKS = [{property: "facebook", tooltip:"Facebook"}, {property:"whatsapp", tooltip: "Whatsapp"},
-  {property:"twitter", tooltip:"Twitter"}, {property: "instagram", tooltip: "Instagram"},
-  {property: "youtube", tooltip: "YouTube"}, {property: "linkedin", tooltip: "LinkedIn"},
-  {property: "pinterest", tooltip: "Pinterest"}, {property: "telegram", tooltip: "Telegram"},
-  {property: "tiktok", tooltip: "TikTok"}, {property: "reddit", tooltip: "Reddit"}, {property: "quora", tooltip: "Quora"}];
-
-const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
+const RenderSocials = ({data, setData, index, isSolidButton}: RenderSocialsProps) => {
   const selection = useRef<SocialsType | null>(null);
 
   const handleValues = (item: SocialsType) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -113,7 +101,7 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
 
   const handlerSwitch = (prop: string) => (event: ChangeEvent<HTMLInputElement>) => {
     const isChecked = event.target.checked;
-    setData((prev: DataType) => {
+    setData((prev: DataType) => { debugger;
       const newData = {...prev};
       if (isChecked) { // @ts-ignore
         if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
@@ -122,9 +110,8 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
       } else { // @ts-ignore
         const elementData = newData.custom[index].data as any;
         delete elementData[prop];
-        if (prop !== 'hideNetworkIcon' && elementData.iconSize !== undefined) { // @ts-ignore
-          delete elementData.iconSize;
-        }
+        if (prop !== 'hideNetworkIcon' && elementData.iconSize !== undefined) {  delete elementData.iconSize; }
+        if (prop === 'socialsOnlyIcons' && elementData.invertIconColors !== undefined) { delete elementData.invertIconColors; }
         if (elementData.hideNetworkIcon !== undefined) { delete elementData.hideNetworkIcon; }
         if (elementData.showOnlyNetworkName !== undefined) { delete elementData.showOnlyNetworkName; }
       }
@@ -187,23 +174,26 @@ const RenderSocials = ({data, setData, index}: RenderSocialsProps) => {
             {!data.linksAsButtons ? (
               <FormControlLabel control={<Switch checked={data?.socialsOnlyIcons || false}
                 onChange={handlerSwitch('socialsOnlyIcons')} />} label="Only icons"  />
-            ) : (
-              <>
-                <FormControlLabel control={<Switch checked={data?.hideNetworkIcon || false}
-                  onChange={handlerSwitch('hideNetworkIcon')} />} label="Hide network icon from button" />
-                <FormControlLabel control={<Switch checked={data?.showOnlyNetworkName || false}
-                  onChange={handlerSwitch('showOnlyNetworkName')} />} label="Show only network name" />
-              </>
-            )}
-            {data?.socialsOnlyIcons && (<FormControl size='small' margin="dense" sx={{width: {xs: '100%', sm: '220px'}}}>
-              <InputLabel>{'Icon size'}</InputLabel>
-              <Select value={data?.iconSize || 'default'} label="Icon size" onChange={beforeSend}>
-                <MenuItem value="default">Default</MenuItem>
-                <MenuItem value="small">Small</MenuItem>
-                <MenuItem value="medium">Medium</MenuItem>
-                <MenuItem value="Large">Large</MenuItem>
-              </Select>
-            </FormControl>)}
+            ) : (<>
+              <FormControlLabel control={<Switch checked={data?.hideNetworkIcon || false}
+                onChange={handlerSwitch('hideNetworkIcon')} />} label="Hide network icon from button" />
+              <FormControlLabel control={<Switch checked={data?.showOnlyNetworkName || false}
+                onChange={handlerSwitch('showOnlyNetworkName')} />} label="Show only network name" />
+            </>)}
+            {data?.socialsOnlyIcons && (<>
+              {!isSolidButton && (<FormControlLabel control={
+                <Switch checked={data?.invertIconColors || false} onChange={handlerSwitch('invertIconColors')} />
+              } label="Invert button colors" />)}
+              <FormControl size='small' margin="dense" sx={{width: {xs: '100%', sm: '120px'}}}>
+                <InputLabel>{'Icon size'}</InputLabel>
+                <Select value={data?.iconSize || 'default'} label="Icon size" onChange={beforeSend}>
+                  <MenuItem value="default">Default</MenuItem>
+                  <MenuItem value="small">Small</MenuItem>
+                  <MenuItem value="medium">Medium</MenuItem>
+                  <MenuItem value="Large">Large</MenuItem>
+                </Select>
+              </FormControl>
+            </>)}
           </Box>
         )}
       </Grid>

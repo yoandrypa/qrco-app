@@ -38,9 +38,10 @@ interface RenderContentProps {
   predefined?: string[];
   selected?: string;
   data: any;
+  isSolidButton?: boolean;
 }
 
-const RenderContent = ({component, handleValues, index, data, setData, predefined, selected}: RenderContentProps) => (
+const RenderContent = ({component, handleValues, index, data, setData, predefined, selected, isSolidButton}: RenderContentProps) => (
   <>
     {component === 'address' && <RenderAddressData data={data} handleValues={handleValues} index={index}/>}
     {component === 'company' && <RenderCompanyData data={data} handleValues={handleValues} index={index}/>}
@@ -54,9 +55,9 @@ const RenderContent = ({component, handleValues, index, data, setData, predefine
     {component === 'gallery' && <RenderAssetsData data={data} setData={setData} type="gallery" index={index}
                                                   totalFiles={selected === 'inventory' ? 3 : FILE_LIMITS['gallery'].totalFiles}/>}
     {component === 'presentation' && <RenderPresentation data={data} handleValues={handleValues} index={index}
-                                                         forceExtra={FORCE_EXTRA.includes(selected || '')} />}
+                                                         forceExtra={FORCE_EXTRA.includes(selected || '')}/>}
     {component === 'opening' && <RenderOpeningTime data={data} setData={setData} index={index}/>}
-    {component === 'socials' && <RenderSocials data={data} setData={setData} index={index}/>}
+    {component === 'socials' && <RenderSocials data={data} setData={setData} index={index} isSolidButton={isSolidButton}/>}
     {component === 'title' && <RenderTitleDesc handleValues={handleValues} title={data?.titleAbout} noPaper sx={{mt: '5px'}}
                                                description={data?.descriptionAbout} index={index}
                                                noHeader={Boolean(data?.titleAbout?.trim().length) || Boolean(data?.descriptionAbout?.trim().length)}

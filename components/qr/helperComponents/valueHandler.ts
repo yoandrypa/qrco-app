@@ -1,4 +1,5 @@
 import {DEFAULT_COLORS} from "../constants";
+import {CustomType} from "../types/types";
 
 export default function valueHanler(prop: string, data: any, payload: any, foreImg: any, backImg: any,
                                     micrositeBackImage: any, setData: Function, setBackImg: Function,
@@ -67,6 +68,13 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
         const newData = {...prev, buttonBackColor: payload === 'solid' ? DEFAULT_COLORS.p : 'unset'};
         newData[prop] = payload.target?.value !== undefined ? payload.target.value : payload;
         if (payload === 'gradient' && newData.buttonsOpacity !== undefined) { delete newData.buttonsOpacity; }
+        if (payload === 'solid' && newData.custom?.length) {
+          newData.custom.forEach((x: CustomType) => {
+            if (x.component === 'socials' && x.data?.invertIconColors !== undefined) {
+              delete x.data.invertIconColors;
+            }
+          });
+        }
         return newData;
       });
     } else if (prop === 'buttonShape') {
@@ -98,21 +106,7 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
         }
 
         newData.layout = newPayload;
-        if (payload.startsWith('empty')) {
-          if (payload.includes('Left')) { newData.layout = 'empty'; }
-          if (newData.backgndImg) { delete newData.backgndImg; }
-          if (newData.foregndImg) { delete newData.foregndImg; }
-          if (newData.foregndImgType !== undefined) { delete newData.foregndImgType; }
-          if (newData.profileImageSize) { delete newData.profileImageSize; }
-          if (newData.profileImageVertical) { delete newData.profileImageVertical; }
-          if (newData.micrositeBackImage) { delete newData.micrositeBackImage; }
-          setBackImg(undefined);
-          setForeImg(undefined);
-          setMicrositeBackImage(undefined);
-        } else if (newPayload.includes('banner') && newData.backgndImg) {
-          delete newData.backgndImg;
-          setBackImg(undefined);
-        }
+        if (payload.startsWith('empty') && payload.includes('Left')) { newData.layout = 'empty'; }
         return newData;
       });
     } else {
