@@ -11,8 +11,6 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import dynamic from "next/dynamic";
-
 import Context from "../../context/Context";
 import RenderQRCommons from "../renderers/RenderQRCommons";
 import {NO_MICROSITE, PROFILE_IMAGE} from "../constants";
@@ -27,6 +25,8 @@ import valueHanler from "./valueHandler";
 import validator from "../validator";
 import {FORCE_EXTRA, IGNORE_VALIDATOR} from "../../../consts";
 
+import dynamic from "next/dynamic";
+
 const ErrorsDialog = dynamic(() => import("./looseComps/ErrorsDialog"));
 const RenderMode = dynamic(() => import("./looseComps/RenderMode"));
 const Notifications = dynamic(() => import("../../notifications/Notifications"));
@@ -34,10 +34,10 @@ const RenderPreviewDrawer = dynamic(() => import("./smallpieces/RenderPreviewDra
 const RenderPreviewButton = dynamic(() => import("./smallpieces/RenderPreviewButton"));
 const RenderSamplePreview = dynamic(() => import("./smallpieces/RenderSamplePreview"));
 const RenderClaimingInfo = dynamic(() => import("./smallpieces/RenderClaimingInfo"));
+const LoadingMicrositeImages = dynamic(() => import("./looseComps/LoadingMicrositeImages"));
 
 interface CommonProps {
-  msg: string;
-  children: ReactNode;
+  msg: string; children: ReactNode;
 }
 
 const mSubscriptions: any[] = [];
@@ -123,18 +123,18 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   useEffect(() => {
     if (isEditOrClone) {
       if (data?.micrositeBackImage?.[0]?.Key) {
-        setLocalLoading(true);
         loadingCount.current += 1;
+        setLocalLoading(true);
         getFiles(data.micrositeBackImage[0].Key, 'micrositeBackImage');
       }
       if (data?.backgndImg?.[0]?.Key) {
-        setLocalLoading(true);
         loadingCount.current += 1;
+        setLocalLoading(true);
         getFiles(data.backgndImg[0].Key, 'backgndImg');
       }
       if (data?.foregndImg?.[0]?.Key) {
-        setLocalLoading(true);
         loadingCount.current += 1;
+        setLocalLoading(true);
         getFiles(data.foregndImg[0].Key, 'foregndImg');
       }
     }
@@ -255,6 +255,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                     <RenderClaimingInfo claim={data.claim} />
                   </Box>
                 )}
+                {loading && <LoadingMicrositeImages />}
                 {tabSelected === 0 ? renderChildren() : (
                   <RenderQRCommons
                     isWideForPreview={isWideForPreview} handleValue={handleValue} omitPrimaryImg={omitProfileImg}
