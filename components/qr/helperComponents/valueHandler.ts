@@ -120,10 +120,10 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
           if (payload !== 'custom' && newData.customFooter !== undefined) { delete newData.customFooter; }
         }
         if (prop === 'micrositeBackImageBlurness' && newData.micrositeBackImageBlurness && payload === 0) {
-          delete newData.micrositeBackImageBlurness;
+          newData.micrositeBackImageBlurness = undefined;
         }
         if (prop === 'micrositeBackImageOpacity' && newData.micrositeBackImageOpacity && payload === 0) {
-          delete newData.micrositeBackImageOpacity;
+          newData.micrositeBackImageOpacity = undefined;
         }
         if (prop.toUpperCase().includes('FONT') && payload === 'default') {
           delete newData[prop];
