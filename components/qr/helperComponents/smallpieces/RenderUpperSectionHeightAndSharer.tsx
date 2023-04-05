@@ -21,7 +21,7 @@ export default function RenderUpperSectionHeightAndSharer({data, handleValue, in
         item="upperHeight"
         message="Top margin calibrator"
         handleValues={handleValue}
-        noNarrow
+        noNarrow={!Boolean(data?.layout?.includes('empty'))}
         icon={
           <AdUnitsIcon fontSize="small" color="primary" sx={{mr: '5px'}}/>
         }

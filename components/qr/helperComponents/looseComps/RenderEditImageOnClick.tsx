@@ -7,7 +7,8 @@ import WallpaperIcon from '@mui/icons-material/Wallpaper';
 import {styled} from "@mui/material/styles";
 
 interface Props {
-  hideBannerSelection?: boolean,
+  hideBannerSelection?: boolean;
+  hideBannerAndProfile?: boolean;
   handleEdit?: (prop: string) => void;
 }
 
@@ -19,7 +20,7 @@ export const Icon = styled(IconButton)(() => ({
   '&:hover': {background: '#eef1f5c7'}
 }));
 
-const RenderEditImageOnClick = ({handleEdit, hideBannerSelection}: Props) => {
+const RenderEditImageOnClick = ({handleEdit, hideBannerSelection, hideBannerAndProfile}: Props) => {
   const handler = (prop: string) => () => {
     if (handleEdit) {
       handleEdit(prop);
@@ -28,7 +29,7 @@ const RenderEditImageOnClick = ({handleEdit, hideBannerSelection}: Props) => {
 
   return (
     <>
-      {!hideBannerSelection && (<Tooltip title="Edit banner image" followCursor>
+      {!hideBannerSelection && !hideBannerAndProfile && (<Tooltip title="Edit banner image" followCursor>
         <Icon sx={{right: '5px', top: '5px', position: 'absolute'}} onClick={handler('banner')}>
           <EditIcon fontSize="small" />
         </Icon>
@@ -38,15 +39,15 @@ const RenderEditImageOnClick = ({handleEdit, hideBannerSelection}: Props) => {
           <WallpaperIcon fontSize="small" />
         </Icon>
       </Tooltip>
-      <Tooltip title="Edit profile image" followCursor>
+      {!hideBannerAndProfile && (<Tooltip title="Edit profile image" followCursor>
         <Icon sx={{right: '5px', top: !hideBannerSelection ? '32px' : '5px'}} onClick={handler('profile')}>
-          <PhotoCameraIcon fontSize="small" />
+          <PhotoCameraIcon fontSize="small"/>
         </Icon>
-      </Tooltip>
+      </Tooltip>)}
     </>
   );
 }
 
 export default memo(RenderEditImageOnClick, (current: Props, next: Props) =>
-  current.hideBannerSelection === next.hideBannerSelection
+  current.hideBannerSelection === next.hideBannerSelection && current.hideBannerAndProfile === next.hideBannerAndProfile
 );

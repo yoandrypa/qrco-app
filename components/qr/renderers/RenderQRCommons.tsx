@@ -14,8 +14,6 @@ const RenderButtonHandler = dynamic(() => import('../helperComponents/smallpiece
 const RenderFontsHandler = dynamic(() => import('../helperComponents/smallpieces/RenderFontsHandler'));
 const RenderLayoutHandler = dynamic(() => import("../helperComponents/smallpieces/RenderLayoutHandler"));
 const RenderMainColors = dynamic(() => import("../helperComponents/smallpieces/RenderMainColors"));
-const Typography = dynamic(() => import("@mui/material/Typography"));
-const CircularProgress = dynamic(() => import("@mui/material/CircularProgress"));
 const RenderFooterHandler = dynamic(() => import("../helperComponents/smallpieces/RenderFooterHandler"));
 
 interface QRCommonsProps {

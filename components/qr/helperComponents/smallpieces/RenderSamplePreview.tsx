@@ -203,7 +203,7 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
               <Suspense fallback={<PleaseWait />}>
                 {step === 1 && isReady && noEditImages === undefined && (
                   <RenderEditImageOnClick
-                    handleEdit={handlePickImage}
+                    handleEdit={handlePickImage} hideBannerAndProfile={data.layout?.includes('empty') || false}
                     hideBannerSelection={data?.layout?.includes('banner') || false} />
                 )}
                 <RenderIframe
