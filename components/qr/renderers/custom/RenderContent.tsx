@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
 
 import {FILE_LIMITS, FORCE_EXTRA} from "../../../../consts";
-import {Type} from "../../types/types";
 
 const RenderSmsForm = dynamic(() => import("../contents/RenderSmsForm"));
 const RenderAddressData = dynamic(() => import("../contents/RenderAddressData"));
@@ -79,7 +78,7 @@ const RenderContent = ({component, handleValues, index, data, setData, predefine
     {component === 'couponData' && <RenderCouponData index={index} handleValues={handleValues} data={data} />}
     {component === 'petId' && <RenderPetDesc index={index} handleValues={handleValues} data={data} />}
     {component === 'sku' && <RenderSku index={index} handleValues={handleValues} data={data} />}
-    {component === 'donation' && <RenderDonation index={index} data={data} />}
+    {component === 'donation' && <RenderDonation index={index} handleValues={handleValues} data={data} />}
   </>
 );
 
