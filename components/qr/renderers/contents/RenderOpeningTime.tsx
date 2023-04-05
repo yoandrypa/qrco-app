@@ -1,3 +1,4 @@
+import {useState} from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -5,13 +6,14 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 
-import {Type, OpeningType, DataType, OpeningObjType} from "../../types/types";
+import {DataType, OpeningObjType, OpeningType, Type} from "../../types/types";
 import {DAYS} from "../../constants";
 import RenderTimeSelector from "../helpers/RenderTimeSelector";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/AddBox";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {getHM} from "../../../helpers/generalFunctions";
+import MoreOptionsForOpening from "../../helperComponents/smallpieces/MoreOptionsForOpening";
 
 const getInitial = () => ({ini: getHM(new Date()), end: getHM(new Date())});
 
@@ -22,6 +24,8 @@ interface OpeningTimeProps {
 }
 
 export default function RenderOpeningTime({data, setData, index}: OpeningTimeProps) {
+  const [content, setContent] = useState<OpeningObjType[] | undefined>(undefined);
+
   const handleFormat = (is: boolean) => () => {
     setData((prev: DataType) => {
       const newData = {...prev};
@@ -70,6 +74,75 @@ export default function RenderOpeningTime({data, setData, index}: OpeningTimePro
       variant={selected ? 'contained' : 'outlined'}>{day}</Button>);
   }
 
+  const renderDayTiming = (timing: OpeningObjType, idx: number, x: string, length: number) => {
+    const disabled = idx === 0 && length === 4;
+    return ( // @ts-ignore
+      <Box sx={{width: '100%', display: 'flex'}} key={`item${DAYS[x]}`}>
+        <Box sx={{width: 'calc(50% - 20px)'}}>
+          <RenderTimeSelector // Time Selector component handles the new data by itself, notice the setData func
+            time={timing.ini}
+            setData={setData}
+            day={x}
+            ini
+            idx={idx}
+            index={index}
+            is12hours={data?.is12hours}
+          />
+        </Box>
+        <Box sx={{width: 'calc(50% - 20px)', ml: '5px'}}>
+          <RenderTimeSelector
+            time={timing.end}
+            setData={setData}
+            day={x}
+            ini={false}
+            idx={idx}
+            index={index}
+            is12hours={data?.is12hours}
+          />
+        </Box>
+        <Box sx={{width: '30px', ml: '5px'}}>
+          <IconButton disabled={disabled} onClick={handleOption(x, idx)} sx={{mt: '5px'}}>
+            {idx === 0 ? <AddIcon color={!disabled ? "primary" : "disabled"}/> : <DeleteIcon color="error"/>}
+          </IconButton>
+        </Box>
+      </Box>
+    );
+  }
+
+  const handleCopy = (day: string) => { // @ts-ignore
+    setContent(structuredClone(data.openingTime?.[day]));
+  }
+
+  const handlePaste = (day: string) => {
+    setData((prev: DataType) => {
+      const newData = {...prev}; // @ts-ignore
+      newData.custom[index].data.openingTime[day] = structuredClone(content);
+      return newData;
+    });
+  }
+
+  const renderTiming = () => (
+    <Grid item xs={12}>
+      <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%'}}>
+        {['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map((x: string) => { // @ts-ignore
+          if (!data.openingTime[x]) { return null; } // @ts-ignore
+          const values = data.openingTime?.[x] || [] as OpeningType; // @ts-ignore
+          const day = DAYS[x];
+          return (
+            <Paper elevation={2} sx={{mr: '10px', mb: '5px', p: 1, minWidth: '318px', maxWidth: 'calc(50% - 15px)'}} key={`day${day}`}>
+              <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
+                <Typography sx={{fontWeight: 'bold'}}>{day}</Typography>
+                <MoreOptionsForOpening day={x} disablePaste={(content || []).length === 0} handleCopy={handleCopy}
+                                       handlePaste={handlePaste} disableCopy={values.length === 0} />
+              </Box>
+              {values.map((timing: OpeningObjType, idx: number) => (renderDayTiming(timing, idx, x, values.length)))}
+            </Paper>
+          );
+        })}
+      </Box>
+    </Grid>
+  );
+
   return (
     <Grid container spacing={1}>
       <Grid item xs={12} sm={3}>
@@ -93,56 +166,7 @@ export default function RenderOpeningTime({data, setData, index}: OpeningTimePro
             renderWorkingDay('sat')]}
         </ButtonGroup>
       </Grid>
-      {Object.keys(data?.openingTime || {}).length ? (
-        <Grid item xs={12}>
-          <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: '100%'}}>
-            {['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'].map((x: string) => { // @ts-ignore
-              if (!data.openingTime[x]) { return null; } // @ts-ignore
-              const values = data.openingTime?.[x] || [] as OpeningType; // @ts-ignore
-              const day = DAYS[x];
-              return (
-                <Paper elevation={2} sx={{mr: '10px', mb: '5px', p: 1, minWidth: '318px', maxWidth: 'calc(50% - 15px)'}} key={`day${day}`}>
-                  <Typography sx={{fontWeight: 'bold'}}>{day}</Typography>
-                  {values.map((timing: OpeningObjType, idx: number) => {
-                    const disabled = idx === 0 && values.length === 4;
-                    return (
-                      <Box sx={{width: '100%', display: 'flex'}} key={`item${day}`}>
-                        <Box sx={{width: 'calc(50% - 20px)'}}>
-                          <RenderTimeSelector // Time Selector component handles the new data by itself, notice the setData func
-                            time={timing.ini}
-                            setData={setData}
-                            day={x}
-                            ini
-                            idx={idx}
-                            index={index}
-                            is12hours={data?.is12hours}
-                          />
-                        </Box>
-                        <Box sx={{width: 'calc(50% - 20px)', ml: '5px'}}>
-                          <RenderTimeSelector
-                            time={timing.end}
-                            setData={setData}
-                            day={x}
-                            ini={false}
-                            idx={idx}
-                            index={index}
-                            is12hours={data?.is12hours}
-                          />
-                        </Box>
-                        <Box sx={{width: '30px', ml: '5px'}}>
-                          <IconButton disabled={disabled} onClick={handleOption(x, idx)} sx={{mt: '5px'}}>
-                            {idx === 0 ? <AddIcon color={!disabled ? "primary" : "disabled"}/> : <DeleteIcon color="error"/>}
-                          </IconButton>
-                        </Box>
-                      </Box>
-                    );
-                  })}
-                </Paper>
-              );
-            })}
-          </Box>
-        </Grid>
-      ) : null}
+      {Object.keys(data?.openingTime || {}).length ? renderTiming() : null}
     </Grid>
   );
 }

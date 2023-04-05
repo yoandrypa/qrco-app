@@ -50,57 +50,47 @@ const RenderQRCommons = ({ loading, data, omitPrimaryImg, foregndImg, backgndImg
   }, [forcePick]);
 
   return (
-    <>
-      {loading && (
-        <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center', mt: '10px', mb: '-10px' }}>
-          <CircularProgress size={20} sx={{ mr: '5px' }} />
-          <Typography sx={{ fontSize: 'small', color: theme => theme.palette.text.disabled}}>
-            {'Loading data. Please wait...'}
-          </Typography>
-        </Box>
-      )}
-      <Box sx={{p: 1, mt: 1}}>
-        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="mainColors" title="Main colors" bold/>
-          {expander === 'mainColors' && <RenderMainColors data={data} handleValue={handleValue} />}
-        </Paper>
-        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="upperSection" title="Top margin and sharer position" bold/>
-          {expander === 'upperSection' && <RenderUpperSectionHeight data={data} handleValue={handleValue} includeSharerConfig />}
-        </Paper>
-        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="images" title="Banner and profile images" bold/>
-          {expander === 'images' && (
-            <RenderMainImgsSelector handleValue={handleValue} data={data} foregndImg={foregndImg} forcePick={forcePick}
-                                    backgndImg={backgndImg} isWideForPreview={isWideForPreview} backError={backError}
-                                    foreError={foreError} omitPrimaryImg={omitPrimaryImg} loading={loading}
-                                    releasePick={releasePick}/>)}
-        </Paper>
-        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="background" title="Background" bold/>
-          {expander === 'background' && (
-            <RenderHandlerBackground handleValue={handleValue} data={data} micrositesImg={micrositesImg}
-                                     forcePick={forcePick} releasePick={releasePick}/>
-          )}
-        </Paper>
-        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="fonts" title="Fonts" bold/>
-          {expander === 'fonts' && <RenderFontsHandler data={data} handleValue={handleValue} />}
-        </Paper>
-        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="buttons" title="Buttons" bold/>
-          {expander === 'buttons' && <RenderButtonHandler handleValue={handleValue} data={data}/>}
-        </Paper>
-        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="layout" title="Layout" bold/>
-          {expander === 'layout' && <RenderLayoutHandler handleValue={handleValue} data={data} omitPrimary={omitPrimaryImg}/>}
-        </Paper>
-        <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="footer" title="Footer" bold/>
-          {expander === 'footer' && <RenderFooterHandler data={data} handleValue={handleValue} />}
-        </Paper>
-      </Box>
-    </>
+    <Box sx={{p: 1, mt: 1}}>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="mainColors" title="Main colors" bold/>
+        {expander === 'mainColors' && <RenderMainColors data={data} handleValue={handleValue} />}
+      </Paper>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="upperSection" title="Top margin and sharer position" bold/>
+        {expander === 'upperSection' && <RenderUpperSectionHeight data={data} handleValue={handleValue} includeSharerConfig />}
+      </Paper>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="images" title="Banner and profile images" bold/>
+        {expander === 'images' && (
+          <RenderMainImgsSelector handleValue={handleValue} data={data} foregndImg={foregndImg} forcePick={forcePick}
+                                  backgndImg={backgndImg} isWideForPreview={isWideForPreview} backError={backError}
+                                  foreError={foreError} omitPrimaryImg={omitPrimaryImg} loading={loading}
+                                  releasePick={releasePick}/>)}
+      </Paper>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="background" title="Background" bold/>
+        {expander === 'background' && (
+          <RenderHandlerBackground handleValue={handleValue} data={data} micrositesImg={micrositesImg}
+                                   forcePick={forcePick} releasePick={releasePick}/>
+        )}
+      </Paper>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="fonts" title="Fonts" bold/>
+        {expander === 'fonts' && <RenderFontsHandler data={data} handleValue={handleValue} />}
+      </Paper>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="buttons" title="Buttons" bold/>
+        {expander === 'buttons' && <RenderButtonHandler handleValue={handleValue} data={data}/>}
+      </Paper>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="layout" title="Layout" bold/>
+        {expander === 'layout' && <RenderLayoutHandler handleValue={handleValue} data={data} omitPrimary={omitPrimaryImg}/>}
+      </Paper>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="footer" title="Footer" bold/>
+        {expander === 'footer' && <RenderFooterHandler data={data} handleValue={handleValue} />}
+      </Paper>
+    </Box>
   );
 }
 
