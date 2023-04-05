@@ -120,10 +120,10 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
           if (payload !== 'custom' && newData.customFooter !== undefined) { delete newData.customFooter; }
         }
         if (prop === 'micrositeBackImageBlurness' && newData.micrositeBackImageBlurness && payload === 0) {
-          delete newData.micrositeBackImageBlurness;
+          newData.micrositeBackImageBlurness = undefined;
         }
         if (prop === 'micrositeBackImageOpacity' && newData.micrositeBackImageOpacity && payload === 0) {
-          delete newData.micrositeBackImageOpacity;
+          newData.micrositeBackImageOpacity = undefined;
         }
         if (prop.toUpperCase().includes('FONT') && payload === 'default') {
           delete newData[prop];
@@ -136,12 +136,12 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
         } else if (['flipHorizontal', 'flipVertical', 'buttonShadow', 'buttonCase'].includes(prop) && !payload && newData[prop] !== undefined) {
           delete newData[prop];
         } else if (prop === 'buttonBorderStyle') {
-          if (payload !== 'two' && newData.buttonBorderColors !== undefined) { delete newData.buttonBorderColors; }
+          if (payload !== 'two' && newData.buttonBorderColors !== undefined) { newData.buttonBorderColors = undefined; }
           if (payload === 'noBorders') {
-            delete newData.buttonBorderStyle;
-            if (newData.buttonBorderWeight !== undefined) { delete newData.buttonBorderWeight; }
-            if (newData.buttonBorderType !== undefined) { delete newData.buttonBorderType; }
-            if (newData.buttonShadowDisplacement !== undefined) { delete newData.buttonShadowDisplacement; }
+            newData.buttonBorderStyle = undefined;
+            if (newData.buttonBorderWeight !== undefined) { newData.buttonBorderWeight = undefined; }
+            if (newData.buttonBorderType !== undefined) { newData.buttonBorderType = undefined; }
+            if (newData.buttonShadowDisplacement !== undefined) { newData.buttonShadowDisplacement = undefined; }
           }
         }
         return newData;
