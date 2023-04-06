@@ -46,7 +46,6 @@ function RenderContactForm({data, handleValues, index}: ContentProps) {
         <FormControlLabel control={<Switch checked={data?.visibleReceipt || false} onChange={handleReceipt} />}
                           label="Visible receipt's cell number in microsite" sx={{mt: '-5px'}}/>
       </Box>
-      {renderItem('message', 'Message placeholder', 'Enter the message placeholder here')}
       {renderItem('buttonText', 'Button text', 'Send SMS')}
     </Stack >
   )

@@ -6,18 +6,11 @@ import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import {styled} from "@mui/material/styles";
 
-import {MAIN_ORANGE} from "../qr/constants";
 import RenderPreview from "../qr/renderers/RenderPreview";
 import RenderDownloadPrint from "../qr/helperComponents/looseComps/RenderDownloadPrint";
 import {findByAddress} from "../../handlers/links";
-
-const Typo = styled(Typography)(({ bold }: { bold?: boolean }) => ({
-  display: 'inline',
-  fontWeight: bold ? 'bold' : 'unset',
-  fontSize: '35px'
-}));
+import QRLynk from "../qr/helperComponents/looseComps/QRLynk";
 
 const URL = 'https://a-qr.link/';
 
@@ -71,8 +64,7 @@ export default function Claimer({ code }: ClaimerProps) {
     }}>
       <Paper sx={{ p: 2, mx: 'auto', width: { sm: '400px', xs: '100%' }}} elevation={3}>
         <Box sx={{ mb: 2, width: '100%', textAlign: 'center' }}>
-          <Typo bold>QR</Typo>
-          <Typo sx={{ color: MAIN_ORANGE }} bold>Lynk</Typo>
+          <QRLynk size="35px" />
           <Typography sx={{ position: 'relative', top: '-43px', right: '-67px', fontSize: '9px', fontWeight: 'bold'}}>TM</Typography>
         </Box>
         <Paper elevation={2}>
