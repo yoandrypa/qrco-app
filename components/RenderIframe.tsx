@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import messaging from "@ebanux/ebanux-utils/messaging";
 
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -39,10 +38,7 @@ const proceed = (plain?: any, imgData?: any) => {
   return imgData !== undefined && (imgData instanceof File || imgData instanceof Blob);
 }
 
-const mSubscriptions: any[] = [];
-
-const RenderIframe = ({ src, width, height, data: initData, selected, backImg, mainImg, backgroundImg, shareLink, notifyReady }: IframeProps) => {
-  const [newData, setNewData] = useState<DataType | undefined>(initData);
+const RenderIframe = ({ src, width, height, data, selected, backImg, mainImg, backgroundImg, shareLink, notifyReady }: IframeProps) => {
   const [whatToRender, setWhatToRender] = useState<string | null>(null);
   const [error, setError] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -50,8 +46,8 @@ const RenderIframe = ({ src, width, height, data: initData, selected, backImg, m
 
   const iRef = useRef<HTMLIFrameElement | null>(null);
 
-  function updatePreview(data: DataType) {
-    if (isReady) {
+  useEffect(() => {
+    if (data && isReady) {
       const previewData = structuredClone(data) as any;
       const isInEdition = previewData.mode === 'edit' || previewData.mode === 'clone';
 
@@ -99,15 +95,7 @@ const RenderIframe = ({ src, width, height, data: initData, selected, backImg, m
         }
       }, 75);
     }
-  }
-
-  useEffect(() => {
-    initData && updatePreview(initData);
-  }, [initData, isReady, backImg, mainImg, backgroundImg]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    newData && updatePreview(newData);
-  }, [newData]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data, isReady, backImg, mainImg, backgroundImg]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const handler = (event: any) => {
@@ -130,16 +118,6 @@ const RenderIframe = ({ src, width, height, data: initData, selected, backImg, m
       notifyReady(false);
       window.removeEventListener("message", handler);
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    // Anything in here is fired on component mount.
-    mSubscriptions.push(messaging.setListener('onChangePreviewQrData', setNewData));
-
-    return () => {
-      // Anything in here is fired on component unmount.
-      messaging.delListener(mSubscriptions);
-    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {

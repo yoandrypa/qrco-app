@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import session from "@ebanux/ebanux-utils/sessionStorage";
-import messaging from "@ebanux/ebanux-utils/messaging";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -27,13 +26,12 @@ export interface DataType {
 export interface PropsType {
   index: number;
   data: DataType;
+  handleValues: Function;
 }
 
-function RenderDonation({ data, index }: PropsType) {
+function RenderDonation({ data, index, handleValues }: PropsType) {
   const onChange = (item: string) => (value: any) => {
-    // @ts-ignore
-    data[item] = value;
-    messaging.emit('onChangeQrData');
+    handleValues(item, index)(value);
   }
 
   useEffect(() => {

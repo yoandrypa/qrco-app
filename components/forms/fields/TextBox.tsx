@@ -25,16 +25,18 @@ interface RenderTextFieldsProps {
 export default function TextBox(props: RenderTextFieldsProps) {
   const { value: initValue, placeholder, label, item, multiline, rows } = props;
   const { handleValues, startAdornment, sx, required, format, isError } = props;
-
   const [value, setValue] = useState<string>(initValue);
+  const [wasEdited, setWasEdited] = useState<boolean>(false);
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
     setValue(newValue);
+    if (!wasEdited) setWasEdited(true);
     item ? handleValues(item)(newValue) : handleValues(newValue);
   }
 
-  const valid = checkValidity(value, !!required, 'string', format);
+  const isRequired = !!required && wasEdited;
+  const valid = checkValidity(value, isRequired, 'string', format);
 
   return (
     <TextField

@@ -1,5 +1,4 @@
 import {ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
-import messaging from "@ebanux/ebanux-utils/messaging";
 
 import Typography from "@mui/material/Typography";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -39,8 +38,6 @@ const LoadingMicrositeImages = dynamic(() => import("./looseComps/LoadingMicrosi
 interface CommonProps {
   msg: string; children: ReactNode;
 }
-
-const mSubscriptions: any[] = [];
 
 function Common({msg, children}: CommonProps) { // @ts-ignore
   const {selected, data, setData, userInfo, options, isWrong, background, frame, cornersData, dotsData, setLoading} = useContext(Context);
@@ -198,18 +195,6 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const omitProfileImg = useMemo(() => !PROFILE_IMAGE.includes(selected) || !data?.isDynamic, [selected, data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    // Anything in here is fired on component mount.
-    mSubscriptions.push(messaging.setListener('onChangeQrData', ()=>{
-      messaging.emit('onChangePreviewQrData', previewQRGenerator(data, selected, omitProfileImg));
-    }));
-
-    return () => {
-      // Anything in here is fired on component unmount.
-      messaging.delListener(mSubscriptions);
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

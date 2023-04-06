@@ -1,9 +1,9 @@
 import {ChangeEvent} from "react";
 import {DataType, Type} from "./types/types";
 
-const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTMLInputElement> | string | boolean | string[], index?: number) => {
-  const value = Array.isArray(payload) || typeof payload === 'string' || typeof payload === 'boolean' ? payload :
-    (item === 'includeExtraInfo' ? payload.target.checked : payload.target.value);
+const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTMLInputElement> | any, index?: number) => {
+  const value = payload?.target ? (item === 'includeExtraInfo' ? payload.target.checked : payload.target.value) : payload;
+
   setData((prev: DataType) => {
     const newData = {...prev};
     if (index !== undefined && index !== -1) { // @ts-ignore

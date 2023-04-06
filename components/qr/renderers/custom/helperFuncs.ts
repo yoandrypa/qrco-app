@@ -139,14 +139,10 @@ export const cleaner = (data: DataType, item: string): void => {
 }
 
 export const sectionPreConfig = (item: string, selected?: string) => {
-  let data = undefined as any;
-  if (item === 'socials') {
-    data = { socialsOnlyIcons: true, hideHeadLine: true };
-  } else if (item === 'links') {
-    data = { hideHeadLine: true };
-  }
-  if (selected === 'petId') {
-    data = { ...data, linksOnlyLinks: true };
-  }
+  const data = (selected === 'petId') ? { linksOnlyLinks: true } : {};
+
+  if (item === 'socials') return { socialsOnlyIcons: true, hideHeadLine: true, ...data };
+  if (item === 'links') return { hideHeadLine: true, ...data };
+
   return data;
 }
