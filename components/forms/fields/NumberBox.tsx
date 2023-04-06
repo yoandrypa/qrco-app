@@ -26,16 +26,18 @@ interface PropsType {
 export default function NumberBox(props: PropsType) {
   const { value: initValue, placeholder, label, item, min, max } = props;
   const { handleValues, startAdornment, sx, required, isError } = props;
-
   const [value, setValue] = useState<number>(initValue);
+  const [wasEdited, setWasEdited] = useState<boolean>(false);
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = parseFloat(event.target.value || String(min) || '0');
     setValue(newValue);
+    if (!wasEdited) setWasEdited(true);
     item ? handleValues(item)(newValue) : handleValues(newValue);
   }
 
-  const valid = checkValidity(value, !!required, 'number', (value: number) => {
+  const isRequired = !!required && wasEdited;
+  const valid = checkValidity(value, isRequired, 'number', (value: number) => {
     const { min = Number.MIN_VALUE, max = Number.MAX_VALUE } = props;
     return (value >= min && value <= max);
   });
