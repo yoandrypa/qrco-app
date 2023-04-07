@@ -174,11 +174,7 @@ const QrGenerator = ({ hidden, options, frame, background, cornersData, dotsData
     }
   }, [options]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return (
-    <>
-      {generateSVG()}
-    </>
-  );
+  return generateSVG();
 }
 
 // @ts-ignore

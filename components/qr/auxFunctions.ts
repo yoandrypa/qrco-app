@@ -18,6 +18,11 @@ import { QR_CONTENT_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { capitalize } from "@mui/material";
 import { createQrDonationPayLynk } from "../../libs/utils/donations";
 
+// @ts-ignore
+import {renderToString} from "react-dom/server";
+import {getOptionsForPreview} from "../../helpers/qr/auxFunctions";
+import {generateSVGObj, handleQrData} from "./QrGenerator";
+
 interface UserInfoProps {
   attributes: { sub: string, email: string },
   cognito_user_id: string,
@@ -144,6 +149,15 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
   return objToEdit;
 };
 
+export const getFileFromQr = (data: DataType, options: OptionsType, background: BackgroundType, frame: FramesType,
+                              cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string) => {
+  const qrDesign = getOptionsForPreview(data, options, background, frame, cornersData, dotsData, selected);
+  const svgObject = generateSVGObj(handleQrData(qrDesign), frame, background, cornersData, dotsData);
+  const svgString = renderToString(svgObject);
+
+  return new File([svgString], 'qrCodeImageFile.svg', {type: 'image/svg+xml'});
+}
+
 /**
  * @param dataSource is data
  * @param userInfo
@@ -174,18 +188,44 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   // cleaning layout data, does not affect the original object
   if (data.layout?.startsWith('empty')) {
-    if (data.backgndImg) { delete data.backgndImg; }
-    if (data.foregndImg) { delete data.foregndImg; }
-    if (data.foregndImgType !== undefined) { delete data.foregndImgType; }
-    if (data.profileImageSize) { delete data.profileImageSize; }
-    if (data.profileImageVertical) { delete data.profileImageVertical; }
+    if (data.backgndImg) { data.backgndImg = undefined; }
+    if (data.foregndImg) { data.foregndImg = undefined; }
+    if (data.foregndImgType !== undefined) { data.foregndImgType = undefined; }
+    if (data.profileImageSize) { data.profileImageSize = undefined; }
+    if (data.profileImageVertical) { data.profileImageVertical = undefined; }
   } else if (data.layout?.includes('banner') && data.backgndImg) {
-    delete data.backgndImg;
+    data.backgndImg = undefined;
   }
 
   // cleaning, same as above
   if (data.claim) { delete data.claim; }
   if (data.forceChange) { delete data.forceChange; }
+
+  if (!data.hideQrForSharing) {
+    prevUpdatingHandler(`${data.qrForSharing?.[0]?.Key === undefined ? 'Saving' : 'Adjusting'} QR code`);
+
+    const file = getFileFromQr(data, options, background, frame, cornersData, dotsData, selected);
+
+    try { // @ts-ignore
+      data.qrForSharing = await upload([file], `${userInfo.cognito_user_id}/${selected}s/design`);
+      prevUpdatingHandler(null, true);
+    } catch {
+      prevUpdatingHandler(null, false);
+      setIsError(true);
+    }
+  }
+
+  if ((data.hideQrForSharing || data.sharerPosition === 'no') && (data.qrForSharing || data.qrForSharing?.[0]?.Key)) {
+    prevUpdatingHandler('Removing QR Code');
+    try {
+      await remove([{ Key: data.qrForSharing.Key }]);
+      data.qrForSharing = undefined;
+      prevUpdatingHandler(null, true);
+    } catch {
+      prevUpdatingHandler(null, false);
+      setIsError(true);
+    }
+  }
 
   if (data.custom?.length) {
     for (let idx = 0, len = data.custom?.length || 0; idx < len; idx += 1) {
@@ -234,7 +274,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     prevUpdatingHandler("Removing previous banner image");
     try {
       await remove([{ Key: data.prevBackImg }]);
-      delete data.prevBackImg;
+      data.prevBackImg = undefined;
       prevUpdatingHandler(null, true);
     } catch {
       prevUpdatingHandler(null, false);
@@ -261,7 +301,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     prevUpdatingHandler("Deleting previous profile image");
     try {
       await remove([{ Key: data.prevForeImg }]);
-      delete data.prevForeImg;
+      data.prevForeImg = undefined;
       prevUpdatingHandler(null, true);
     } catch {
       prevUpdatingHandler(null, false);
@@ -288,7 +328,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     prevUpdatingHandler("Removing previous background image");
     try {
       await remove([{ Key: data.prevMicrositeImg }]);
-      delete data.prevMicrositeImg;
+      data.prevMicrositeImg = undefined;
       prevUpdatingHandler(null, true);
     } catch {
       prevUpdatingHandler(null, false);

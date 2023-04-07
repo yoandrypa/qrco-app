@@ -212,6 +212,8 @@ export type CustomType = {
 };
 
 export type DataType = {
+  qrForSharing?: File;
+  hideQrForSharing?: boolean;
   sharerPosition?: string;
   upperHeight?: string;
   buttonShadowDisplacement?: string;

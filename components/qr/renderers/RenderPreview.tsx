@@ -33,6 +33,7 @@ interface PreviewProps {
   externalFrame?: FramesType;
   externalDesign?: any;
   qrDesign?: any;
+  getDataBack?: (data: any) => void;
   qr?: any;
   avoidDuplicate?: boolean;
   onlyPreview?: boolean;
@@ -41,7 +42,10 @@ interface PreviewProps {
   externalClose?: () => void;
 }
 
-const RenderPreview = ({externalClose, onlyPreview, qrDesign, qr, externalFrame, externalDesign, handleDone, override, width, avoidDuplicate, ...qrProps}: PreviewProps) => {
+const RenderPreview = (
+  {externalClose, onlyPreview, qrDesign, qr, externalFrame, externalDesign, handleDone, override, width,
+    getDataBack, avoidDuplicate, ...qrProps}: PreviewProps
+) => {
   const [preview, setPreview] = useState<boolean>(false);
   const [qrData, setQrData] = useState<any>(null);
   const [current, setCurrent] = useState<string | null>(externalDesign || null);
@@ -97,9 +101,10 @@ const RenderPreview = ({externalClose, onlyPreview, qrDesign, qr, externalFrame,
   useEffect(() => {
     if (qrData) { // @ts-ignore
       const t = qrRef.current?.outerHTML;
+      if (getDataBack) { getDataBack(t); }
       setCurrent(t);
     }
-  }, [qrData]);
+  }, [qrData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (current && qrDesign?.image?.length && !done.current) {
