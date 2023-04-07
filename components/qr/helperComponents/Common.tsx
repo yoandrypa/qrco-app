@@ -15,10 +15,9 @@ import RenderQRCommons from "../renderers/RenderQRCommons";
 import {NO_MICROSITE, PROFILE_IMAGE} from "../constants";
 import {download} from "../../../handlers/storage";
 import {DataType} from "../types/types";
-import {previewQRGenerator} from "../../../helpers/qr/auxFunctions";
+import {getOptionsForPreview, previewQRGenerator} from "../../../helpers/qr/auxFunctions";
 import {saveOrUpdate} from "../auxFunctions";
-import {blobUrlToFile, handleDesignerString} from "../../../helpers/qr/helpers";
-import {initialData} from "../../../helpers/qr/data";
+import {blobUrlToFile} from "../../../helpers/qr/helpers";
 import {generateUUID} from "listr2/dist/utils/uuid";
 import valueHanler from "./valueHandler";
 import validator from "../validator";
@@ -183,16 +182,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
 
   const handleImg = useCallback((prop: string) => setForceOpen(prop), []);
 
-  const optionsForPreview = useCallback(() => {
-    const opts = {...options, background, frame, corners: cornersData, cornersDot: dotsData};
-    if (!data?.isDynamic) {
-      opts.data = handleDesignerString(selected, data || {...initialData});
-      if (!opts.data.length) {
-        opts.data = selected === 'web' ? 'https://www.example.com' : 'Example';
-      }
-    }
-    return opts;
-  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+  const optionsForPreview = useMemo(() => // eslint-disable-next-line react-hooks/exhaustive-deps
+    getOptionsForPreview(data, options, background, frame, cornersData, dotsData, selected), [data]);
 
   const omitProfileImg = useMemo(() => !PROFILE_IMAGE.includes(selected) || !data?.isDynamic, [selected, data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -258,7 +249,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
               code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
               save={handleSave} style={{mt: 1, ml: '15px', position: 'sticky', top: '120px'}}
               saveDisabled={isWrong || !data.qrName?.trim().length} shareLink={options?.data}
-              qrOptions={optionsForPreview()} step={1} data={previewQRGenerator(data, selected, omitProfileImg)}
+              qrOptions={optionsForPreview} step={1} data={previewQRGenerator(data, selected, omitProfileImg)}
               onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
               backImg={isEditOrClone && backImg ? backImg : undefined} handlePickImage={handleImg}
               mainImg={isEditOrClone && foreImg ? foreImg : undefined}
@@ -274,7 +265,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
             save={handleSave} saveDisabled={isWrong || !data.qrName?.trim().length} style={{mt: '-15px'}}
             data={previewQRGenerator(data, selected, omitProfileImg)} step={1} isDrawed
             onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
-            shareLink={options?.data} qrOptions={optionsForPreview()} handlePickImage={handleImg}
+            shareLink={options?.data} qrOptions={optionsForPreview} handlePickImage={handleImg}
             backImg={isEditOrClone && backImg ? backImg : undefined}
             mainImg={isEditOrClone && foreImg ? foreImg : undefined}
             backgroundImg={isEditOrClone && micrositeBackImage ? micrositeBackImage : undefined} />

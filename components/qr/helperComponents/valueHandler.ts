@@ -10,16 +10,16 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
       if (prop === 'backgndImg' && prev?.backgndImg?.[0]?.Key) { newData.prevBackImg = prev.backgndImg[0].Key; }
       if (prop === 'foregndImg') {
         if (prev?.foregndImg?.[0]?.Key) { newData.prevForeImg = prev.foregndImg[0].Key; }
-        if (newData.profileImageVertical !== undefined) { delete newData.profileImageVertical; }
-        if (newData.profileImageSize !== undefined) { delete newData.profileImageSize; }
-        if (newData.foregndImgType !== undefined) { delete newData.foregndImgType; }
+        if (newData.profileImageVertical !== undefined) { newData.profileImageVertical = undefined; }
+        if (newData.profileImageSize !== undefined) { newData.profileImageSize = undefined; }
+        if (newData.foregndImgType !== undefined) { newData.foregndImgType = undefined; }
       }
       if (prop === 'micrositeBackImage') {
         if (prev?.micrositeBackImage?.[0]?.Key) { newData.prevMicrositeImg = prev.micrositeBackImage[0].Key; }
-        if (newData.micrositeBackImageBlurness !== undefined) { delete newData.micrositeBackImageBlurness; }
-        if (newData.micrositeBackImageOpacity !== undefined) { delete newData.micrositeBackImageOpacity; }
+        if (newData.micrositeBackImageBlurness !== undefined) { newData.micrositeBackImageBlurness = undefined; }
+        if (newData.micrositeBackImageOpacity !== undefined) { newData.micrositeBackImageOpacity = undefined; }
       }
-      delete newData[prop];
+      newData[prop] = undefined;
       return newData;
     });
     if (prop === 'micrositeBackImage' && micrositeBackImage) { setMicrositeBackImage(undefined); }
@@ -42,24 +42,24 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
       (prop === 'buttonBack' && payload === 'default') || (prop === 'autoOpen' && !payload)) {
       setData((prev: any) => {
         const newData = {...prev};
-        delete newData[prop];
+        newData[prop] = undefined;
         if (prop === 'buttonBack' && payload === 'default' && newData.buttonBackColor !== undefined) {
-          delete newData.buttonBackColor;
+          newData.buttonBackColor = undefined;
         }
         return newData;
       });
     } else if (prop === 'backgroundType') {
       setData((prev: any) => {
         const newData = {...prev};
-        if (newData.backgroundColor !== undefined) { delete newData.backgroundColor; }
-        if (newData.backgroundColorRight !== undefined) { delete newData.backgroundColorRight; }
-        if (newData.backgroundDirection !== undefined) { delete newData.backgroundDirection; }
+        if (newData.backgroundColor !== undefined) { newData.backgroundColor = undefined; }
+        if (newData.backgroundColorRight !== undefined) { newData.backgroundColorRight = undefined; }
+        if (newData.backgroundDirection !== undefined) { newData.backgroundDirection = undefined; }
         newData.backgroundType = payload?.target?.value || payload;
         if (newData.backgroundType !== 'image' && newData.micrositeBackImage !== undefined) {
           setMicrositeBackImage(undefined);
-          delete newData.micrositeBackImage;
-          if (newData.micrositeBackImageOpacity) { delete newData.micrositeBackImageOpacity; }
-          if (newData.micrositeBackImageBlurness) { delete newData.micrositeBackImageBlurness; }
+          newData.micrositeBackImage = undefined;
+          if (newData.micrositeBackImageOpacity) { newData.micrositeBackImageOpacity = undefined; }
+          if (newData.micrositeBackImageBlurness) { newData.micrositeBackImageBlurness = undefined; }
         }
         return newData;
       });
@@ -67,12 +67,10 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
       setData((prev: any) => {
         const newData = {...prev, buttonBackColor: payload === 'solid' ? DEFAULT_COLORS.p : 'unset'};
         newData[prop] = payload.target?.value !== undefined ? payload.target.value : payload;
-        if (payload === 'gradient' && newData.buttonsOpacity !== undefined) { delete newData.buttonsOpacity; }
+        if (payload === 'gradient' && newData.buttonsOpacity !== undefined) { newData.buttonsOpacity = undefined; }
         if (payload === 'solid' && newData.custom?.length) {
           newData.custom.forEach((x: CustomType) => {
-            if (x.component === 'socials' && x.data?.invertIconColors !== undefined) {
-              delete x.data.invertIconColors;
-            }
+            if (x.component === 'socials' && x.data?.invertIconColors !== undefined) { x.data.invertIconColors = undefined; }
           });
         }
         return newData;
@@ -80,17 +78,17 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
     } else if (prop === 'buttonShape') {
       setData((prev: any) => {
         const newData = {...prev, [prop]: payload};
-        if (newData.flipHorizontal !== undefined) { delete newData.flipHorizontal; }
-        if (newData.flipVertical !== undefined && !['5', '6', '7'].includes(payload)) { delete newData.flipVertical; }
-        if (newData.alternate !== undefined && !['5', '6', '7'].includes(payload)) { delete newData.alternate; }
-        if (payload !== '4' && newData.buttonBorders !== undefined) { delete newData.buttonBorders; }
+        if (newData.flipHorizontal !== undefined) { newData.flipHorizontal = undefined; }
+        if (newData.flipVertical !== undefined && !['5', '6', '7'].includes(payload)) { newData.flipVertical = undefined; }
+        if (newData.alternate !== undefined && !['5', '6', '7'].includes(payload)) { newData.alternate = undefined; }
+        if (payload !== '4' && newData.buttonBorders !== undefined) { newData.buttonBorders = undefined; }
         return newData;
       });
     } else if (prop === 'buttonShadowDisplacement') {
       setData((prev: any) => {
         const newData = {...prev, buttonShadowDisplacement: payload};
-        if (newData.buttonShadow !== undefined) { delete newData.buttonShadow; }
-        if (newData.buttonsOpacity !== undefined) { delete newData.buttonsOpacity; }
+        if (newData.buttonShadow !== undefined) { newData.buttonShadow = undefined; }
+        if (newData.buttonsOpacity !== undefined) { newData.buttonsOpacity = undefined; }
         if (newData.buttonBorderWeight === 'weight') { newData.buttonShadowDisplacement = 'downRight'; }
         return newData;
       });
@@ -98,7 +96,7 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
       setData((prev: any) => {
         const newData = {...prev};
         let newPayload = `${payload}`;
-        if (!newPayload.includes('empty') && newData.upperHeight === 'narrow') { delete newData.upperHeight; }
+        if (!newPayload.includes('empty') && newData.upperHeight === 'narrow') { newData.upperHeight = undefined; }
         if (!newPayload.includes('entire') && !newPayload.includes('sections')) {
           let index = newPayload.indexOf('#');
           if (index !== -1) { newPayload = newPayload.slice(0, index); }
@@ -110,14 +108,23 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
         if (payload.startsWith('empty') && payload.includes('Left')) { newData.layout = 'empty'; }
         return newData;
       });
+    } else if (prop === 'hideQrForSharing') {
+      setData((prev: any) => {
+        const newData = {...prev, hideQrForSharing: payload};
+        if (!payload && newData.hideQrForSharing !== undefined) { newData.hideQrForSharing = undefined; }
+        return newData;
+      });
     } else {
       setData((prev: any) => {
         const newData = {...prev};
         newData[prop] = payload.target?.value !== undefined ? payload.target.value : payload;
+        if (prop === 'sharerPosition' && payload === 'no' && !newData.hideQrForSharing) {
+          newData.hideQrForSharing = true;
+        }
         if (['micrositeBackImage','backgndImg','foregndImg'].includes(prop)) { newData.forceChange = !Boolean(newData.forceChange); }
         if (prop === 'footerKind') {
-          if (payload === 'default') { delete newData.footerKind; }
-          if (payload !== 'custom' && newData.customFooter !== undefined) { delete newData.customFooter; }
+          if (payload === 'default') { newData.footerKind = undefined; }
+          if (payload !== 'custom' && newData.customFooter !== undefined) { newData.customFooter = undefined; }
         }
         if (prop === 'micrositeBackImageBlurness' && newData.micrositeBackImageBlurness && payload === 0) {
           newData.micrositeBackImageBlurness = undefined;
@@ -126,15 +133,15 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
           newData.micrositeBackImageOpacity = undefined;
         }
         if (prop.toUpperCase().includes('FONT') && payload === 'default') {
-          delete newData[prop];
+          newData[prop] = undefined;
         }
         if (prop === 'buttonBorderWeight' && newData.buttonShadowDisplacement !== undefined && payload === 'weight') {
           newData.buttonShadowDisplacement = 'downRight';
         }
         if (['profileImageVertical', 'profileImageSize', 'buttonsSeparation', 'upperHeight', 'sharerPosition'].includes(prop) && payload === 'default') {
-          delete newData[prop];
+          newData[prop] = undefined;
         } else if (['flipHorizontal', 'flipVertical', 'buttonShadow', 'buttonCase'].includes(prop) && !payload && newData[prop] !== undefined) {
-          delete newData[prop];
+          newData[prop] = undefined;
         } else if (prop === 'buttonBorderStyle') {
           if (payload !== 'two' && newData.buttonBorderColors !== undefined) { newData.buttonBorderColors = undefined; }
           if (payload === 'noBorders') {
@@ -155,11 +162,11 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
     setData((prev: any) => {
       const newData = {...prev};
       if (prop === 'both') {
-        if (newData.primary) { delete newData.primary; }
-        if (newData.secondary) { delete newData.secondary; }
+        if (newData.primary) { newData.primary = undefined; }
+        if (newData.secondary) { newData.secondary = undefined; }
       } else {
-        if (newData.backgroundColor) { delete newData.backgroundColor; }
-        if (newData.backgroundColorRight) { delete newData.backgroundColorRight; }
+        if (newData.backgroundColor) { newData.backgroundColor = undefined; }
+        if (newData.backgroundColorRight) { newData.backgroundColorRight = undefined; }
       }
       return newData;
     });

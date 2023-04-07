@@ -225,7 +225,7 @@ export default function QrList({ title }: any) {
           <Box sx={{ border: theme => `solid 1px ${theme.palette.info.light}`, p: '20px', borderRadius: '5px' }}>
             <InfoIcon color="info" />
             <Typography sx={{ mb: '25px', color: theme => theme.palette.info.light, fontWeight: 'bold' }}>
-              {'There are no QR codes.'}
+              {'There are no QRLynks.'}
             </Typography>
             <ButtonCreateQrLynks light />
           </Box>

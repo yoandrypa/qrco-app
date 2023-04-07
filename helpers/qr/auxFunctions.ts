@@ -1,5 +1,14 @@
-import {CustomType, DataType} from "../../components/qr/types/types";
+import {
+  BackgroundType,
+  CornersAndDotsType,
+  CustomType,
+  DataType,
+  FramesType,
+  OptionsType
+} from "../../components/qr/types/types";
 import {bannerImg, mainImg} from "./previewFiles";
+import {handleDesignerString} from "./helpers";
+import {initialData} from "./data";
 
 export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: boolean, isDetailsView?: boolean) => {
   let proceed = true;
@@ -247,4 +256,16 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
   }
 
   return obj;
+}
+
+export const getOptionsForPreview = (data: any, options: OptionsType, background: BackgroundType, frame: FramesType,
+                                  cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected?: string) => {
+  const opts = {...options, background, frame, corners: cornersData, cornersDot: dotsData};
+  if (!data?.isDynamic) {
+    opts.data = handleDesignerString(selected || '', data || {...initialData});
+    if (!opts.data.length) {
+      opts.data = selected === 'web' ? 'https://www.example.com' : 'Example';
+    }
+  }
+  return opts;
 }
