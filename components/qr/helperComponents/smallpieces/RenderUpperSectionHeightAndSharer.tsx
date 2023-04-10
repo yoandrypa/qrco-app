@@ -18,6 +18,8 @@ interface RenderUpperProps extends CustomCommon {
 export default function RenderUpperSectionHeightAndSharer(
   {data, handleValue, includeSharerConfig, includeQrCode}: RenderUpperProps
 ) {
+  const isEmpty = Boolean(data?.layout?.includes('empty'));
+
   return (
     <>
       <SpacingSelector
@@ -25,7 +27,8 @@ export default function RenderUpperSectionHeightAndSharer(
         item="upperHeight"
         message="Top margin calibrator"
         handleValues={handleValue}
-        noNarrow={!Boolean(data?.layout?.includes('empty'))}
+        includeSmall={isEmpty}
+        noNarrow={!isEmpty}
         icon={
           <AdUnitsIcon fontSize="small" color="primary" sx={{mr: '5px'}}/>
         }

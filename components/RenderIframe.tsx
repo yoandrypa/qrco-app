@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import { DataType } from "./qr/types/types";
-import { convertBase64, getImageData } from "../helpers/qr/helpers";
+import {DataType} from "./qr/types/types";
+import {convertBase64, getImageData} from "../helpers/qr/helpers";
 
 interface IframeProps {
   src: string;
@@ -19,6 +19,7 @@ interface IframeProps {
   backgroundImg?: File | string;
   backImg?: File | string;
   mainImg?: File | string;
+  qrImg?: File;
 }
 
 const style = {
@@ -38,7 +39,7 @@ const proceed = (plain?: any, imgData?: any) => {
   return imgData !== undefined && (imgData instanceof File || imgData instanceof Blob);
 }
 
-const RenderIframe = ({ src, width, height, data, selected, backImg, mainImg, backgroundImg, shareLink, notifyReady }: IframeProps) => {
+const RenderIframe = ({ src, width, height, data, selected, backImg, mainImg, backgroundImg, shareLink, notifyReady, qrImg }: IframeProps) => {
   const [whatToRender, setWhatToRender] = useState<string | null>(null);
   const [error, setError] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -55,6 +56,7 @@ const RenderIframe = ({ src, width, height, data, selected, backImg, mainImg, ba
         if (shareLink && previewData.shortlinkurl === undefined) {
           previewData.shortlinkurl = shareLink;
         }
+
         if (previewData.backgndImg || backImg) {
           previewData.backgndImg = !isInEdition || proceed(backImg, previewData.backgndImg) ?
             await getImageData(previewData.backgndImg) : await getImageData(backImg);
@@ -66,6 +68,9 @@ const RenderIframe = ({ src, width, height, data, selected, backImg, mainImg, ba
         if (previewData.micrositeBackImage || backgroundImg) {
           previewData.micrositeBackImage = !isInEdition || proceed(backgroundImg, previewData.micrositeBackImage) ?
             await getImageData(previewData.micrositeBackImage) : await getImageData(backgroundImg);
+        }
+        if (qrImg) {
+          previewData.qrCodeImg = qrImg;
         }
 
         if (previewData.custom) {
