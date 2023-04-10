@@ -96,7 +96,7 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
       setData((prev: any) => {
         const newData = {...prev};
         let newPayload = `${payload}`;
-        if (!newPayload.includes('empty') && newData.upperHeight === 'narrow') { newData.upperHeight = undefined; }
+        if (!newPayload.includes('empty') && ['narrow', 'small'].includes(newData.upperHeight)) { newData.upperHeight = undefined; }
         if (!newPayload.includes('entire') && !newPayload.includes('sections')) {
           let index = newPayload.indexOf('#');
           if (index !== -1) { newPayload = newPayload.slice(0, index); }

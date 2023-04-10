@@ -1,4 +1,4 @@
-import {memo, MouseEvent, Suspense, useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {memo, MouseEvent, Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
@@ -18,11 +18,13 @@ import { debounce } from "@mui/material";
 import { NO_MICROSITE, ONLY_QR } from "../../constants";
 import RenderPreview from "../../renderers/RenderPreview";
 import RenderCellPhoneShape from "../RenderCellPhoneShape";
-import { cleanSelectionForMicrositeURL, qrNameDisplayer } from "../../../../helpers/qr/helpers";
+import {cleanSelectionForMicrositeURL, qrNameDisplayer} from "../../../../helpers/qr/helpers";
 import { DataType } from "../../types/types";
 
 import dynamic from "next/dynamic";
 import {areEquals, handleCopy} from "../../../helpers/generalFunctions";
+import Context from "../../../context/Context";
+import {getFileFromQr} from "../../auxFunctions";
 
 const PleaseWait = dynamic(() => import("../../../PleaseWait"));
 const Popover = dynamic(() => import("@mui/material/Popover"));
@@ -69,6 +71,15 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
   const [open, setOpen] = useState<HTMLButtonElement | null>(null);
   const [updating, setUpdating] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
+
+  const {options, background, frame, cornersData, dotsData} = useContext(Context);
+
+  const sharerPos = data?.sharerPosition || '';
+  const hideQr = data?.hideQrForSharing || false;
+
+  const qrImg = useMemo(() =>
+    sharerPos !== 'no' && !hideQr ? getFileFromQr({isDynamic: true}, options, background, frame, cornersData, dotsData, selected || '', true) : undefined,
+  [sharerPos, hideQr]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const forceHide = useRef<boolean>(false);
   const microSitesBaseUrl = process.env.MICRO_SITES_BASE_URL;
@@ -209,7 +220,7 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
                 <RenderIframe
                   src={!code ? cleanSelectionForMicrositeURL(selected || '', isDynamic, true) : `${microSitesBaseUrl}/sample/empty`}
                   selected={selected} width="256px" height="536px" data={data} backImg={backImg} mainImg={mainImg}
-                  shareLink={shareLink} notifyReady={setIsReady} backgroundImg={backgroundImg} />
+                  shareLink={shareLink} notifyReady={setIsReady} backgroundImg={backgroundImg} qrImg={qrImg} />
               </Suspense>
             ) : null}
           </RenderCellPhoneShape>

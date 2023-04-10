@@ -150,10 +150,14 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
 };
 
 export const getFileFromQr = (data: DataType, options: OptionsType, background: BackgroundType, frame: FramesType,
-                              cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string) => {
+                              cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string, onlySvg?: boolean) => {
   const qrDesign = getOptionsForPreview(data, options, background, frame, cornersData, dotsData, selected);
   const svgObject = generateSVGObj(handleQrData(qrDesign), frame, background, cornersData, dotsData);
   const svgString = renderToString(svgObject);
+
+  if (onlySvg) {
+    return svgString;
+  }
 
   return new File([svgString], 'qrCodeImageFile.svg', {type: 'image/svg+xml'});
 }

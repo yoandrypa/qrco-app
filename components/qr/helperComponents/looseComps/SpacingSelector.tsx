@@ -12,9 +12,10 @@ interface SpacingProps {
   handleValues: Function;
   index?: number;
   noNarrow?: boolean;
+  includeSmall?: boolean;
 }
 
-export default function SpacingSelector({selection, item, message, handleValues, index, icon, noNarrow}: SpacingProps) {
+export default function SpacingSelector({selection, item, message, handleValues, index, icon, noNarrow, includeSmall}: SpacingProps) {
   const handler = (event: SelectChangeEvent) => {
     if (index !== undefined) {
       handleValues(item, index)(event.target.value);
@@ -36,6 +37,7 @@ export default function SpacingSelector({selection, item, message, handleValues,
         fullWidth
       >
         {!noNarrow && <MenuItem value='narrow'>Narrow</MenuItem>}
+        {includeSmall && <MenuItem value='small'>Small</MenuItem>}
         <MenuItem value='default'>Default</MenuItem>
         <MenuItem value='medium'>Medium</MenuItem>
         <MenuItem value='wide'>Wide</MenuItem>

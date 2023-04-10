@@ -230,7 +230,7 @@ export const downloadAsSVGOrVerify = (qrImageData: string | { outerHTML: string;
   } else {
     const element = document.createElement('a');
     element.href = URL.createObjectURL(data);
-    element.download = 'ebanuxQr.svg';
+    element.download = 'qrLynk.svg';
     document.body.appendChild(element);
     element.click();
     element.remove();
@@ -253,7 +253,7 @@ export const downloadAsImg = async (svgData: string | { outerHTML: string | numb
     const data = canvas.toDataURL( `image/${!asJpg ? 'png' : 'jpeg'}`, 1);
     if (!verify) {
       const anchor = document.createElement('a');
-      anchor.download = `ebanuxQr.${!asJpg ? 'png' : 'jpg'}`;
+      anchor.download = `qrLynk.${!asJpg ? 'png' : 'jpg'}`;
       anchor.href = data;
       anchor.click();
       anchor.remove();
