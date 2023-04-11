@@ -1,4 +1,5 @@
-import { DataType, Type } from "../../types/types";
+import { CustomType, DataType, Type } from "../../types/types";
+import { getUuid } from "../../../../helpers/qr/helpers";
 
 export const components = {
   address: { name: 'Address' },
@@ -25,7 +26,7 @@ export const components = {
   contact: { name: 'Contact form' },
   tags: { name: 'Tags' },
   sms: { name: 'Contact via SMS' },
-  donation: { name: 'Donation' },
+  donation: { name: 'Donation', isMonetized: true },
   couponInfo: { name: 'Promotion info', notInMenu: true },
   couponData: { name: 'Coupon data', notInMenu: true },
   petId: { name: 'Pet presentation', notInMenu: true },
@@ -138,11 +139,20 @@ export const cleaner = (data: DataType, item: string): void => {
   }
 }
 
-export const sectionPreConfig = (item: string, selected?: string) => {
-  const data = (selected === 'petId') ? { linksOnlyLinks: true } : {};
+export const sectionPreConfig = (item: string, selected?: string): CustomType => {
+  let data: any = (selected === 'petId') ? { linksOnlyLinks: true } : {};
 
-  if (item === 'socials') return { socialsOnlyIcons: true, hideHeadLine: true, ...data };
-  if (item === 'links') return { hideHeadLine: true, ...data };
+  if (item === 'socials') {
+    data = { socialsOnlyIcons: true, hideHeadLine: true, ...data };
+  } else if (item === 'links') {
+    data = { hideHeadLine: true, ...data };
+  }
 
-  return data;
+  return {
+    component: item,
+    expand: getUuid(),
+    // @ts-ignore
+    isMonetized: components[item]?.isMonetized || false,
+    data,
+  }
 }

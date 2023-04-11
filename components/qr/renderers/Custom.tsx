@@ -18,7 +18,6 @@ import {
   CustomSettingsProps,
   getNameStr, sectionPreConfig,
 } from "./custom/helperFuncs";
-import {getUuid} from "../../../helpers/qr/helpers";
 
 import dynamic from "next/dynamic";
 import RenderContent from "./custom/RenderContent";
@@ -100,14 +99,11 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
     setData((prev: DataType) => {
       const newData = {...prev};
       if (!newData.custom) { newData.custom = []; } // @ts-ignore
-      const expand = getUuid();
-      const newComponent = {component: item, expand} as any;
-      const sectionPreData = sectionPreConfig(item, selected);
-      if (sectionPreData) { newComponent.data = sectionPreData; }
-      newData.custom.push(newComponent);
+      const newSection = sectionPreConfig(item, selected); // @ts-ignore
+      newData.custom.push(newSection);
       setExpander((prev: string[]) => {
         const newExpander = [...prev];
-        newExpander.push(expand);
+        newExpander.push(newSection.expand);
         return newExpander;
       });
       return newData;
@@ -132,11 +128,9 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
       setData((prev: DataType) => {
         const newData = {...prev, custom: []};
         predefined.forEach((item, index) => { // @ts-ignore
-          const newComponent = {component: item, expand: getUuid()} as any;
-          const sectionPreData = sectionPreConfig(item, selected);
-          if (sectionPreData) { newComponent.data = sectionPreData; } // @ts-ignore
-          newData.custom.push(newComponent); // @ts-ignore
-          if (index === 0) { setExpander([newData.custom[0].expand]); }
+          const newSection = sectionPreConfig(item, selected); // @ts-ignore
+          newData.custom.push(newSection); // @ts-ignore
+          if (index === 0) { setExpander([newSection.expand]); }
         });
         return newData;
       });

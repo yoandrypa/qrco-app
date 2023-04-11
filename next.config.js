@@ -56,6 +56,7 @@ module.exports = {
     OAUTH_URL: process.env.OAUTH_URL || process.env.REACT_APP_OAUTH_URL,
 
     PAYLINK_BASE_URL: process.env.PAYLINK_BASE_URL || 'https://ebanux.link',
+    PAYLINK_APP_URL: process.env.PAYLINK_APP_URL || 'https://ebanux.com',
 
     SESSION_COOKIE_NAME: process.env.SESSION_COOKIE_NAME || 'ebanux-qrco-app',
     SESSION_SECRET: process.env.SESSION_SECRET,
