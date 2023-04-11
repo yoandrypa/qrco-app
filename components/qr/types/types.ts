@@ -209,6 +209,7 @@ export type CustomType = {
   name?: string;
   data: Type;
   expand: string;
+  isMonetized?: boolean;
 };
 
 export type DataType = {

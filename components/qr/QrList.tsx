@@ -13,6 +13,7 @@ import Edit from "@mui/icons-material/Edit";
 import SyncIcon from "@mui/icons-material/Sync";
 import SyncDisabledIcon from "@mui/icons-material/SyncDisabled";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import MonetizationIcon from '@mui/icons-material/MonetizationOn';
 import Public from "@mui/icons-material/Public";
 import IconButton from "@mui/material/IconButton";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -137,10 +138,14 @@ export default function QrList({ title }: any) {
                         {renderQr(qr)}
                       </Box>
                       <Stack direction="column" sx={{ my: "auto" }}>
-                        <Typography variant="subtitle2" sx={{ color: "orange", mb: "-7px" }}>
+                        <Typography variant="subtitle2"
+                                    sx={{ color: "orange", mb: "-7px", display: 'flex', alignItems: 'center' }}>
                           {qrNameDisplayer(qr.qrType, qr.isDynamic)}
+                          {qr.isMonetized && <MonetizationIcon sx={{width: 18, height: 18, ml: '2px'}} color="warning" />}
                         </Typography>
-                        <Typography variant="h6" sx={{ fontWeight: "bold", mb: "-2px" }}>{qr.qrName}</Typography>
+                        <Typography variant="h6" sx={{ fontWeight: "bold", mb: "-2px" }}>
+                          {qr.qrName}
+                        </Typography>
                         {isWide ? (
                           <Typography variant="caption" sx={{ color: "gray" }}>
                             {`Created${dateHandler(humanDate(new Date(qr.createdAt).getTime()))}`}

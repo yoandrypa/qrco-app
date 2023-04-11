@@ -17,6 +17,7 @@ import { startWaiting, releaseWaiting } from "../Waiting";
 import { QR_CONTENT_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { capitalize } from "@mui/material";
 import { createQrDonationPayLynk } from "../../libs/utils/donations";
+import { components } from "./renderers/custom/helperFuncs";
 
 interface UserInfoProps {
   attributes: { sub: string, email: string },
@@ -210,6 +211,10 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
           prevUpdatingHandler(null, false);
         }
       }
+      // Check if the section is monetized
+      data.isMonetized ||= section.isMonetized;
+      // @ts-ignore | Legacy check if the section is monetized TODO: Remove after edit and save all donation QRs.
+      data.isMonetized ||= components[section.component]?.isMonetized;
     }
   }
 
