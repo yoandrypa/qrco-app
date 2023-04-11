@@ -18,7 +18,7 @@ const handlePhones = (x: CustomType, index: number, other?: string, company?: bo
   if (exists(x, getItem('phone')) && !PHONE.test(x.data?.[getItem('phone')] || '')) {
     errors.push(`Enter a valid phone number in ${other ? `${other} ` : ''}section ${index + 1}`);
   }
-  if (exists(x, 'whatsapp') && !PHONE.test(x.data?.fax || '')) {
+  if (exists(x, 'whatsapp') && !PHONE.test(x.data?.whatsapp || '')) {
     errors.push(`Enter a valid whatsapp number in ${other ? `${other} ` : ''}section ${index + 1}`);
   } // @ts-ignore
   if (exists(x,  getItem('fax')) && !PHONE.test(x.data?.[getItem('fax')] || '')) {

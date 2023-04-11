@@ -137,6 +137,7 @@ export type Type = {
   firstName?: string;
   cell?: string;
   phone?: string;
+  whatsapp?: string;
   fax?: string;
   organization?: string;
   position?: string;

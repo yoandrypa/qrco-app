@@ -151,7 +151,7 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
 };
 
 export const getFileFromQr = (data: DataType, options: OptionsType, background: BackgroundType, frame: FramesType,
-                              cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string, onlySvg?: boolean) => {
+                              cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string, onlySvg?: boolean, name?: string) => {
   const qrDesign = getOptionsForPreview(data, options, background, frame, cornersData, dotsData, selected);
   const svgObject = generateSVGObj(handleQrData(qrDesign), frame, background, cornersData, dotsData);
   const svgString = renderToString(svgObject);
@@ -160,7 +160,7 @@ export const getFileFromQr = (data: DataType, options: OptionsType, background: 
     return svgString;
   }
 
-  return new File([svgString], `${getUuid()}QR.svg`, {type: 'image/svg+xml'});
+  return new File([svgString], name !== undefined ? name : `${getUuid()}QR.svg`, {type: 'image/svg+xml'});
 }
 
 /**
@@ -209,13 +209,9 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
   if (!data.hideQrForSharing) {
     prevUpdatingHandler(`${data.qrForSharing?.[0]?.Key === undefined ? 'Saving' : 'Adjusting'} QR code`);
 
-    const file = getFileFromQr(data, options, background, frame, cornersData, dotsData, selected);
+    const file = getFileFromQr(data, options, background, frame, cornersData, dotsData, selected, false, data.qrForSharing?.[0]?.name);
 
-    try {
-      if (data.qrForSharing?.[0]?.Key !== undefined) {
-        await remove([{Key: data.qrForSharing.Key}]);
-      }
-      // @ts-ignore
+    try { // @ts-ignore
       data.qrForSharing = await upload([file], `${userInfo.cognito_user_id}/${selected}s/design`);
       prevUpdatingHandler(null, true);
     } catch {
