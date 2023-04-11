@@ -60,7 +60,7 @@ const validator = (custom: CustomType[], forceExtra: boolean, ignore?: boolean) 
     errors.push('Add at least one section');
   } else {
     custom.forEach((x: CustomType, index: number) => {
-      if (isEmpty(x)) { // @ts-ignore
+      if (x.component !== 'date' && isEmpty(x)) { // @ts-ignore
         errors.push(`Make sure the ${components[x.component]?.name.toLowerCase() || x.component} section ${index + 1} is not empty`);
       } else { // @ts-ignore
         if (x.component === 'address' && exists(x, 'zip') && !ZIP.test(x.data.zip)) {
