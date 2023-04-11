@@ -160,7 +160,7 @@ export const getFileFromQr = (data: DataType, options: OptionsType, background: 
     return svgString;
   }
 
-  return new File([svgString], 'qrCodeImageFile.svg', {type: 'image/svg+xml'});
+  return new File([svgString], `${getUuid()}QR.svg`, {type: 'image/svg+xml'});
 }
 
 /**
@@ -211,7 +211,11 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
     const file = getFileFromQr(data, options, background, frame, cornersData, dotsData, selected);
 
-    try { // @ts-ignore
+    try {
+      if (data.qrForSharing?.[0]?.Key !== undefined) {
+        await remove([{Key: data.qrForSharing.Key}]);
+      }
+      // @ts-ignore
       data.qrForSharing = await upload([file], `${userInfo.cognito_user_id}/${selected}s/design`);
       prevUpdatingHandler(null, true);
     } catch {
