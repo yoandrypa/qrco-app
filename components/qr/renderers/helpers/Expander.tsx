@@ -13,7 +13,7 @@ interface ExpanderProps {
   setExpand: (expander: string | null) => void;
   item: string;
   title: string;
-  index: number;
+  index?: number;
   bold?: boolean;
   required?: boolean;
   deleteButton?: boolean;
@@ -48,10 +48,10 @@ const Expander = ({expand, setExpand, editFunc, item, title, bold, required, del
       }}
     >
       <Box sx={{display: 'flex', justifyContent: 'space-between', width: '100%'}} onClick={handleExpand}>
-        <Tooltip title={`Edit section ${index + 1} headline`} disableHoverListener={editFunc === undefined}>
+        <Tooltip title={index !== undefined ? `Edit section ${index + 1} headline` : 'Edit section headline'} disableHoverListener={editFunc === undefined}>
           <Box sx={{display: 'flex'}} onClick={handleEdit}>
-          <Typography sx={{fontSize: 'xx-large', mt: '-17px', mr: '5px', fontWeight: 'bold', color: '#AAAAAA37'}}>{index + 1}</Typography>
-          <Typography sx={{fontWeight: bold ? 'bold' : 'normal', display: 'inline-flex'}}>{title}</Typography>
+            {index !== undefined && <Typography sx={{fontSize: 'xx-large', mt: '-17px', mr: '5px', fontWeight: 'bold', color: '#AAAAAA37'}}>{index + 1}</Typography>}
+            <Typography sx={{fontWeight: bold ? 'bold' : 'normal', display: 'inline-flex'}}>{title}</Typography>
           </Box>
         </Tooltip>
         {required && !expand && <Typography sx={{mt: '3px'}} color="error">{'REQUIRED'}</Typography>}
