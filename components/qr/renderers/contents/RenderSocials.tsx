@@ -44,6 +44,11 @@ const RenderSocials = ({data, setData, index, isSolidButton}: RenderSocialsProps
 
       if (item.network === 'whatsapp' && !isError && !PHONE.test(item.value || '')) { isError = true;}
 
+      let placeholder = 'Enter just your ';
+      if (item.network === 'whatsapp') { placeholder += 'cell number'; }
+      else if (['discord', 'youtube'].includes(item.network)) { placeholder += 'channel'; }
+      else { placeholder += 'username'; }
+
       return (
         <Box sx={{width: '100%', display: 'flex'}}>
           {data?.socials?.length !== 1 && <DragIndicatorIcon sx={{ color: theme => theme.palette.text.disabled, mt: '15px' }} />}
@@ -52,7 +57,7 @@ const RenderSocials = ({data, setData, index, isSolidButton}: RenderSocialsProps
             autoFocus={item.network === selection.current}
             size="small"
             fullWidth
-            placeholder={`Enter just your ${item.network !== 'whatsapp' ? 'username' : 'cell number'}`}
+            placeholder={placeholder}
             margin="dense"
             value={item.value || ''}
             onChange={handleValues(item.network)}
@@ -101,7 +106,7 @@ const RenderSocials = ({data, setData, index, isSolidButton}: RenderSocialsProps
 
   const handlerSwitch = (prop: string) => (event: ChangeEvent<HTMLInputElement>) => {
     const isChecked = event.target.checked;
-    setData((prev: DataType) => { debugger;
+    setData((prev: DataType) => {
       const newData = {...prev};
       if (isChecked) { // @ts-ignore
         if (!newData.custom[index].data) { newData.custom[index].data = {}; } // @ts-ignore
