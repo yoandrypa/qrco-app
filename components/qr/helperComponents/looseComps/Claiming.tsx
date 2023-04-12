@@ -52,7 +52,7 @@ export default function Claiming({code, URL, handleOk, buttonMessage, handleCurr
 
   return (
     <Box sx={{ mt: '10px' }}>
-      <Box sx={{ display: 'flex', mt: '-5px', height: '85px' }}>
+      <Box sx={{ display: 'flex', mt: '-5px' }}>
         <TextField
           onKeyDown={(evt: KeyboardEvent<HTMLInputElement>) => !/^[a-zA-Z0-9_]+$/.test(evt.key) && evt.preventDefault()}
           label=""
@@ -62,10 +62,7 @@ export default function Claiming({code, URL, handleOk, buttonMessage, handleCurr
           margin="dense"
           value={custom}
           error={isError || (!available && !sameCode)}
-          helperText={sameCode ? 'Enter a different code' : (checking && !isError ? 'Checking code availability...' :
-            (isError ? 'Make sure you entered a code' : (available ? 'The code is available' : 'The entered code is already taken')))
-          }
-          sx={{ '& fieldset': { borderRadius: '5px 0 0 5px' } }}
+          sx={{'& fieldset': {borderRadius: '5px 0 0 5px'}}}
           onChange={handleCustom}
           InputProps={{
             startAdornment: (
@@ -76,11 +73,15 @@ export default function Claiming({code, URL, handleOk, buttonMessage, handleCurr
           }} />
         <Button
           onClick={handleOk}
-          variant="outlined" sx={{ height: '40px', mt: '8px', borderRadius: '0 5px 5px 0' }}
+          variant="outlined" sx={{height: '40px', mt: '8px', borderRadius: '0 5px 5px 0'}}
           disabled={isError || !available || checking}>
           <Typography sx={{ mx: '5px' }}>{buttonMessage || 'Ok'}</Typography>
         </Button>
       </Box>
+      <Typography variant="caption" sx={{color: theme => sameCode || (checking && !isError) ? theme.palette.text.disabled : theme.palette[isError || !available ? 'error' : 'success'].main}}>
+        {sameCode ? 'Enter a different code' : (checking && !isError ? 'Checking code availability...' :
+          (isError ? 'Make sure you entered a code' : (available ? 'The code is available' : 'The entered code is already taken')))}
+      </Typography>
     </Box>
   );
 }
