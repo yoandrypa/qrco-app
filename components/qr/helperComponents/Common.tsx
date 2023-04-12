@@ -183,7 +183,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   const handleImg = useCallback((prop: string) => setForceOpen(prop), []);
 
   const optionsForPreview = useMemo(() => // eslint-disable-next-line react-hooks/exhaustive-deps
-    getOptionsForPreview(data, options, background, frame, cornersData, dotsData, selected), [data]);
+    getOptionsForPreview(data, options, background, frame, cornersData, dotsData, selected), [data, options.data]);
 
   const omitProfileImg = useMemo(() => !PROFILE_IMAGE.includes(selected) || !data?.isDynamic, [selected, data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 

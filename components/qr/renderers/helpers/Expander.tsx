@@ -50,7 +50,7 @@ const Expander = ({expand, setExpand, editFunc, item, title, bold, required, del
       <Box sx={{display: 'flex', justifyContent: 'space-between', width: '100%'}} onClick={handleExpand}>
         <Tooltip title={index !== undefined ? `Edit section ${index + 1} headline` : 'Edit section headline'} disableHoverListener={editFunc === undefined}>
           <Box sx={{display: 'flex'}} onClick={handleEdit}>
-            {index !== undefined && <Typography sx={{fontSize: 'xx-large', mt: '-17px', mr: '5px', fontWeight: 'bold', color: '#AAAAAA37'}}>{index + 1}</Typography>}
+            {index !== undefined && <Typography sx={{fontSize: '25px', mt: '-8px', mr: '5px', fontWeight: 'bold', color: '#AAAAAA70'}}>{index + 1}</Typography>}
             <Typography sx={{fontWeight: bold ? 'bold' : 'normal', display: 'inline-flex'}}>{title}</Typography>
           </Box>
         </Tooltip>

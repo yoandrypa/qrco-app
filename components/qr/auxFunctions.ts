@@ -181,8 +181,8 @@ export const getFileFromQr = (data: DataType, options: OptionsType, background: 
  */
 export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps, options: OptionsType, frame: FramesType,
                                    background: BackgroundType, cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string,
-                                   setIsError: (isError: boolean) => void,
-                                   success: (creationData?: string) => void, router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
+                                   setIsError: (isError: boolean) => void, success: (creationData?: string) => void,
+                                   router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
                                    updatingHandler?: (value: string | null, status?: boolean) => void) => {
 
   const prevUpdatingHandler = (value: string | null, status?: boolean) => {
@@ -213,6 +213,9 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
     try { // @ts-ignore
       data.qrForSharing = await upload([file], `${userInfo.cognito_user_id}/${selected}s/design`);
+      if (!updatingHandler && dataSource.qrForSharing?.name !== data.qrForSharing.name) {
+        dataSource.qrForSharing = structuredClone(data.qrForSharing);
+      }
       prevUpdatingHandler(null, true);
     } catch {
       prevUpdatingHandler(null, false);

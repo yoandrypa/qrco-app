@@ -433,3 +433,22 @@ export const cleanSelectionForMicrositeURL = (item: string, isDynamic: boolean, 
 export const getSx = (theme: any) => ({
   border: `solid 1px ${theme.palette.primary.main}`, borderRadius: '100%', width: '40px', height: '40px', my: 'auto', p: '5px', color: theme.palette.primary.main
 });
+
+export interface SamplePrevProps {
+  style?: object;
+  save?: () => void;
+  saveDisabled?: boolean;
+  isDrawed?: boolean;
+  data?: DataType;
+  onlyQr?: boolean;
+  qrOptions?: any;
+  isDynamic: boolean;
+  shareLink?: string;
+  backgroundImg?: File | string;
+  backImg?: File | string;
+  mainImg?: File | string;
+  step: number;
+  handlePickImage?: (prop: string) => void;
+  showSampleMessage?: boolean;
+  noEditImages?: boolean;
+}
