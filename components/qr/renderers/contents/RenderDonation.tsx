@@ -50,7 +50,6 @@ function RenderDonation({ data, index, handleValues }: PropsType) {
             index={index} label="Title" value={title}
             placeholder="Enter the donation section title"
             onChange={onChange('title')}
-            requiredAdornment
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -67,7 +66,6 @@ function RenderDonation({ data, index, handleValues }: PropsType) {
             index={index} label="Message" value={message}
             placeholder="Would you like to buy me a coffee?"
             onChange={onChange('message')}
-            requiredAdornment
             rows={5}
           />
         </Grid>
