@@ -1,4 +1,4 @@
-import {MouseEvent, useCallback, useState} from "react";
+import {MouseEvent, memo, useCallback, useState} from "react";
 import LinkIcon from "@mui/icons-material/Link";
 import Box from "@mui/material/Box";
 import EditIcon from '@mui/icons-material/Edit';
@@ -18,7 +18,7 @@ interface LinkItemProps {
   urlData: string;
 }
 
-export default function RenderLinkItem({step, code, onlyQr, selected, urlData}: LinkItemProps) {
+function RenderLinkItem({step, code, onlyQr, selected, urlData}: LinkItemProps) {
   const [anchor, setAnchor] = useState<undefined | HTMLElement>(undefined);
 
   const handleEdit = useCallback((event: MouseEvent<HTMLElement>) => {
@@ -65,3 +65,5 @@ export default function RenderLinkItem({step, code, onlyQr, selected, urlData}: 
     </Box>
   );
 }
+
+export default memo(RenderLinkItem);
