@@ -2,59 +2,66 @@ import React, { ChangeEvent, ReactNode, useState } from "react";
 
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import RequiredAdornment from "../helpers/RequiredAdornment";
+import ReqAdornment from "../helpers/RequiredAdornment";
 
 import { checkValidity, FormatType } from "../helpers/validations";
+import { parseFormFieldSx, parseFormFieldInputSx } from "../helpers/styles";
+import { useTheme } from "@mui/system";
 
 interface RenderTextFieldsProps {
   label?: string;
   required?: boolean;
+  shrink?: boolean;
   placeholder?: string;
-  handleValues: Function;
-  isError?: boolean;
+  onChange: Function;
   multiline?: boolean;
-  value: string;
-  item?: string;
+  value?: string;
   sx?: any;
   index?: number;
   rows?: number;
   format?: FormatType;
   startAdornment?: ReactNode;
+  requiredAdornment?: boolean | string | ReactNode;
 }
 
 export default function TextBox(props: RenderTextFieldsProps) {
-  const { value: initValue, placeholder, label, item, multiline, rows } = props;
-  const { handleValues, startAdornment, sx, required, format, isError } = props;
-  const [value, setValue] = useState<string>(initValue);
-  const [wasEdited, setWasEdited] = useState<boolean>(false);
+  const theme = useTheme();
+  const {
+    value: initValue, onChange, multiline, format, shrink, sx,
+    startAdornment: sAdornment, requiredAdornment: rAdornment,
+    ...staticProps
+  } = props;
+  const { required = !!rAdornment } = staticProps;
 
-  const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const [value, setValue] = useState<string>(initValue || '');
+  const [valid, setValid] = useState<boolean>(checkValidity(initValue, false, 'string', format));
+
+  const onBaseChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
-    setValue(newValue);
-    if (!wasEdited) setWasEdited(true);
-    item ? handleValues(item)(newValue) : handleValues(newValue);
-  }
+    const newValid = checkValidity(newValue, required, 'string', format);
 
-  const isRequired = !!required && wasEdited;
-  const valid = checkValidity(value, isRequired, 'string', format);
+    setValue(newValue);
+    setValid(newValid);
+    onChange?.(newValue, newValid);
+  }
 
   return (
     <TextField
-      value={value || ''}
-      label={label}
-      placeholder={placeholder}
-      required={required || false}
-      error={isError || !valid}
-      multiline={multiline || (rows && rows > 1) || false}
-      rows={rows}
+      {...staticProps}
+      required={required}
+      sx={parseFormFieldSx(sx, theme)}
+      value={value}
+      error={!valid}
+      multiline={multiline || (staticProps.rows && staticProps.rows > 1) || false}
       fullWidth
       margin="dense"
       size="small"
-      sx={{ ...sx }}
-      onChange={onChange}
+      onChange={onBaseChange}
+      InputLabelProps={{ shrink }}
       InputProps={{
-        startAdornment: startAdornment && <InputAdornment position="start">{startAdornment}</InputAdornment>,
-        endAdornment: required && <RequiredAdornment value={String(value)} />,
+        startAdornment: sAdornment && <InputAdornment position="start">{sAdornment}</InputAdornment>,
+        endAdornment: required && rAdornment && <ReqAdornment value={value}>{rAdornment}</ReqAdornment>,
+        sx: parseFormFieldInputSx(sx, theme),
       }}
     />
   );

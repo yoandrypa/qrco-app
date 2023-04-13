@@ -26,7 +26,7 @@ export const ProBadge = styled(Box)(({pro}: { pro?: boolean }) => ({
   borderRadius: '4px',
   marginLeft: 5,
   background: pro ? '#000' : blue[800],
-  '& :first-child': {
+  '& p:first-of-type': {
     color: '#fff',
     fontSize: '0.55rem',
     fontWeight: 'bold',

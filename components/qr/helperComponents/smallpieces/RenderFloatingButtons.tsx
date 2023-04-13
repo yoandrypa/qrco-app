@@ -22,7 +22,7 @@ export default function RenderFloatingButtons(
   }: RenderFloatingButtons) {
 
   return (
-    <Box sx={{ position: 'fixed', width: `${size}px`, top: '100px', display: 'flex', justifyContent: 'space-between' }}>
+    <Box sx={{ position: 'fixed', width: `${size}px`, top: '100px', display: 'flex', justifyContent: 'space-between', zIndex: 100 }}>
       {step > 0 ? <RenderBackButton
         step={step}
         handleBack={handleBack}
