@@ -399,9 +399,13 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       edition = true;
       if (dataLength) { prevUpdatingHandler("Updating QR Code data"); }
 
-      const objToEdit = generateObjectToEdit(qrData, data, qrDesign);
+      const objToEdit = generateObjectToEdit(qrData, data, qrDesign) as any;
 
       if (!objToEdit.userId) { objToEdit.userId = userInfo.cognito_user_id; }
+      if (objToEdit.qrOptionsId.editedShortLink) {
+        delete objToEdit.qrOptionsId.editedShortLink;
+        objToEdit.shortLinkId = { address: objToEdit.qrOptionsId.shortCode };
+      }
 
       await qrEdit(objToEdit);
       if (success) success();

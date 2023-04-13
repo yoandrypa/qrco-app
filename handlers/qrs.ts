@@ -11,6 +11,10 @@ export const create = async (data) => {
       }
     }
 
+    if (data.qrData.mode !== undefined) {
+      delete data.qrData.mode;
+    }
+
     return await Qr.create(data);
   } catch (e: any) {
     throw new CustomError(e.message, 500, e);
