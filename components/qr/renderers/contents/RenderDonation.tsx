@@ -30,8 +30,8 @@ export interface PropsType {
 }
 
 function RenderDonation({ data, index, handleValues }: PropsType) {
-  const onChange = (item: string) => (value: any) => {
-    handleValues(item, index)(value);
+  const onChange = (attr: string) => (value: any, valid: boolean) => {
+    handleValues(attr, index)(value);
   }
 
   useEffect(() => {
@@ -47,28 +47,28 @@ function RenderDonation({ data, index, handleValues }: PropsType) {
       <Grid container spacing={1}>
         <Grid item xs={12} sm={6}>
           <TextBox
-            index={index} item="title" label="Title" value={title}
+            index={index} label="Title" value={title}
             placeholder="Enter the donation section title"
-            handleValues={onChange}
-            required
+            onChange={onChange('title')}
+            requiredAdornment
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <ProposalsTextBox
-            index={index} item="buttonText" label="Button text" value={buttonText}
+            index={index} label="Button text" value={buttonText}
             options={['Donate', 'Give', 'Contribute']}
-            handleValues={onChange}
-            required
+            onChange={onChange('buttonText')}
+            requiredAdornment
           />
         </Grid>
         <Grid item xs={12}>
           <Caption text="Add a small text here:" />
           <TextBox
-            index={index} item="message" label="Message" value={message}
+            index={index} label="Message" value={message}
             placeholder="Would you like to buy me a coffee?"
-            handleValues={onChange}
+            onChange={onChange('message')}
+            requiredAdornment
             rows={5}
-            required
           />
         </Grid>
         <Grid item xs={12}>
@@ -80,20 +80,20 @@ function RenderDonation({ data, index, handleValues }: PropsType) {
         </Grid>
         <Grid item xs={12} sm={8}>
           <TextBox
-            index={index} item="website" label="Website or social link" value={website}
+            index={index} label="Website or social link" value={website}
             placeholder="Enter your website or social link"
-            handleValues={onChange}
+            onChange={onChange('website')}
             format={UrlFormat}
           />
         </Grid>
         <Grid item xs={12} sm={4}>
           <NumberBox
-            index={index} item="unitAmount" label="Coffee Price" value={unitAmount}
+            index={index} label="Coffee Price" value={unitAmount}
             min={1} max={100}
             placeholder="5"
-            handleValues={onChange}
+            onChange={onChange('unitAmount')}
             startAdornment={<Coffee sx={{ color: 'primary.main' }} />}
-            required
+            requiredAdornment
           />
         </Grid>
       </Grid>

@@ -1,64 +1,74 @@
-import React, { useState, SyntheticEvent, ReactNode, ChangeEvent } from "react";
+import React, { ReactNode, useState } from "react";
 
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import InputAdornment from "@mui/material/InputAdornment";
-import RequiredAdornment from "../helpers/RequiredAdornment";
+import ReqAdornment from "../helpers/RequiredAdornment";
 
 import { checkValidity, FormatType } from "../helpers/validations";
+import { parseFormFieldSx, parseFormFieldInputSx } from "../helpers/styles";
+import { useTheme } from "@mui/system";
 
 interface PropsType {
   label?: string;
   required?: boolean;
+  shrink?: boolean;
   placeholder?: string;
-  handleValues: Function;
-  isError?: boolean;
-  value: string;
-  item?: string;
+  onChange: Function;
+  value?: string;
+  sx?: any;
   index?: number;
   options: string[];
   format?: FormatType;
   startAdornment?: ReactNode;
+  requiredAdornment?: boolean | string | ReactNode;
 }
 
 export default function ProposalsTextBox(props: PropsType) {
-  const { value: initValue, placeholder, label, item, options } = props;
-  const { handleValues, startAdornment, required, format, isError } = props;
-  const [value, setValue] = useState<string>(initValue);
-  const [wasEdited, setWasEdited] = useState<boolean>(false);
+  const theme = useTheme();
+  const {
+    value: initValue, onChange, options, format, sx, shrink,
+    startAdornment: sAdornment, requiredAdornment: rAdornment,
+    ...staticProps
+  } = props;
+  const { required = !!rAdornment } = staticProps;
 
-  const onChange = (event: SyntheticEvent, newValue: string) => {
+  const [value, setValue] = useState<string>(initValue || '');
+  const [valid, setValid] = useState<boolean>(checkValidity(initValue, false, 'string', format));
+
+  const onBaseChange = (event: any, newValue: string) => {
+    const newValid = checkValidity(newValue, required, 'string', format);
+
     setValue(newValue);
-    if (!wasEdited) setWasEdited(true);
-    item ? handleValues(item)(newValue) : handleValues(newValue);
+    setValid(newValid);
+    onChange?.(newValue, newValid);
   }
-
-  const isRequired = !!required && wasEdited;
-  const valid = checkValidity(value, isRequired, 'string', format);
 
   return (
     <Autocomplete
       freeSolo
-      value={value}
-      onChange={onChange}
-      inputValue={value}
-      onInputChange={onChange}
+      onChange={onBaseChange}
+      onInputChange={onBaseChange}
       disableClearable
+      fullWidth
       options={options}
       renderInput={(params) => (
         <TextField
+          {...staticProps}
           {...params}
-          fullWidth
           required={required}
+          sx={parseFormFieldSx(sx, theme)}
+          value={value}
+          fullWidth
           size="small"
           margin="dense"
-          placeholder={placeholder}
-          label={label}
-          error={isError || !valid}
+          error={!valid}
+          InputLabelProps={{ shrink }}
           InputProps={{
             ...params.InputProps,
-            startAdornment: startAdornment && <InputAdornment position="start">{startAdornment}</InputAdornment>,
-            endAdornment: (required && <RequiredAdornment value={value} />),
+            startAdornment: sAdornment && <InputAdornment position="start">{sAdornment}</InputAdornment>,
+            endAdornment: required && rAdornment && <ReqAdornment value={value}>{rAdornment}</ReqAdornment>,
+            sx: parseFormFieldInputSx(sx, theme),
           }}
         />
       )}

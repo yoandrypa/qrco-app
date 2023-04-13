@@ -1,14 +1,15 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
 import { Theme } from '@mui/material/styles';
 
 interface PropsType {
   value: string;
+  children?: boolean | string | ReactNode;
 }
 
-const RequiredAdornment = ({ value }: PropsType) => {
-  if (value && value.trim().length > 0) return null;
+const RequiredAdornment = ({ value, children }: PropsType) => {
+  if (children === false || (value && value.trim().length > 0)) return null;
 
   const rqSx = (theme: Theme) => ({
     position: 'absolute',
@@ -18,7 +19,7 @@ const RequiredAdornment = ({ value }: PropsType) => {
 
   return (
     <InputAdornment position="end" sx={rqSx}>
-      <Typography color="error">{'REQUIRED'}</Typography>
+      <Typography color="error">{children === true ? 'REQUIRED' : children}</Typography>
     </InputAdornment>
   )
 };

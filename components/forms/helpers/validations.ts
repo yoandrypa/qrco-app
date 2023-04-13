@@ -26,8 +26,8 @@ function checkFormat(value: any, format?: FormatType) {
   return false;
 }
 
-export function checkValidity(value: any, required: boolean, type?: KlassType, format?: FormatType) {
-  return checkRequired(value, required)
+export function checkValidity(value: any, required?: boolean, type?: KlassType, format?: FormatType) {
+  return checkRequired(value, !!required)
     && checkType(value, type)
     && checkFormat(value, format)
 }
