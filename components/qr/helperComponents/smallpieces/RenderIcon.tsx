@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
 import { grey } from "@mui/material/colors";
 import {useTheme} from "@mui/system";
-import QuoraIcon from "../QuoraIcon";
 
 const WebIcon = dynamic(() => import('@mui/icons-material/Web'));
 const AlternateEmailIcon = dynamic(() => import('@mui/icons-material/AlternateEmail'));
@@ -66,6 +65,10 @@ const PersonSearchIcon = dynamic(() => import('@mui/icons-material/PersonSearch'
 const InventoryIcon = dynamic(() => import('@mui/icons-material/Inventory'));
 const RedditIcon = dynamic(() => import('@mui/icons-material/Reddit'));
 const TikTokIcon = dynamic(() => import("../TikTokIcon"));
+const QuoraIcon = dynamic(() => import("../QuoraIcon"));
+const Snapchat = dynamic(() => import("../Snapchat"));
+const Twitch = dynamic(() => import("../Twitch"));
+const DiscordIcon = dynamic(() => import("../DiscordIcon"));
 
 type RenderIconProp = {
   icon: string;
@@ -149,6 +152,9 @@ export default function RenderIcon({ icon, color, enabled, sx }: RenderIconProp)
       case 'reddit': { return <RedditIcon sx={sxStyling} />; }
       case 'tiktok': { return <TikTokIcon sx={sxStyling} />; }
       case 'quora': { return <QuoraIcon sx={sxStyling} />; }
+      case 'snapchat': { return <Snapchat sx={sxStyling} />; }
+      case 'twitch': { return <Twitch sx={sxStyling} />; }
+      case 'discord': { return <DiscordIcon sx={sxStyling} />; }
       default: { return <TextSnippetOutlinedIcon sx={sxStyling} />; }
     }
   };

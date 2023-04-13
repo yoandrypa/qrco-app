@@ -18,7 +18,7 @@ const handlePhones = (x: CustomType, index: number, other?: string, company?: bo
   if (exists(x, getItem('phone')) && !PHONE.test(x.data?.[getItem('phone')] || '')) {
     errors.push(`Enter a valid phone number in ${other ? `${other} ` : ''}section ${index + 1}`);
   }
-  if (exists(x, 'whatsapp') && !PHONE.test(x.data?.fax || '')) {
+  if (exists(x, 'whatsapp') && !PHONE.test(x.data?.whatsapp || '')) {
     errors.push(`Enter a valid whatsapp number in ${other ? `${other} ` : ''}section ${index + 1}`);
   } // @ts-ignore
   if (exists(x,  getItem('fax')) && !PHONE.test(x.data?.[getItem('fax')] || '')) {
@@ -60,7 +60,7 @@ const validator = (custom: CustomType[], forceExtra: boolean, ignore?: boolean) 
     errors.push('Add at least one section');
   } else {
     custom.forEach((x: CustomType, index: number) => {
-      if (isEmpty(x)) { // @ts-ignore
+      if (x.component !== 'date' && isEmpty(x)) { // @ts-ignore
         errors.push(`Make sure the ${components[x.component]?.name.toLowerCase() || x.component} section ${index + 1} is not empty`);
       } else { // @ts-ignore
         if (x.component === 'address' && exists(x, 'zip') && !ZIP.test(x.data.zip)) {

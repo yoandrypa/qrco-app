@@ -173,6 +173,7 @@ export const remove = async (key: { userId: string, createdAt: number }) => {
         promises.push(StorageHandler.remove(section.data.files));
       }
     }
+
     if (["video", "gallery", "pdf", "audio"].includes(qr.qrType) && qr.files?.length) {
       promises.push(StorageHandler.remove(qr.files));
     }
@@ -181,6 +182,14 @@ export const remove = async (key: { userId: string, createdAt: number }) => {
     }
     if (qr.foregndImg) {
       promises.push(StorageHandler.remove(qr.foregndImg));
+    }
+    if (qr.micrositeBackImage) {
+      promises.push(StorageHandler.remove(qr.micrositeBackImage));
+    }
+    if (qr.qrForSharing) {
+      console.log(qr.qrForSharing);
+      debugger;
+      promises.push(StorageHandler.remove(qr.qrForSharing));
     }
 
     return Promise.all(promises).then(() => {

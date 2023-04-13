@@ -1,4 +1,4 @@
-import {memo, MouseEvent, Suspense, useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {memo, MouseEvent, Suspense, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
@@ -9,20 +9,21 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import Typography from "@mui/material/Typography";
-import LinkIcon from "@mui/icons-material/Link";
 import SaveIcon from "@mui/icons-material/Save";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Divider from "@mui/material/Divider";
-import { debounce } from "@mui/material";
+import {debounce} from "@mui/material";
 
-import { NO_MICROSITE, ONLY_QR } from "../../constants";
+import Context from "../../../context/Context";
 import RenderPreview from "../../renderers/RenderPreview";
+import RenderLinkItem from "./RenderLinkItem";
 import RenderCellPhoneShape from "../RenderCellPhoneShape";
-import { cleanSelectionForMicrositeURL, qrNameDisplayer } from "../../../../helpers/qr/helpers";
-import { DataType } from "../../types/types";
+import {NO_MICROSITE, ONLY_QR} from "../../constants";
+import {getFileFromQr} from "../../auxFunctions";
+import {areEquals, handleCopy} from "../../../helpers/generalFunctions";
+import {cleanSelectionForMicrositeURL, qrNameDisplayer, SamplePrevProps} from "../../../../helpers/qr/helpers";
 
 import dynamic from "next/dynamic";
-import {areEquals, handleCopy} from "../../../helpers/generalFunctions";
 
 const PleaseWait = dynamic(() => import("../../../PleaseWait"));
 const Popover = dynamic(() => import("@mui/material/Popover"));
@@ -30,25 +31,6 @@ const RenderIframe = dynamic(() => import('../../../RenderIframe'), { suspense: 
 const RenderIcon = dynamic(() => import("./RenderIcon"));
 const RenderEditImageOnClick = dynamic(() => import("../looseComps/RenderEditImageOnClick"));
 const RenderCopiedNotification = dynamic(() => import("../looseComps/RenderCopiedNotification"));
-
-interface SamplePrevProps {
-  style?: object;
-  save?: () => void;
-  saveDisabled?: boolean;
-  isDrawed?: boolean;
-  data?: DataType;
-  onlyQr?: boolean;
-  qrOptions?: any;
-  isDynamic: boolean;
-  shareLink?: string;
-  backgroundImg?: File | string;
-  backImg?: File | string;
-  mainImg?: File | string;
-  step: number;
-  handlePickImage?: (prop: string) => void;
-  showSampleMessage?: boolean;
-  noEditImages?: boolean;
-}
 
 interface WithSelection extends SamplePrevProps {
   selected: string;
@@ -69,6 +51,15 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
   const [open, setOpen] = useState<HTMLButtonElement | null>(null);
   const [updating, setUpdating] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
+
+  const {options, background, frame, cornersData, dotsData} = useContext(Context);
+
+  const sharerPos = data?.sharerPosition || '';
+  const hideQr = data?.hideQrForSharing || false;
+
+  const qrImg = useMemo(() =>
+    sharerPos !== 'no' && !hideQr ? getFileFromQr({isDynamic: true}, options, background, frame, cornersData, dotsData, selected || '', true) : undefined,
+  [sharerPos, hideQr]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const forceHide = useRef<boolean>(false);
   const microSitesBaseUrl = process.env.MICRO_SITES_BASE_URL;
@@ -119,41 +110,18 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
   }, [selected]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Box sx={{
-      ...style,
-      border: !isDrawed ? 'solid 1px rgba(0,0,0,0.1)' : 'unset',
-      borderRadius: !isDrawed ? '5px' : 0,
-      height: 'fit-content',
-      pb: '5px',
-      pr: '15px'
-    }}>
-      <Box sx={{
-        width: '100%',
-        ml: '10px',
-        mt: !isDrawed ? '-5px' : 0,
-        mb: !isDrawed ? '13px' : 0
-      }}>
-        <Box sx={{
-          height: '30px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          ml: !isDrawed ? 0 : '5px',
-          width: !isDrawed ? '100%' : 'calc(100% - 10px)'
-        }}>
+    <Box sx={{ ...style, border: !isDrawed ? 'solid 1px rgba(0,0,0,0.1)' : 'unset',
+      borderRadius: !isDrawed ? '5px' : 0, height: 'fit-content', pb: '5px', pr: '15px' }}>
+      <Box sx={{ width: '100%', ml: '10px', mt: !isDrawed ? '-5px' : 0, mb: !isDrawed ? '13px' : 0 }}>
+        <Box sx={{ height: '30px', display: 'flex', justifyContent: 'space-between',
+          ml: !isDrawed ? 0 : '5px', width: !isDrawed ? '100%' : 'calc(100% - 10px)' }}>
           <Box sx={{ display: 'flex' }}>
-            {!onlyQr ? <LinkIcon sx={{ color: theme => theme.palette.primary.dark, mt: '12px', mr: '-7px' }} /> : (
-              <Box sx={{ mt: '12px', mr: '5px' }}>
-                <RenderIcon icon={selected || ''} enabled />
-              </Box>
+            {!onlyQr ? <RenderLinkItem step={step} code={code || ''} /> : (
+              <Box sx={{mt: '12px', mr: '5px'}}><RenderIcon icon={selected || ''} enabled /></Box>
             )}
             <Typography sx={{
-              mt: '14px',
-              ml: !onlyQr ? '10px' : 0,
-              whiteSpace: 'nowrap',
-              width: !onlyQr ? '177px' : '210px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              fontSize: '13px'
+              mt: '14px', ml: !onlyQr ? '10px' : 0, fontSize: '13px', width: !onlyQr ? '177px' : '210px',
+              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
             }}>{!onlyQr ? clearUrl(URL || '') : URL || qrOptions?.data}</Typography>
             {!onlyQr ? (
               <>
@@ -209,7 +177,7 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
                 <RenderIframe
                   src={!code ? cleanSelectionForMicrositeURL(selected || '', isDynamic, true) : `${microSitesBaseUrl}/sample/empty`}
                   selected={selected} width="256px" height="536px" data={data} backImg={backImg} mainImg={mainImg}
-                  shareLink={shareLink} notifyReady={setIsReady} backgroundImg={backgroundImg} />
+                  shareLink={shareLink} notifyReady={setIsReady} backgroundImg={backgroundImg} qrImg={qrImg} />
               </Suspense>
             ) : null}
           </RenderCellPhoneShape>
@@ -226,16 +194,10 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
       </Box>
       {copied && <RenderCopiedNotification setCopied={setCopied} />}
       {open && (
-        <Popover
-          open
-          anchorEl={open}
-          onClose={() => setOpen(null)}
+        <Popover open anchorEl={open} onClose={() => setOpen(null)}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <Typography whiteSpace="pre" sx={{ p: 1 }}>
-            {qrOptions?.data || URL}
-          </Typography>
+          transformOrigin={{ vertical: 'top', horizontal: 'center' }}>
+          <Typography whiteSpace="pre" sx={{ p: 1 }}>{qrOptions?.data || URL}</Typography>
         </Popover>
       )}
     </Box>

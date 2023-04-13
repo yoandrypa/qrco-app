@@ -137,6 +137,7 @@ export type Type = {
   firstName?: string;
   cell?: string;
   phone?: string;
+  whatsapp?: string;
   fax?: string;
   organization?: string;
   position?: string;
@@ -213,6 +214,8 @@ export type CustomType = {
 };
 
 export type DataType = {
+  qrForSharing?: File;
+  hideQrForSharing?: boolean;
   sharerPosition?: string;
   upperHeight?: string;
   buttonShadowDisplacement?: string;

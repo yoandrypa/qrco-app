@@ -24,6 +24,9 @@ import {
 } from "../../../helpers/qr/helpers";
 import {initialBackground} from "../../../helpers/qr/data";
 
+// @ts-ignore
+import {renderToString} from "react-dom/server";
+
 // noinspection JSDeprecatedSymbols
 const QRRender = ({qrData, width, alt}: {qrData: string; width: number | string; alt: string;}) =>
   <img src={`data:image/svg+xml;base64,${btoa(qrData)}`} alt={alt} width={width}/>;
@@ -33,6 +36,7 @@ interface PreviewProps {
   externalFrame?: FramesType;
   externalDesign?: any;
   qrDesign?: any;
+  getDataBack?: (data: any) => void;
   qr?: any;
   avoidDuplicate?: boolean;
   onlyPreview?: boolean;
@@ -41,7 +45,10 @@ interface PreviewProps {
   externalClose?: () => void;
 }
 
-const RenderPreview = ({externalClose, onlyPreview, qrDesign, qr, externalFrame, externalDesign, handleDone, override, width, avoidDuplicate, ...qrProps}: PreviewProps) => {
+const RenderPreview = (
+  {externalClose, onlyPreview, qrDesign, qr, externalFrame, externalDesign, handleDone, override, width,
+   getDataBack, avoidDuplicate, ...qrProps}: PreviewProps
+) => {
   const [preview, setPreview] = useState<boolean>(false);
   const [qrData, setQrData] = useState<any>(null);
   const [current, setCurrent] = useState<string | null>(externalDesign || null);
@@ -96,10 +103,11 @@ const RenderPreview = ({externalClose, onlyPreview, qrDesign, qr, externalFrame,
 
   useEffect(() => {
     if (qrData) { // @ts-ignore
-      const t = qrRef.current?.outerHTML;
+      const t = renderToString(qrData);
+      if (getDataBack) { getDataBack(t); }
       setCurrent(t);
     }
-  }, [qrData]);
+  }, [qrData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (current && qrDesign?.image?.length && !done.current) {
@@ -122,7 +130,7 @@ const RenderPreview = ({externalClose, onlyPreview, qrDesign, qr, externalFrame,
     if (qrDesign || override) {
       generateQr();
     }
-  }, [qrDesign, override]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [qrDesign?.data, override]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const name = qr?.name || 'unnamed';
 

@@ -54,8 +54,10 @@ const RenderQRCommons = ({ loading, data, omitPrimaryImg, foregndImg, backgndImg
         {expander === 'mainColors' && <RenderMainColors data={data} handleValue={handleValue} />}
       </Paper>
       <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
-        <Expander expand={expander} setExpand={handleExpander} item="upperSection" title="Top margin and sharer position" bold/>
-        {expander === 'upperSection' && <RenderUpperSectionHeight data={data} handleValue={handleValue} includeSharerConfig />}
+        <Expander expand={expander} setExpand={handleExpander} item="upperSection" title="Top margin and sharer config" bold/>
+        {expander === 'upperSection' && (
+          <RenderUpperSectionHeight data={data} handleValue={handleValue} includeSharerConfig includeQrCode />
+        )}
       </Paper>
       <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
         <Expander expand={expander} setExpand={handleExpander} item="images" title="Banner and profile images" bold/>

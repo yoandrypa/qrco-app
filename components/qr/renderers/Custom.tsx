@@ -16,7 +16,8 @@ import {
   CustomEditProps,
   CustomProps,
   CustomSettingsProps,
-  getNameStr, sectionPreConfig,
+  getNameStr,
+  sectionPreConfig,
 } from "./custom/helperFuncs";
 
 import dynamic from "next/dynamic";
@@ -170,7 +171,7 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
 
                   return (<Draggable key={key} draggableId={key} index={index} isDragDisabled={data.custom?.length === 1}>
                     {(prov: any, snap: any) => (
-                      <Box sx={{my: 4, width: '100%', ...getItemStyle(snap.isDragging, prov.draggableProps.style)}}
+                      <Box sx={{position: 'relative', my: 4, width: '100%', ...getItemStyle(snap.isDragging, prov.draggableProps.style)}}
                            ref={prov.innerRef} {...prov.draggableProps} {...prov.dragHandleProps}>
                         <DragPaper elevation={2} sx={{p: 1}} avoidIcon={data.custom?.length === 1} removeFunc={handleRemove(index, component)}
                                    editFunc={isHeadline ? handleEdit(index, component, x.name) : undefined}
