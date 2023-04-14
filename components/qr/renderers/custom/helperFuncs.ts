@@ -155,6 +155,6 @@ export const sectionPreConfig = (item: string, selected?: string): CustomType =>
     expand: getUuid(),
     // @ts-ignore
     isMonetized: components[item]?.isMonetized || false,
-    data,
+    data
   }
 }
