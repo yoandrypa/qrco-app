@@ -9,16 +9,7 @@ import {CustomType, DataType} from "../types/types";
 
 import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import {getItemStyle} from "../helperComponents/looseComps/StyledComponents";
-
-import {
-  cleaner,
-  components,
-  CustomEditProps,
-  CustomProps,
-  CustomSettingsProps,
-  getNameStr,
-  sectionPreConfig,
-} from "./custom/helperFuncs";
+import {cleaner, components, CustomEditProps, CustomProps, CustomSettingsProps, getNameStr, sectionPreConfig} from "./custom/helperFuncs";
 
 import dynamic from "next/dynamic";
 import RenderContent from "./custom/RenderContent";
@@ -29,7 +20,7 @@ const RenderConfirmDlg = dynamic(() => import("../../renderers/RenderConfirmDlg"
 const Button = dynamic(() => import("@mui/material/Button"));
 const ArrowCircleUpIcon = dynamic(() => import("@mui/icons-material/ArrowCircleUp"));
 const IconButton = dynamic(() => import("@mui/material/IconButton"));
-const HeadlineSettings = dynamic(() => import("./custom/HeadlineSettings"));
+const RenderHeadlineSettings = dynamic(() => import("./custom/RenderHeadlineSettings"));
 
 export default function Custom({data, setData, handleValues, predefined, tip, selected}: CustomProps) {
   const [showOptions, setShowOptions] = useState<HTMLElement | null>(null);
@@ -195,9 +186,15 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
         </DragDropContext>
       </Box>
       {showOptions && <CustomMenu handle={handleAdd} showOptions={showOptions} setShowOptions={setShowOptions} />}
-      {openSettings && (<HeadlineSettings
-        anchor={openSettings.anchor} handleValues={handleValues} index={openSettings.index} hideHeadline={openSettings.hideHeadlineOpts || false}
-        data={data?.custom?.[openSettings.index]?.data} handleClose={() => setOpenSettings(null)}/>)}
+      {openSettings && (<RenderHeadlineSettings
+        handleValues={handleValues}
+        handleClose={() => setOpenSettings(null)}
+        index={openSettings.index}
+        data={data?.custom?.[openSettings.index]?.data}
+        hideHeadline={openSettings.hideHeadlineOpts || false}
+        anchor={openSettings.anchor}
+        />)}
+
       {open && <CustomEditSection handleClose={() => setOpen(null)} anchor={open.anchor} value={open.item}
                                   current={open.name} handleOk={(value: string) => handleAccept(value, open.index, open.item)} />}
       {confirm !== undefined && <RenderConfirmDlg confirmationMsg="Are you sure?" title="Confirm" noMsg="No" yesMsg="Yes"
