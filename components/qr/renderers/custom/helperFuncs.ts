@@ -100,7 +100,7 @@ export interface ContentProps {
 
 export const cleaner = (data: DataType, item: string): void => {
   const deleteItem = (item: string): void => { // @ts-ignore
-    if (data[item] !== undefined) delete data[item];
+    if (data[item] !== undefined) { delete data[item]; }
   }
   if (item === 'easiness' && data.easiness !== undefined) {
     delete data.easiness;
@@ -157,9 +157,8 @@ export const sectionPreConfig = (item: string, selected?: string): CustomType =>
 
   return {
     component: item,
-    expand: getUuid(),
-    // @ts-ignore
-    isMonetized: item?.isMonetized || false,
-    data,
+    expand: getUuid(), // @ts-ignore
+    isMonetized: components[item]?.isMonetized || false,
+    data
   }
 }
