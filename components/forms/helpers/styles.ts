@@ -1,6 +1,6 @@
 import { Theme } from '@mui/system'
 
-export function parseFormFieldSx(sx: any, theme: Theme) {
+export function parseFormFieldLabelSx(sx: any, theme: Theme) {
   return {
     '& .MuiFormLabel-root': {
       px: 1,
@@ -13,7 +13,23 @@ export function parseFormFieldSx(sx: any, theme: Theme) {
         borderStyle: 'solid',
       },
     },
+  }
+}
+
+export function parseFormFieldSx(sx: any, theme: Theme) {
+  return {
+    ...parseFormFieldLabelSx(sx, theme),
     ...sx
+  }
+}
+
+export function parseFormSelectFieldSx(sx: any, theme: Theme) {
+  return {
+    mt: 1,
+    '& .MuiSelect-select': {
+      py: theme.spacing(1.1),
+    },
+    ...parseFormFieldSx(sx, theme),
   }
 }
 

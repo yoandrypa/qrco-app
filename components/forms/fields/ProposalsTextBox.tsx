@@ -47,6 +47,7 @@ export default function ProposalsTextBox(props: PropsType) {
   return (
     <Autocomplete
       freeSolo
+      value={value}
       onChange={onBaseChange}
       onInputChange={onBaseChange}
       disableClearable
@@ -58,7 +59,6 @@ export default function ProposalsTextBox(props: PropsType) {
           {...params}
           required={required}
           sx={parseFormFieldSx(sx, theme)}
-          value={value}
           fullWidth
           size="small"
           margin="dense"

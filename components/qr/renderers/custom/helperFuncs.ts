@@ -8,13 +8,13 @@ export const components = {
   justEmail: { name: 'Email address' },
   email: { name: 'Email and web' },
   easiness: { name: 'Easiness' },
-  links: { name: 'Links' },
+  links: { name: 'Links', data: { hideHeadLine: true } },
   organization: { name: 'Organization' },
   phones: { name: 'Phones' },
   gallery: { name: 'Gallery' },
   presentation: { name: 'Presentation' },
   opening: { name: 'Opening time' },
-  socials: { name: 'Social networks' },
+  socials: { name: 'Social networks', data: { socialsOnlyIcons: true, hideHeadLine: true } },
   title: { name: 'Title and description' },
   action: { name: 'Action button' },
   single: { name: 'Single text' },
@@ -26,22 +26,29 @@ export const components = {
   contact: { name: 'Contact form' },
   tags: { name: 'Tags' },
   sms: { name: 'Contact via SMS' },
-  donation: { name: 'Donation', isMonetized: true },
+  donation: { name: 'Donation', isMonetized: true, data: { iconId: 'Coffee1', buttonText: 'Donation', unitAmount: 2 } },
   couponInfo: { name: 'Promotion info', notInMenu: true },
   couponData: { name: 'Coupon data', notInMenu: true },
   petId: { name: 'Pet presentation', notInMenu: true },
   sku: { name: 'Product', notInMenu: true },
 };
 
-export interface RenderSocialsProps { index: number; data?: Type; setData: Function; isSolidButton?: boolean; }
+export interface RenderSocialsProps {
+  index: number;
+  data?: Type;
+  setData: Function;
+  isSolidButton?: boolean;
+}
 
-export const NETWORKS = [{property: "facebook", tooltip:"Facebook"}, {property:"whatsapp", tooltip: "Whatsapp"},
-  {property:"twitter", tooltip:"Twitter"}, {property: "instagram", tooltip: "Instagram"},
-  {property: "youtube", tooltip: "YouTube"}, {property: "linkedin", tooltip: "LinkedIn"},
-  {property: "pinterest", tooltip: "Pinterest"}, {property: "telegram", tooltip: "Telegram"},
-  {property: "tiktok", tooltip: "TikTok"}, {property: "reddit", tooltip: "Reddit"},
-  {property: "snapchat", tooltip: "Snapchat"}, {property: "twitch", tooltip: "Twitch"},
-  {property: "quora", tooltip: "Quora"}, {property: "discord", tooltip: "Discord"}];
+export const NETWORKS = [
+  { property: "facebook", tooltip: "Facebook" }, { property: "whatsapp", tooltip: "Whatsapp" },
+  { property: "twitter", tooltip: "Twitter" }, { property: "instagram", tooltip: "Instagram" },
+  { property: "youtube", tooltip: "YouTube" }, { property: "linkedin", tooltip: "LinkedIn" },
+  { property: "pinterest", tooltip: "Pinterest" }, { property: "telegram", tooltip: "Telegram" },
+  { property: "tiktok", tooltip: "TikTok" }, { property: "reddit", tooltip: "Reddit" },
+  { property: "snapchat", tooltip: "Snapchat" }, { property: "twitch", tooltip: "Twitch" },
+  { property: "quora", tooltip: "Quora" }, { property: "discord", tooltip: "Discord" }
+];
 
 // @ts-ignore
 const getName = (type: string) => components[type].name;
@@ -142,19 +149,17 @@ export const cleaner = (data: DataType, item: string): void => {
 }
 
 export const sectionPreConfig = (item: string, selected?: string): CustomType => {
-  let data: any = (selected === 'petId') ? { linksOnlyLinks: true } : {};
+  // @ts-ignore
+  const component: any = components[item];
+  const data = component.data || {};
 
-  if (item === 'socials') {
-    data = { socialsOnlyIcons: true, hideHeadLine: true, ...data };
-  } else if (item === 'links') {
-    data = { hideHeadLine: true, ...data };
-  }
+  if (selected === 'petId') data.linksOnlyLinks = true;
 
   return {
     component: item,
     expand: getUuid(),
     // @ts-ignore
-    isMonetized: components[item]?.isMonetized || false,
-    data
+    isMonetized: item?.isMonetized || false,
+    data,
   }
 }
