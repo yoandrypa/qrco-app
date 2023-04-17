@@ -40,13 +40,15 @@ export interface RenderSocialsProps {
   isSolidButton?: boolean;
 }
 
-export const NETWORKS = [{ property: "facebook", tooltip: "Facebook" }, { property: "whatsapp", tooltip: "Whatsapp" },
+export const NETWORKS = [
+  { property: "facebook", tooltip: "Facebook" }, { property: "whatsapp", tooltip: "Whatsapp" },
   { property: "twitter", tooltip: "Twitter" }, { property: "instagram", tooltip: "Instagram" },
   { property: "youtube", tooltip: "YouTube" }, { property: "linkedin", tooltip: "LinkedIn" },
   { property: "pinterest", tooltip: "Pinterest" }, { property: "telegram", tooltip: "Telegram" },
   { property: "tiktok", tooltip: "TikTok" }, { property: "reddit", tooltip: "Reddit" },
   { property: "snapchat", tooltip: "Snapchat" }, { property: "twitch", tooltip: "Twitch" },
-  { property: "quora", tooltip: "Quora" }, { property: "discord", tooltip: "Discord" }];
+  { property: "quora", tooltip: "Quora" }, { property: "discord", tooltip: "Discord" }
+];
 
 // @ts-ignore
 const getName = (type: string) => components[type].name;

@@ -20,10 +20,8 @@ const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTM
         } else { // @ts-ignore
           delete elementData[obj][prop]; // @ts-ignore
           if (elementData[obj][`${prop}Icon`]) { delete elementData[obj][`${prop}Icon`]; } // @ts-ignore
-          if (!Object.keys(elementData[obj]).length) { delete elementData[obj]; }
-          Object.keys(elementData).forEach(x => { // @ts-ignore
-            if (x.endsWith('_Custom')) { delete elementData[x]; }
-          });
+          if (!Object.keys(elementData[obj]).length) { delete elementData[obj]; }  // @ts-ignore
+          Object.keys(elementData).forEach(x => { if (x.endsWith('_Custom')) { delete elementData[x]; } });
         }
       } else if (item === 'tags') {
         if (Array.isArray(payload)) {
@@ -47,6 +45,7 @@ const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTM
             if (elementData.headLineFontStyle !== undefined) { delete elementData.headLineFontStyle; }
             if (elementData.headlineFont !== undefined) { delete elementData.headlineFont; }
             if (elementData.headlineFontSize !== undefined) { delete elementData.headlineFontSize; }
+            if (elementData.sectionArrangement !== undefined) { delete elementData.sectionArrangement; }
           }
         }
       } else if (item === 'easiness') {
@@ -71,6 +70,12 @@ const valuesHanlder = (setData: Function, item: string, payload: ChangeEvent<HTM
           if (elementData.topSpacing !== undefined) { delete elementData.topSpacing; }
           if (elementData.bottomSpacing !== undefined) { delete elementData.bottomSpacing; }
           if (elementData.customFont !== undefined) { delete elementData.customFont; }
+          if (elementData.sectionArrangement !== undefined) { delete elementData.sectionArrangement; }
+          if (elementData.hideHeadLine !== undefined) { delete elementData.hideHeadLine; }
+          if (elementData.centerHeadLine !== undefined) { delete elementData.centerHeadLine; }
+          if (elementData.hideHeadLineIcon !== undefined) { delete elementData.hideHeadLineIcon; }
+        } else if (item === 'sectionArrangement' && value === 'default') {
+          delete elementData.sectionArrangement;
         } else {
           if (typeof value === "string" && !value.trim().length) { // @ts-ignore
             delete elementData[item]; // @ts-ignore

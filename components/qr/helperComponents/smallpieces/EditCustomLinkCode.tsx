@@ -29,7 +29,13 @@ export default function EditCustomLinkCode({anchor, setAnchor, current}: EditCus
   }
 
   const handleOk = () => {
-    setOptions((prev: OptionsType) => ({ ...prev, shortCode: code.current, data: generateShortLink(code.current, process.env.SHORT_URL_DOMAIN) }));
+    setOptions((prev: OptionsType) => {
+      const newOptions = {...prev, shortCode: code.current, data: generateShortLink(code.current, process.env.SHORT_URL_DOMAIN)};
+      if (newOptions.mode === 'edit') { // @ts-ignore
+        newOptions.editedShortLink = true;
+      }
+      return newOptions;
+    });
     close();
   }
 

@@ -28,7 +28,6 @@ import dynamic from "next/dynamic";
 const PleaseWait = dynamic(() => import("../../../PleaseWait"));
 const Popover = dynamic(() => import("@mui/material/Popover"));
 const RenderIframe = dynamic(() => import('../../../RenderIframe'), { suspense: true });
-const RenderIcon = dynamic(() => import("./RenderIcon"));
 const RenderEditImageOnClick = dynamic(() => import("../looseComps/RenderEditImageOnClick"));
 const RenderCopiedNotification = dynamic(() => import("../looseComps/RenderCopiedNotification"));
 
@@ -113,22 +112,17 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
     <Box sx={{ ...style, border: !isDrawed ? 'solid 1px rgba(0,0,0,0.1)' : 'unset',
       borderRadius: !isDrawed ? '5px' : 0, height: 'fit-content', pb: '5px', pr: '15px' }}>
       <Box sx={{ width: '100%', ml: '10px', mt: !isDrawed ? '-5px' : 0, mb: !isDrawed ? '13px' : 0 }}>
-        <Box sx={{ height: '30px', display: 'flex', justifyContent: 'space-between',
+        <Box sx={{ height: '31px', display: 'flex', justifyContent: 'space-between',
           ml: !isDrawed ? 0 : '5px', width: !isDrawed ? '100%' : 'calc(100% - 10px)' }}>
-          <Box sx={{ display: 'flex' }}>
-            {!onlyQr ? <RenderLinkItem step={step} code={code || ''} /> : (
-              <Box sx={{mt: '12px', mr: '5px'}}><RenderIcon icon={selected || ''} enabled /></Box>
-            )}
-            <Typography sx={{
-              mt: '14px', ml: !onlyQr ? '10px' : 0, fontSize: '13px', width: !onlyQr ? '177px' : '210px',
-              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'
-            }}>{!onlyQr ? clearUrl(URL || '') : URL || qrOptions?.data}</Typography>
+          <Box sx={{ display: 'flex', width: '100%' }}>
+            <RenderLinkItem step={step} code={code || ''} selected={selected || ''} onlyQr={onlyQr || false}
+                            urlData={!onlyQr ? clearUrl(URL || '') : URL || qrOptions?.data}/>
             {!onlyQr ? (
               <>
-                <IconButton size="small" target="_blank" component="a" href={URL} sx={{ height: '28px', width: '28px', mt: '9px' }}>
+                <IconButton size="small" target="_blank" component="a" href={URL} sx={{ height: '28px', width: '28px', mt: '9px', ml: '-2px' }}>
                   <OpenInNewIcon fontSize="small" />
                 </IconButton>
-                <IconButton size="small" sx={{ height: '28px', width: '28px', mt: '9px' }} onClick={() => handleCopy(URL, setCopied)}>
+                <IconButton size="small" sx={{ height: '28px', width: '28px', mt: '9px', ml: '-2px' }} onClick={() => handleCopy(URL, setCopied)}>
                   <ContentCopyIcon fontSize="small" />
                 </IconButton>
               </>
@@ -154,7 +148,7 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
             </ToggleButton>
           </ToggleButtonGroup>
           {!onlyQr && save && (
-            <Button variant="outlined" onClick={save} sx={{ height: '24px', ml: '5px' }} disabled={saveDisabled}>
+            <Button variant="outlined" onClick={save} sx={{ height: '24px', mr: '5px' }} disabled={saveDisabled}>
               <SaveIcon fontSize="small" sx={{ mb: '1px' }} />
               <Typography>{'Save'}</Typography>
             </Button>

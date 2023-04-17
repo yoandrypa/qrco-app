@@ -27,8 +27,6 @@ export default function RenderEmail({data, handleValues, sx, index, isCompany, i
       isError = true;
     }
 
-    console.log(data);
-
     return (
       <RenderTextFields
         item={!isCompany ? 'email' : 'companyEmail'}
