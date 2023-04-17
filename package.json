@@ -32,6 +32,7 @@
     "dynamoose": "^3.1.0",
     "fast-geoip": "^1.1.88",
     "html-react-parser": "^3.0.4",
+    "inflection": "^2.0.1",
     "iron-session": "^6.3.1",
     "isbot": "^3.5.2",
     "joi": "^17.7.0",

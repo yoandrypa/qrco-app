@@ -12,6 +12,8 @@ import TextBox from "../../../forms/fields/TextBox";
 import NumberBox from "../../../forms/fields/NumberBox";
 import ProposalsTextBox from "../../../forms/fields/ProposalsTextBox";
 import Caption from "../helpers/Caption";
+import SelectIconBox from "../../../forms/fields/SelectIconBox";
+import EbxIcon from "../../../icons";
 
 export interface DataType {
   title: string;
@@ -21,6 +23,7 @@ export interface DataType {
   unitAmount: number;
   email: string;
   ownerId: string;
+  iconId: string;
 }
 
 export interface PropsType {
@@ -33,13 +36,19 @@ function RenderDonation({ data, index, handleValues }: PropsType) {
   const onChange = (attr: string) => (value: any, valid: boolean) => {
     handleValues(attr, index)(value);
   }
-
   useEffect(() => {
     if (data.email === undefined) data.email = session.currentUser.email;
     if (data.ownerId === undefined) data.ownerId = session.currentUser.cognito_user_id;
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { title = '', buttonText = '', message = '', website = '', unitAmount = 1 } = data || {};
+  const {
+    title = '',
+    buttonText = '',
+    message = '',
+    website = '',
+    unitAmount = 1,
+    iconId = 'Coffee1',
+  } = data || {};
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -57,7 +66,6 @@ function RenderDonation({ data, index, handleValues }: PropsType) {
             index={index} label="Button text" value={buttonText}
             options={['Donate', 'Give', 'Contribute']}
             onChange={onChange('buttonText')}
-            requiredAdornment
           />
         </Grid>
         <Grid item xs={12}>
@@ -76,12 +84,20 @@ function RenderDonation({ data, index, handleValues }: PropsType) {
             will be redirected to a &quot;thank you page&quot;.
           </Alert>
         </Grid>
-        <Grid item xs={12} sm={8}>
+        <Grid item xs={12}>
           <TextBox
             index={index} label="Website or social link" value={website}
             placeholder="Enter your website or social link"
             onChange={onChange('website')}
             format={UrlFormat}
+          />
+        </Grid>
+        <Grid item xs={12} sm={8}>
+          <SelectIconBox
+            index={index} label="Icon" value={iconId}
+            placeholder="5"
+            onChange={onChange('iconId')}
+            requiredAdornment
           />
         </Grid>
         <Grid item xs={12} sm={4}>
@@ -90,10 +106,11 @@ function RenderDonation({ data, index, handleValues }: PropsType) {
             min={1} max={100}
             placeholder="5"
             onChange={onChange('unitAmount')}
-            startAdornment={<Coffee sx={{ color: 'primary.main' }} />}
+            startAdornment={<EbxIcon iconId={iconId} />}
             requiredAdornment
           />
         </Grid>
+
       </Grid>
     </Box>
   )
