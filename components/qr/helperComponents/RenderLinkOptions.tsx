@@ -31,7 +31,7 @@ const RenderLinkOptions = ({link, isWide, iconsProps}: LinkOpsProps) => {
           </a>
         </Link>
       </Typography>
-      <IconButton sx={{mt: '-5px'}} size="small">
+      <IconButton sx={{mt: '-5px'}} size="small" target="_blank" component="a" href={link}>
         <OpenInNewIcon sx={{width: '17px', height: '17px'}}/>
       </IconButton>
       <div style={{marginLeft: '-4px'}}>

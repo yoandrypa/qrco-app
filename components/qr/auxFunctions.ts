@@ -1,7 +1,7 @@
 // TODO: Use setError from Notification component.
 import {
   BackgroundType,
-  CornersAndDotsType,
+  CornersAndDotsType, CustomType,
   DataType,
   EditType,
   FramesType,
@@ -235,10 +235,12 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     }
   }
 
+  const clearExpand = !data.custom?.some((x: CustomType) => x.data?.sectionArrangement === 'tabbed');
+
   if (data.custom?.length) {
     for (let idx = 0, len = data.custom?.length || 0; idx < len; idx += 1) {
       const section = data.custom[idx]; // @ts-ignore
-      if (section.expand !== undefined) delete section.expand;
+      if (clearExpand && section.expand !== undefined) { delete section.expand; }
       if (["pdf", "audio", "gallery", "video"].includes(section.component) && section.data?.files?.length) {
         prevUpdatingHandler(`Uploading assets for ${capitalize(section.component)} section`);
         try {
