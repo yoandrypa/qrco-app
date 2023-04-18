@@ -187,8 +187,6 @@ export const remove = async (key: { userId: string, createdAt: number }) => {
       promises.push(StorageHandler.remove(qr.micrositeBackImage));
     }
     if (qr.qrForSharing) {
-      console.log(qr.qrForSharing);
-      debugger;
       promises.push(StorageHandler.remove(qr.qrForSharing));
     }
 
