@@ -14,7 +14,6 @@ import {Type} from "../../types/types";
 import SpacingSelector from "../../helperComponents/looseComps/SpacingSelector";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import {IS_DEV_ENV} from "../../constants";
 
 const HeadLineSettings = dynamic(() => import("./headline/HeadLineSettings"));
 const AllowFonts = dynamic(() => import("./headline/AllowFonts"));
@@ -76,7 +75,7 @@ export default function RenderHeadlineSettings({hideHeadline, handleValues, hand
             <MenuItem value='default'>Always expanded</MenuItem>
             <MenuItem value='collapseButton'>Button collapsible</MenuItem>
             <MenuItem value='collapsible'>Classic collapsible</MenuItem>
-            {IS_DEV_ENV && <MenuItem value='tabbed'>Tabbed</MenuItem>}
+            <MenuItem value='tabbed'>Tabbed</MenuItem>
           </Select>
         </>)}
         <Divider sx={{my: 1}}/>
