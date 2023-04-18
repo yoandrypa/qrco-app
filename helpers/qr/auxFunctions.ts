@@ -181,7 +181,8 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
         }
         case 'audio': {
           x.data = { // @ts-ignore
-            files: [{name: "audio.mp3", Key: "audios/Luerod Bounce - Will i am (Orchrestral mix)mp3.mp3"}],
+            // files: [{name: "audio.mp3", Key: "audios/Luerod Bounce - Will i am (Orchrestral mix)mp3.mp3"}],
+            files: [{}],
             isSample: true
           };
           break;
