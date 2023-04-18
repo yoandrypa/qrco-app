@@ -8,16 +8,14 @@ import ReplayIcon from "@mui/icons-material/Replay";
 import VerticalSplitIcon from "@mui/icons-material/VerticalSplit";
 import ImportExportIcon from "@mui/icons-material/ImportExport";
 
-import dynamic from 'next/dynamic';
 import {Type} from "../../types/types";
 
 import SpacingSelector from "../../helperComponents/looseComps/SpacingSelector";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-
-const HeadLineSettings = dynamic(() => import("./headline/HeadLineSettings"));
-const AllowFonts = dynamic(() => import("./headline/AllowFonts"));
-const CustomFont = dynamic(() => import("./headline/CustomFont"));
+import CustomFont from "./headline/CustomFont";
+import AllowFonts from "./headline/AllowFonts";
+import HeadLineSettings from "./headline/HeadLineSettings";
 
 interface HeadStngsProps {
   hideHeadline: boolean;
@@ -51,7 +49,7 @@ export default function RenderHeadlineSettings({hideHeadline, handleValues, hand
       open
       anchorEl={anchor}
       onClose={handleClose}
-      anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
+      anchorOrigin={{vertical: 'top', horizontal: 'left'}}
       transformOrigin={{vertical: 'top', horizontal: 'left'}}
     >
       <Box sx={{p: 2, width: {sm: '640px', xs: '100%'}}}>
