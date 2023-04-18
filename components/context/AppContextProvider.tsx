@@ -20,7 +20,7 @@ import {
 } from "../../helpers/qr/helpers";
 
 import session from "@ebanux/ebanux-utils/sessionStorage";
-import { logout } from '@ebanux/ebanux-utils/auth';
+import { signOut } from '@ebanux/ebanux-utils/auth';
 
 import { startWaiting, releaseWaiting } from "../Waiting";
 import { isBrowser } from "@ebanux/ebanux-utils/utils";
@@ -186,7 +186,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       }
     } else {
       return (
-        <AppWrapper setIsFreeMode={setIsTrialMode} handleLogout={logout} clearData={clearData}
+        <AppWrapper setIsFreeMode={setIsTrialMode} handleLogout={signOut} clearData={clearData}
                     mode={data.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} userInfo={userInfo}>
           {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>

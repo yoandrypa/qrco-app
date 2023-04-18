@@ -6,7 +6,7 @@ import { startAuthorizationFlow } from "../../libs/utils/auth";
 
 import { startWaiting, releaseWaiting } from "../../components/Waiting";
 
-export default function Login() {
+export default function SingUp() {
   const router = useRouter();
 
   useEffect(() => {
@@ -14,7 +14,7 @@ export default function Login() {
     if (session.isAuthenticated) {
       router.push('/').finally(releaseWaiting);
     } else {
-      startAuthorizationFlow({ pathname: '/' });
+      startAuthorizationFlow({ pathname: '/' }, true);
     }
   }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 };

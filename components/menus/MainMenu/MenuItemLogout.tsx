@@ -9,7 +9,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { startWaiting } from "../../Waiting";
 
 import classes from "./classes.sx";
-import { logout } from "@ebanux/ebanux-utils/auth";
+import { signOut } from "@ebanux/ebanux-utils/auth";
 import { waitConfirmation } from "../../ConfirmDialog";
 
 export default function MenuItemLogout() {
@@ -17,7 +17,7 @@ export default function MenuItemLogout() {
 
   const onLogout = () => {
     startWaiting();
-    logout();
+    signOut();
   }
 
   const onConfirmLogout = () => waitConfirmation(

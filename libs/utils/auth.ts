@@ -9,9 +9,9 @@ interface RouterType {
   query?: any
 }
 
-export function startAuthorizationFlow(callbackRoute?: NextRouter | RouterType) {
+export function startAuthorizationFlow(callbackRoute?: NextRouter | RouterType, signUp?: boolean) {
   startWaiting();
   const { pathname, query } = callbackRoute || { pathname: '/' };
   session.set('CALLBACK_ROUTE', { pathname, query });
-  _startAuthorizationFlow();
+  _startAuthorizationFlow(signUp);
 }

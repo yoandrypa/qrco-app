@@ -40,20 +40,21 @@ module.exports = {
     GOOGLE_SAFE_BROWSING_KEY: process.env.GOOGLE_SAFE_BROWSING_KEY,
 
     LINK_LENGTH: process.env.LINK_LENGTH || process.env.REACT_APP_LINK_LENGTH,
-
     LINK_CODE_ALPHABET: process.env.LINK_CODE_ALPHABET || 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890',
-    LOGOUT_REDIRECT_URI: process.env.LOGOUT_REDIRECT_URI || process.env.REACT_APP_LOGOUT_REDIRECT_URI,
-    LOGOUT_URL: process.env.LOGOUT_URL || process.env.REACT_APP_LOGOUT_URL,
 
     MAX_ALLOW_COLLISIONS: process.env.MAX_ALLOW_COLLISIONS || '25',
     MICRO_SITES_BASE_URL: process.env.MICRO_SITES_BASE_URL || process.env.REACT_MICROSITES_ROUTE || 'http://localhost:3001',
 
     NON_USER_COOLDOWN: process.env.NON_USER_COOLDOWN || process.env.REACT_APP_NON_USER_COOLDOWN,
 
-    OAUTH_REDIRECT_URI: process.env.OAUTH_REDIRECT_URI || process.env.REACT_APP_OAUTH_REDIRECT_URI,
     OAUTH_SCOPE: process.env.OAUTH_SCOPE || process.env.REACT_APP_OAUTH_SCOPE,
     OAUTH_TOKEN_URL: process.env.OAUTH_TOKEN_URL || process.env.REACT_APP_OAUTH_TOKEN_URL,
-    OAUTH_URL: process.env.OAUTH_URL || process.env.REACT_APP_OAUTH_URL,
+
+    SIGN_UP_URL: process.env.SIGN_UP_URL,
+    SIGN_IN_URL: process.env.SIGN_IN_URL || process.env.OAUTH_URL || process.env.REACT_APP_OAUTH_URL,
+    SIGN_OUT_URL: process.env.SIGN_OUT_URL || process.env.LOGOUT_URL || process.env.REACT_APP_LOGOUT_URL,
+    SIGN_IN_REDIRECT_URI: process.env.SIGN_IN_REDIRECT_URI || process.env.OAUTH_REDIRECT_URI || process.env.REACT_APP_OAUTH_REDIRECT_URI,
+    SIGN_OUT_REDIRECT_URI: process.env.SIGN_OUT_REDIRECT_URI || process.env.LOGOUT_REDIRECT_URI || process.env.REACT_APP_LOGOUT_REDIRECT_URI,
 
     PAYLINK_BASE_URL: process.env.PAYLINK_BASE_URL || 'https://ebanux.link',
     PAYLINK_APP_URL: process.env.PAYLINK_APP_URL || 'https://ebanux.com',
