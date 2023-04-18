@@ -3,10 +3,6 @@ import session from "@ebanux/ebanux-utils/sessionStorage";
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import Alert from "@mui/material/Alert";
-import Coffee from "@mui/icons-material/Coffee";
-
-import { UrlFormat } from "../../../forms/helpers/validations";
 
 import TextBox from "../../../forms/fields/TextBox";
 import NumberBox from "../../../forms/fields/NumberBox";
@@ -19,7 +15,6 @@ export interface DataType {
   title: string;
   buttonText: string;
   message: string;
-  website: string;
   unitAmount: number;
   email: string;
   ownerId: string;
@@ -45,7 +40,6 @@ function RenderDonation({ data, index, handleValues }: PropsType) {
     title = '',
     buttonText = '',
     message = '',
-    website = '',
     unitAmount = 1,
     iconId = 'Coffee1',
   } = data || {};
@@ -77,21 +71,6 @@ function RenderDonation({ data, index, handleValues }: PropsType) {
             rows={5}
           />
         </Grid>
-        <Grid item xs={12}>
-          <Alert severity='info'>
-            Note: When you receive a donation, your supporters will be redirected to this website or social link page,
-            you can use this to provide some content as a sign of appreciation or just leave it blank and they
-            will be redirected to a &quot;thank you page&quot;.
-          </Alert>
-        </Grid>
-        <Grid item xs={12}>
-          <TextBox
-            index={index} label="Website or social link" value={website}
-            placeholder="Enter your website or social link"
-            onChange={onChange('website')}
-            format={UrlFormat}
-          />
-        </Grid>
         <Grid item xs={12} sm={8}>
           <SelectIconBox
             index={index} label="Icon" value={iconId}
@@ -102,7 +81,7 @@ function RenderDonation({ data, index, handleValues }: PropsType) {
         </Grid>
         <Grid item xs={12} sm={4}>
           <NumberBox
-            index={index} label="Coffee Price" value={unitAmount}
+            index={index} label="Unit amount" value={unitAmount}
             min={1} max={100}
             placeholder="5"
             onChange={onChange('unitAmount')}

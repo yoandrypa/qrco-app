@@ -6,8 +6,8 @@ export const Coffee2 = dynamic(() => import( '@mui/icons-material/CoffeeOutlined
 export const Coffee3 = dynamic(() => import( '@mui/icons-material/EmojiFoodBeverage'));
 export const Coffee4 = dynamic(() => import( '@mui/icons-material/EmojiFoodBeverageOutlined'));
 
-export const Coffee5 = dynamic(() => import( '@mui/icons-material/FreeBreakfast'));
-export const Coffee6 = dynamic(() => import( '@mui/icons-material/FreeBreakfastOutlined'));
+export const Tea1 = dynamic(() => import( '@mui/icons-material/FreeBreakfast'));
+export const Tea2 = dynamic(() => import( '@mui/icons-material/FreeBreakfastOutlined'));
 
 export const LunchDining1 = dynamic(() => import( '@mui/icons-material/LunchDining'));
 export const LunchDining2 = dynamic(() => import( '@mui/icons-material/LunchDiningOutlined'));
