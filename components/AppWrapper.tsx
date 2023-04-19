@@ -57,6 +57,7 @@ export default function AppWrapper(props: AppWrapperProps) {
   } = props;
 
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
+  const [ready, setReady] = useState<boolean>(false);
 
   // @ts-ignore
   const { subscription, setSubscription, setLoading } = useContext(Context);
@@ -110,6 +111,7 @@ export default function AppWrapper(props: AppWrapperProps) {
   useEffect(() => {
     if (session.isAuthenticated && !subscription) loadSubscription().then((subscription: any) => {
       setSubscription(subscription);
+      setReady(true);
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -143,7 +145,7 @@ export default function AppWrapper(props: AppWrapperProps) {
           <ConfirmDialog />
           <Notification />
           <Waiting />
-          {children}
+          {ready && children}
         </Box>
         {handleLogout !== undefined && !router.query.login && (
           <Box sx={{
