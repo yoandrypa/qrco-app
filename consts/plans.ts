@@ -44,27 +44,27 @@ export const basic = {
   },
 };
 
-export const basicAnnual = {
-  title: "Basic",
-  description: "A good choice to get started and save some cash.",
-  buttonText: "SUBSCRIBE",
-  planType: "basicAnnual",
-  legend: "Save two months",
-  highlighted: false,
-  priceAmount: "$90.00",
-  features: {
-    // [ 0 is Not-Allow ] and [ -1 is Unlimited ]
-    upToDynamicQR: 50,                // Up to 50 dynamic QR code
-    amountByAdditionalDynamicQR: 1,   // $1 per additional Dynamic QR
-    upToPreGeneratedQR: -1,           // Unlimited pre-generated QRs
-    upToMicroSite: 50,                // Up to 50 micro-site (mobile-friendly landing page)
-    upToStaticQR: -1,                 // Unlimited static QR codes
-    upToScans: -1,                    // Unlimited scans
-    allowQRCodesDesign: true,         // QR codes design customization and edition
-    allowEditDynamicQRContent: true,  // Dynamic QR codes content edition
-    allowEditMicroSite: true,         // Micro-sites appearance customization and edition
-  },
-};
+// export const basicAnnual = {
+//   title: "Basic",
+//   description: "A good choice to get started and save some cash.",
+//   buttonText: "SUBSCRIBE",
+//   planType: "basicAnnual",
+//   legend: "Save two months",
+//   highlighted: false,
+//   priceAmount: "$90.00",
+//   features: {
+//     // [ 0 is Not-Allow ] and [ -1 is Unlimited ]
+//     upToDynamicQR: 50,                // Up to 50 dynamic QR code
+//     amountByAdditionalDynamicQR: 1,   // $1 per additional Dynamic QR
+//     upToPreGeneratedQR: -1,           // Unlimited pre-generated QRs
+//     upToMicroSite: 50,                // Up to 50 micro-site (mobile-friendly landing page)
+//     upToStaticQR: -1,                 // Unlimited static QR codes
+//     upToScans: -1,                    // Unlimited scans
+//     allowQRCodesDesign: true,         // QR codes design customization and edition
+//     allowEditDynamicQRContent: true,  // Dynamic QR codes content edition
+//     allowEditMicroSite: true,         // Micro-sites appearance customization and edition
+//   },
+// };
 
 export const business = {
   title: "Business",
@@ -88,27 +88,27 @@ export const business = {
   },
 };
 
-export const businessAnnual = {
-  title: "Business",
-  description: "Receive a fair discount with our annual plan.",
-  buttonText: "SUBSCRIBE",
-  planType: "businessAnnual",
-  legend: "Save three months",
-  highlighted: true,
-  priceAmount: "$135.OO",
-  features: {
-    // [ 0 is Not-Allow ] and [ -1 is Unlimited ]
-    upToDynamicQR: 100,               // Up to 100 dynamic QR code
-    amountByAdditionalDynamicQR: 0.9, // $0.90 per additional Dynamic QR
-    upToPreGeneratedQR: -1,           // Unlimited pre-generated QRs
-    upToMicroSite: 100,               // Up to 100 micro-site (mobile-friendly landing page)
-    upToStaticQR: -1,                 // Unlimited static QR codes
-    upToScans: -1,                    // Unlimited scans
-    allowQRCodesDesign: true,         // QR codes design customization and edition
-    allowEditDynamicQRContent: true,  // Dynamic QR codes content edition
-    allowEditMicroSite: true,         // Micro-sites appearance customization and edition
-  },
-};
+// export const businessAnnual = {
+//   title: "Business",
+//   description: "Receive a fair discount with our annual plan.",
+//   buttonText: "SUBSCRIBE",
+//   planType: "businessAnnual",
+//   legend: "Save three months",
+//   highlighted: true,
+//   priceAmount: "$135.OO",
+//   features: {
+//     // [ 0 is Not-Allow ] and [ -1 is Unlimited ]
+//     upToDynamicQR: 100,               // Up to 100 dynamic QR code
+//     amountByAdditionalDynamicQR: 0.9, // $0.90 per additional Dynamic QR
+//     upToPreGeneratedQR: -1,           // Unlimited pre-generated QRs
+//     upToMicroSite: 100,               // Up to 100 micro-site (mobile-friendly landing page)
+//     upToStaticQR: -1,                 // Unlimited static QR codes
+//     upToScans: -1,                    // Unlimited scans
+//     allowQRCodesDesign: true,         // QR codes design customization and edition
+//     allowEditDynamicQRContent: true,  // Dynamic QR codes content edition
+//     allowEditMicroSite: true,         // Micro-sites appearance customization and edition
+//   },
+// };
 
 export const premium = {
   title: "Premium",
@@ -131,26 +131,27 @@ export const premium = {
     allowEditMicroSite: true,         // Micro-sites appearance customization and edition
   },
 };
-export const premiumAnnual = {
-  title: "Premium",
-  description: "Receive a great discount and get completely covered.",
-  buttonText: "SUBSCRIBE",
-  planType: "premiumAnnual",
-  legend: "Save four months",
-  highlighted: true,
-  priceAmount: "$360.00",
-  features: {
-    // [ 0 is Not-Allow ] and [ -1 is Unlimited ]
-    upToDynamicQR: 500,               // Up to 500 dynamic QR code
-    amountByAdditionalDynamicQR: 0.8, // $0.80 per additional Dynamic QR
-    upToPreGeneratedQR: -1,           // Unlimited pre-generated QRs
-    upToMicroSite: 500,               // Up to 500 micro-site (mobile-friendly landing page)
-    upToStaticQR: -1,                 // Unlimited static QR codes
-    upToScans: -1,                    // Unlimited scans
-    allowQRCodesDesign: true,         // QR codes design customization and edition
-    allowEditDynamicQRContent: true,  // Dynamic QR codes content edition
-    allowEditMicroSite: true,         // Micro-sites appearance customization and edition
-  },
-};
+
+// export const premiumAnnual = {
+//   title: "Premium",
+//   description: "Receive a great discount and get completely covered.",
+//   buttonText: "SUBSCRIBE",
+//   planType: "premiumAnnual",
+//   legend: "Save four months",
+//   highlighted: true,
+//   priceAmount: "$360.00",
+//   features: {
+//     // [ 0 is Not-Allow ] and [ -1 is Unlimited ]
+//     upToDynamicQR: 500,               // Up to 500 dynamic QR code
+//     amountByAdditionalDynamicQR: 0.8, // $0.80 per additional Dynamic QR
+//     upToPreGeneratedQR: -1,           // Unlimited pre-generated QRs
+//     upToMicroSite: 500,               // Up to 500 micro-site (mobile-friendly landing page)
+//     upToStaticQR: -1,                 // Unlimited static QR codes
+//     upToScans: -1,                    // Unlimited scans
+//     allowQRCodesDesign: true,         // QR codes design customization and edition
+//     allowEditDynamicQRContent: true,  // Dynamic QR codes content edition
+//     allowEditMicroSite: true,         // Micro-sites appearance customization and edition
+//   },
+// };
 
 export default { free, basic, business, premium };
