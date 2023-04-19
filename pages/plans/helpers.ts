@@ -1,11 +1,16 @@
 import { NextRouter } from "next/router";
 import { request } from "../../libs/utils/request";
 import { setError, setWarning } from "../../components/Notification";
-import session from "@ebanux/ebanux-utils/sessionStorage";
+import { startAuthorizationFlow } from "../../libs/utils/auth";
 
-export function gotoLogin({ pathname, query }: NextRouter) {
+interface RouterType {
+  pathname: string,
+  query?: any
+}
+
+export function gotoLogin(router: NextRouter | RouterType, redirect = false) {
   setWarning('You need to be authenticated before buying any plan!', true);
-  session.set('CALLBACK_ROUTE', { pathname, query });
+  if (redirect) startAuthorizationFlow(router);
 }
 
 export function reviewingPlan() {

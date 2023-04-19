@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 
 import Alert, { AlertColor } from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
+import LinearProgress from '@mui/material/LinearProgress';
 
 import parseHtml from 'html-react-parser';
 import messaging from "@ebanux/ebanux-utils/messaging";
+
+import classes from "./styles.sx";
 
 const mSubscriptions: any[] = [];
 
@@ -77,6 +80,7 @@ const Notification = () => {
               anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
       <Alert variant="standard" sx={{ width: "100%" }} severity={severity} onClose={closeHandle}>
         {parseHtml(message as string)}
+        {autoHide && <LinearProgress color={severity} sx={classes.progress(closeOption)} />}
       </Alert>
     </Snackbar>
   );
