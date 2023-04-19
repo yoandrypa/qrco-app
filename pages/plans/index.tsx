@@ -6,50 +6,42 @@ import { useRouter } from "next/router";
 import Context from "../../components/context/Context";
 import PlanList from "../../components/plans/PlanList";
 
-import { request } from "../../libs/utils/request";
+import { gotoLogin, buyPlan, reviewingPlan } from "./helpers";
 import { setWarning } from "../../components/Notification";
 
 const Plans = () => {
-  const { pathname, query } = useRouter();
+  const router = useRouter();
   const { subscription } = useContext(Context);
-  const [activePlan, setActivePlan] = useState<string>();
+  const [activePlan, setActivePlan] = useState<string>(subscription?.metadata?.plan_type || 'free');
 
-  async function reviewingPlan() {
-    request({ url: 'billing-portal', throwError: 'notify' }).then(({ url }) => {
-      window.open(url, '_blank');
-    });
-  }
+  function onSelectedPlan(planType: string, timeout = 0) {
+    if (!subscription || subscription.status === 'canceled') return buyPlan(planType);
+    if (timeout == 0) return reviewingPlan();
 
-  async function onSelectedPlan(planType: string) {
-    if (subscription && activePlan === planType) return await reviewingPlan();
+    let msg;
+    if (activePlan === planType) {
+      msg = 'You are already subscribed to this plan, you can see the details on your customer portal.';
+    } else {
+      msg = 'You are already subscribed to another plan, you can see the details on your customer portal.<br/>';
+      msg += 'To subscribe to a new plan you must first cancel the old one.';
+    }
 
-    const options = {
-      url: 'subscriptions',
-      method: "POST",
-      data: { planType },
-      throwError: 'notify',
-    };
-
-    // Send request to create and get checkout-session url
-    request(options).then(({ url: checkoutSessionUrl }) => {
-      window.location.href = checkoutSessionUrl;
-    });
+    setWarning(msg, timeout);
+    setTimeout(reviewingPlan, timeout);
   }
 
   useEffect(() => {
-    if (session.isAuthenticated) {
-      setActivePlan(subscription?.metadata?.plan_type || 'free');
-    } else {
-      setWarning('You need to be authenticated before buying any plan!', true);
-      session.set('CALLBACK_ROUTE', { pathname, query });
-    }
+    if (!session.isAuthenticated) return gotoLogin(router);
+    setActivePlan(subscription?.metadata?.plan_type || 'free');
   }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (!session.isAuthenticated) return gotoLogin(router);
+    if (router.query.type) onSelectedPlan(router.query.type as string, 8000);
+  }, [router.isReady]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
-    <PlanList
-      activePlan={activePlan}
-      onSelected={session.isAuthenticated ? onSelectedPlan : undefined}
-    />
+    <PlanList activePlan={activePlan} onSelected={session.isAuthenticated ? onSelectedPlan : undefined} />
   );
 };
 

@@ -8,13 +8,14 @@ import Grid from '@mui/material/Grid'
 import Button from "@mui/material/Button";
 
 import { request } from "../../libs/utils/request";
+import { setError } from "../../components/Notification";
 
 const AccountPage = () => {
 
   async function reviewingPlan() {
-    request({ url: 'billing-portal', throwError: 'notify' }).then(({ url }) => {
+    request({ url: 'billing-portal' }).then(({ url }) => {
       window.open(url, '_blank');
-    });
+    }).catch(setError);
   }
 
   return (
