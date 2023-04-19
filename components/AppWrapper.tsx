@@ -57,7 +57,7 @@ export default function AppWrapper(props: AppWrapperProps) {
   } = props;
 
   const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
-  const [ready, setReady] = useState<boolean>(false);
+  const [pendingTask, setPendingTask] = useState<number>(1);
 
   // @ts-ignore
   const { subscription, setSubscription, setLoading } = useContext(Context);
@@ -93,6 +93,8 @@ export default function AppWrapper(props: AppWrapperProps) {
     });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const releaseTask = () => setPendingTask(Math.max(0, pendingTask - 1));
+
   useEffect(() => {
     const { currentUser, isAuthenticated } = session;
 
@@ -109,10 +111,14 @@ export default function AppWrapper(props: AppWrapperProps) {
   }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (session.isAuthenticated && !subscription) loadSubscription().then((subscription: any) => {
-      setSubscription(subscription);
-      setReady(true);
-    });
+    if (session.isAuthenticated && !subscription) {
+      loadSubscription().then((subscription: any) => {
+        setSubscription(subscription);
+        releaseTask();
+      });
+    } else {
+      releaseTask();
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -145,7 +151,7 @@ export default function AppWrapper(props: AppWrapperProps) {
           <ConfirmDialog />
           <Notification />
           <Waiting />
-          {ready && children}
+          {pendingTask == 0 && children}
         </Box>
         {handleLogout !== undefined && !router.query.login && (
           <Box sx={{
