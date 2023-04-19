@@ -18,12 +18,12 @@ import dynamic from "next/dynamic";
 import session from "@ebanux/ebanux-utils/sessionStorage";
 import { useRouter } from "next/router";
 import { request } from "../../libs/utils/request";
-import { setWarning, hideNotification } from "../Notification";
+import { setWarning, hideNotification, setError } from "../Notification";
 import { waitConfirmation } from "../ConfirmDialog";
 import { releaseWaiting, startWaiting } from "../Waiting";
 import { startAuthorizationFlow } from "../../libs/utils/auth";
 import validator from "./validator";
-import {FORCE_EXTRA, IGNORE_VALIDATOR} from "../../consts";
+import { FORCE_EXTRA, IGNORE_VALIDATOR } from "../../consts";
 
 const ErrorsDialog = dynamic(() => import("./helperComponents/looseComps/ErrorsDialog"));
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
@@ -101,40 +101,44 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   }
 
   async function allowCreate() {
-    const { isDynamic, preGenerated } = data;
+    try {
+      const { isDynamic, preGenerated } = data;
 
-    if (!isDynamic || preGenerated || !isFirstStep) return true;
+      if (!isDynamic || preGenerated || !isFirstStep) return true;
 
-    if (!session.isAuthenticated) {
-      session.set('CONTEXT', { selected, data });
-      startAuthorizationFlow({ pathname: QR_CONTENT_ROUTE });
-      return false;
-    }
-
-    if (process.env.REACT_APP_OVERRIDE === 'dev') {
-      return true;
-    }
-
-    let upToDynamicQR = process.env.FREE_DYNAMIC_QRS || 1;
-    let amountByAdditionalDynamicQR = 0;
-
-    if (subscription?.status === 'active') {
-      upToDynamicQR = subscription.features.upToDynamicQR;
-      amountByAdditionalDynamicQR = subscription.features.amountByAdditionalDynamicQR;
-    }
-
-    if (amountByAdditionalDynamicQR === 0) {
-      const { count } = await request({ url: 'links/count', params: { preGenerated: false }, throwError: 'notify' });
-      if (upToDynamicQR !== -1 && count >= upToDynamicQR) {
-        setWarning([
-          'You have reached the limit of Dynamic QRs for this account.',
-          'Upgrade to a paid plan to add more QRs.',
-        ], false);
-        waitConfirmation('Click accept to if you want to view or upgrade your current plan.', onConfirmUpgrade);
+      if (!session.isAuthenticated) {
+        session.set('CONTEXT', { selected, data });
+        startAuthorizationFlow({ pathname: QR_CONTENT_ROUTE });
         return false;
       }
+
+      if (process.env.REACT_APP_OVERRIDE === 'dev') {
+        return true;
+      }
+
+      let upToDynamicQR = process.env.FREE_DYNAMIC_QRS || 1;
+      let amountByAdditionalDynamicQR = 0;
+
+      if (subscription?.status === 'active') {
+        upToDynamicQR = subscription.features.upToDynamicQR;
+        amountByAdditionalDynamicQR = subscription.features.amountByAdditionalDynamicQR;
+      }
+
+      if (amountByAdditionalDynamicQR === 0) {
+        const { count } = await request({ url: 'links/count', params: { preGenerated: false } });
+        if (upToDynamicQR !== -1 && count >= upToDynamicQR) {
+          setWarning([
+            'You have reached the limit of Dynamic QRs for this account.',
+            'Upgrade to a paid plan to add more QRs.',
+          ], false);
+          waitConfirmation('Click accept to if you want to view or upgrade your current plan.', onConfirmUpgrade);
+          return false;
+        }
+      }
+      return true;
+    } catch (e: any) {
+      setError(e);
     }
-    return true;
   }
 
   const handleNext = async () => {
@@ -199,7 +203,12 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
       const genShortLinkAndId = async () => {
         const id = getUuid();
         const shortCode = data.claim || await generateId(); // @ts-ignore
-        setOptions((prev: OptionsType) => ({ ...prev, id, shortCode, data: generateShortLink(shortCode, process.env.SHORT_URL_DOMAIN) }));
+        setOptions((prev: OptionsType) => ({
+          ...prev,
+          id,
+          shortCode,
+          data: generateShortLink(shortCode, process.env.SHORT_URL_DOMAIN)
+        }));
       };
       genShortLinkAndId();
     }
