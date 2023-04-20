@@ -41,8 +41,8 @@ export default function CardDataStatic({data, handleValues, setIsWrong}: CardDat
     <Common msg="Your contact details. Users can store your info or contact you right away.">
       <Box sx={{my: 4, width: '100%'}}>
         <Paper elevation={2} sx={{p: 1}}>
-          <RenderPresentation data={data} handleValues={handleValues} message="Presentation" index={-1} />
-          <RenderPhones data={data} handleValues={handleValues} message="Phones" index={-1} />
+          <RenderPresentation data={data} handleValues={handleValues} message="Presentation" index={-1} noExtra />
+          <RenderPhones data={data} handleValues={handleValues} message="Phones" index={-1} noButtons />
           <RenderOrganization data={data} handleValues={handleValues} message="Organization" index={-1} />
         </Paper>
         <Paper elevation={2} sx={{p: 1, mt: 2}}>
@@ -50,7 +50,7 @@ export default function CardDataStatic({data, handleValues, setIsWrong}: CardDat
           {expander === "address" && (
             <Box sx={{width: '100%'}}>
               <RenderAddressData data={data} handleValues={handleValues} index={-1} />
-              <RenderEmailWeb data={data} handleValues={handleValues} sx={{ mt: 1 }} index={-1} />
+              <RenderEmailWeb data={data} handleValues={handleValues} sx={{ mt: 1 }} index={-1} noButtons />
             </Box>
           )}
         </Paper>

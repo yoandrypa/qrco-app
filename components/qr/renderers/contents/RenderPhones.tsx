@@ -10,9 +10,10 @@ import RenderAsButton from "../../helperComponents/smallpieces/RenderAsButton";
 interface RenderPhonesProps extends ContentProps {
   isCompany?: boolean;
   message?: string;
+  noButtons?: boolean;
 }
 
-export default function RenderPhones({data, handleValues, isCompany, index, message}: RenderPhonesProps) {
+export default function RenderPhones({data, handleValues, isCompany, index, message, noButtons}: RenderPhonesProps) {
   const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string | boolean) => {
     handleValues(item, index)(payload);
   }
@@ -48,9 +49,9 @@ export default function RenderPhones({data, handleValues, isCompany, index, mess
         <Grid item sm={6} xs={12} style={{paddingTop: 0}}>
           {renderItem(!isCompany ? 'fax' : 'companyFax', 'Fax')}
         </Grid>
-        <Grid item xs={12}>
-          <RenderAsButton sendData={beforeSend} extras={data?.extras} message="Phones as buttons" item="phoneButton" />
-        </Grid>
+        {!noButtons && (<Grid item xs={12}>
+          <RenderAsButton sendData={beforeSend} extras={data?.extras} message="Phones as buttons" item="phoneButton"/>
+        </Grid>)}
       </Grid>
     </Box>
   );
