@@ -2,9 +2,6 @@ import {forwardRef, useEffect, useState} from 'react';
 
 import parse from 'html-react-parser';
 
-// @ts-ignore
-import {renderToString} from "react-dom/server";
-
 import {originalDimensions} from '../../helpers/qr/data';
 import {BackgroundType, CornersAndDotsType, FramesType, OptionsType} from './types/types';
 import {getFrame} from '../../helpers/qr/helpers';
