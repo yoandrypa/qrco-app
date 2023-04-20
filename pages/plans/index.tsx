@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import Context from "../../components/context/Context";
 import PlanList from "../../components/plans/PlanList";
 
-import { gotoLogin, buyPlan, reviewingPlan } from "./helpers";
+import { gotoLogin, buyPlan, reviewingPlan } from "../../helpers/plans";
 
 const Plans = () => {
   const router = useRouter();
