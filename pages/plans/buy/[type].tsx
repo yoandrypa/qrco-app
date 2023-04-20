@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import Context from "../../../components/context/Context";
 import PlanList from "../../../components/plans/PlanList";
 
-import { gotoLogin, buyPlan, reviewingPlan } from "../helpers";
+import { gotoLogin, buyPlan, reviewingPlan } from "../../../helpers/plans";
 import { setWarning, setInfo } from "../../../components/Notification";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
