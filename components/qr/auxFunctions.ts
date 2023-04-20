@@ -90,10 +90,8 @@ export const steps = ["Type", "Content", "QR Design"];
 
 const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame: FramesType,
                  cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, edit: boolean): void => {
-  if (!areEquals(frame, initialFrame)) {
-    qrDesign.frame = frame;
-  }
-
+  if (frame.textUp === false) { delete frame.textUp; }
+  if (!areEquals(frame, initialFrame)) { qrDesign.frame = frame; }
   if (!areEquals(background, initialBackground)) {
     qrDesign.background = background;
     if (qrDesign.background.file === null) qrDesign.background.file = '';
@@ -101,21 +99,11 @@ const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame: Frame
   } else if (edit) { // @ts-ignore
     qrDesign.background = initialBackground;
   }
-  if (cornersData !== null) {
-    qrDesign.corners = cornersData;
-  }
-  if (dotsData !== null) {
-    qrDesign.cornersDot = dotsData;
-  }
-  if (!qrDesign.cornersDotOptions.type) {
-    qrDesign.cornersDotOptions.type = "";
-  }
-  if (!qrDesign.cornersSquareOptions.type) {
-    qrDesign.cornersSquareOptions.type = "";
-  }
-  if (qrDesign.mode !== undefined) {
-    delete qrDesign.mode;
-  }
+  if (cornersData !== null) { qrDesign.corners = cornersData; }
+  if (dotsData !== null) { qrDesign.cornersDot = dotsData; }
+  if (!qrDesign.cornersDotOptions.type) { qrDesign.cornersDotOptions.type = ""; }
+  if (!qrDesign.cornersSquareOptions.type) { qrDesign.cornersSquareOptions.type = ""; }
+  if (qrDesign.mode !== undefined) { qrDesign.mode = undefined; }
 };
 
 const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: OptionsType): EditType => {
@@ -394,6 +382,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     let edition = false;
 
     if (data.mode !== 'edit') {
+      if (qrData.frame !== undefined && !frame.type) { delete qrData.frame; }
       if (dataLength) { prevUpdatingHandler("Saving QR Code data"); }
       const response = await create({ shortLink, qrDesign, qrData });
       if (success && response?.creationDate) success(response.creationDate);
@@ -402,6 +391,11 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       if (dataLength) { prevUpdatingHandler("Updating QR Code data"); }
 
       const objToEdit = generateObjectToEdit(qrData, data, qrDesign) as any;
+
+      if (objToEdit.frame !== undefined && !frame?.type) {
+        objToEdit.frame = undefined;
+        objToEdit.qrOptionsId.frame = undefined;
+      }
 
       if (!objToEdit.userId) { objToEdit.userId = userInfo.cognito_user_id; }
       if (objToEdit.qrOptionsId.editedShortLink) {
