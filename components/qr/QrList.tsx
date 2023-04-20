@@ -70,15 +70,21 @@ export default function QrList({ title }: any) {
 
   const handleClone = useCallback((qr: QrDataType) => {
     startWaiting();
-    const qrName = `${qr.qrName} copy`;
-    setOptions({ ...qr.qrOptionsId, ...qr, mode: "clone", qrName });
-    router.push(QR_CONTENT_ROUTE, undefined, { shallow: true })
-      .finally(() => releaseWaiting());
+    const objectToClone = { ...qr.qrOptionsId, ...qr, mode: "clone", qrName: `${qr.qrName} copy` } as any; // @ts-ignore
+    if (!objectToClone.image?.trim()?.length && qr.qrOptionsId?.image?.trim()?.length) { // @ts-ignore
+      objectToClone.image = qr.qrOptionsId.image;
+    }
+    setOptions(objectToClone);
+    router.push(QR_CONTENT_ROUTE, undefined, { shallow: true }).finally(() => releaseWaiting());
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleEdit = useCallback((qr: QrDataType) => {
     startWaiting();
-    setOptions({ ...qr.qrOptionsId, ...qr, mode: "edit" });
+    const objToEdit = { ...qr.qrOptionsId, ...qr, mode: "edit" } as any; // @ts-ignore
+    if (!objToEdit.image?.trim()?.length && qr.qrOptionsId?.image?.trim()?.length) { // @ts-ignore
+      objToEdit.image = qr.qrOptionsId.image;
+    }
+    setOptions(objToEdit);
     router.push(qr.isDynamic ? QR_CONTENT_ROUTE : QR_DESIGN_ROUTE, undefined, { shallow: true })
       .finally(() => releaseWaiting());
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
