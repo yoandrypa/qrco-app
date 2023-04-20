@@ -392,9 +392,13 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
       const objToEdit = generateObjectToEdit(qrData, data, qrDesign) as any;
 
-      if (objToEdit.frame !== undefined && !frame?.type) {
-        objToEdit.frame = undefined;
-        objToEdit.qrOptionsId.frame = undefined;
+      if (objToEdit.frame !== undefined) {
+        if (!frame?.type) {
+          objToEdit.frame = undefined;
+          objToEdit.qrOptionsId.frame = undefined;
+        } else if (!areEquals(objToEdit.frame, frame)) {
+          objToEdit.frame = frame;
+        }
       }
 
       if (!objToEdit.userId) { objToEdit.userId = userInfo.cognito_user_id; }
