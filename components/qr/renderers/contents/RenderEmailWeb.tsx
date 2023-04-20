@@ -9,9 +9,10 @@ import {ChangeEvent} from "react";
 interface RenderEmailWebProps extends ContentProps {
   sx?: Object;
   isCompany?: boolean;
+  noButtons?: boolean;
 }
 
-export default function RenderEmailWeb({data, handleValues, sx, index, isCompany}: RenderEmailWebProps) {
+export default function RenderEmailWeb({data, handleValues, sx, index, isCompany, noButtons}: RenderEmailWebProps) {
   const beforeSend = (item: string) => (payload: ChangeEvent<HTMLInputElement> | string) => {
     handleValues(item, index)(payload);
   }
@@ -26,12 +27,14 @@ export default function RenderEmailWeb({data, handleValues, sx, index, isCompany
           <RenderWeb index={index} handleValues={handleValues} data={data} isCompany={isCompany} item="emailWebButton" />
         </Grid>
       </Grid>
-      <RenderAsButton
-        sendData={beforeSend}
-        message="Render email and web as buttons"
-        extras={data?.extras}
-        item="emailWebButton"
-      />
+      {!noButtons && (
+        <RenderAsButton
+          sendData={beforeSend}
+          message="Render email and web as buttons"
+          extras={data?.extras}
+          item="emailWebButton"
+        />
+      )}
     </Box>
   );
 }
