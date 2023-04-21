@@ -4,17 +4,17 @@ import dynamic from "next/dynamic";
 const Icon = dynamic(() => import('@mui/icons-material/CreditCard'));
 const Form = dynamic(() => import('./form'));
 
-import { IconPropsType, FormPropsType, SettingQrType } from './types';
+import { IIconProps, IFormProps, ISettingQr, IData } from './types';
 import { parseIconStyle } from '../commons/helpers';
 
-const setting: SettingQrType = {
+const setting: ISettingQr<IData> = {
   id: 'sendMeMoney',
   name: 'Send Me Money',
   description: 'Receive payments worldwide',
   isMonetized: true,
   isDynamic: true,
-  renderIcon: (props: IconPropsType) => <Icon sx={parseIconStyle(props)} />,
-  renderForm: (props: FormPropsType) => <Form {...props} />,
+  renderIcon: (props: IIconProps) => <Icon sx={parseIconStyle(props)} />,
+  renderForm: (props: IFormProps<IData>) => <Form {...props} />,
 };
 
 export default setting;

@@ -9,9 +9,9 @@ import NumberBox from "../../../forms/fields/NumberBox";
 import EbxIcon from "../../../icons";
 import Caption from "../../renderers/helpers/Caption";
 
-import { FormPropsType } from "./types";
+import { IFormProps, IData } from "./types";
 
-export default function Form({ data, index, handleValues }: FormPropsType) {
+export default function Form({ data, index, handleValues }: IFormProps<IData>) {
   const onChange = (attr: string) => (value: any, valid: boolean) => {
     handleValues(attr, index)(value);
   }

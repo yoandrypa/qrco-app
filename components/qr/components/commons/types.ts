@@ -1,25 +1,25 @@
 import { ReactNode } from "react";
 
-export interface IconPropsType {
+export interface IIconProps {
   enabled: boolean;
   color?: string;
   sx?: Object;
 }
 
-export interface FormPropsType<DataType> {
+export interface IFormProps<IData> {
   index: number;
-  data: DataType;
+  data: IData;
   handleValues: Function;
 }
 
-export interface SettingQrType<DataType> {
+export interface ISettingQr<IData> {
   id: string;
   name: string;
   description: string;
   isDynamic?: boolean;
   isMonetized?: boolean;
-  renderIcon: (props: IconPropsType) => ReactNode;
-  renderForm: (props: FormPropsType<DataType>) => ReactNode;
+  renderIcon: (props: IIconProps) => ReactNode;
+  renderForm: (props: IFormProps<IData>) => ReactNode;
   devOnly?: boolean;
 }
 
