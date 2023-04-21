@@ -1,6 +1,7 @@
 import pluralize from "pluralize";
-import {formatBytes} from "../../utils";
-import {FILE_LIMITS} from "../../consts";
+import { formatBytes } from "../../utils";
+import { FILE_LIMITS } from "../../consts";
+import { dynamicQrTypes as dynamicQrSettings } from "./components"
 
 export const dynamicQrTypes = {
   web: {
@@ -55,10 +56,7 @@ export const dynamicQrTypes = {
     description: "Start your own charity or fundraising campaign",
     devOnly: true
   },
-  paylink: {
-    description: "Receive payments worldwide",
-    devOnly: true
-  }
+  ...dynamicQrSettings,
 };
 
 const handleAssetDesc = (selected: 'pdf' | 'gallery' | 'audio' | 'video') => (

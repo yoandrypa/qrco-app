@@ -1,17 +1,19 @@
-import {ChangeEvent, useContext} from 'react';
+import React, { ChangeEvent, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 import RenderIcon from './helperComponents/smallpieces/RenderIcon';
 import Context from '../context/Context';
-import {DataType, OptionsType, SocialProps} from './types/types';
+import { DataType, OptionsType, SocialProps } from './types/types';
 
 import dynamic from "next/dynamic";
 
 import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
-import {qrNameDisplayer} from "../../helpers/qr/helpers";
-import {dynamicQr} from "./qrtypes";
+import { qrNameDisplayer } from "../../helpers/qr/helpers";
+import { dynamicQr, dynamicQrTypes } from "./qrtypes";
 import valuesHanlder from "./helperFunction";
+import { renderQrIcon } from "./components/commons/helpers";
+import { grey } from "@mui/material/colors";
 
 const CardDataStatic = dynamic(() => import("./renderers/custom/CardDataStatic"));
 const Custom = dynamic(() => import("./renderers/Custom"));
@@ -39,6 +41,8 @@ type QrContentHandlerProps = {
 
 const QrContentHandler = () => { // @ts-ignore
   const { data, setData, selected, setIsWrong, userInfo, options }: QrContentHandlerProps = useContext(Context);
+  // @ts-ignore
+  const qrType = dynamicQrTypes[selected] || { id: selected };
 
   const handleValues = (item: string, index?: number) => (payload: ChangeEvent<HTMLInputElement> | string | boolean | string[]) => {
     valuesHanlder(setData, item, payload, index);
@@ -50,6 +54,9 @@ const QrContentHandler = () => { // @ts-ignore
 
   const renderSel = () => {
     if (!selected) { return null; }
+
+    if (qrType?.renderForm) return qrType.renderForm({ data, handleValues });
+
     switch (selected) {
       case 'web': {
         return <SingleData
@@ -116,7 +123,9 @@ const QrContentHandler = () => { // @ts-ignore
       {selected ? (
         <>
           {!Boolean(userInfo) && <Box sx={{ mb: '10px' }}><RenderNoUserWarning /></Box>}
-          <Box sx={{ display: 'inline' }}><RenderIcon icon={selected} enabled sx={{mb: '-5px'}} /></Box>
+          <Box sx={{ display: 'inline' }}>
+            {renderQrIcon(qrType, { enabled: true, sx: { mb: '-5px' } })}
+          </Box>
           <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{qrNameDisplayer(selected || '', data?.isDynamic || false)}</Typography>
           <Typography sx={{ display: { xs: 'none', sm: 'inline' } }}>{`: Enter the content${data?.isDynamic ? ' and page design' : ''}`}</Typography>
           <NotifyDynamic isDynamic={data?.isDynamic || false} />

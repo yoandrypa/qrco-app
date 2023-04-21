@@ -64,6 +64,7 @@ const CustomizeIcon = dynamic(() => import('@mui/icons-material/DashboardCustomi
 const PersonSearchIcon = dynamic(() => import('@mui/icons-material/PersonSearch'));
 const InventoryIcon = dynamic(() => import('@mui/icons-material/Inventory'));
 const RedditIcon = dynamic(() => import('@mui/icons-material/Reddit'));
+const PaymentLinkIcon = dynamic(() => import('@mui/icons-material/PaidOutlined'));
 const TikTokIcon = dynamic(() => import("../TikTokIcon"));
 const QuoraIcon = dynamic(() => import("../QuoraIcon"));
 const Snapchat = dynamic(() => import("../Snapchat"));
@@ -101,6 +102,7 @@ export default function RenderIcon({ icon, color, enabled, sx }: RenderIconProp)
       case 'contact':
       case 'vcard+': { return <ContactPhoneIcon sx={sxStyling} />; }
       case 'web': { return <WebIcon sx={sxStyling} />; }
+      case 'paymentLink': { return <PaymentLinkIcon sx={sxStyling} />; }
       case 'whatsapp': { return <WhatsAppIcon sx={sxStyling} />; }
       case 'pinterest': { return <PinterestIcon sx={sxStyling} />; }
       case 'linkedin': { return <LinkedInIcon sx={sxStyling} />; }
