@@ -2,7 +2,6 @@ import React, { ChangeEvent, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import RenderIcon from './helperComponents/smallpieces/RenderIcon';
 import Context from '../context/Context';
 import { DataType, OptionsType, SocialProps } from './types/types';
 
@@ -13,7 +12,6 @@ import { qrNameDisplayer } from "../../helpers/qr/helpers";
 import { dynamicQr, dynamicQrTypes } from "./qrtypes";
 import valuesHanlder from "./helperFunction";
 import { renderQrIcon } from "./components/commons/helpers";
-import { grey } from "@mui/material/colors";
 
 const CardDataStatic = dynamic(() => import("./renderers/custom/CardDataStatic"));
 const Custom = dynamic(() => import("./renderers/Custom"));
