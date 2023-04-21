@@ -21,7 +21,7 @@ import { MyBadge } from "./looseComps/StyledComponents";
 import { areEquals } from "../../helpers/generalFunctions";
 import initialOptions, { initialData } from "../../../helpers/qr/data";
 import { dynamicQrTypes, staticQrTypes } from "../qrtypes";
-import { SettingQrType } from "../components/commons/types";
+import { ISettingQr } from "../components/commons/types";
 
 
 const RenderMode = dynamic(() => import("./looseComps/RenderMode"));
@@ -107,7 +107,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
     }
   };
 
-  const renderTypeSelector = (typeId: string, qrType: SettingQrType<any>, enabled: boolean) => {
+  const renderTypeSelector = (typeId: string, qrType: ISettingQr<any>, enabled: boolean) => {
     qrType.id ??= typeId;  // Set id in legacy qr-types
 
     return (

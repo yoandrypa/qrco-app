@@ -5,12 +5,12 @@ import Typography from "@mui/material/Typography";
 import { grey } from "@mui/material/colors";
 import { useTheme } from "@mui/system";
 import { qrNameDisplayer } from "../../../helpers/qr/helpers";
-import { SettingQrType } from "../components/commons/types";
+import { ISettingQr } from "../components/commons/types";
 import { renderQrIcon } from "../components/commons/helpers";
 
 interface TypeSelectorProps {
   handleSelect: (payload: string) => void;
-  qrType: SettingQrType<any>;
+  qrType: ISettingQr<any>;
   selected: boolean;
   enabled?: boolean;
   isDynamic?: boolean;
@@ -53,7 +53,7 @@ const TypeSelector = ({ isDynamic, handleSelect, qrType, selected, enabled = tru
     >
       <Box sx={{ display: 'flex', p: 1 }}>
         <Box sx={{ mt: '3px' }}>
-          {renderQrIcon(qrType, enabled, !selected && !over ? grey[800] : undefined)}
+          {renderQrIcon(qrType, { enabled, color: !selected && !over ? grey[800] : undefined })}
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: 'left', ml: 1, width: '100%' }}>
           <Box sx={{ display: 'flex', width: '100%', justifyContent: 'space-between' }}>
