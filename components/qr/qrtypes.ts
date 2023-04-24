@@ -1,7 +1,7 @@
 import pluralize from "pluralize";
 import { formatBytes } from "../../utils";
 import { FILE_LIMITS } from "../../consts";
-import { dynamicQrTypes as dynamicQrSettings } from "./components"
+import { dynamicQrTypes as dynamicQrSettings, staticQrTypes as staticQrSettings } from "./components"
 import { IQrSetting } from "./components/commons/types"
 
 export const dynamicQrTypes = {
@@ -54,6 +54,7 @@ export const dynamicQrTypes = {
     description: "Start your own charity or fundraising campaign",
     devOnly: true
   },
+  // Include the dynamic qr-types from independent components
   ...dynamicQrSettings,
 };
 
@@ -146,7 +147,9 @@ export const staticQrTypes = {
   crypto: {
     description: "Receive crypto on your eWallet",
     devOnly: true
-  }
+  },
+  // Include the dynamic qr-types from independent components
+  ...staticQrSettings,
 }
 
 export function getQrType(qrTypeId: string): IQrSetting<any> {
