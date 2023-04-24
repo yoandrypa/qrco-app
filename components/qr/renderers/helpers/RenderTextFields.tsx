@@ -1,4 +1,4 @@
-import {memo, useEffect, useState} from "react";
+import {memo, useState} from "react";
 import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -6,16 +6,13 @@ import TextField from "@mui/material/TextField";
 import RenderIcon from "../../helperComponents/smallpieces/RenderIcon";
 
 import dynamic from "next/dynamic";
-import Divider from "@mui/material/Divider";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
+import TextFieldButtonType from "./textfieldHelpers/TextFieldButtonType";
+import renderText from "./textfieldHelpers/textHandler";
 
-const MenuItem = dynamic(() => import("@mui/material/MenuItem"));
-const Popover = dynamic(() => import("@mui/material/Popover"));
-const MenuList = dynamic(() => import("@mui/material/MenuList"));
 const IconButton = dynamic(() => import("@mui/material/IconButton"));
 const ArrowDropDownIcon = dynamic(() => import("@mui/icons-material/ArrowDropDown"));
 const FontDownloadIcon = dynamic(() => import("@mui/icons-material/FontDownload"));
+const TextFieldButton = dynamic(() => import("./textfieldHelpers/TextFieldButton"));
 
 interface RenderTextFieldsProps {
   label?: string;
@@ -28,18 +25,16 @@ interface RenderTextFieldsProps {
   customValue?: string;
   item?: string;
   sx?: any;
+  isButtons?: boolean;
+  type?: string;
   index?: number;
   includeIcon?: boolean;
   options?: boolean;
 }
 
-const RenderTextFields = ({value, customValue, handleValues, placeholder, label, item, required, isError, multiline, sx, includeIcon, options}: RenderTextFieldsProps) => {
+function RenderTextFields({type, isButtons, value, customValue, handleValues, placeholder, label, item, required, isError, multiline, sx, includeIcon, options}: RenderTextFieldsProps) {
   const [anchor, setAnchor] = useState<Element | undefined>(undefined);
-  const [openCustom, setOpenCustom] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!anchor && openCustom) { setOpenCustom(false); }
-  }, [anchor]); // eslint-disable-line react-hooks/exhaustive-deps
+  const [anchorType, setAnchorType] = useState<Element | undefined>(undefined);
 
   return (
     <>
@@ -56,8 +51,22 @@ const RenderTextFields = ({value, customValue, handleValues, placeholder, label,
         placeholder={placeholder}
         onChange={item !== undefined ? handleValues(item) : handleValues}
         InputProps={{
-          startAdornment: includeIcon && (
-            <RenderIcon icon={item || ''} enabled color={'#717171'} sx={{ mr: includeIcon ? '5px' : 'unset' }} />
+          startAdornment: (
+            (includeIcon || Boolean(isButtons)) ? (
+              <InputAdornment position="start">
+                {includeIcon && (
+                  <RenderIcon icon={item || ''} enabled color={'#717171'} sx={{ mr: includeIcon ? '5px' : 'unset' }} />
+                )}
+                {isButtons && (
+                  <span style={{display: 'flex'}}>
+                    <Typography sx={{mt: '5px'}}>{renderText(type, '')}</Typography>
+                    <IconButton size="small" onClick={event => setAnchorType(event.currentTarget)}>
+                      <ArrowDropDownIcon />
+                    </IconButton>
+                  </span>
+                )}
+              </InputAdornment>
+            ) : null
           ),
           endAdornment: (
             (required && !value.trim().length) || options ? (
@@ -74,54 +83,24 @@ const RenderTextFields = ({value, customValue, handleValues, placeholder, label,
           )
         }}
       />
+      {anchorType && (
+        <TextFieldButtonType
+          anchor={anchorType}
+          setAnchor={setAnchorType}
+          handler={(value: string) => {
+            handleValues({type: value});
+            setAnchorType(undefined);
+          }}
+          type={type}
+        />
+      )}
       {anchor && options && (
-        <Popover
-          open
-          anchorEl={anchor}
-          onClose={() => setAnchor(undefined)}
-          anchorOrigin={{vertical: 'top', horizontal: 'left'}}
-          transformOrigin={{vertical: 'top', horizontal: 'left'}}
-        >
-          {!openCustom ? (
-            <MenuList>
-              {Boolean(customValue?.length) && (
-                <Typography sx={{width: '100%', textAlign: 'center', color: theme => theme.palette.text.disabled, fontSize: 'smaller'}}>
-                  {customValue}
-                </Typography>
-              )}
-              <MenuItem key={'setCustom'} onClick={() => setOpenCustom(true)}>
-                <Typography>{'Set custom text'}</Typography>
-              </MenuItem>
-              <MenuItem key={'clearCustom'} disabled={!customValue?.length} onClick={() => {
-                handleValues(`${item}_Custom`)('');
-                setAnchor(undefined);
-              }}>
-                <Typography>{'Clear custom text'}</Typography>
-              </MenuItem>
-            </MenuList>
-          ) : (
-            <Box sx={{width: {xs: '350px', sm: '100%'}}}>
-              <Box sx={{p: 1, m: 1}}>
-                <Typography>{'Enter the custom text for this button'}</Typography>
-                <TextField
-                  fullWidth
-                  label=""
-                  autoFocus
-                  size="small"
-                  placeholder="Custom text"
-                  margin="dense"
-                  value={customValue || ''}
-                  onChange={item !== undefined ? handleValues(`${item}_Custom`) : handleValues}
-                />
-                <Divider sx={{my: 1}}/>
-                <div style={{display: 'flex', justifyContent: 'end'}}>
-                  <Button variant="outlined" disabled={!customValue?.length} onClick={() => handleValues(`${item}_Custom`)('')}>Clear</Button>
-                  <Button variant="outlined" sx={{ml: '5px'}} onClick={() => setAnchor(undefined)}>Close</Button>
-                </div>
-              </Box>
-            </Box>
-          )}
-        </Popover>
+        <TextFieldButton
+          anchor={anchor}
+          setAnchor={setAnchor}
+          handleValues={handleValues}
+          item={item}
+          customValue={customValue} />
       )}
     </>
   );
@@ -129,7 +108,7 @@ const RenderTextFields = ({value, customValue, handleValues, placeholder, label,
 
 const notIf = (current: RenderTextFieldsProps, next: RenderTextFieldsProps) => (
   current.value === next.value && current.isError === next.isError && current.index === next.index &&
-  current.options === next.options && current.customValue === next.customValue
+  current.options === next.options && current.customValue === next.customValue && current.type === next.type
 );
 
 export default memo(RenderTextFields, notIf);

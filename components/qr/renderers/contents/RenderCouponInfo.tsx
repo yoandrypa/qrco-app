@@ -26,7 +26,6 @@ export default function RenderCouponInfo({data, handleValues, index}: ContentPro
         options={item === 'badge' ? ['Get coupon', '10% off', 'Get for free'] : ['Shop online', 'Buy online', 'Get a discount', 'Buy & get a discount']}
         value={value}
         item={item}
-        index={index}
         required={required}
         label={label}
         placeholder={placeholder}
