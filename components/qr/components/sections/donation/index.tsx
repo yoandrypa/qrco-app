@@ -12,8 +12,6 @@ import { parseIconStyle, uuid } from '../../commons/helpers';
 const setting: IQrSetting<ISectionData> = {
   id: 'donation',
   name: 'Donation',
-  description: 'Get donations from your supporters worldwide.',
-  tip: 'Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.',
   isMonetized: true,
   isDynamic: true,
   renderIcon: (props: IIconProps) => <Icon sx={parseIconStyle(props)} />,
