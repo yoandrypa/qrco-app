@@ -6,6 +6,7 @@ const Form = dynamic(() => import('./form'));
 
 import { IIconProps, IFormProps, IQrSetting, IData } from './types';
 import { parseIconStyle } from '../commons/helpers';
+import session from "@ebanux/ebanux-utils/sessionStorage";
 
 const setting: IQrSetting<IData> = {
   id: 'sendMeMoney',
@@ -15,6 +16,13 @@ const setting: IQrSetting<IData> = {
   isDynamic: true,
   renderIcon: (props: IIconProps) => <Icon sx={parseIconStyle(props)} />,
   renderForm: (props: IFormProps<IData>) => <Form {...props} />,
+  getDefaultQrData: () => ({
+    concept: '',
+    description: '',
+    unitAmount: 5,
+    email: session.currentUser?.email as string,
+    ownerId: session.currentUser?.cognito_user_id as string,
+  }),
 };
 
 export default setting;
