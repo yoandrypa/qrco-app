@@ -36,6 +36,7 @@ export default function Form({ data, index, handleValues }: IFormProps<ISectionD
             index={index} label="Receipt email" value={email} required
             placeholder="Enter your email address here"
             onChange={onChange('email')}
+            format={/^\w+(\.\w+)*(\+\w+(\.\w+)*)?@\w+(\.\w+)+$/}
           />
         </Grid>
         <Grid item xs={12}>
