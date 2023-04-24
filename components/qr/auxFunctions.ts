@@ -141,7 +141,7 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
 export const getFileFromQr = (data: DataType, options: OptionsType, background: BackgroundType, frame: FramesType,
                               cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string, onlySvg?: boolean, name?: string) => {
   const qrDesign = getOptionsForPreview(data, options, background, frame, cornersData, dotsData, selected);
-  const svgObject = generateSVGObj(handleQrData(qrDesign), frame, background, cornersData, dotsData);
+  const svgObject = generateSVGObj(handleQrData(qrDesign), frame, background, cornersData, dotsData, undefined, undefined, undefined, options?.image);
   const svgString = renderToString(svgObject);
 
   if (onlySvg) {
@@ -392,9 +392,13 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
       const objToEdit = generateObjectToEdit(qrData, data, qrDesign) as any;
 
-      if (objToEdit.frame !== undefined && !frame?.type) {
-        objToEdit.frame = undefined;
-        objToEdit.qrOptionsId.frame = undefined;
+      if (objToEdit.frame !== undefined) {
+        if (!frame?.type) {
+          objToEdit.frame = undefined;
+          objToEdit.qrOptionsId.frame = undefined;
+        } else if (!areEquals(objToEdit.frame, frame)) {
+          objToEdit.frame = frame;
+        }
       }
 
       if (!objToEdit.userId) { objToEdit.userId = userInfo.cognito_user_id; }

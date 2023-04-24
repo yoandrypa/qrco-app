@@ -50,7 +50,6 @@ const RenderPreview = (
    getDataBack, avoidDuplicate, ...qrProps}: PreviewProps
 ) => {
   const [preview, setPreview] = useState<boolean>(false);
-  const [qrData, setQrData] = useState<any>(null);
   const [current, setCurrent] = useState<string | null>(externalDesign || null);
   const [anchor, setAnchor] = useState<object | null>(null);
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
@@ -72,6 +71,14 @@ const RenderPreview = (
     setAnchor(currentTarget);
   };
 
+  const handleCloseEvent = () => {
+    if (!externalClose) {
+      handlePreView();
+    } else {
+      externalClose();
+    }
+  }
+
   // frame definition is outside due to it is used in the donwload mechanism
   const frame: FramesType | null = externalFrame || getFrameObject(qrDesign);
 
@@ -89,25 +96,12 @@ const RenderPreview = (
       cornersData={cornersData}
       dotsData={dotsData}
       overrideValue={undefined}
-    /> // @ts-ignore
-    setQrData(render);
+    />
+
+    const t = renderToString(render);
+    if (getDataBack) { getDataBack(t); }
+    setCurrent(t);
   };
-
-  const handleCloseEvent = () => {
-    if (!externalClose) {
-      handlePreView();
-    } else {
-      externalClose();
-    }
-  }
-
-  useEffect(() => {
-    if (qrData) { // @ts-ignore
-      const t = renderToString(qrData);
-      if (getDataBack) { getDataBack(t); }
-      setCurrent(t);
-    }
-  }, [qrData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (current && qrDesign?.image?.length && !done.current) {
@@ -165,7 +159,7 @@ const RenderPreview = (
 
   return (
     <>
-      <Box sx={{display: 'none'}}>{qrData}</Box>
+      {/*<Box sx={{display: 'none'}}>{qrData}</Box>*/}
       {!avoidDuplicate && !externalClose && (<Box onClick={handlePreView} sx={{cursor: !override ? 'pointer' : 'normal'}}>
         {current && !updating ? (
           <>
