@@ -1,6 +1,7 @@
-import { ChangeEvent, ReactNode } from "react";
+import { ChangeEvent, ReactElement } from "react";
 
-type TEventPayload = ChangeEvent<HTMLInputElement> | string | number | boolean | string[];
+export type TEventPayload = ChangeEvent<HTMLInputElement> | string | number | boolean | string[];
+export type THandleValues = (item: string, index?: number) => (payload: TEventPayload) => void;
 
 export interface IIconProps {
   enabled: boolean;
@@ -11,7 +12,7 @@ export interface IIconProps {
 export interface IFormProps<IQrData> {
   index?: number;
   data: IQrData;
-  handleValues: (item: string, index?: number) => (payload: TEventPayload) => void;
+  handleValues: THandleValues;
 }
 
 export interface IQrSetting<IQrData> {
@@ -21,8 +22,8 @@ export interface IQrSetting<IQrData> {
   tip?: string;
   isDynamic?: boolean;
   isMonetized?: boolean;
-  renderIcon: (props: IIconProps) => ReactNode;
-  renderForm: (props: IFormProps<IQrData>) => ReactNode;
+  renderIcon: (props: IIconProps) => ReactElement;
+  renderForm: (props: IFormProps<IQrData>) => ReactElement;
   getDefaultQrData: () => IQrData;
   devOnly?: boolean;
 }

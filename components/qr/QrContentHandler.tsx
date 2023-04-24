@@ -11,7 +11,7 @@ import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
 import { qrNameDisplayer } from "../../helpers/qr/helpers";
 import { dynamicQr, dynamicQrTypes } from "./qrtypes";
 import { renderQrIcon } from "./components/commons/helpers";
-import { IQrSetting } from "./components/commons/types";
+import { IQrSetting, TEventPayload } from "./components/commons/types";
 import valuesHanlder from "./helperFunction";
 import Common from "./helperComponents/Common";
 
@@ -44,7 +44,7 @@ const QrContentHandler = () => { // @ts-ignore
   // @ts-ignore
   const qrType: IQrSetting = dynamicQrTypes[selected] || { id: selected };
 
-  const handleValues = (item: string, index?: number) => (payload: ChangeEvent<HTMLInputElement> | string | boolean | string[]) => {
+  const handleValues = (item: string, index?: number) => (payload: TEventPayload) => {
     valuesHanlder(setData, item, payload, index);
   };
 
