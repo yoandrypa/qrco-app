@@ -5,12 +5,12 @@ import Typography from "@mui/material/Typography";
 import { grey } from "@mui/material/colors";
 import { useTheme } from "@mui/system";
 import { qrNameDisplayer } from "../../../helpers/qr/helpers";
-import { ISettingQr } from "../components/commons/types";
+import { IQrSetting } from "../components/commons/types";
 import { renderQrIcon } from "../components/commons/helpers";
 
 interface TypeSelectorProps {
   handleSelect: (payload: string) => void;
-  qrType: ISettingQr<any>;
+  qrType: IQrSetting<any>;
   selected: boolean;
   enabled?: boolean;
   isDynamic?: boolean;

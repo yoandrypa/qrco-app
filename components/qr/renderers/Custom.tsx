@@ -89,8 +89,8 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
   const handleAdd = useCallback((item: string) => () => {
     doneFirst.current = true;
     setData((prev: DataType) => {
-      const newData = {...prev};
-      if (!newData.custom) { newData.custom = []; } // @ts-ignore
+      const newData = { ...prev };
+      if (!newData.custom) newData.custom = []; // @ts-ignore
       const newSection = sectionPreConfig(item, selected); // @ts-ignore
       newData.custom.push(newSection);
       setExpander((prev: string[]) => {
@@ -118,11 +118,12 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
   useEffect(() => {
     if (predefined) {
       setData((prev: DataType) => {
-        const newData = {...prev, custom: []};
+        const newData = { ...prev };
+        if (!newData.custom) newData.custom = [];
         predefined.forEach((item, index) => { // @ts-ignore
           const newSection = sectionPreConfig(item, selected); // @ts-ignore
           newData.custom.push(newSection); // @ts-ignore
-          if (index === 0) { setExpander([newSection.expand]); }
+          if (index === 0) setExpander([newSection.expand]);
         });
         return newData;
       });

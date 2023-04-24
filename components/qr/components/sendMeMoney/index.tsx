@@ -4,10 +4,10 @@ import dynamic from "next/dynamic";
 const Icon = dynamic(() => import('@mui/icons-material/CreditCard'));
 const Form = dynamic(() => import('./form'));
 
-import { IIconProps, IFormProps, ISettingQr, IData } from './types';
+import { IIconProps, IFormProps, IQrSetting, IData } from './types';
 import { parseIconStyle } from '../commons/helpers';
 
-const setting: ISettingQr<IData> = {
+const setting: IQrSetting<IData> = {
   id: 'sendMeMoney',
   name: 'Send Me Money',
   description: 'Receive payments worldwide',

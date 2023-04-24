@@ -10,8 +10,10 @@ import dynamic from "next/dynamic";
 import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
 import { qrNameDisplayer } from "../../helpers/qr/helpers";
 import { dynamicQr, dynamicQrTypes } from "./qrtypes";
-import valuesHanlder from "./helperFunction";
 import { renderQrIcon } from "./components/commons/helpers";
+import { IQrSetting } from "./components/commons/types";
+import valuesHanlder from "./helperFunction";
+import Common from "./helperComponents/Common";
 
 const CardDataStatic = dynamic(() => import("./renderers/custom/CardDataStatic"));
 const Custom = dynamic(() => import("./renderers/Custom"));
@@ -40,7 +42,7 @@ type QrContentHandlerProps = {
 const QrContentHandler = () => { // @ts-ignore
   const { data, setData, selected, setIsWrong, userInfo, options }: QrContentHandlerProps = useContext(Context);
   // @ts-ignore
-  const qrType = dynamicQrTypes[selected] || { id: selected };
+  const qrType: IQrSetting = dynamicQrTypes[selected] || { id: selected };
 
   const handleValues = (item: string, index?: number) => (payload: ChangeEvent<HTMLInputElement> | string | boolean | string[]) => {
     valuesHanlder(setData, item, payload, index);
@@ -53,7 +55,11 @@ const QrContentHandler = () => { // @ts-ignore
   const renderSel = () => {
     if (!selected) { return null; }
 
-    if (qrType?.renderForm) return qrType.renderForm({ data, handleValues });
+    if (qrType?.renderForm) return (
+      <Common msg={qrType.tip}>
+        {qrType.renderForm({data, handleValues})}
+      </Common>
+    )
 
     switch (selected) {
       case 'web': {

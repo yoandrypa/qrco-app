@@ -2,6 +2,7 @@ import pluralize from "pluralize";
 import { formatBytes } from "../../utils";
 import { FILE_LIMITS } from "../../consts";
 import { dynamicQrTypes as dynamicQrSettings } from "./components"
+import { IQrSetting } from "./components/commons/types"
 
 export const dynamicQrTypes = {
   web: {
@@ -39,9 +40,6 @@ export const dynamicQrTypes = {
   },
   coupon: {
     description: "Share a coupon"
-  },
-  donation: {
-    description: "Get donations from your supporters worldwide",
   },
   petId: {
     description: "Share your pet's information"
@@ -99,10 +97,6 @@ export const dynamicQr = {
     tip: "Smart labels.",
     predefined: ['title', 'tags', 'gallery']
   },
-  donation: {
-    tip: "Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.",
-    predefined: ['donation']
-  },
   pdf: {
     tip: handleAssetDesc('pdf'),
     predefined: ['title', 'pdf']
@@ -153,4 +147,9 @@ export const staticQrTypes = {
     description: "Receive crypto on your eWallet",
     devOnly: true
   }
+}
+
+export function getQrType(qrTypeId: string): IQrSetting<any> {
+  // @ts-ignore
+  return dynamicQrTypes[qrTypeId] || staticQrTypes[qrTypeId];
 }

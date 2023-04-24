@@ -16,8 +16,10 @@ export default function ButtonMyQrLynks() {
 
   const onClick = () => {
     startWaiting();
-    clearData(true);
-    router.push('/').finally(releaseWaiting);
+    router.push('/').finally(() => {
+      clearData(true);
+      releaseWaiting();
+    });
   }
 
   return (

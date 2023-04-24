@@ -1,4 +1,4 @@
-export type { IIconProps, IFormProps, ISettingQr } from '../commons/types';
+export type { IIconProps, IFormProps, IQrSetting } from '../commons/types';
 
 export interface IData {
   concept: string;

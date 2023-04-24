@@ -24,6 +24,7 @@ import { releaseWaiting, startWaiting } from "../Waiting";
 import { startAuthorizationFlow } from "../../libs/utils/auth";
 import validator from "./validator";
 import { FORCE_EXTRA, IGNORE_VALIDATOR } from "../../consts";
+import { getQrType } from "./qrtypes";
 
 const ErrorsDialog = dynamic(() => import("./helperComponents/looseComps/ErrorsDialog"));
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
@@ -155,8 +156,11 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     if (isFirstStep) {
       // Step 1: QR_TYPE_ROUTE or / ==>  QR_CONTENT_ROUTE
       startWaiting();
-      router.push(QR_CONTENT_ROUTE).finally(releaseWaiting);
 
+      const qrType = getQrType(selected);
+      if (qrType?.getDefaultQrData) setData(qrType.getDefaultQrData());
+
+      router.push(QR_CONTENT_ROUTE).finally(releaseWaiting);
     } else if (router.pathname === QR_CONTENT_ROUTE) {
       // Step 2: QR_CONTENT_ROUTE ==> QR_DESIGN_ROUTE
       startWaiting();
