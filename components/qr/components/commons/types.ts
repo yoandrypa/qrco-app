@@ -18,7 +18,7 @@ export interface IFormProps<IQrData> {
 export interface IQrSetting<IQrData> {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   tip?: string;
   isDynamic?: boolean;
   isMonetized?: boolean;
