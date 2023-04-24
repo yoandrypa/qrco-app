@@ -14,6 +14,7 @@ const setting: IQrSetting<IData> = {
   description: 'Receive payments worldwide',
   isMonetized: true,
   isDynamic: true,
+  devOnly: true,
   renderIcon: (props: IIconProps) => <Icon sx={parseIconStyle(props)} />,
   renderForm: (props: IFormProps<IData>) => <Form {...props} />,
   getDefaultQrData: () => ({
