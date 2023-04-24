@@ -99,19 +99,28 @@ const validator = (custom: CustomType[], forceExtra: boolean, ignore?: boolean) 
         if (x.component === 'easiness' && !Object.keys(x.data?.easiness || {}).length) {
           errors.push(`Select at least an easiness in section ${index + 1}`);
         }
-        if (x.component === 'links') {
+        if (['links', 'buttons'].includes(x.component)) {
+          let name = x.component.slice(0, -1);
           if (!x.data?.links?.length) {
-            errors.push(`Enter at least one link in section ${index + 1}`);
+            errors.push(`Enter at least one ${name} in section ${index + 1} (${x.component})`);
           } else {
             if (!x.data?.linksOnlyLinks) {
               if (x.data.links.some(xx => !xx.label?.trim().length)) {
-                errors.push(`Missing at least one link label in section ${index + 1}`);
+                errors.push(`Missing at least one ${name} label in section ${index + 1} (${x.component})`);
               }
             }
             if (x.data?.links.some(xx => !xx.link?.trim().length)) {
-              errors.push(`Missing at least one link in section ${index + 1}`);
-            } else if (x.data?.links.some(xx => !isValidUrl(xx.link))) {
-              errors.push(`There is at least one invalid link in section ${index + 1}`);
+              errors.push(`Missing at least one ${name === 'link' ? 'link' : 'item'} in section ${index + 1} (${x.component})`);
+            } else {
+              if (x.data?.links.some(xx => (xx.kind === undefined || xx.kind === 'link') && !isValidUrl(xx.link))) {
+                errors.push(`There is at least one invalid link in section ${index + 1} (${x.component})`);
+              }
+              if (x.data?.links.some(xx => xx.kind === 'email' && !EMAIL.test(xx.link))) {
+                errors.push(`There is at least one invalid button email in section ${index + 1} (${x.component})`);
+              }
+              if (x.data?.links.some(xx => ['call', 'sms', 'whatsapp'].includes(xx.kind || '') && !PHONE.test(xx.link))) {
+                errors.push(`There is at least one invalid button phone or whatsapp number in section ${index + 1} (${x.component})`);
+              }
             }
           }
         }
@@ -198,7 +207,7 @@ const validator = (custom: CustomType[], forceExtra: boolean, ignore?: boolean) 
           errors.push(`Enter the coupon code in section ${index + 1}`);
         }
         if (x.component === 'title' && !exists(x, 'titleAbout') && !exists(x, 'descriptionAbout')) {
-          errors.push(`Enter at least one of these title of description in section ${index + 1}`);
+          errors.push(`Enter at least one of these title or description in section ${index + 1}`);
         }
         if (x.component === 'petId') {
           if (!exists(x, 'petName')) { errors.push(`Enter the pet name in section ${index + 1}`); }

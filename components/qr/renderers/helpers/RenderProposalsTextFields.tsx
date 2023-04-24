@@ -3,6 +3,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import {areEquals} from "../../../helpers/generalFunctions";
 
 interface RenderTextFieldsProps {
   label?: string;
@@ -12,11 +13,10 @@ interface RenderTextFieldsProps {
   isError?: boolean;
   value: string;
   item?: string;
-  index?: number;
   options: string[];
 }
 
-const RenderProposalsTextFields = ({ value, handleValues, placeholder, label, item, required, isError, options, index }: RenderTextFieldsProps) => {
+const RenderProposalsTextFields = ({ value, handleValues, placeholder, label, item, required, isError, options }: RenderTextFieldsProps) => {
   const handleBefore = (newValue: string | null) => {
     const value = newValue || '';
     if (item !== undefined) {
@@ -34,7 +34,7 @@ const RenderProposalsTextFields = ({ value, handleValues, placeholder, label, it
       inputValue={value}
       onInputChange={(event, newInputValue) => { handleBefore(newInputValue); }}
       disableClearable
-      renderInput={(params) => (
+      renderInput={params => (
         <TextField
           {...params}
           fullWidth
@@ -60,9 +60,8 @@ const RenderProposalsTextFields = ({ value, handleValues, placeholder, label, it
     />);
 };
 
-// @ts-ignore
-function notIf(current, next) {
-  return current.value === next.value && current.isError === next.isError && current.index === next.index;
-}
+const notIf = (current: RenderTextFieldsProps, next: RenderTextFieldsProps) => (
+  current.value === next.value && current.isError === next.isError && areEquals(current.options, next.options)
+);
 
 export default memo(RenderProposalsTextFields, notIf);

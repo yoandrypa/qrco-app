@@ -48,7 +48,7 @@ const RenderContent = ({component, handleValues, index, data, setData, predefine
     {component === 'justEmail' && <RenderEmail data={data} handleValues={handleValues} index={index}/>}
     {component === 'email' && <RenderEmailWeb data={data} handleValues={handleValues} index={index}/>}
     {component === 'easiness' && <RenderEasiness data={data} handleValues={handleValues} index={index}/>}
-    {component === 'links' && <RenderLinks data={data} setData={setData} index={index}/>}
+    {['links', 'buttons'].includes(component) && <RenderLinks data={data} setData={setData} index={index} isButtons={component === 'buttons'}/>}
     {component === 'organization' && <RenderOrganization data={data} handleValues={handleValues} index={index}/>}
     {component === 'phones' && <RenderPhones data={data} handleValues={handleValues} index={index}/>}
     {component === 'gallery' && <RenderAssetsData data={data} setData={setData} type="gallery" index={index}

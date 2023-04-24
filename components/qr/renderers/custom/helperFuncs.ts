@@ -3,6 +3,7 @@ import { getUuid } from "../../../../helpers/qr/helpers";
 
 export const components = {
   address: { name: 'Address' },
+  buttons: { name: 'Buttons', data: { hideHeadLine: true } },
   company: { name: 'Company' },
   date: { name: 'Date' },
   donation: { name: 'Donation', isMonetized: true, data: { iconId: 'Coffee1', buttonText: 'Donation', unitAmount: 2 } },
@@ -16,8 +17,8 @@ export const components = {
   phones: { name: 'Phones' },
   presentation: { name: 'Presentation' },
   socials: { name: 'Social networks', data: { socialsOnlyIcons: true, hideHeadLine: true } },
-  title: { name: 'Title and description' },
   tags: { name: 'Tags' },
+  title: { name: 'Title and description' },
   contact: { name: 'Contact form' },
   sms: { name: 'Contact via SMS' },
   keyvalue: { name: 'Details' },
@@ -26,11 +27,11 @@ export const components = {
   video: { name: 'Video files' },
   single: { name: 'Single text' },
   web: { name: 'Web' },
-  action: { name: 'Action button' },
+  action: { name: 'Action button', notInMenu: true },
   couponInfo: { name: 'Promotion info', notInMenu: true },
   couponData: { name: 'Coupon data', notInMenu: true },
   petId: { name: 'Pet presentation', notInMenu: true },
-  sku: { name: 'Product', notInMenu: true },
+  sku: { name: 'Product', notInMenu: true }
 };
 
 export interface RenderSocialsProps {

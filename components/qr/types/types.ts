@@ -69,8 +69,7 @@ export type OpeningType = {
 } | {} | null;
 
 export type LinkType = {
-  label?: string;
-  link: string;
+  label?: string; link: string; kind?: string;
 }
 
 export type KeyValues = { key?: string; value: string; }
@@ -482,4 +481,8 @@ export type MediaField = DragField & {
 export interface CustomCommon {
   data?: DataType;
   handleValue: Function;
+}
+
+export interface RenderLinksBtnsProps {
+  index: number; data?: Type; setData: Function; isButtons: boolean;
 }
