@@ -22,7 +22,6 @@ const RenderTitleDesc = dynamic(() => import("../contents/RenderTitleDesc"));
 const RenderActionButton = dynamic(() => import("../contents/RenderActionButton"));
 const RenderSingleText = dynamic(() => import("../contents/RenderSingleText"));
 const RenderKeyValue = dynamic(() => import("../contents/RenderKeyValue"));
-const RenderContactForm = dynamic(() => import("../contents/RenderContactForm"));
 const RenderWeb = dynamic(() => import("../contents/RenderWeb"));
 const RenderTags = dynamic(() => import("../contents/RenderTags"));
 const RenderCouponInfo = dynamic(() => import("../contents/RenderCouponInfo"));
@@ -82,7 +81,6 @@ const RenderContent = ({ component, handleValues, index, data, setData, predefin
                                                   totalFiles={predefined === undefined ? 1 : FILE_LIMITS['video'].totalFiles} />}
       {component === 'keyvalue' && <RenderKeyValue index={index} setData={setData} data={data} topics="" />}
       {component === 'web' && <RenderWeb data={data} handleValues={handleValues} index={index} />}
-      {component === 'contact' && <RenderContactForm index={index} handleValues={handleValues} data={data} />}
       {component === 'tags' && <RenderTags index={index} handleValues={handleValues} data={data} />}
       {component === 'sms' && <RenderSmsForm index={index} handleValues={handleValues} data={data} />}
       {component === 'couponInfo' && <RenderCouponInfo index={index} handleValues={handleValues} data={data} />}
