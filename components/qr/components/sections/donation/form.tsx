@@ -4,33 +4,20 @@ import session from "@ebanux/ebanux-utils/sessionStorage";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 
-import TextBox from "../../../forms/fields/TextBox";
-import NumberBox from "../../../forms/fields/NumberBox";
-import ProposalsTextBox from "../../../forms/fields/ProposalsTextBox";
-import Caption from "../helpers/Caption";
-import SelectIconBox from "../../../forms/fields/SelectIconBox";
-import EbxIcon from "../../../icons";
+import TextBox from "../../../../forms/fields/TextBox";
+import NumberBox from "../../../../forms/fields/NumberBox";
+import EbxIcon from "../../../../icons";
+import Caption from "../../../renderers/helpers/Caption";
+import ProposalsTextBox from "../../../../forms/fields/ProposalsTextBox";
+import SelectIconBox from "../../../../forms/fields/SelectIconBox";
 
-export interface DataType {
-  title: string;
-  buttonText: string;
-  message: string;
-  unitAmount: number;
-  email: string;
-  ownerId: string;
-  iconId: string;
-}
+import { IFormProps, ISectionData } from "./types";
 
-export interface PropsType {
-  index: number;
-  data: DataType;
-  handleValues: Function;
-}
-
-function RenderDonation({ data, index, handleValues }: PropsType) {
+export default function Form({ data, index, handleValues }: IFormProps<ISectionData>) {
   const onChange = (attr: string) => (value: any, valid: boolean) => {
     handleValues(attr, index)(value);
   }
+
   useEffect(() => {
     if (data.email === undefined) data.email = session.currentUser.email;
     if (data.ownerId === undefined) data.ownerId = session.currentUser.cognito_user_id;
@@ -94,5 +81,3 @@ function RenderDonation({ data, index, handleValues }: PropsType) {
     </Box>
   )
 }
-
-export default RenderDonation
