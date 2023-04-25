@@ -110,13 +110,13 @@ const validator = (custom: CustomType[], forceExtra: boolean, ignore?: boolean) 
             if (x.data?.links.some(xx => !xx.link?.trim().length)) {
               errors.push(`Missing at least one ${name === 'link' ? 'link' : 'item'} in section ${index + 1} (${x.component})`);
             } else {
-              if (x.data?.links.some(xx => (xx.kind === undefined || xx.kind === 'link') && !isValidUrl(xx.link))) {
+              if (x.data?.links.some(xx => (xx.type === undefined || xx.type === 'link') && !isValidUrl(xx.link))) {
                 errors.push(`There is at least one invalid link in section ${index + 1} (${x.component})`);
               }
-              if (x.data?.links.some(xx => xx.kind === 'email' && !EMAIL.test(xx.link))) {
+              if (x.data?.links.some(xx => xx.type === 'email' && !EMAIL.test(xx.link))) {
                 errors.push(`There is at least one invalid button email in section ${index + 1} (${x.component})`);
               }
-              if (x.data?.links.some(xx => ['call', 'sms', 'whatsapp'].includes(xx.kind || '') && !PHONE.test(xx.link))) {
+              if (x.data?.links.some(xx => ['call', 'sms', 'whatsapp'].includes(xx.type || '') && !PHONE.test(xx.link))) {
                 errors.push(`There is at least one invalid button phone or whatsapp number in section ${index + 1} (${x.component})`);
               }
             }

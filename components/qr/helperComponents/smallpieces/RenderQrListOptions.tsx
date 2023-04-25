@@ -54,6 +54,7 @@ const RenderQrListOptions = ({qr, handleEdit, setConfirm, handlePauseQrLink, han
   const handleDetails = () => {
     setLoading(true);
     router.push("/qr/" + (new Date(qr.createdAt)).getTime() + "/details").then(() => setLoading(false));
+    // router.push("/qr/" + (qr.createdAt.getTime() - 1) + "/details").then(() => setLoading(false));
   };
 
   const handlePreview = () => {
