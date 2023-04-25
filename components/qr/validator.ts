@@ -104,11 +104,9 @@ const validator = (custom: CustomType[], forceExtra: boolean, ignore?: boolean) 
           if (!x.data?.links?.length) {
             errors.push(`Enter at least one ${name} in section ${index + 1} (${x.component})`);
           } else {
-            if (!x.data?.linksOnlyLinks) {
-              if (x.data.links.some(xx => !xx.label?.trim().length)) {
+            if (!x.data?.linksOnlyLinks && x.data.links.some(xx => !xx.label?.trim().length)) {
                 errors.push(`Missing at least one ${name} label in section ${index + 1} (${x.component})`);
               }
-            }
             if (x.data?.links.some(xx => !xx.link?.trim().length)) {
               errors.push(`Missing at least one ${name === 'link' ? 'link' : 'item'} in section ${index + 1} (${x.component})`);
             } else {

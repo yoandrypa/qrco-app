@@ -30,7 +30,6 @@ const getOptions = (item?: string) => {
     if (item === 'email') { return ['Email', 'Email me', 'Write me an email', 'Send me an email']; }
     if (item === 'sms') { return ['SMS', 'Text me', 'Send me an SMS', 'Send me a text']; }
   }
-
   return ['My website', 'My youtube channel', 'My blog', 'My portfolio', 'My podcast', 'My store'];
 }
 
@@ -98,9 +97,9 @@ export default function RenderLinks({data, setData, index, isButtons}: RenderLin
         }
       } else {
         if (e.target.checked) { // @ts-ignore
-          newData.custom[index].data.linksOnlyLinks = true;
+          newData.custom[index].data[item] = true;
         } else { // @ts-ignore
-          delete newData.custom[index].data.linksOnlyLinks;
+          delete newData.custom[index].data[item];
         }
       }
       return newData;
@@ -126,7 +125,7 @@ export default function RenderLinks({data, setData, index, isButtons}: RenderLin
       sx.mr = '-7px';
     }
     return (
-      <Tooltip title={'Remove link'}>
+      <Tooltip title={`Remove ${isButtons ? 'button' : 'link'}`}>
         <IconButton onClick={remove(idx)} sx={sx}>
           <DeleteIcon color="error"/>
         </IconButton>
@@ -189,7 +188,7 @@ export default function RenderLinks({data, setData, index, isButtons}: RenderLin
           <TableCell sx={{p: 0, borderBottom: 'none', pt: '5px'}} align="right">
             {idx + 1 === length ? (
               <>
-                <Tooltip title={'Add a link'}>
+                <Tooltip title={`Add a ${isButtons ? 'button' : 'link'}`}>
                   <IconButton onClick={add}><AddBoxIcon color="primary"/></IconButton>
                 </Tooltip>
                 {!isWide && idx !== 0 && removeItem()}
@@ -217,11 +216,9 @@ export default function RenderLinks({data, setData, index, isButtons}: RenderLin
   return (
     <Box sx={{width: '100%'}}>
       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided: any) => renderTable(provided)}
-        </Droppable>
+        <Droppable droppableId="droppable">{(provided: any) => renderTable(provided)}</Droppable>
       </DragDropContext>
-      {!isButtons && (
+      {!isButtons ? (
         <Box sx={{width: '100%', display: 'flex', mt: '-5px', flexDirection: {sm: 'row', xs: 'column'}}}>
           <FormControl disabled={data?.linksOnlyLinks}>
             <FormControlLabel control={<Switch onChange={handleOnly('avoidButtons')} checked={!Boolean(data?.avoidButtons)} />}
@@ -232,6 +229,11 @@ export default function RenderLinks({data, setData, index, isButtons}: RenderLin
               label="Only links" />
           </FormControl>
         </Box>
+      ) : (
+        <FormControl>
+          <FormControlLabel control={<Switch onChange={handleOnly('showIcons')} checked={data?.showIcons || false} />}
+                            label="Show icons" />
+        </FormControl>
       )}
     </Box>
   );

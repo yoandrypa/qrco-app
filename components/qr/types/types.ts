@@ -93,6 +93,7 @@ export type SocialNetworksType = { network: SocialsType, value?: string };
 export type Type = {
   sectionArrangement?: string;
   invertIconColors?: boolean;
+  showIcons?: boolean;
   extras?: any;
   customFont?: boolean;
   headLineFontStyle?: string;
