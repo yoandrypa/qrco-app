@@ -69,7 +69,7 @@ export type OpeningType = {
 } | {} | null;
 
 export type LinkType = {
-  label?: string; link: string; kind?: string;
+  label?: string; link: string; type?: string;
 }
 
 export type KeyValues = { key?: string; value: string; }

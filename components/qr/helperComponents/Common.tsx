@@ -1,16 +1,15 @@
 import {ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
 
 import Typography from "@mui/material/Typography";
-import InputAdornment from "@mui/material/InputAdornment";
 import ArticleIcon from '@mui/icons-material/ArticleOutlined';
 import DesignServicesIcon from '@mui/icons-material/DesignServices';
-import TextField from "@mui/material/TextField";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import Context from "../../context/Context";
+import RenderNameAndSecret from "./commonHelper/RenderNameAndSecret";
 import RenderQRCommons from "../renderers/RenderQRCommons";
 import {NO_MICROSITE, PROFILE_IMAGE} from "../constants";
 import {download} from "../../../handlers/storage";
@@ -203,22 +202,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       {userInfo ? (
         <Box sx={{ display: 'flex' }}>
           <Box sx={{ width: '100%' }}>
-            <TextField
-              label="QRLynk name"
-              required
-              size="small"
-              fullWidth
-              margin="dense"
-              value={data?.qrName || ''}
-              onChange={handleValue('qrName')}
-              InputProps={{
-                endAdornment: (
-                  !Boolean(data?.qrName?.trim().length) ? (<InputAdornment position="end">
-                    <Typography color="error">{'REQUIRED'}</Typography>
-                  </InputAdornment>) : null
-                )
-              }}
-            />
+            <RenderNameAndSecret handleValue={handleValue} qrName={data?.qrName} secret={data?.secret} />
             {![...NO_MICROSITE, 'web'].includes(selected) && data?.isDynamic ? (
               <Box sx={{width: '100%', position: 'relative'}}>
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>

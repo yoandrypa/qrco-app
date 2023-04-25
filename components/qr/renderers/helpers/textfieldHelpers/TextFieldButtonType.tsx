@@ -29,35 +29,35 @@ export default function TextFieldButtonType({anchor, type, handler, setAnchor}: 
         <MenuItem
           key="link"
           onClick={() => handler('link')}
-          sx={{color: type === undefined || type === 'link' ? 'primary.dark' : 'text.disabled'}}>
+          sx={{color: type === undefined || type === 'link' ? 'primary.dark' : 'primary.light'}}>
           <LinkIcon fontSize="small" sx={{mr: 1}}/>
           <Typography sx={{fontWeight: type === undefined || type === 'link' ? 'bold' : undefined}}>{renderText('link', '')}</Typography>
         </MenuItem>
         <MenuItem
           key="email"
           onClick={() => handler('email')}
-          sx={{color: type !== 'email' ? 'text.disabled' : 'primary.dark'}}>
+          sx={{color: type !== 'email' ? 'primary.light' : 'primary.dark'}}>
           <MailIcon fontSize="small" sx={{mr: 1}}/>
           <Typography sx={{fontWeight: type === 'email' ? 'bold' : undefined}}>{renderText('email', '')}</Typography>
         </MenuItem>
         <MenuItem
           key="call"
           onClick={() => handler('call')}
-          sx={{color: type !== 'call' ? 'text.disabled' : 'primary.dark'}}>
+          sx={{color: type !== 'call' ? 'primary.light' : 'primary.dark'}}>
           <CallIcon fontSize="small" sx={{mr: 1}}/>
           <Typography sx={{fontWeight: type === 'cell' ? 'bold' : undefined}}>{renderText('call', '')}</Typography>
         </MenuItem>
         <MenuItem
           key="whatsapp"
           onClick={() => handler('whatsapp')}
-          sx={{color: type !== 'whatsapp' ? 'text.disabled' : 'primary.dark'}}>
+          sx={{color: type !== 'whatsapp' ? 'primary.light' : 'primary.dark'}}>
           <WhatsAppIcon fontSize="small" sx={{mr: 1}}/>
           <Typography sx={{fontWeight: type === 'whatsapp' ? 'bold' : undefined}}>{renderText('whatsapp', '')}</Typography>
         </MenuItem>
         <MenuItem
           key="sms"
           onClick={() => handler('sms')}
-          sx={{color: type !== 'sms' ? 'text.disabled' : 'primary.dark'}}>
+          sx={{color: type !== 'sms' ? 'primary.light' : 'primary.dark'}}>
           <SmsIcon fontSize="small" sx={{mr: 1}}/>
           <Typography sx={{fontWeight: type === 'sms' ? 'bold' : undefined}}>{renderText('sms', '')}</Typography>
         </MenuItem>
