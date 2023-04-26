@@ -74,6 +74,7 @@ export default function QrList({ title }: any) {
     if (!objectToClone.image?.trim()?.length && qr.qrOptionsId?.image?.trim()?.length) { // @ts-ignore
       objectToClone.image = qr.qrOptionsId.image;
     }
+    if (objectToClone.secret !== undefined) { delete objectToClone.secret; }
     setOptions(objectToClone);
     router.push(QR_CONTENT_ROUTE, undefined, { shallow: true }).finally(() => releaseWaiting());
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
