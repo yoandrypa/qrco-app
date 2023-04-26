@@ -255,8 +255,6 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
       // Check if the section is monetized
       data.isMonetized ||= section.isMonetized;
-      // @ts-ignore | Legacy check if the section is monetized TODO: Remove after edit and save all donation QRs.
-      data.isMonetized ||= components[section.component]?.isMonetized;
     }
   }
 

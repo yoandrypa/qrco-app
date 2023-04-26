@@ -1,7 +1,7 @@
 import sendMeMoney from './sendMeMoney';
 import donation from './donation';
-import sDonation from './sections/donation';
-import sContact from './sections/contact';
+import sDonation from './donation/section';
+import sContact from './contact/section';
 
 export const dynamicQrTypes = {
   // Add here all reference to the dynamic Qr types.
