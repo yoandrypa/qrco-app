@@ -1,31 +1,21 @@
-import React, { useEffect } from 'react'
-import session from "@ebanux/ebanux-utils/sessionStorage";
+import React from 'react'
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 
-import TextBox from "../../../forms/fields/TextBox";
-import NumberBox from "../../../forms/fields/NumberBox";
-import EbxIcon from "../../../icons";
-import Caption from "../../renderers/helpers/Caption";
+import TextBox from "../../../../forms/fields/TextBox";
+import NumberBox from "../../../../forms/fields/NumberBox";
+import EbxIcon from "../../../../icons";
+import Caption from "../../../renderers/helpers/Caption";
 
-import { IFormProps, IData } from "./types";
+import { IFormProps, ISectionData } from "./types";
 
-export default function Form({ data, index, handleValues }: IFormProps<IData>) {
+export default function Form({ data, index, handleValues }: IFormProps<ISectionData>) {
   const onChange = (attr: string) => (value: any, valid: boolean) => {
     handleValues(attr, index)(value);
   }
 
-  useEffect(() => {
-    if (data.email === undefined) data.email = session.currentUser.email;
-    if (data.ownerId === undefined) data.ownerId = session.currentUser.cognito_user_id;
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const {
-    concept = '',
-    description = '',
-    unitAmount = 1,
-  } = data || {};
+  const { concept, description, unitAmount } = data || {};
 
   return (
     <Box sx={{ width: '100%' }}>

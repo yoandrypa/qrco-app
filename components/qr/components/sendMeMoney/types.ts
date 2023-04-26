@@ -1,9 +1,9 @@
-export type { IIconProps, IFormProps, IQrSetting } from '../commons/types';
+import { IQrSection } from '../commons/types';
+import { ISectionData } from './section/types';
 
-export interface IData {
-  concept: string;
-  description: string;
-  unitAmount: number;
-  email: string;
-  ownerId: string;
+export type { IIconProps, IFormProps, IQrSetting, IQrSection } from '../commons/types';
+
+export interface IQrData {
+  isDynamic: boolean,
+  custom: IQrSection<ISectionData>[];
 }

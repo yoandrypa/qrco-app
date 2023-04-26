@@ -1,28 +1,35 @@
 import React from "react";
 import dynamic from "next/dynamic";
 
+import qrSection from "./section";
+
 const Icon = dynamic(() => import('@mui/icons-material/CreditCard'));
-const Form = dynamic(() => import('./form'));
 
-import { IIconProps, IFormProps, IQrSetting, IData } from './types';
-import { parseIconStyle } from '../commons/helpers';
-import session from "@ebanux/ebanux-utils/sessionStorage";
+import { IIconProps, IFormProps, IQrSetting, IQrData } from './types';
+import { parseIconStyle, uuid } from '../commons/helpers';
 
-const setting: IQrSetting<IData> = {
-  id: 'sendMeMoney',
+const componentId = 'sendMeMoney';
+
+const setting: IQrSetting<IQrData> = {
+  id: componentId,
   name: 'Send Me Money',
   description: 'Receive payments worldwide',
-  isMonetized: true,
-  isDynamic: true,
-  devOnly: true,
+  tip: 'Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.',
   renderIcon: (props: IIconProps) => <Icon sx={parseIconStyle(props)} />,
-  renderForm: (props: IFormProps<IData>) => <Form {...props} />,
+  renderForm: ({ data, ...props }: IFormProps<IQrData>) => {
+    return qrSection.renderForm({
+      data: data.custom[0].data, index: 0, ...props
+    })
+  },
   getDefaultQrData: () => ({
-    concept: '',
-    description: '',
-    unitAmount: 5,
-    email: session.currentUser?.email as string,
-    ownerId: session.currentUser?.cognito_user_id as string,
+    isDynamic: true,
+    isMonetized: true,
+    custom: [{
+      component: componentId,
+      isMonetized: true,
+      expand: uuid(),
+      data: qrSection.getDefaultQrData(),
+    }],
   }),
 };
 
