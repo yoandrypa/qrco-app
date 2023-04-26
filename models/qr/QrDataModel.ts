@@ -10,6 +10,7 @@ const QrDataSchema = new dynamoose.Schema({
   },*/
   qrName: { type: String, required: true },
   qrType: { type: String, required: true },
+  secret: String,
   isDynamic: { type: Boolean, default: false },
   shortLinkId: { type: [LinkModel, Object] },
   userId: { type: UserModel, hashKey: true },

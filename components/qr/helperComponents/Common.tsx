@@ -22,6 +22,8 @@ import valueHanler from "./valueHandler";
 import validator from "../validator";
 import {FORCE_EXTRA, IGNORE_VALIDATOR} from "../../../consts";
 
+import {releaseWaiting, startWaiting} from "../../Waiting";
+
 import dynamic from "next/dynamic";
 
 const ErrorsDialog = dynamic(() => import("./looseComps/ErrorsDialog"));
@@ -38,7 +40,7 @@ interface CommonProps {
 }
 
 function Common({msg, children}: CommonProps) { // @ts-ignore
-  const {selected, data, setData, userInfo, options, isWrong, background, frame, cornersData, dotsData, setLoading} = useContext(Context);
+  const {selected, data, setData, userInfo, options, isWrong, background, frame, cornersData, dotsData} = useContext(Context);
 
   const [loading, setLocalLoading] = useState<boolean>(false);
   const [backImg, setBackImg] = useState<any>(undefined);
@@ -156,10 +158,11 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       setValidationErrors(validate);
     } else {
       lastAction.current = 'saving the data';
-      setLoading(true);
+      startWaiting();
       await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setError, (creationDate?: string) => {
         setData((prev: DataType) => {
-          const newData = {...prev, mode: 'edit'};
+          const newData = {...prev};
+          if (newData.mode !== 'secret') { newData.mode = 'edit'; }
           if (newData.claim !== undefined) {
             delete newData.claim;
           }
@@ -174,7 +177,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           }
           return newData;
         });
-        setLoading(false);
+        releaseWaiting();
       });
     }
   };
@@ -199,10 +202,10 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           autoHideDuration={10500}
         />
       )}
-      {userInfo ? (
+      {userInfo || data.mode === 'secret' ? (
         <Box sx={{ display: 'flex' }}>
           <Box sx={{ width: '100%' }}>
-            <RenderNameAndSecret handleValue={handleValue} qrName={data?.qrName} secret={data?.secret} />
+            <RenderNameAndSecret handleValue={handleValue} qrName={data?.qrName} secret={data?.secret} hideSecret={data.mode === 'secret'} />
             {![...NO_MICROSITE, 'web'].includes(selected) && data?.isDynamic ? (
               <Box sx={{width: '100%', position: 'relative'}}>
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>

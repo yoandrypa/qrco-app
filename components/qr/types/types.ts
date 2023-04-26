@@ -250,6 +250,7 @@ export type DataType = {
   index?: number[];
   includeDescription?: boolean;
   claimable?: boolean;
+  secret?: string;
   preGenerated?: boolean;
   custom?: CustomType[];
   qrName?: string;
