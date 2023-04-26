@@ -205,7 +205,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       {userInfo || data.mode === 'secret' ? (
         <Box sx={{ display: 'flex' }}>
           <Box sx={{ width: '100%' }}>
-            <RenderNameAndSecret handleValue={handleValue} qrName={data?.qrName} secret={data?.secret} hideSecret={data.mode === 'secret'} />
+            <RenderNameAndSecret handleValue={handleValue} qrName={data?.qrName} secret={data?.secret} hideSecret={data.mode === 'secret' || !data?.isDynamic} />
             {![...NO_MICROSITE, 'web'].includes(selected) && data?.isDynamic ? (
               <Box sx={{width: '100%', position: 'relative'}}>
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>
