@@ -22,6 +22,8 @@ import valueHanler from "./valueHandler";
 import validator from "../validator";
 import {FORCE_EXTRA, IGNORE_VALIDATOR} from "../../../consts";
 
+import {releaseWaiting, startWaiting} from "../../Waiting";
+
 import dynamic from "next/dynamic";
 
 const ErrorsDialog = dynamic(() => import("./looseComps/ErrorsDialog"));
@@ -38,7 +40,7 @@ interface CommonProps {
 }
 
 function Common({msg, children}: CommonProps) { // @ts-ignore
-  const {selected, data, setData, userInfo, options, isWrong, background, frame, cornersData, dotsData, setLoading} = useContext(Context);
+  const {selected, data, setData, userInfo, options, isWrong, background, frame, cornersData, dotsData} = useContext(Context);
 
   const [loading, setLocalLoading] = useState<boolean>(false);
   const [backImg, setBackImg] = useState<any>(undefined);
@@ -156,7 +158,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       setValidationErrors(validate);
     } else {
       lastAction.current = 'saving the data';
-      setLoading(true);
+      startWaiting();
       await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setError, (creationDate?: string) => {
         setData((prev: DataType) => {
           const newData = {...prev};
@@ -175,7 +177,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           }
           return newData;
         });
-        setLoading(false);
+        releaseWaiting();
       });
     }
   };

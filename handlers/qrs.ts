@@ -83,7 +83,7 @@ export const edit = async (data: QrDataType) => {
       createdAt = (new Date(createdAt)).getTime();
     }
 
-    const qr = await Qr.get({ userId, createdAt }); 
+    const qr = await Qr.get({ userId, createdAt });
 
     if (!qr) {
       throw new CustomError("QR code was not found.");
