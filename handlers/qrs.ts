@@ -1,6 +1,9 @@
 import * as Qr from "../queries/qr";
 import { CustomError } from "../utils";
 import * as Link from "../queries/link";
+import {getBySecret} from "../queries/qr";
+import {customAlphabet} from "nanoid";
+import {generateUUID} from "listr2/dist/utils/uuid";
 
 // @ts-ignore
 export const create = async (data) => {
@@ -157,6 +160,22 @@ export const pauseQRLink = async (
 export const getItemBySecret = async (secret: string) => {
   try {
     return await Qr.getBySecret(secret);
+  } catch (e: any) {
+    throw new CustomError(e.message, e.statusCode || 500, e);
+  }
+}
+
+// @ts-ignore
+export const generateSecret = async () => {
+  try {
+    const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_", 10);
+    const newSecret = nanoid();
+
+    const data = await Qr.getBySecret(newSecret);
+    if (Boolean(data)) {
+      return await generateSecret();
+    }
+    return newSecret;
   } catch (e: any) {
     throw new CustomError(e.message, e.statusCode || 500, e);
   }
