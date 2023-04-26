@@ -13,7 +13,6 @@ const setting: IQrSetting<ISectionData> = {
   id: 'contact',
   name: 'Contact form',
   isMonetized: false,
-  isDynamic: true,
   renderIcon: (props: IIconProps) => <Icon sx={parseIconStyle(props)} />,
   renderForm: (props: IFormProps<ISectionData>) => <Form {...props} />,
   getDefaultQrData: () => ({
