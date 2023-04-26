@@ -87,7 +87,7 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
   const command = (): void => {
     if (mustReload.current) {
       mustReload.current = false;
-      setUpdating(true);
+      // setUpdating(true);                         <-------- this line makes the component to repaint if logos
     }
   };
 

@@ -103,12 +103,12 @@ const RenderPreview = (
     setCurrent(t);
   };
 
-  useEffect(() => {
+  /*useEffect(() => {                                           <------- this effect makes the component to rerender when logos
     if (current && qrDesign?.image?.length && !done.current) {
       done.current = true;
       setUpdating(true);
     }
-  }, [current]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [current]); // eslint-disable-line react-hooks/exhaustive-deps*/
 
   useEffect(() => {
     if (updating) {
@@ -116,7 +116,7 @@ const RenderPreview = (
       setTimeout(() => {
         setUpdating(false);
         generateQr();
-      }, 450);
+      }, 150);
     }
   }, [updating]); // eslint-disable-line react-hooks/exhaustive-deps
 

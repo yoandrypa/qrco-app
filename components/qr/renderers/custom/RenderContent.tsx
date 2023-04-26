@@ -49,12 +49,11 @@ const RenderContent = ({ component, handleValues, index, data, setData, predefin
     <>
       {component === 'address' && <RenderAddressData data={data} handleValues={handleValues} index={index} />}
       {component === 'company' && <RenderCompanyData data={data} handleValues={handleValues} index={index} />}
-      {component === 'date' &&
-      <RenderDateSelector data={data} handleValues={handleValues} label="Date" index={index} />}
+      {component === 'date' && <RenderDateSelector data={data} handleValues={handleValues} label="Date" index={index} />}
       {component === 'justEmail' && <RenderEmail data={data} handleValues={handleValues} index={index} />}
       {component === 'email' && <RenderEmailWeb data={data} handleValues={handleValues} index={index} />}
       {component === 'easiness' && <RenderEasiness data={data} handleValues={handleValues} index={index} />}
-      {component === 'links' && <RenderLinks data={data} setData={setData} index={index} />}
+      {['links', 'buttons'].includes(component) && <RenderLinks data={data} setData={setData} index={index} isButtons={component === 'buttons'} />}
       {component === 'organization' && <RenderOrganization data={data} handleValues={handleValues} index={index} />}
       {component === 'phones' && <RenderPhones data={data} handleValues={handleValues} index={index} />}
       {component === 'gallery' && <RenderAssetsData data={data} setData={setData} type="gallery" index={index}
@@ -62,19 +61,15 @@ const RenderContent = ({ component, handleValues, index, data, setData, predefin
       {component === 'presentation' && <RenderPresentation data={data} handleValues={handleValues} index={index}
                                                            forceExtra={FORCE_EXTRA.includes(selected || '')} />}
       {component === 'opening' && <RenderOpeningTime data={data} setData={setData} index={index} />}
-      {component === 'socials' &&
-      <RenderSocials data={data} setData={setData} index={index} isSolidButton={isSolidButton} />}
-      {component === 'title' &&
-      <RenderTitleDesc handleValues={handleValues} title={data?.titleAbout} noPaper sx={{ mt: '5px' }}
-                       description={data?.descriptionAbout} index={index}
-                       noHeader={Boolean(data?.titleAbout?.trim().length) || Boolean(data?.descriptionAbout?.trim().length)}
-                       header="Fill at least one of these fields" />}
-      {component === 'action' &&
-      <RenderActionButton index={index} setData={setData} handleValues={handleValues} data={data} />}
+      {component === 'socials' && <RenderSocials data={data} setData={setData} index={index} isSolidButton={isSolidButton} />}
+      {component === 'title' && <RenderTitleDesc handleValues={handleValues} title={data?.titleAbout} noPaper sx={{ mt: '5px' }}
+                                                 description={data?.descriptionAbout} index={index}
+                                                 noHeader={Boolean(data?.titleAbout?.trim().length) || Boolean(data?.descriptionAbout?.trim().length)}
+                                                 header="Fill at least one of these fields" />}
+      {component === 'action' && <RenderActionButton index={index} setData={setData} handleValues={handleValues} data={data} />}
       {component === 'single' && <RenderSingleText text={data?.text || ''} index={index} handleValues={handleValues} />}
-      {component === 'pdf' &&
-      <RenderAssetsData totalFiles={predefined === undefined ? 1 : FILE_LIMITS['pdf'].totalFiles}
-                        data={data} setData={setData} type="pdf" index={index} />}
+      {component === 'pdf' && <RenderAssetsData totalFiles={predefined === undefined ? 1 : FILE_LIMITS['pdf'].totalFiles}
+                                                data={data} setData={setData} type="pdf" index={index} />}
       {component === 'audio' && <RenderAssetsData data={data} setData={setData} type="audio" index={index}
                                                   totalFiles={predefined === undefined ? 1 : FILE_LIMITS['audio'].totalFiles} />}
       {component === 'video' && <RenderAssetsData data={data} setData={setData} type="video" index={index}
@@ -89,6 +84,6 @@ const RenderContent = ({ component, handleValues, index, data, setData, predefin
       {component === 'sku' && <RenderSku index={index} handleValues={handleValues} data={data} />}
     </>
   )
-}
+};
 
 export default RenderContent;

@@ -3,7 +3,7 @@ import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
 import TableContainer from "@mui/material/TableContainer";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import {DataType, LinkType, Type} from "../../types/types";
+import {DataType, LinkType, RenderLinksBtnsProps} from "../../types/types";
 import TableRow from "@mui/material/TableRow";
 import {getItemStyle} from "../../helperComponents/looseComps/StyledComponents";
 import TableCell from "@mui/material/TableCell";
@@ -20,14 +20,20 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import FormControl from "@mui/material/FormControl";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import renderText from "../helpers/textfieldHelpers/textHandler";
+import {EMAIL, PHONE} from "../../constants";
 
-interface RenderLinksProps {
-  index: number;
-  data?: Type;
-  setData: Function;
+const getOptions = (item?: string) => {
+  if (item !== undefined) {
+    if (item === 'call') { return ['Call now', 'Call me', 'Give me a call', 'Phone call']; }
+    if (item === 'whatsapp') { return ['Whatsapp', 'Whatsapp me', 'Hit my whatsapp', 'Whatsapp call', 'Send me a whatsapp call']; }
+    if (item === 'email') { return ['Email', 'Email me', 'Write me an email', 'Send me an email']; }
+    if (item === 'sms') { return ['SMS', 'Text me', 'Send me an SMS', 'Send me a text']; }
+  }
+  return ['My website', 'My youtube channel', 'My blog', 'My portfolio', 'My podcast', 'My store'];
 }
 
-export default function RenderLinks({data, setData, index}: RenderLinksProps) {
+export default function RenderLinks({data, setData, index, isButtons}: RenderLinksBtnsProps) {
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
 
   const onDragEnd = useCallback((result: any) => {
@@ -64,11 +70,17 @@ export default function RenderLinks({data, setData, index}: RenderLinksProps) {
     });
   }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleChangeValue = useCallback((item: string, idx: number) => (payload: ChangeEvent<HTMLInputElement> | string) => { // @ts-ignore
+  const handleChangeValue = useCallback((item: string, idx: number) => (payload: ChangeEvent<HTMLInputElement> | string | {type: string}) => { // @ts-ignore
     const value = payload.target?.value !== undefined ? payload.target.value : payload;
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
-      newData.custom[index].data.links[idx][item] = item === 'link' ? value.toLowerCase() : value
+      const element = newData.custom[index].data.links[idx] as any;
+      if (typeof value === 'string') {
+        element[item] = item === 'link' ? value.toLowerCase() : value;
+      } else {
+        element.type = value.type;
+        if (element.type === 'link') { delete element.type; }
+      }
       return newData;
     });
   }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -85,9 +97,9 @@ export default function RenderLinks({data, setData, index}: RenderLinksProps) {
         }
       } else {
         if (e.target.checked) { // @ts-ignore
-          newData.custom[index].data.linksOnlyLinks = true;
+          newData.custom[index].data[item] = true;
         } else { // @ts-ignore
-          delete newData.custom[index].data.linksOnlyLinks;
+          delete newData.custom[index].data[item];
         }
       }
       return newData;
@@ -103,22 +115,33 @@ export default function RenderLinks({data, setData, index}: RenderLinksProps) {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const renderTableRow = (item: {label?: string, link: string}, idx: number, length: number) => {
+  const renderTableRow = (item: {label?: string, link: string, type?: string}, idx: number, length: number) => {
     const itemId = `item${idx}`;
 
     const removeItem = (adj?: boolean) => {
-      const sx = {width: '40px', height: '40px'} as any;
-      if (adj) {
-        sx.mt = '8px';
-        sx.mr = '-7px';
+    const sx = {width: '40px', height: '40px'} as any;
+    if (adj) {
+      sx.mt = '8px';
+      sx.mr = '-7px';
+    }
+    return (
+      <Tooltip title={`Remove ${isButtons ? 'button' : 'link'}`}>
+        <IconButton onClick={remove(idx)} sx={sx}>
+          <DeleteIcon color="error"/>
+        </IconButton>
+      </Tooltip>
+    )};
+
+    let isError = false;
+    if (item.link.trim().length > 0) {
+      if ((item.type === undefined || item.type === 'link')) {
+        isError = !isValidUrl(item.link);
+      } else if (item.type === 'email') {
+        isError = !EMAIL.test(item.link);
+      } else {
+        isError = !PHONE.test(item.link);
       }
-      return (
-        <Tooltip title={'Remove link'}>
-          <IconButton onClick={remove(idx)} sx={sx}>
-            <DeleteIcon color="error"/>
-          </IconButton>
-        </Tooltip>
-      )};
+    }
 
     return <Draggable key={itemId} draggableId={itemId} index={idx} isDragDisabled={length === 1}>
       {(provided: any, snapshot: any) => (
@@ -137,11 +160,10 @@ export default function RenderLinks({data, setData, index}: RenderLinksProps) {
           <TableCell sx={{p: 0, width: '100%', borderBottom: 'none'}}>
             <Box sx={{width: '100%', display: 'flex', flexDirection: {sm: 'row', xs: 'column'}}}>
               {!data?.linksOnlyLinks && (
-                <Box sx={{width: '100%'}}>
+                <Box sx={{width: !isButtons? '100%' : {xs: '100%', sm: '70%'}}}>
                   <RenderProposalsTextFields
                     required
-                    index={index}
-                    options={['My website', 'My youtube channel', 'My blog', 'My portfolio', 'My podcast', 'My store']}
+                    options={getOptions(item.type)}
                     placeholder="Label here"
                     value={item.label || ''}
                     handleValues={handleChangeValue('label', idx)}
@@ -151,11 +173,13 @@ export default function RenderLinks({data, setData, index}: RenderLinksProps) {
               <Box sx={{width: '100%', display: 'flex'}}>
                 <RenderTextFields
                   required
+                  type={item.type}
+                  isButtons={isButtons}
                   index={index}
-                  placeholder="URL here"
+                  placeholder={renderText(item.type)}
                   value={item.link}
                   handleValues={handleChangeValue('link', idx)}
-                  isError={item.link.trim().length > 0 && !isValidUrl(item.link)}
+                  isError={isError}
                 />
                 {isWide && idx !== 0 && idx + 1 === length && removeItem(true)}
               </Box>
@@ -164,7 +188,7 @@ export default function RenderLinks({data, setData, index}: RenderLinksProps) {
           <TableCell sx={{p: 0, borderBottom: 'none', pt: '5px'}} align="right">
             {idx + 1 === length ? (
               <>
-                <Tooltip title={'Add a link'}>
+                <Tooltip title={`Add a ${isButtons ? 'button' : 'link'}`}>
                   <IconButton onClick={add}><AddBoxIcon color="primary"/></IconButton>
                 </Tooltip>
                 {!isWide && idx !== 0 && removeItem()}
@@ -192,20 +216,25 @@ export default function RenderLinks({data, setData, index}: RenderLinksProps) {
   return (
     <Box sx={{width: '100%'}}>
       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(provided: any) => renderTable(provided)}
-        </Droppable>
+        <Droppable droppableId="droppable">{(provided: any) => renderTable(provided)}</Droppable>
       </DragDropContext>
-      <Box sx={{width: '100%', display: 'flex', mt: '-5px', flexDirection: {sm: 'row', xs: 'column'}}}>
-        <FormControl disabled={data?.linksOnlyLinks}>
-          <FormControlLabel control={<Switch onChange={handleOnly('avoidButtons')} checked={!Boolean(data?.avoidButtons)} />}
-            label="Links as buttons" />
+      {!isButtons ? (
+        <Box sx={{width: '100%', display: 'flex', mt: '-5px', flexDirection: {sm: 'row', xs: 'column'}}}>
+          <FormControl disabled={data?.linksOnlyLinks}>
+            <FormControlLabel control={<Switch onChange={handleOnly('avoidButtons')} checked={!Boolean(data?.avoidButtons)} />}
+              label="Links as buttons" />
+          </FormControl>
+          <FormControl sx={{mr: '5px'}}>
+            <FormControlLabel control={<Switch onChange={handleOnly('linksOnlyLinks')} checked={data?.linksOnlyLinks || false} />}
+              label="Only links" />
+          </FormControl>
+        </Box>
+      ) : (
+        <FormControl>
+          <FormControlLabel control={<Switch onChange={handleOnly('showIcons')} checked={data?.showIcons || false} />}
+                            label="Show icons" />
         </FormControl>
-        <FormControl sx={{mr: '5px'}}>
-          <FormControlLabel control={<Switch onChange={handleOnly('linksOnlyLinks')} checked={data?.linksOnlyLinks || false} />}
-            label="Only links" />
-        </FormControl>
-      </Box>
+      )}
     </Box>
   );
 }
