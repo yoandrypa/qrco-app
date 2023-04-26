@@ -168,8 +168,8 @@ export const getFileFromQr = (data: DataType, options: OptionsType, background: 
  * @param updatingHandler
  */
 export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps, options: OptionsType, frame: FramesType,
-                                   background: BackgroundType, cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string,
-                                   setIsError: (isError: boolean) => void, success: (creationData?: string) => void,
+                                   background: BackgroundType, cornersData: CornersAndDotsType, dotsData: CornersAndDotsType,
+                                   selected: string, setIsError: (isError: boolean) => void, success: (creationData?: string) => void,
                                    router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
                                    updatingHandler?: (value: string | null, status?: boolean) => void) => {
 
@@ -194,13 +194,16 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
   if (data.claim) { delete data.claim; }
   if (data.forceChange) { delete data.forceChange; }
 
+  // @ts-ignore
+  const userId = data.mode !== 'secret' ? userInfo.cognito_user_id : options?.userId?.id;
+
   if (!data.hideQrForSharing) {
     prevUpdatingHandler(`${data.qrForSharing?.[0]?.Key === undefined ? 'Saving' : 'Adjusting'} QR code`);
 
     const file = getFileFromQr(data, options, background, frame, cornersData, dotsData, selected, false, data.qrForSharing?.[0]?.name);
 
     try { // @ts-ignore
-      data.qrForSharing = await upload([file], `${userInfo.cognito_user_id}/${selected}s/design`);
+      data.qrForSharing = await upload([file], `${userId}/${selected}s/design`);
       if (!updatingHandler && dataSource.qrForSharing?.name !== data.qrForSharing.name) {
         dataSource.qrForSharing = structuredClone(data.qrForSharing);
       }
@@ -233,7 +236,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
         prevUpdatingHandler(`Uploading assets for ${capitalize(section.component)} section`);
         try {
           // upload will handle only File instances, others are ignored
-          section.data.files = await upload(section.data.files, `${userInfo.cognito_user_id}/${selected}s`);
+          section.data.files = await upload(section.data.files, `${userId}/${selected}s`);
           prevUpdatingHandler(null, true);
         } catch {
           prevUpdatingHandler(null, false);
@@ -261,7 +264,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     if (!Array.isArray(data.backgndImg)) {
       prevUpdatingHandler("Uploading banner image");
       try { // @ts-ignore
-        data.backgndImg = await upload([data.backgndImg], `${userInfo.cognito_user_id}/${selected}s/design`);
+        data.backgndImg = await upload([data.backgndImg], `${userId}/${selected}s/design`);
         prevUpdatingHandler(null, true);
       } catch {
         prevUpdatingHandler(null, false);
@@ -288,7 +291,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     if (!Array.isArray(data.foregndImg)) {
       prevUpdatingHandler("Uploading profile image");
       try { // @ts-ignore
-        data.foregndImg = await upload([data.foregndImg], `${userInfo.cognito_user_id}/${selected}s/design`);
+        data.foregndImg = await upload([data.foregndImg], `${userId}/${selected}s/design`);
         prevUpdatingHandler(null, true);
       } catch {
         prevUpdatingHandler(null, false);
@@ -315,7 +318,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     if (!Array.isArray(data.micrositeBackImage)) {
       prevUpdatingHandler("Uploading background image");
       try { // @ts-ignore
-        data.micrositeBackImage = await upload([data.micrositeBackImage], `${userInfo.cognito_user_id}/${selected}s/design`);
+        data.micrositeBackImage = await upload([data.micrositeBackImage], `${userId}/${selected}s/design`);
         prevUpdatingHandler(null, true);
       } catch {
         prevUpdatingHandler(null, false);
@@ -342,10 +345,11 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
   const qrData: any = { ...data, qrType: selected };
   const qrDesign = { ...options };
 
-  if (data.mode !== 'edit') {
+  if (!['edit', 'secret'].includes(data.mode)) {
     const qrDesignId = getUuid();
     const qrId = options.id || getUuid();
     qrData.qrOptionsId = qrDesignId;
+
     qrData.userId = userInfo.cognito_user_id;
 
     if (data.isDynamic) { // @ts-ignore
@@ -380,14 +384,16 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   try {
     let edition = false;
+    const secretMode = data.mode === 'secret';
 
-    if (data.mode !== 'edit') {
+    if (!['edit', 'secret'].includes(data.mode)) {
       if (qrData.frame !== undefined && !frame.type) { delete qrData.frame; }
       if (dataLength) { prevUpdatingHandler("Saving QR Code data"); }
       const response = await create({ shortLink, qrDesign, qrData });
       if (success && response?.creationDate) success(response.creationDate);
     } else {
       edition = true;
+
       if (dataLength) { prevUpdatingHandler("Updating QR Code data"); }
 
       const objToEdit = generateObjectToEdit(qrData, data, qrDesign) as any;
@@ -405,6 +411,11 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       if (objToEdit.qrOptionsId.editedShortLink) {
         delete objToEdit.qrOptionsId.editedShortLink;
         objToEdit.shortLinkId = { address: objToEdit.qrOptionsId.shortCode };
+      }
+
+      if (secretMode) {
+        if (typeof objToEdit.userId !== 'string') { objToEdit.userId = objToEdit.userId.id; }
+        if (typeof objToEdit.qrOptionsId.userId !== 'string') { objToEdit.qrOptionsId.userId = objToEdit.qrOptionsId.userId.id; }
       }
 
       await qrEdit(objToEdit);

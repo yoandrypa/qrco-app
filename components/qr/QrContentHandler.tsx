@@ -115,7 +115,7 @@ const QrContentHandler = () => { // @ts-ignore
     <>
       {selected ? (
         <>
-          {!Boolean(userInfo) && <Box sx={{ mb: '10px' }}><RenderNoUserWarning /></Box>}
+          {!Boolean(userInfo) && data.mode !== 'secret' && <Box sx={{ mb: '10px' }}><RenderNoUserWarning /></Box>}
           <Box sx={{ display: 'inline' }}><RenderIcon icon={selected} enabled sx={{mb: '-5px'}} /></Box>
           <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{qrNameDisplayer(selected || '', data?.isDynamic || false)}</Typography>
           <Typography sx={{ display: { xs: 'none', sm: 'inline' } }}>{`: Enter the content${data?.isDynamic ? ' and page design' : ''}`}</Typography>

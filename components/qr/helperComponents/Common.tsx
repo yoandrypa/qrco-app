@@ -159,7 +159,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       setLoading(true);
       await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setError, (creationDate?: string) => {
         setData((prev: DataType) => {
-          const newData = {...prev, mode: 'edit'};
+          const newData = {...prev};
+          if (newData.mode !== 'secret') { newData.mode = 'edit'; }
           if (newData.claim !== undefined) {
             delete newData.claim;
           }
@@ -199,10 +200,10 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           autoHideDuration={10500}
         />
       )}
-      {userInfo ? (
+      {userInfo || data.mode === 'secret' ? (
         <Box sx={{ display: 'flex' }}>
           <Box sx={{ width: '100%' }}>
-            <RenderNameAndSecret handleValue={handleValue} qrName={data?.qrName} secret={data?.secret} />
+            <RenderNameAndSecret handleValue={handleValue} qrName={data?.qrName} secret={data?.secret} hideSecret={data.mode === 'secret'} />
             {![...NO_MICROSITE, 'web'].includes(selected) && data?.isDynamic ? (
               <Box sx={{width: '100%', position: 'relative'}}>
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>
