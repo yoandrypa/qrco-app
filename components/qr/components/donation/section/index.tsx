@@ -7,14 +7,13 @@ const Icon = dynamic(() => import('@mui/icons-material/Coffee'));
 const Form = dynamic(() => import('./form'));
 
 import { IIconProps, IFormProps, IQrSetting, IQrSection, ISectionData } from './types';
-import { parseIconStyle, uuid } from '../../commons/helpers';
+import { parseIconStyle } from '../../commons/helpers';
 import { createAxiosInstance } from "@ebanux/ebanux-utils/request";
 
 const setting: IQrSetting<ISectionData> = {
   id: 'donation',
   name: 'Donation',
   isMonetized: true,
-  isDynamic: true,
   renderIcon: (props: IIconProps) => <Icon sx={parseIconStyle(props)} />,
   renderForm: (props: IFormProps<ISectionData>) => <Form {...props} />,
   getDefaultQrData: () => ({
@@ -26,7 +25,7 @@ const setting: IQrSetting<ISectionData> = {
     ownerId: session.currentUser?.cognito_user_id as string,
     iconId: 'Coffee1',
   }),
-  beforeSave: async (section: IQrSection<ISectionData>, index) => {
+  beforeSave: async (section: IQrSection<ISectionData>) => {
     const { data } = section;
     const axios = createAxiosInstance(`${process.env.PAYLINK_BASE_URL}/api/v2.0`);
     const name = `${section.data.title} (QR-DONATION)`.toUpperCase();

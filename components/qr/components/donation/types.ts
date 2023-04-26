@@ -1,5 +1,5 @@
 import { IQrSection } from '../commons/types';
-import { ISectionData } from '../sections/donation/types';
+import { ISectionData } from './section/types';
 
 export type { IIconProps, IFormProps, IQrSetting, IQrSection } from '../commons/types';
 
