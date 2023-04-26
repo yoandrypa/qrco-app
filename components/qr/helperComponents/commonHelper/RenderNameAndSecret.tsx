@@ -11,7 +11,7 @@ import ReplayIcon from "@mui/icons-material/Replay";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import Tooltip from "@mui/material/Tooltip";
 
-import {handleCopy} from "../../../helpers/generalFunctions";
+import {areEquals, handleCopy} from "../../../helpers/generalFunctions";
 
 import dynamic from "next/dynamic";
 import { generateSecret} from "../../../../handlers/qrs";
@@ -24,13 +24,17 @@ interface NameSecretProps {
   qrName?: string;
   secret?: string;
   hideSecret: boolean;
+  errors: string[];
+  openValidationErrors: () => void;
 }
 
-function RenderNameAndSecret({handleValue, qrName, secret, hideSecret}: NameSecretProps) {
+function RenderNameAndSecret({handleValue, qrName, secret, hideSecret, errors, openValidationErrors}: NameSecretProps) {
   const [handleSecret, setHandleSecret] = useState<boolean>(secret !== undefined);
   const [url, setUrl] = useState<string | undefined>(undefined);
   const [copy, setCopy] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const disabled = !qrName?.trim()?.length;
 
   const generateSecretId = async () => {
     setLoading(true);
@@ -39,10 +43,12 @@ function RenderNameAndSecret({handleValue, qrName, secret, hideSecret}: NameSecr
   }
 
   const toggleSecret = () => {
-    if (!handleSecret) {
-      generateSecretId();
+    if (errors.length === 0) {
+      if (!handleSecret) { generateSecretId(); }
+      setHandleSecret((prev: boolean) => !prev);
+    } else {
+      openValidationErrors();
     }
-    setHandleSecret((prev: boolean) => !prev);
   }
 
   const clearSecret = () => {
@@ -79,30 +85,34 @@ function RenderNameAndSecret({handleValue, qrName, secret, hideSecret}: NameSecr
         />
         {!hideSecret && (<>
           {!handleSecret ? (
-            <Button sx={{height: '40px', mt: {xs: '4px', sm: 1}, ml: {xs: 0, sm: 1}}} variant="outlined"
-                    onClick={toggleSecret} startIcon={<KeyIcon/>}>{'Secret'}</Button>
+            <Button sx={{height: '40px', mt: {xs: '4px', sm: 1}, ml: {xs: 0, sm: 1}}} variant="outlined" onClick={toggleSecret} startIcon={
+              <KeyIcon sx={{color: 'error.light'}}/>
+            } disabled={disabled}>{'Secret'}</Button>
           ) : (
             <Box sx={{ml: {xs: 0, sm: 1}, width: '100%'}}>
               <TextField
                 label="Secret"
                 size="small"
                 fullWidth
+                disabled={disabled}
                 sx={{mb: '-5px'}}
                 margin="dense"
                 value={secret || ''}
                 InputProps={{
                   startAdornment: (
-                    <InputAdornment position="start" sx={{mr: 0}}><Typography>{url || '...'}</Typography></InputAdornment>
+                    <InputAdornment position="start" sx={{mr: 0}}>
+                      <Typography>{url ? `h...${url.slice(-12)}` : '...'}</Typography>
+                    </InputAdornment>
                   ),
                   endAdornment: (
                     <InputAdornment position="end" sx={{mr: '-10px'}}>
                       <Tooltip title="Copy secret">
-                        <IconButton disabled={url === undefined} sx={{mr: '-3px'}}
-                          size="small" onClick={handleCopier}><ContentCopyIcon color="primary"/></IconButton>
+                        <IconButton disabled={disabled || url === undefined} sx={{mr: '-3px'}} size="small"
+                          onClick={handleCopier}><ContentCopyIcon sx={{color: !disabled ? 'primary.main' : 'text.disabled'}}/></IconButton>
                       </Tooltip>
                       <Tooltip title="Generate another secret">
-                        <IconButton disabled={url === undefined || loading} sx={{mr: '-3px'}}
-                          size="small" onClick={generateSecretId}><ReplayIcon color="primary"/></IconButton>
+                        <IconButton disabled={disabled || url === undefined || loading} sx={{mr: '-3px'}} size="small"
+                          onClick={generateSecretId}><ReplayIcon sx={{color: !disabled ? 'primary.main' : 'text.disabled'}}/></IconButton>
                       </Tooltip>
                       <Tooltip title="Clear secret">
                         <IconButton size="small" onClick={clearSecret}><ClearIcon color="error"/></IconButton>
@@ -111,7 +121,7 @@ function RenderNameAndSecret({handleValue, qrName, secret, hideSecret}: NameSecr
                   )
                 }}
               />
-              <Box sx={{color: 'text.disabled', display: 'flex', mt: '3px'}}>
+              <Box sx={{color: 'text.disabled', display: 'flex', mt: '3px', mb: '-14px'}}>
                 <WarningAmberIcon sx={{fontSize: '14px', mt: '2px'}}/>
                 <Typography variant="caption">Secret allows you to share the edition of this QRLynk</Typography>
               </Box>
@@ -125,6 +135,6 @@ function RenderNameAndSecret({handleValue, qrName, secret, hideSecret}: NameSecr
 }
 
 const notIf = (current: NameSecretProps, next: NameSecretProps) =>
-  current.qrName === next.qrName && current.secret === next.secret;
+  current.qrName === next.qrName && current.secret === next.secret && areEquals(current.errors, next.errors);
 
 export default memo(RenderNameAndSecret, notIf);
