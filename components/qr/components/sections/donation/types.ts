@@ -1,4 +1,4 @@
-export type { IIconProps, IFormProps, IQrSetting } from '../../commons/types';
+export type { IIconProps, IFormProps, IQrSetting, IQrSection } from '../../commons/types';
 
 export interface ISectionData {
   title: string;

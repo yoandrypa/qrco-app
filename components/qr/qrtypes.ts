@@ -1,7 +1,7 @@
 import pluralize from "pluralize";
 import { formatBytes } from "../../utils";
 import { FILE_LIMITS } from "../../consts";
-import { dynamicQrTypes as dynamicQrSettings, staticQrTypes as staticQrSettings } from "./components"
+import { dynamicQrTypes as dynamicQrSettings, staticQrTypes as staticQrSettings, sectionsQrTypes } from "./components"
 import { IQrSetting } from "./components/commons/types"
 
 export const dynamicQrTypes = {
@@ -159,5 +159,5 @@ export function getQrType(qrTypeId: string): IQrSetting<any> {
 
 export function getQrSectionType(qrTypeId: string): IQrSetting<any> {
   // @ts-ignore
-  return dynamicQr[qrTypeId];
+  return sectionsQrTypes[qrTypeId];
 }

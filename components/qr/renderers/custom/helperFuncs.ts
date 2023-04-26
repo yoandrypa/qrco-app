@@ -34,7 +34,7 @@ export const components = {
   couponData: { name: 'Coupon data', notInMenu: true },
   petId: { name: 'Pet presentation', notInMenu: true },
   sku: { name: 'Product', notInMenu: true },
-  // Include sections the qr-types from independent components
+  // Include the sections qr-types from independent components
   ...sectionsQrTypes,
 };
 
