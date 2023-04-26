@@ -11,10 +11,10 @@ import ReplayIcon from "@mui/icons-material/Replay";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import Tooltip from "@mui/material/Tooltip";
 
-import {customAlphabet} from "nanoid";
 import {handleCopy} from "../../../helpers/generalFunctions";
 
 import dynamic from "next/dynamic";
+import { generateSecret} from "../../../../handlers/qrs";
 
 const RenderCopiedNotification = dynamic(() => import ("../looseComps/RenderCopiedNotification"));
 const WarningAmberIcon = dynamic(() => import ("@mui/icons-material/WarningAmber"));
@@ -26,18 +26,16 @@ interface NameSecretProps {
   hideSecret: boolean;
 }
 
-const genSecretId = () => {
-  const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_", 10);
-  return nanoid();
-}
-
 function RenderNameAndSecret({handleValue, qrName, secret, hideSecret}: NameSecretProps) {
   const [handleSecret, setHandleSecret] = useState<boolean>(secret !== undefined);
   const [url, setUrl] = useState<string | undefined>(undefined);
   const [copy, setCopy] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const generateSecretId = () => {
-    handleValue('secret')(genSecretId());
+  const generateSecretId = async () => {
+    setLoading(true);
+    handleValue('secret')(await generateSecret());
+    setLoading(false);
   }
 
   const toggleSecret = () => {
@@ -81,8 +79,8 @@ function RenderNameAndSecret({handleValue, qrName, secret, hideSecret}: NameSecr
         />
         {!hideSecret && (<>
           {!handleSecret ? (
-              <Button sx={{height: '40px', mt: {xs: '4px', sm: 1}, ml: {xs: 0, sm: 1}}} variant="outlined"
-                      onClick={toggleSecret} startIcon={<KeyIcon/>}>{'Secret'}</Button>
+            <Button sx={{height: '40px', mt: {xs: '4px', sm: 1}, ml: {xs: 0, sm: 1}}} variant="outlined"
+                    onClick={toggleSecret} startIcon={<KeyIcon/>}>{'Secret'}</Button>
           ) : (
             <Box sx={{ml: {xs: 0, sm: 1}, width: '100%'}}>
               <TextField
@@ -103,7 +101,7 @@ function RenderNameAndSecret({handleValue, qrName, secret, hideSecret}: NameSecr
                           size="small" onClick={handleCopier}><ContentCopyIcon color="primary"/></IconButton>
                       </Tooltip>
                       <Tooltip title="Generate another secret">
-                        <IconButton disabled={url === undefined} sx={{mr: '-3px'}}
+                        <IconButton disabled={url === undefined || loading} sx={{mr: '-3px'}}
                           size="small" onClick={generateSecretId}><ReplayIcon color="primary"/></IconButton>
                       </Tooltip>
                       <Tooltip title="Clear secret">
