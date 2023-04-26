@@ -15,6 +15,9 @@ export interface IFormProps<IQrData> {
   handleValues: THandleValues;
 }
 
+type TBeforeSave1<IQrData> = (data: IQrSection<IQrData>, index?: number) => Promise<IQrSection<IQrData>>;
+type TBeforeSave2<IQrData> = (data: IQrData, index?: number) => Promise<IQrData>;
+
 export interface IQrSetting<IQrData> {
   id: string;
   name: string;
@@ -25,7 +28,7 @@ export interface IQrSetting<IQrData> {
   renderIcon: (props: IIconProps) => ReactElement;
   renderForm: (props: IFormProps<IQrData>) => ReactElement;
   getDefaultQrData: () => IQrData;
-  beforeSave?: (data: IQrSection<IQrData>, index?: number) => Promise<IQrSection<IQrData>>;
+  beforeSave?: TBeforeSave1<IQrData> | TBeforeSave2<IQrData>;
   devOnly?: boolean;
 }
 
