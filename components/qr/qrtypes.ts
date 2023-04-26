@@ -156,3 +156,8 @@ export function getQrType(qrTypeId: string): IQrSetting<any> {
   // @ts-ignore
   return dynamicQrTypes[qrTypeId] || staticQrTypes[qrTypeId];
 }
+
+export function getQrSectionType(qrTypeId: string): IQrSetting<any> {
+  // @ts-ignore
+  return dynamicQr[qrTypeId];
+}

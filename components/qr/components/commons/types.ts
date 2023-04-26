@@ -25,6 +25,7 @@ export interface IQrSetting<IQrData> {
   renderIcon: (props: IIconProps) => ReactElement;
   renderForm: (props: IFormProps<IQrData>) => ReactElement;
   getDefaultQrData: () => IQrData;
+  beforeSave?: (data: IQrData, index?: number) => Promise<IQrData>;
   devOnly?: boolean;
 }
 

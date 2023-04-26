@@ -8,6 +8,7 @@ const Form = dynamic(() => import('./form'));
 
 import { IIconProps, IFormProps, IQrSetting, ISectionData } from './types';
 import { parseIconStyle, uuid } from '../../commons/helpers';
+import { createAxiosInstance } from "@ebanux/ebanux-utils/request";
 
 const setting: IQrSetting<ISectionData> = {
   id: 'donation',
@@ -25,6 +26,20 @@ const setting: IQrSetting<ISectionData> = {
     ownerId: session.currentUser?.cognito_user_id as string,
     iconId: 'Coffee1',
   }),
+  beforeSave: async (data: ISectionData, index ) => {
+    const axios = createAxiosInstance(`${process.env.PAYLINK_BASE_URL}/api/v2.0`);
+    const name = `${data.title} (QR-DONATION)`.toUpperCase();
+    const { data: { result: { id: priceId } } } = await axios.post('prices', {
+      unit_amount: data.unitAmount,
+      nickname: name,
+      product: { name },
+      currency: 'usd',
+    });
+
+    data.priceId = priceId;
+
+    return data;
+  }
 };
 
 export default setting;

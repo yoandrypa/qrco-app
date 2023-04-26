@@ -8,4 +8,5 @@ export interface ISectionData {
   email: string;
   ownerId: string;
   iconId: string;
+  priceId?: string;
 }
