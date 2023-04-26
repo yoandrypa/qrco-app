@@ -202,3 +202,13 @@ export const remove = async (key: { userId: string, createdAt: number }) => {
     throw e;
   }
 };
+
+export const getBySecret = async (secret: string) => {
+  try {
+    const resp = await QrDataModel.scan({'secret': {'eq': secret}}).exec(); // @ts-ignore
+    const extraData = await resp.populate(['shortLinkId', 'qrOptionsId']); // @ts-ignore
+    return extraData[0];
+  } catch (e) {
+    throw e;
+  }
+}

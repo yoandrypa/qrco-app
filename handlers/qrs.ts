@@ -144,14 +144,20 @@ export const pauseQRLink = async (
   try {
     const paused = !shortLinkId.paused;
     return await Link.update({
-        userId: shortLinkId.userId,
-        createdAt: (new Date(shortLinkId.createdAt)).getTime(),
-      },
-      {
-        paused,
-        pausedById: paused ? shortLinkId.userId : undefined,
-      });
+      userId: shortLinkId.userId,
+      createdAt: (new Date(shortLinkId.createdAt)).getTime(),
+    }, {
+      paused, pausedById: paused ? shortLinkId.userId : undefined
+    });
   } catch (e: any) {
     throw new CustomError(e.message, e.statusCode || 500, e);
   }
 };
+
+export const getItemBySecret = async (secret: string) => {
+  try {
+    return await Qr.getBySecret(secret);
+  } catch (e: any) {
+    throw new CustomError(e.message, e.statusCode || 500, e);
+  }
+}
