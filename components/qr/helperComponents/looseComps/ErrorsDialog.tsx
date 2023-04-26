@@ -20,7 +20,7 @@ export default function ErrorsDialog({errors, handleClose}: ErrorsDlgProps) {
         <PanToolIcon fontSize="small" sx={{mr: '5px', ml: '-5px', mb: '-1px', color: theme => theme.palette.error.dark}}/>
         {`Before moving on, solve th${length === 1 ? 'is' : `ese ${length} `} error${length === 1 ? '' : 's'}`}
       </DialogTitle>
-      <DialogContent dividers sx={{maxHeight: '350px'}}>
+      <DialogContent sx={{maxHeight: '350px'}}>
         <ul style={{padding: '0 16px'}}>
           {errors.map(x => <li key={x}><Typography>{x}</Typography></li>)}
         </ul>

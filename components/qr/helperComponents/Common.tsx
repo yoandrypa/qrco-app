@@ -152,8 +152,12 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     {children}
   </>);
 
+  const getValidationErrors = useCallback(() =>
+    validator(data.custom || [], FORCE_EXTRA.includes(selected), IGNORE_VALIDATOR.includes(selected) || !data.isDynamic),
+    [data.custom, data.isDynamic, selected]);
+
   const handleSave = async () => {
-    const validate = validator(data.custom || [], FORCE_EXTRA.includes(selected), IGNORE_VALIDATOR.includes(selected) || !data.isDynamic);
+    const validate = getValidationErrors();
     if (validate.length) {
       setValidationErrors(validate);
     } else {
@@ -182,7 +186,14 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     }
   };
 
+  useEffect(() => {
+    if (data?.secret) {
+      handleSave();
+    } // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.secret]);
+
   const handleImg = useCallback((prop: string) => setForceOpen(prop), []);
+  const forceOpenValidator = () => { setValidationErrors(getValidationErrors()); }
 
   const optionsForPreview = useMemo(() => // eslint-disable-next-line react-hooks/exhaustive-deps
     getOptionsForPreview(data, options, background, frame, cornersData, dotsData, selected), [data, options.data]);
@@ -205,7 +216,9 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       {userInfo || data.mode === 'secret' ? (
         <Box sx={{ display: 'flex' }}>
           <Box sx={{ width: '100%' }}>
-            <RenderNameAndSecret handleValue={handleValue} qrName={data?.qrName} secret={data?.secret} hideSecret={data.mode === 'secret' || !data?.isDynamic} />
+            <RenderNameAndSecret handleValue={handleValue} qrName={data?.qrName} secret={data?.secret}
+                                 hideSecret={data.mode === 'secret' || !data?.isDynamic} errors={getValidationErrors()}
+                                 openValidationErrors={forceOpenValidator} />
             {![...NO_MICROSITE, 'web'].includes(selected) && data?.isDynamic ? (
               <Box sx={{width: '100%', position: 'relative'}}>
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>
