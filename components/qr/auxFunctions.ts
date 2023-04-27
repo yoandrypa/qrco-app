@@ -384,6 +384,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   try {
     let edition = false;
+
     const secretMode = data.mode === 'secret';
 
     if (!['edit', 'secret'].includes(data.mode)) {
@@ -416,7 +417,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       if (secretMode) {
         if (typeof objToEdit.userId !== 'string') { objToEdit.userId = objToEdit.userId.id; }
         if (typeof objToEdit.qrOptionsId.userId !== 'string') { objToEdit.qrOptionsId.userId = objToEdit.qrOptionsId.userId.id; }
-      } else {
+      } else if (objToEdit.secret === undefined) {
         objToEdit.secret = undefined;
       }
 
