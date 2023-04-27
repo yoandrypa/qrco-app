@@ -171,7 +171,7 @@ export const generateSecret = async () => {
     const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_", 10);
     const newSecret = nanoid();
 
-    const data = await Qr.getBySecret(newSecret);
+    const data = await Qr.getBySecret(newSecret, true);
     if (Boolean(data)) {
       return await generateSecret();
     }

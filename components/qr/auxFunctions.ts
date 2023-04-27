@@ -417,9 +417,8 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       if (secretMode) {
         if (typeof objToEdit.userId !== 'string') { objToEdit.userId = objToEdit.userId.id; }
         if (typeof objToEdit.qrOptionsId.userId !== 'string') { objToEdit.qrOptionsId.userId = objToEdit.qrOptionsId.userId.id; }
-      } else if (objToEdit.secret === undefined) {
-        objToEdit.secret = undefined;
-      }
+      } else if (objToEdit.secret === undefined) { objToEdit.secret = undefined; }
+      if (objToEdit.secretOps === undefined) { objToEdit.secretOps = undefined; }
 
       await qrEdit(objToEdit);
       if (success) success();
