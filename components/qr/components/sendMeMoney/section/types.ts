@@ -8,4 +8,6 @@ export interface ISectionData {
   ownerId: string;
   productId?: string;
   priceId?: string;
+  changePrice?: boolean;
+  changeProduct?: boolean;
 }

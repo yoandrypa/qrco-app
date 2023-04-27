@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -11,7 +11,13 @@ import Caption from "../../../renderers/helpers/Caption";
 import { IFormProps, ISectionData } from "./types";
 
 export default function Form({ data, index, handleValues }: IFormProps<ISectionData>) {
+  const [initData] = useState<ISectionData>(data);
+
   const onChange = (attr: string) => (value: any, valid: boolean) => {
+    if (initData.priceId && attr.match(/unitAmount/)) data.changePrice = initData.unitAmount !== value;
+    if (initData.productId && attr.match(/description|concept/)) {
+      data.changeProduct = (initData.description !== data.description) && (initData.concept !== data.concept);
+    }
     handleValues(attr, index)(value);
   }
 

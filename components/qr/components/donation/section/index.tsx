@@ -26,17 +26,27 @@ const setting: IQrSetting<ISectionData> = {
     iconId: 'Coffee1',
   }),
   beforeSave: async (section: IQrSection<ISectionData>) => {
-    const { data } = section;
     const axios = createAxiosInstance(`${process.env.PAYLINK_BASE_URL}/api/v2.0`);
-    const name = `${section.data.title} (QR-DONATION)`.toUpperCase();
-    const { data: { result: { id: priceId } } } = await axios.post('prices', {
-      unit_amount: data.unitAmount,
-      nickname: name,
-      product: { name },
-      currency: 'usd',
-    });
+    const { data } = section;
+    const { title, unitAmount } = data;
 
-    data.priceId = priceId;
+    if (!data.productId || data.changeProduct) {
+      const productPath = data.productId ? `products/${data.productId}` : 'products';
+      const { data: { result: { id: productId } } } = await axios.post(productPath, { name: title || 'QR-DONATION' });
+      data.productId = productId;
+      delete data.changeProduct;
+    }
+
+    if (!data.priceId || data.changePrice) {
+      const { data: { result: { id: priceId } } } = await axios.post('prices', {
+        unit_amount: unitAmount,
+        nickname: (title || 'QR-DONATION').toUpperCase(),
+        product: data.productId,
+        currency: 'usd',
+      });
+      data.priceId = priceId;
+      delete data.changePrice;
+    }
 
     return section;
   }

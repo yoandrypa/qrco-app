@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -13,7 +13,11 @@ import SelectIconBox from "../../../../forms/fields/SelectIconBox";
 import { IFormProps, ISectionData } from "./types";
 
 export default function Form({ data, index, handleValues }: IFormProps<ISectionData>) {
+  const [initData] = useState<ISectionData>(data);
+
   const onChange = (attr: string) => (value: any, valid: boolean) => {
+    if (initData.priceId && attr.match(/unitAmount/)) data.changePrice = initData.unitAmount !== value;
+    if (initData.productId && attr.match(/title/)) data.changeProduct = (initData.title !== value);
     handleValues(attr, index)(value);
   }
 

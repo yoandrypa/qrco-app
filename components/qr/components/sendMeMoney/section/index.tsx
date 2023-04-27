@@ -24,20 +24,27 @@ const setting: IQrSetting<ISectionData> = {
     ownerId: session.currentUser?.cognito_user_id as string,
   }),
   beforeSave: async (section: IQrSection<ISectionData>) => {
-    const { data } = section;
     const axios = createAxiosInstance(`${process.env.PAYLINK_BASE_URL}/api/v2.0`);
-    const productPath = data.productId ? `products/${data.productId}` : 'products';
+    const { data } = section;
     const { concept, description, unitAmount } = data;
-    const { data: { result: { id: productId } } } = await axios.put(productPath, { name: concept, description });
-    const { data: { result: { id: priceId } } } = await axios.post('prices', {
-      unit_amount: unitAmount,
-      nickname: concept,
-      product: productId,
-      currency: 'usd',
-    });
 
-    data.productId = productId;
-    data.priceId = priceId;
+    if (!data.productId || data.changeProduct) {
+      const productPath = data.productId ? `products/${data.productId}` : 'products';
+      const { data: { result: { id: productId } } } = await axios.post(productPath, { name: concept, description });
+      data.productId = productId;
+      delete data.changeProduct;
+    }
+
+    if (!data.priceId || data.changePrice) {
+      const { data: { result: { id: priceId } } } = await axios.post('prices', {
+        unit_amount: unitAmount,
+        nickname: concept,
+        product: data.productId,
+        currency: 'usd',
+      });
+      data.priceId = priceId;
+      delete data.changePrice;
+    }
 
     return section;
   }
