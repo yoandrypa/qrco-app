@@ -160,7 +160,7 @@ export default function AppWrapper(props: AppWrapperProps) {
             justifyContent: "space-betweem",
           }}>
             <Box sx={{ display: "flex", width: "100%", mt: 1 }}>
-              <Typography sx={{ my: "auto", display: { sm: "block", xs: "none" } }}>
+              <Typography sx={{ my: "auto", display: { sm: "block", xs: "none" }, fontSize: "14px" }}>
                 {"Powered by"}
               </Typography>
               <Box component="img" alt="EBANUX" src="/ebanux.svg" sx={{ width: "95px", mt: "-2px", ml: "7px" }} />

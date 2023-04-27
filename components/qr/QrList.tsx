@@ -40,8 +40,8 @@ const renderStaticDynamic = (is: boolean, avoidIcon?: boolean, isSecret?: boolea
   <Typography variant="caption" style={{ color: '#808080'}}>
     {!avoidIcon ? (is ? <SyncIcon sx={{ ...iconsProps, mr: '5px' }} /> : <SyncDisabledIcon sx={{ ...iconsProps, mr: '5px' }} />) : null}
     {is ? "Dynamic" : "Static"}
-    {isSecret && <KeyIcon sx={{ ...iconsProps, mb: '-5px', ml: '5px' }} color="error"/>}
-    {isLock && <LockOutlinedIcon sx={{ ...iconsProps, mb: '-5px', ml: '5px' }} color="warning"/>}
+    {isSecret && <KeyIcon sx={{ ...iconsProps, mb: '-5px', ml: '1px' }} color="error"/>}
+    {isLock && <LockOutlinedIcon sx={{ ...iconsProps, mb: '-5px', ml: '1px' }} color="warning"/>}
   </Typography>
 );
 
@@ -57,17 +57,15 @@ const renderQr = (qr: any) => {
 export default function QrList({ title }: any) {
   const [confirm, setConfirm] = useState<{ createdAt: number; userId: string; } | null>(null);
   const [qrs, setQRs] = useState({ items: [] }); // @ts-ignore
-  const { setOptions, userInfo } = useContext(Context);
+  const {setOptions, userInfo} = useContext(Context);
   const router = useRouter();
-
   const isWide = useMediaQuery("(min-width:665px)", { noSsr: true });
 
   const loadItems = useCallback(() => {
     if (userInfo) {
       startWaiting();
       list({ userId: userInfo.cognito_user_id }) // @ts-ignore
-        .then((qrs) => setQRs(qrs))
-        .finally(() => releaseWaiting());
+        .then((qrs) => setQRs(qrs)).finally(() => releaseWaiting());
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -207,7 +205,7 @@ export default function QrList({ title }: any) {
         }}>
           <Box sx={{ border: theme => `solid 1px ${theme.palette.info.light}`, p: '20px', borderRadius: '5px' }}>
             <InfoIcon color="info" />
-            <Typography sx={{ mb: '25px', color: theme => theme.palette.info.light, fontWeight: 'bold' }}>
+            <Typography sx={{ mb: '25px', color: 'info.light', fontWeight: 'bold' }}>
               {'There are no QRLynks.'}
             </Typography>
             <ButtonCreateQrLynks light />
