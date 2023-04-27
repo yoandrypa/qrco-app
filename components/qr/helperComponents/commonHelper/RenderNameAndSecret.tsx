@@ -12,27 +12,26 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import Tooltip from "@mui/material/Tooltip";
 
 import {areEquals, handleCopy} from "../../../helpers/generalFunctions";
+import {generateSecret} from "../../../../handlers/qrs";
+import {iconColor, NameSecretProps} from "./helpers";
 
 import dynamic from "next/dynamic";
-import { generateSecret} from "../../../../handlers/qrs";
+import Notifications from "../../../notifications/Notifications";
+import RenderCopyOption from "./RenderCopyOption";
 
 const RenderCopiedNotification = dynamic(() => import ("../looseComps/RenderCopiedNotification"));
 const WarningAmberIcon = dynamic(() => import ("@mui/icons-material/WarningAmber"));
+const LockIconOpen = dynamic(() => import ("@mui/icons-material/LockOpenOutlined"));
+const LockIcon = dynamic(() => import ("@mui/icons-material/LockOutlined"));
+const EditIcon = dynamic(() => import ("@mui/icons-material/Edit"));
+const EditOffIcon = dynamic(() => import ("@mui/icons-material/EditOffOutlined"));
 
-interface NameSecretProps {
-  handleValue: (prop: string) => (payload: any) => void;
-  qrName?: string;
-  secret?: string;
-  hideSecret: boolean;
-  errors: string[];
-  openValidationErrors: () => void;
-}
-
-function RenderNameAndSecret({handleValue, qrName, secret, hideSecret, errors, openValidationErrors}: NameSecretProps) {
+function RenderNameAndSecret({handleValue, qrName, secret, secretOps, hideSecret, errors, openValidationErrors}: NameSecretProps) {
   const [handleSecret, setHandleSecret] = useState<boolean>(secret !== undefined);
   const [url, setUrl] = useState<string | undefined>(undefined);
   const [copy, setCopy] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [notify, setNotify] = useState<boolean>(false);
 
   const disabled = !qrName?.trim()?.length;
 
@@ -54,6 +53,22 @@ function RenderNameAndSecret({handleValue, qrName, secret, hideSecret, errors, o
   const clearSecret = () => {
     handleValue('secret')(undefined);
     setHandleSecret(false);
+  }
+
+  const handleEdit = () => {
+    if (!secretOps?.includes('e') && !secretOps?.includes('l')) {
+      setNotify(true);
+    } else {
+      handleValue('secretOps')('edit');
+    }
+  }
+
+  const handleLock = () => {
+    if (secretOps?.includes('e') && secretOps.includes('l')) {
+      setNotify(true);
+    } else {
+      handleValue('secretOps')('lock');
+    }
   }
 
   const handleCopier = () => {
@@ -99,20 +114,26 @@ function RenderNameAndSecret({handleValue, qrName, secret, hideSecret, errors, o
                 margin="dense"
                 value={secret || ''}
                 InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start" sx={{mr: 0}}>
-                      <Typography>{url ? `h...${url.slice(-12)}` : '...'}</Typography>
-                    </InputAdornment>
-                  ),
                   endAdornment: (
                     <InputAdornment position="end" sx={{mr: '-10px'}}>
-                      <Tooltip title="Copy secret">
+                      <RenderCopyOption disabled={disabled} secret={secret || ''} secretOps={secretOps} />
+                      {/*<Tooltip title="Copy secret edit URL">
                         <IconButton disabled={disabled || url === undefined} sx={{mr: '-3px'}} size="small"
-                          onClick={handleCopier}><ContentCopyIcon sx={{color: !disabled ? 'primary.main' : 'text.disabled'}}/></IconButton>
+                                    onClick={handleCopier}><ContentCopyIcon sx={iconColor(disabled)}/></IconButton>
+                      </Tooltip>*/}
+                      <Tooltip title={`Edition is ${secretOps?.includes('e') ? 'dis' : 'en'}abled`}>
+                        <IconButton disabled={disabled || url === undefined} sx={{mr: '-3px'}} size="small" onClick={handleEdit}>
+                          {secretOps?.includes('e') ? <EditOffIcon sx={iconColor(disabled)}/> : <EditIcon sx={iconColor(disabled)}/> }
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title={`Lock is ${!secretOps?.includes('l') ? 'dis' : 'en'}abled`}>
+                        <IconButton disabled={disabled || url === undefined} sx={{mr: '-3px'}} size="small" onClick={handleLock}>
+                          {!secretOps?.includes('l') ? <LockIconOpen sx={iconColor(disabled)}/> : <LockIcon sx={iconColor(disabled)}/> }
+                        </IconButton>
                       </Tooltip>
                       <Tooltip title="Generate another secret">
                         <IconButton disabled={disabled || url === undefined || loading} sx={{mr: '-3px'}} size="small"
-                          onClick={generateSecretId}><ReplayIcon sx={{color: !disabled ? 'primary.main' : 'text.disabled'}}/></IconButton>
+                          onClick={generateSecretId}><ReplayIcon sx={iconColor(disabled)}/></IconButton>
                       </Tooltip>
                       <Tooltip title="Clear secret">
                         <IconButton size="small" onClick={clearSecret}><ClearIcon color="error"/></IconButton>
@@ -121,20 +142,30 @@ function RenderNameAndSecret({handleValue, qrName, secret, hideSecret, errors, o
                   )
                 }}
               />
-              <Box sx={{color: 'text.disabled', display: 'flex', mt: '3px', mb: '-14px'}}>
-                <WarningAmberIcon sx={{fontSize: '14px', mt: '2px'}}/>
-                <Typography variant="caption">Secret allows you to share the edition of this QRLynk</Typography>
-              </Box>
             </Box>
           )}
         </>)}
       </Box>
+      {!hideSecret && (<Box sx={{color: 'text.disabled', display: 'flex', mt: '-3px', mb: '-7px', width: '100%', justifyContent: 'end'}}>
+        <WarningAmberIcon sx={{fontSize: '14px', mt: '2px', mr: '5px', color: 'warning.light'}}/>
+        <Typography variant="caption">Secret allows you to share the edition and/or the lock of this QRLynk</Typography>
+      </Box>)}
       {copy && <RenderCopiedNotification setCopied={() => setCopy(false)} />}
+      {notify && <Notifications
+        title="Not allowed"
+        message="Not allowed to disable both secret lock copy and secret URL edit."
+        onClose={() => setNotify(false)}
+        vertical="top"
+        horizontal="center"
+        showProgress
+        autoHideDuration={5000}
+      />}
     </>
   );
 }
 
 const notIf = (current: NameSecretProps, next: NameSecretProps) =>
-  current.qrName === next.qrName && current.secret === next.secret && areEquals(current.errors, next.errors);
+  current.qrName === next.qrName && current.secret === next.secret && current.secretOps === next.secretOps &&
+  areEquals(current.errors, next.errors);
 
 export default memo(RenderNameAndSecret, notIf);

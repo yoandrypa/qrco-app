@@ -29,6 +29,7 @@ const DashboardIcon = dynamic(() => import("@mui/icons-material/Dashboard"));
 const PlayCircleOutlineIcon = dynamic(() => import("@mui/icons-material/PlayCircleOutline"));
 const PauseCircleOutlineIcon = dynamic(() => import("@mui/icons-material/PauseCircleOutline"));
 const KeyIcon = dynamic(() => import("@mui/icons-material/Key"));
+const LockOutlinedIcon = dynamic(() => import("@mui/icons-material/LockOutlined"));
 const RenderCopiedNotification = dynamic(() => import("../looseComps/RenderCopiedNotification"));
 
 interface RenderQrOptsProps {
@@ -170,10 +171,16 @@ const RenderQrListOptions = ({qr, handleEdit, setConfirm, handlePauseQrLink, han
               </MenuItem>
             )}
             {qr.secret !== undefined && <Divider />}
-            {qr.secret !== undefined && (
-              <MenuItem key="copySecret" onClick={() => handleCopy(`${window.location.origin}/s/${qr.secret}`, setCopy)}>
+            {qr.secret !== undefined && !qr.secretOps?.includes('e') && (
+              <MenuItem key="copySecretUrl" onClick={() => handleCopy(`${window.location.origin}/s/${qr.secret}`, setCopy)}>
                 <KeyIcon color="error"/>
-                <Typography sx={{ml: '5px'}}>{'Copy secret'}</Typography>
+                <Typography sx={{ml: '5px'}}>{'Copy secret edit URL'}</Typography>
+              </MenuItem>
+            )}
+            {qr.secret !== undefined && qr.secretOps?.includes('l') && (
+              <MenuItem key="copySecretCode" onClick={() => handleCopy(qr.secret, setCopy)}>
+                <LockOutlinedIcon color="warning"/>
+                <Typography sx={{ml: '5px'}}>{'Copy secret code'}</Typography>
               </MenuItem>
             )}
           </Menu>

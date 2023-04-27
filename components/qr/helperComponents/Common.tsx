@@ -186,11 +186,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     }
   };
 
-  useEffect(() => {
-    if (data?.secret) {
-      handleSave();
-    } // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.secret]);
+  useEffect(() => { handleSave(); }, [data?.secret, data?.secretOps]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleImg = useCallback((prop: string) => setForceOpen(prop), []);
   const forceOpenValidator = () => { setValidationErrors(getValidationErrors()); }
@@ -218,7 +214,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           <Box sx={{ width: '100%' }}>
             <RenderNameAndSecret handleValue={handleValue} qrName={data?.qrName} secret={data?.secret}
                                  hideSecret={data.mode === 'secret' || !data?.isDynamic} errors={getValidationErrors()}
-                                 openValidationErrors={forceOpenValidator} />
+                                 openValidationErrors={forceOpenValidator} secretOps={data?.secretOps} />
             {![...NO_MICROSITE, 'web'].includes(selected) && data?.isDynamic ? (
               <Box sx={{width: '100%', position: 'relative'}}>
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>
