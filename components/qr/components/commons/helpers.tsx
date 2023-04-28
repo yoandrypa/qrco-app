@@ -1,7 +1,9 @@
-import { grey } from "@mui/material/colors";
-import { IIconProps, IQrSetting, IQrSection } from "./types";
 import React, { ReactElement } from "react";
+
 import RenderIcon from "../../helperComponents/smallpieces/RenderIcon";
+
+import { grey } from "@mui/material/colors";
+import { IIconProps, IQrSetting } from "./types";
 
 export function parseIconStyle({ color, enabled, sx }: IIconProps) {
   return { ...sx, color: enabled ? color || 'primary.dark' : grey[600] };
@@ -23,13 +25,4 @@ export function uuid(): string {
     dt = Math.floor(dt / 16);
     return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
   });
-}
-
-export function sectionData(component: string, data: any, isMonetized = false): IQrSection<any> {
-  return {
-    component,
-    isMonetized,
-    data,
-    expand: uuid(),
-  }
 }
