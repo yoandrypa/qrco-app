@@ -9,6 +9,7 @@ const Form = dynamic(() => import('./form'));
 import { IIconProps, IFormProps, IQrSetting, IQrSection, ISectionData } from './types';
 import { parseIconStyle } from '../../commons/helpers';
 import { createAxiosInstance } from "@ebanux/ebanux-utils/request";
+import { payLynkRequest } from "../../../../../libs/utils/request";
 
 const setting: IQrSetting<ISectionData> = {
   id: 'donation',
@@ -32,17 +33,19 @@ const setting: IQrSetting<ISectionData> = {
 
     if (!data.productId || data.changeProduct) {
       const productPath = data.productId ? `products/${data.productId}` : 'products';
-      const { data: { result: { id: productId } } } = await axios.post(productPath, { name: title || 'QR-DONATION' });
+      const { id: productId } = await payLynkRequest({
+        url: productPath, method: 'POST',
+        data: { name: title || 'QR-DONATION' }
+      });
       data.productId = productId;
       delete data.changeProduct;
     }
 
     if (!data.priceId || data.changePrice) {
-      const { data: { result: { id: priceId } } } = await axios.post('prices', {
-        unit_amount: unitAmount,
-        nickname: (title || 'QR-DONATION').toUpperCase(),
-        product: data.productId,
-        currency: 'usd',
+      const nickname = (title || 'QR-DONATION').toUpperCase();
+      const { id: priceId } = await payLynkRequest({
+        url: 'prices', method: 'POST',
+        data: { unit_amount: unitAmount, nickname, product: data.productId, currency: 'usd' }
       });
       data.priceId = priceId;
       delete data.changePrice;
