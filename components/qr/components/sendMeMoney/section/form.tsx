@@ -29,7 +29,7 @@ export default function Form({ data, index, handleValues }: IFormProps<ISectionD
       <Grid container spacing={1}>
         <Grid item xs={12} sm={6}>
           <TextBox
-            index={index} label="Concept" value={concept}
+            index={index} label="Concept" value={concept} requiredAdornment
             placeholder="Concept"
             onChange={onChange('concept')}
           />
