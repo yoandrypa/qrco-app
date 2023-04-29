@@ -1,10 +1,10 @@
 export type { IIconProps, IFormProps, IQrSetting } from '../../commons/types';
 
 export interface ISectionData {
-  title: string;
-  message: string;
+  subjectPlaceholder: string;
+  messagePlaceholder: string;
+  recipientVisible: boolean;
+  recipientEmail: string;
   buttonText: string;
-  visibleReceipt: boolean;
-  email: string;
   ownerId: string;
 }

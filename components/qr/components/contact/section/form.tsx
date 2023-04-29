@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect } from 'react'
+import React, { ChangeEvent } from 'react'
 
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -15,17 +15,11 @@ export default function Form({ data, index, handleValues }: IFormProps<ISectionD
     handleValues(attr, index)(value);
   }
 
-  const handleReceipt = (event: ChangeEvent<HTMLInputElement>) => {
-    handleValues('visibleReceipt', index)(event.target.checked);
+  const onChangeRecipientVisible = (event: ChangeEvent<HTMLInputElement>) => {
+    handleValues('recipientVisible', index)(event.target.checked);
   }
 
-  const {
-    title = '',
-    email = '',
-    message = '',
-    buttonText = '',
-    visibleReceipt = false,
-  } = data || {};
+  const { subjectPlaceholder, messagePlaceholder, recipientEmail, recipientVisible, buttonText } = data || {};
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -33,23 +27,23 @@ export default function Form({ data, index, handleValues }: IFormProps<ISectionD
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <TextBox
-            index={index} label="Receipt email" value={email} required
+            index={index} label="Receipt email" value={recipientEmail} required
             placeholder="Enter your email address here"
-            onChange={onChange('email')}
+            onChange={onChange('recipientEmail')}
             format={/^\w+(\.\w+)*(\+\w+(\.\w+)*)?@\w+(\.\w+)+$/}
           />
         </Grid>
         <Grid item xs={12}>
           <FormControlLabel
-            control={<Switch checked={visibleReceipt || false} onChange={handleReceipt} />}
+            control={<Switch checked={recipientVisible || false} onChange={onChangeRecipientVisible} />}
             label="Visible receipt's email in in microsite" sx={{ mt: '-5px' }}
           />
         </Grid>
         <Grid item xs={12} sm={8}>
           <TextBox
-            index={index} label="Subject placeholder" value={title}
+            index={index} label="Subject placeholder" value={subjectPlaceholder}
             placeholder="Enter the email subject placeholder here"
-            onChange={onChange('title')}
+            onChange={onChange('subjectPlaceholder')}
           />
         </Grid>
         <Grid item xs={12} sm={4}>
@@ -61,9 +55,9 @@ export default function Form({ data, index, handleValues }: IFormProps<ISectionD
         </Grid>
         <Grid item xs={12}>
           <TextBox
-            index={index} label="Message placeholder" value={message}
+            index={index} label="Message placeholder" value={messagePlaceholder}
             placeholder="Enter the email message placeholder here"
-            onChange={onChange('message')}
+            onChange={onChange('messagePlaceholder')}
           />
         </Grid>
       </Grid>

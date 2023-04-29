@@ -7,7 +7,7 @@ const Icon = dynamic(() => import('@mui/icons-material/ContactPhone'));
 const Form = dynamic(() => import('./form'));
 
 import { IIconProps, IFormProps, IQrSetting, ISectionData } from './types';
-import { parseIconStyle, uuid } from '../../commons/helpers';
+import { parseIconStyle } from '../../commons/helpers';
 
 const setting: IQrSetting<ISectionData> = {
   id: 'contact',
@@ -16,12 +16,12 @@ const setting: IQrSetting<ISectionData> = {
   renderIcon: (props: IIconProps) => <Icon sx={parseIconStyle(props)} />,
   renderForm: (props: IFormProps<ISectionData>) => <Form {...props} />,
   getDefaultQrData: () => ({
-    title: '',
-    message: '',
-    buttonText: '',
-    email: session.currentUser?.email as string,
+    subjectPlaceholder: '',
+    messagePlaceholder: '',
+    recipientVisible: false,
+    recipientEmail: session.currentUser?.email as string,
     ownerId: session.currentUser?.cognito_user_id as string,
-    visibleReceipt: false
+    buttonText: '',
   }),
 };
 
