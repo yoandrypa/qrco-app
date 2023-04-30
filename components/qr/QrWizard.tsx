@@ -50,8 +50,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   // @ts-ignore
   const {
     selected, data, options, frame, background, cornersData, dotsData, isWrong, loading, setOptions,
-    setRedirecting, clearData, setData,
-    subscription, userInfo,
+    setRedirecting, clearData, setData, subscription, userInfo
   }: StepsProps = useContext(Context);
 
   const router = useRouter();
@@ -59,11 +58,8 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
 
   const handleBack = () => {
     startWaiting();
-    router.push(
-      router.pathname === QR_DESIGN_ROUTE ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE,
-      undefined,
-      { shallow: true }
-    ).finally(releaseWaiting);
+    router.push(router.pathname === QR_DESIGN_ROUTE ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE,
+      undefined, { shallow: true }).finally(releaseWaiting);
   };
 
   const isLogged = Boolean(userInfo);
@@ -153,22 +149,18 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
       }
     }
 
-    if (isFirstStep) {
-      // Step 1: QR_TYPE_ROUTE or / ==>  QR_CONTENT_ROUTE
+    if (isFirstStep) { // Step 1: QR_TYPE_ROUTE or / ==>  QR_CONTENT_ROUTE
       startWaiting();
 
       const qrType = getQrType(selected);
       if (qrType?.getDefaultQrData) setData(qrType.getDefaultQrData());
 
       router.push(QR_CONTENT_ROUTE).finally(releaseWaiting);
-    } else if (router.pathname === QR_CONTENT_ROUTE) {
-      // Step 2: QR_CONTENT_ROUTE ==> QR_DESIGN_ROUTE
+    } else if (router.pathname === QR_CONTENT_ROUTE) { // Step 2: QR_CONTENT_ROUTE ==> QR_DESIGN_ROUTE
       startWaiting();
       router.push(QR_DESIGN_ROUTE, undefined, { shallow: true }).finally(releaseWaiting);
-
-    } else if (router.pathname === QR_DESIGN_ROUTE) {
-      // Step 3: QR_DESIGN_ROUTE    ==> PRINT | DOWNLOAD | SAVE
-      if (!session.isAuthenticated) return lastStep(false);
+    } else if (router.pathname === QR_DESIGN_ROUTE) { // Step 3: QR_DESIGN_ROUTE ==> PRINT | DOWNLOAD | SAVE
+      if (!session.isAuthenticated && data.mode !== 'secret') { return lastStep(false); }
 
       startWaiting();
       await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setIsError,
@@ -233,6 +225,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
           handleBack={handleBack}
           editingStatic={!data.isDynamic && options.mode === 'edit'}
           cloneMode={data.mode === 'clone'}
+          secretMode={data.mode === 'secret'}
           selected={selected} />
         <Stepper activeStep={currentStep} sx={{ width: "100%", my: 0 }}>
           {steps.map((label: string) => <Step key={label}><StepLabel>{isWide ? label : ""}</StepLabel></Step>)}
@@ -267,6 +260,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
           isWrong={isWrong}
           editingStatic={!data.isDynamic && options.mode === 'edit'}
           cloneMode={options.mode === 'clone'}
+          secretMode={options.mode === 'secret'}
           handleBack={handleBack}
           handleNext={handleNext}
           size={size}

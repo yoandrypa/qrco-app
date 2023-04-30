@@ -19,6 +19,7 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
         if (newData.micrositeBackImageBlurness !== undefined) { newData.micrositeBackImageBlurness = undefined; }
         if (newData.micrositeBackImageOpacity !== undefined) { newData.micrositeBackImageOpacity = undefined; }
       }
+      if (prop === 'secret' && newData.secretOps !== undefined) { newData.secretOps = undefined; }
       newData[prop] = undefined;
       return newData;
     });
@@ -112,6 +113,24 @@ export default function valueHanler(prop: string, data: any, payload: any, foreI
       setData((prev: any) => {
         const newData = {...prev, hideQrForSharing: payload};
         if (!payload && newData.hideQrForSharing !== undefined) { newData.hideQrForSharing = undefined; }
+        return newData;
+      });
+    } else if (prop === 'secretOps') {
+      setData((prev: any) => {
+        const newData = {...prev};
+
+        const handler = (opType: 'e' | 'l') => {
+          if (!newData.secretOps?.includes(opType)) {
+            if (newData.secretOps === undefined) { newData.secretOps = ''; }
+            newData.secretOps += opType;
+          } else {
+            newData.secretOps = newData.secretOps.replace(opType, '');
+          }
+        }
+
+        if (payload === 'edit') { handler('e'); }
+        if (payload === 'lock') { handler('l'); }
+        if (!Boolean(newData.secretOps?.length)) { delete newData.secretOps; }
         return newData;
       });
     } else {

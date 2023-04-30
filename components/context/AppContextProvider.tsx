@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
@@ -12,11 +12,7 @@ import {
 } from "../qr/constants";
 import AppWrapper from "../AppWrapper";
 import {
-  dataCleaner,
-  getBackgroundObject,
-  getCornersAndDotsObject,
-  getFrameObject,
-  handleInitialData,
+  dataCleaner, getBackgroundObject, getCornersAndDotsObject, getFrameObject, handleInitialData
 } from "../../helpers/qr/helpers";
 
 import session from "@ebanux/ebanux-utils/sessionStorage";
@@ -137,14 +133,14 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, [isUserInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (["edit", "clone"].includes(options?.mode || '')) {
+    if (["edit", "clone", "secret"].includes(options?.mode || '')) {
+      setData(dataCleaner(options));
+      setOptions(dataCleaner(options, true)); // @ts-ignore
+      setSelected(options.qrType);
       setCornersData(getCornersAndDotsObject(options, "corners"));
       setDotsData(getCornersAndDotsObject(options, "cornersDot"));
       setBackground(getBackgroundObject(options) || initialBackground);
       setFrame(getFrameObject(options) || initialFrame);
-      setData(dataCleaner(options));
-      setOptions(dataCleaner(options, true)); // @ts-ignore
-      setSelected(options.qrType);
     }
   }, [options.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 

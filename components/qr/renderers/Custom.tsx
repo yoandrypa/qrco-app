@@ -186,7 +186,7 @@ export default function Custom({data, setData, handleValues, predefined, tip, se
           </Droppable>
         </DragDropContext>
       </Box>
-      {showOptions && <CustomMenu handle={handleAdd} showOptions={showOptions} setShowOptions={setShowOptions} />}
+      {showOptions && <CustomMenu handle={handleAdd} showOptions={showOptions} setShowOptions={setShowOptions} isSecret={data.mode === 'secret'} />}
       {openSettings && (<RenderHeadlineSettings
         handleValues={handleValues}
         handleClose={() => setOpenSettings(null)}

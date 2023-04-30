@@ -20,14 +20,17 @@ import dynamic from "next/dynamic";
 import {useRouter} from "next/router";
 
 import Context from "../../../context/Context";
-import {IS_DEV_ENV} from "../../constants";
 import {handleDesignerString} from "../../../../helpers/qr/helpers";
+import {handleCopy} from "../../../helpers/generalFunctions";
 
 const RenderPreview = dynamic(() => import("../../renderers/RenderPreview"));
 const DynamicFeedIcon = dynamic(() => import("@mui/icons-material/DynamicFeed"));
 const DashboardIcon = dynamic(() => import("@mui/icons-material/Dashboard"));
 const PlayCircleOutlineIcon = dynamic(() => import("@mui/icons-material/PlayCircleOutline"));
 const PauseCircleOutlineIcon = dynamic(() => import("@mui/icons-material/PauseCircleOutline"));
+const KeyIcon = dynamic(() => import("@mui/icons-material/Key"));
+const LockOutlinedIcon = dynamic(() => import("@mui/icons-material/LockOutlined"));
+const RenderCopiedNotification = dynamic(() => import("../looseComps/RenderCopiedNotification"));
 
 interface RenderQrOptsProps {
   qr: any;
@@ -44,6 +47,7 @@ const RenderQrListOptions = ({qr, handleEdit, setConfirm, handlePauseQrLink, han
   const {loading, setLoading} = useContext(Context);
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
   const [preview, setPreview] = useState<any>(null);
+  const [copy, setCopy] = useState<boolean>(false);
 
   const isWide = useMediaQuery("(min-width:900px)", { noSsr: true });
 
@@ -166,9 +170,23 @@ const RenderQrListOptions = ({qr, handleEdit, setConfirm, handlePauseQrLink, han
                 <Typography sx={{ml: '5px'}}>{'Delete'}</Typography>
               </MenuItem>
             )}
+            {qr.secret !== undefined && <Divider />}
+            {qr.secret !== undefined && !qr.secretOps?.includes('e') && (
+              <MenuItem key="copySecretUrl" onClick={() => handleCopy(`${window.location.origin}/s/${qr.secret}`, setCopy)}>
+                <KeyIcon color="error"/>
+                <Typography sx={{ml: '5px'}}>{'Copy secret edit URL'}</Typography>
+              </MenuItem>
+            )}
+            {qr.secret !== undefined && qr.secretOps?.includes('l') && (
+              <MenuItem key="copySecretCode" onClick={() => handleCopy(qr.secret, setCopy)}>
+                <LockOutlinedIcon color="warning"/>
+                <Typography sx={{ml: '5px'}}>{'Copy secret code'}</Typography>
+              </MenuItem>
+            )}
           </Menu>
         )}
       </Stack>
+      {copy && <RenderCopiedNotification setCopied={() => setCopy(false)} />}
       {preview && <RenderPreview qrDesign={preview} externalClose={() => setPreview(null)} />}
     </>
   );

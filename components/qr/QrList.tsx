@@ -29,16 +29,19 @@ import RenderLinkOptions from "./helperComponents/RenderLinkOptions";
 
 const RenderConfirmDlg = dynamic(() => import("../renderers/RenderConfirmDlg"));
 const ButtonCreateQrLynks = dynamic(() => import("../menus/MainMenu/ButtonCreateQrLynks"));
+const KeyIcon = dynamic(() => import("@mui/icons-material/Key"));
+const LockOutlinedIcon = dynamic(() => import("@mui/icons-material/LockOutlined"));
 
 const dateHandler = (date: string): string => `${date.startsWith('Yesterday') || date.startsWith('Today') ? ':' : ' at:'} ${date}`;
 
 const iconsProps = {width: '17px', height: '17px', mb: '-3px'};
 
-const renderStaticDynamic = (is: boolean, avoidIcon?: boolean) => (
+const renderStaticDynamic = (is: boolean, avoidIcon?: boolean, isSecret?: boolean, isLock?: boolean) => (
   <Typography variant="caption" style={{ color: '#808080'}}>
-    {!avoidIcon ? (is ? <SyncIcon sx={{ ...iconsProps, mr: '5px' }} /> :
-      <SyncDisabledIcon sx={{ ...iconsProps, mr: '5px' }} />) : null}
+    {!avoidIcon ? (is ? <SyncIcon sx={{ ...iconsProps, mr: '5px' }} /> : <SyncDisabledIcon sx={{ ...iconsProps, mr: '5px' }} />) : null}
     {is ? "Dynamic" : "Static"}
+    {isSecret && <KeyIcon sx={{ ...iconsProps, mb: '-5px', ml: '5px' }} color="error"/>}
+    {isLock && <LockOutlinedIcon sx={{ ...iconsProps, mb: '-5px', ml: '5px' }} color="warning"/>}
   </Typography>
 );
 
@@ -74,6 +77,7 @@ export default function QrList({ title }: any) {
     if (!objectToClone.image?.trim()?.length && qr.qrOptionsId?.image?.trim()?.length) { // @ts-ignore
       objectToClone.image = qr.qrOptionsId.image;
     }
+    if (objectToClone.secret !== undefined) { delete objectToClone.secret; }
     setOptions(objectToClone);
     router.push(QR_CONTENT_ROUTE, undefined, { shallow: true }).finally(() => releaseWaiting());
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -150,7 +154,7 @@ export default function QrList({ title }: any) {
                     <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink}
                                          setConfirm={setConfirm} handleClone={handleClone} link={qrLink.link} />
                     <Box sx={{display: 'grid', mr: '10px'}}>
-                      {renderStaticDynamic(qr.isDynamic, true)}
+                      {renderStaticDynamic(qr.isDynamic, true, qr.secret !== undefined && !qr.secretOps?.includes('e'), qr.secretOps?.includes('l'))}
                       <Typography variant="caption" style={{color: "#808080"}}>{pluralize('visit', qrLink.visitCount || 0, true)}</Typography>
                     </Box>
                   </Box>)}
@@ -159,7 +163,7 @@ export default function QrList({ title }: any) {
                       <Divider orientation="vertical" flexItem sx={{ mr: 2 }} />
                       <Stack direction="column" spacing={0.8} justifyContent="flex-start" alignItems="flex-start"
                              sx={{ ml: { xs: 2, sm: 0 }, my: 'auto' }}>
-                        {renderStaticDynamic(qr.isDynamic)}
+                        {renderStaticDynamic(qr.isDynamic, false, qr.secret !== undefined && !qr.secretOps?.includes('e'), qr.secretOps?.includes('l'))}
                         {qrLink.address ? (
                           <RenderLinkOptions link={qrLink?.link || ''} isWide={true} iconsProps={iconsProps} />
                         ) : <div />}

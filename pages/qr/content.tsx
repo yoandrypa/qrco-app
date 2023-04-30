@@ -18,7 +18,9 @@ export default function QrContent () {
       selected = router.query.selected; // eslint-disable-line react-hooks/exhaustive-deps
       setSelected(selected);
     }
-    handleVerifier(router, data?.isDynamic || false, Boolean(userInfo), selected, setLoading);
+    if (data.mode !== 'secret') {
+      handleVerifier(router, data?.isDynamic || false, Boolean(userInfo), selected, setLoading);
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

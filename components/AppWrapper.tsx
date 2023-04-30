@@ -1,4 +1,4 @@
-import React, { cloneElement, ReactElement, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { cloneElement, ReactElement, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -151,7 +151,7 @@ export default function AppWrapper(props: AppWrapperProps) {
           <ConfirmDialog />
           <Notification />
           <Waiting />
-          {pendingTask == 0 && children}
+          {pendingTask === 0 && children}
         </Box>
         {handleLogout !== undefined && !router.query.login && (
           <Box sx={{
