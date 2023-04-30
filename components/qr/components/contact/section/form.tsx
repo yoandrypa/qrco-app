@@ -27,7 +27,7 @@ export default function Form({ data, index, handleValues }: IFormProps<ISectionD
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <TextBox
-            index={index} label="Receipt email" value={recipientEmail} required
+            index={index} label="Recipient email" value={recipientEmail} required
             placeholder="Enter your email address here"
             onChange={onChange('recipientEmail')}
             format={/^\w+(\.\w+)*(\+\w+(\.\w+)*)?@\w+(\.\w+)+$/}
@@ -36,7 +36,7 @@ export default function Form({ data, index, handleValues }: IFormProps<ISectionD
         <Grid item xs={12}>
           <FormControlLabel
             control={<Switch checked={recipientVisible || false} onChange={onChangeRecipientVisible} />}
-            label="Visible receipt's email in in microsite" sx={{ mt: '-5px' }}
+            label="Recipient email visible on microsite" sx={{ mt: '-5px' }}
           />
         </Grid>
         <Grid item xs={12} sm={8}>
