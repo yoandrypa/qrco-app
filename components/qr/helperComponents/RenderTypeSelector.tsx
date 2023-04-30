@@ -1,4 +1,4 @@
-import {useContext, useEffect, useMemo, useState} from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -8,19 +8,21 @@ import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import Context from "../../context/Context";
-import {DataType} from "../types/types";
+import { DataType } from "../types/types";
 
 import dynamic from "next/dynamic";
 
-import {IS_DEV_ENV, ONLY_QR} from "../constants";
+import { IS_DEV_ENV, ONLY_QR } from "../constants";
 import RenderProDesc from "./smallpieces/RenderProDesc";
 import RenderFreeDesc from "./smallpieces/RenderFreeDesc";
 import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
 import TypeSelector from "./TypeSelector";
-import {MyBadge} from "./looseComps/StyledComponents";
-import {areEquals} from "../../helpers/generalFunctions";
-import initialOptions, {initialData} from "../../../helpers/qr/data";
-import {dynamicQrTypes, staticQrTypes} from "../qrtypes";
+import { MyBadge } from "./looseComps/StyledComponents";
+import { areEquals } from "../../helpers/generalFunctions";
+import initialOptions, { initialData } from "../../../helpers/qr/data";
+import { dynamicQrTypes, staticQrTypes } from "../qrtypes";
+import { IQrSetting } from "../components/commons/types";
+
 
 const RenderMode = dynamic(() => import("./looseComps/RenderMode"));
 const RenderClaimingInfo = dynamic(() => import("./smallpieces/RenderClaimingInfo"));
@@ -105,23 +107,24 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
     }
   };
 
-  const renderTypeSelector = (item: string, description: string, enabled: boolean) => (
-    <Grid id={`card${item}`} item
-          lg={!selected ? 3 : isWideForThreeColumns ? 4 : 6}
-          md={!selected ? 4 : (isWideForThreeColumns ? 4 : 6)} sm={6} xs={12}>
-      <TypeSelector
-        icon={item} isDynamic={isDynamic} enabled={enabled} description={description} selected={selected === item}
-        handleSelect={handleSelect} />
-    </Grid>
-  );
+  const renderTypeSelector = (typeId: string, qrType: IQrSetting<any>, enabled: boolean) => {
+    qrType.id ??= typeId;  // Set id in legacy qr-types
+
+    return (
+      <Grid id={`card${typeId}`} item
+            lg={!selected ? 3 : isWideForThreeColumns ? 4 : 6}
+            md={!selected ? 4 : (isWideForThreeColumns ? 4 : 6)} sm={6} xs={12}>
+        <TypeSelector isDynamic={isDynamic} enabled={enabled} qrType={qrType} selected={selected === typeId}
+          handleSelect={handleSelect} />
+      </Grid>
+    );
+  };
 
   const renderTypes = (items: object) => {
     const keys = Object.keys(items);
     return keys.map((x: string) => { // @ts-ignore
-      const type = items[x];
-      if (IS_DEV_ENV || !type.devOnly) {
-        return renderTypeSelector(x, type.description, true);
-      }
+      const qrType = items[x];
+      if (IS_DEV_ENV || !qrType.devOnly) return renderTypeSelector(qrType.id || x, qrType, true);
       return null;
     })
   };

@@ -55,6 +55,7 @@ const Notification = () => {
     }
 
     if (Array.isArray(message)) message = message.join('<br/>');
+    message = message.replace(/\n/, '<br/>');
 
     setState({ notification: { message, severity }, open: true, closeOption });
   }

@@ -1,6 +1,8 @@
 import pluralize from "pluralize";
-import {formatBytes} from "../../utils";
-import {FILE_LIMITS} from "../../consts";
+import { formatBytes } from "../../utils";
+import { FILE_LIMITS } from "../../consts";
+import { dynamicQrTypes as dynamicQrSettings, staticQrTypes as staticQrSettings, sectionsQrTypes } from "./components"
+import { IQrSetting } from "./components/commons/types"
 
 export const dynamicQrTypes = {
   web: {
@@ -39,9 +41,6 @@ export const dynamicQrTypes = {
   coupon: {
     description: "Share a coupon"
   },
-  donation: {
-    description: "Get donations from your supporters worldwide",
-  },
   petId: {
     description: "Share your pet's information"
   },
@@ -55,10 +54,8 @@ export const dynamicQrTypes = {
     description: "Start your own charity or fundraising campaign",
     devOnly: true
   },
-  paylink: {
-    description: "Receive payments worldwide",
-    devOnly: true
-  }
+  // Include the dynamic qr-types from independent components
+  ...dynamicQrSettings,
 };
 
 const handleAssetDesc = (selected: 'pdf' | 'gallery' | 'audio' | 'video') => (
@@ -100,10 +97,6 @@ export const dynamicQr = {
   linkedLabel: {
     tip: "Smart labels.",
     predefined: ['title', 'tags', 'gallery']
-  },
-  donation: {
-    tip: "Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.",
-    predefined: ['donation']
   },
   pdf: {
     tip: handleAssetDesc('pdf'),
@@ -154,5 +147,17 @@ export const staticQrTypes = {
   crypto: {
     description: "Receive crypto on your eWallet",
     devOnly: true
-  }
+  },
+  // Include the dynamic qr-types from independent components
+  ...staticQrSettings,
+}
+
+export function getQrType(qrTypeId: string): IQrSetting<any> {
+  // @ts-ignore
+  return dynamicQrTypes[qrTypeId] || staticQrTypes[qrTypeId];
+}
+
+export function getQrSectionType(qrTypeId: string): IQrSetting<any> {
+  // @ts-ignore
+  return sectionsQrTypes[qrTypeId];
 }

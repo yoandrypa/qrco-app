@@ -3289,10 +3289,10 @@
   dependencies:
     "@date-io/core" "^2.16.0"
 
-"@ebanux/ebanux-utils@^1.0.34":
-  version "1.0.34"
-  resolved "https://registry.yarnpkg.com/@ebanux/ebanux-utils/-/ebanux-utils-1.0.34.tgz#0034c08f4c64edb60d6e4193d131ffc63ad798d1"
-  integrity sha512-YGOjVTUBxUBaub7zSPDzRDFnYpcjMjlgotHxonZ9tzplqIznN3Tnzh2aJT5Ymzanq1WldEelaRWL4+HlgYohnA==
+"@ebanux/ebanux-utils@^1.0.35":
+  version "1.0.35"
+  resolved "https://registry.yarnpkg.com/@ebanux/ebanux-utils/-/ebanux-utils-1.0.35.tgz#97448221ccdc206d6d01cd20e6b768615647bf9e"
+  integrity sha512-ltjnU4y6MhoFGcYBFEU6SidWtv2XpIbhIOxDeoy9ljvYp9DV1ph/4zV5yYPE94pvjQ5DMX940W/bXQJY/5cUJg==
   dependencies:
     axios "^1.2.0"
     axios-token-interceptor "^0.2.0"

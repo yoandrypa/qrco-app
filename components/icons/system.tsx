@@ -32,3 +32,5 @@ export const Liquor2 = dynamic(() => import( '@mui/icons-material/LiquorOutlined
 
 export const ShoppingBag1 = dynamic(() => import( '@mui/icons-material/ShoppingBag'));
 export const ShoppingBag2 = dynamic(() => import( '@mui/icons-material/ShoppingBagOutlined'));
+
+export const Money = dynamic(() => import( '@mui/icons-material/AttachMoneyOutlined'));

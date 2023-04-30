@@ -11,9 +11,10 @@ import { useTheme } from "@mui/system";
 interface RenderTextFieldsProps {
   label?: string;
   required?: boolean;
+  disabled?: boolean;
   shrink?: boolean;
   placeholder?: string;
-  onChange: Function;
+  onChange?: Function;
   multiline?: boolean;
   value?: string;
   sx?: any;
@@ -42,7 +43,7 @@ export default function TextBox(props: RenderTextFieldsProps) {
 
     setValue(newValue);
     setValid(newValid);
-    onChange?.(newValue, newValid);
+    onChange && onChange(newValue, newValid);
   }
 
   return (

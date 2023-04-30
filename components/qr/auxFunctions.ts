@@ -16,13 +16,13 @@ import { create, edit as qrEdit } from "../../handlers/qrs";
 import { startWaiting, releaseWaiting } from "../Waiting";
 import { QR_CONTENT_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { capitalize } from "@mui/material";
-import { createQrDonationPayLynk } from "../../libs/utils/donations";
-import { components } from "./renderers/custom/helperFuncs";
 
 // @ts-ignore
-import {renderToString} from "react-dom/server";
-import {getOptionsForPreview} from "../../helpers/qr/auxFunctions";
-import {generateSVGObj, handleQrData} from "./QrGenerator";
+import { renderToString } from "react-dom/server";
+import { getOptionsForPreview } from "../../helpers/qr/auxFunctions";
+import { generateSVGObj, handleQrData } from "./QrGenerator";
+import { getQrType, getQrSectionType } from "./qrtypes";
+import { setError } from "../../components/Notification";
 
 interface UserInfoProps {
   attributes: { sub: string, email: string },
@@ -228,10 +228,33 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   const clearExpand = !data.custom?.some((x: CustomType) => x.data?.sectionArrangement === 'tabbed');
 
+  const qrType = options.qrType ? getQrType(options.qrType) : null;
+  try {
+    if (qrType?.beforeSave) await qrType.beforeSave(data);
+  } catch (e: any) {
+    setError(e);
+  }
+
   if (data.custom?.length) {
     for (let idx = 0, len = data.custom?.length || 0; idx < len; idx += 1) {
-      const section = data.custom[idx]; // @ts-ignore
-      if (clearExpand && section.expand !== undefined) { delete section.expand; }
+      const section = data.custom[idx];
+
+      if (clearExpand && section.expand !== undefined) delete section.expand;
+
+      if (!qrType?.beforeSave) {
+        const qrSecType = getQrSectionType(section.component);
+
+        if (qrSecType?.beforeSave) {
+          try {
+            prevUpdatingHandler(`Setting ${section.component} micro-site section`)
+            await qrSecType.beforeSave(section, idx);
+          } catch (error) {
+            setIsError(true);
+            prevUpdatingHandler(null, false);
+          }
+        }
+      }
+
       if (["pdf", "audio", "gallery", "video"].includes(section.component) && section.data?.files?.length) {
         prevUpdatingHandler(`Uploading assets for ${capitalize(section.component)} section`);
         try {
@@ -242,19 +265,10 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
           prevUpdatingHandler(null, false);
           setIsError(true);
         }
-      } else if (section.component === 'donation') {
-        try {
-          prevUpdatingHandler('Setting donation micro-site')
-          await createQrDonationPayLynk(section.data, options.data);
-        } catch (error) {
-          setIsError(true);
-          prevUpdatingHandler(null, false);
-        }
       }
+
       // Check if the section is monetized
       data.isMonetized ||= section.isMonetized;
-      // @ts-ignore | Legacy check if the section is monetized TODO: Remove after edit and save all donation QRs.
-      data.isMonetized ||= components[section.component]?.isMonetized;
     }
   }
 

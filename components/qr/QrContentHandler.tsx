@@ -1,17 +1,19 @@
-import {ChangeEvent, useContext} from 'react';
+import React, { ChangeEvent, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import RenderIcon from './helperComponents/smallpieces/RenderIcon';
 import Context from '../context/Context';
-import {DataType, OptionsType, SocialProps} from './types/types';
+import { DataType, OptionsType, SocialProps } from './types/types';
 
 import dynamic from "next/dynamic";
 
 import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
-import {qrNameDisplayer} from "../../helpers/qr/helpers";
-import {dynamicQr} from "./qrtypes";
+import { qrNameDisplayer } from "../../helpers/qr/helpers";
+import { dynamicQr, dynamicQrTypes } from "./qrtypes";
+import { renderQrIcon } from "./components/commons/helpers";
+import { IQrSetting, TEventPayload } from "./components/commons/types";
 import valuesHanlder from "./helperFunction";
+import Common from "./helperComponents/Common";
 
 const CardDataStatic = dynamic(() => import("./renderers/custom/CardDataStatic"));
 const Custom = dynamic(() => import("./renderers/Custom"));
@@ -39,8 +41,10 @@ type QrContentHandlerProps = {
 
 const QrContentHandler = () => { // @ts-ignore
   const { data, setData, selected, setIsWrong, userInfo, options }: QrContentHandlerProps = useContext(Context);
+  // @ts-ignore
+  const qrType: IQrSetting = dynamicQrTypes[selected] || { id: selected };
 
-  const handleValues = (item: string, index?: number) => (payload: ChangeEvent<HTMLInputElement> | string | boolean | string[]) => {
+  const handleValues = (item: string, index?: number) => (payload: TEventPayload) => {
     valuesHanlder(setData, item, payload, index);
   };
 
@@ -50,6 +54,13 @@ const QrContentHandler = () => { // @ts-ignore
 
   const renderSel = () => {
     if (!selected) { return null; }
+
+    if (qrType?.renderForm) return (
+      <Common msg={qrType.tip}>
+        {qrType.renderForm({data, handleValues})}
+      </Common>
+    )
+
     switch (selected) {
       case 'web': {
         return <SingleData
@@ -115,8 +126,10 @@ const QrContentHandler = () => { // @ts-ignore
     <>
       {selected ? (
         <>
-          {!Boolean(userInfo) && data.mode !== 'secret' && <Box sx={{ mb: '10px' }}><RenderNoUserWarning /></Box>}
-          <Box sx={{ display: 'inline' }}><RenderIcon icon={selected} enabled sx={{mb: '-5px'}} /></Box>
+          {!Boolean(userInfo) && <Box sx={{ mb: '10px' }}><RenderNoUserWarning /></Box>}
+          <Box sx={{ display: 'inline' }}>
+            {renderQrIcon(qrType, { enabled: true, sx: { mb: '-5px' } })}
+          </Box>
           <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{qrNameDisplayer(selected || '', data?.isDynamic || false)}</Typography>
           <Typography sx={{ display: { xs: 'none', sm: 'inline' } }}>{`: Enter the content${data?.isDynamic ? ' and page design' : ''}`}</Typography>
           <NotifyDynamic isDynamic={data?.isDynamic || false} />

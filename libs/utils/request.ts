@@ -25,3 +25,7 @@ export async function loadSubscription(): Promise<any> {
 
   return subscription;
 }
+
+export function payLynkRequest(options: any): Promise<any> {
+  return request({ ...options, baseURL: `${process.env.PAYLINK_BASE_URL}/api/v2.0` });
+}

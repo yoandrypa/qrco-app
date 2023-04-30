@@ -1,5 +1,7 @@
 import { CustomType, DataType, Type } from "../../types/types";
 import { getUuid } from "../../../../helpers/qr/helpers";
+import { sectionsQrTypes } from "../../components";
+import { IQrSetting, THandleValues } from "../../components/commons/types";
 
 export const components = {
   address: { name: 'Address' },
@@ -31,7 +33,9 @@ export const components = {
   couponInfo: { name: 'Promotion info', notInMenu: true },
   couponData: { name: 'Coupon data', notInMenu: true },
   petId: { name: 'Pet presentation', notInMenu: true },
-  sku: { name: 'Product', notInMenu: true }
+  sku: { name: 'Product', notInMenu: true },
+  // Include the sections qr-types from independent components
+  ...sectionsQrTypes,
 };
 
 export interface RenderSocialsProps {
@@ -77,7 +81,7 @@ export interface CustomProps {
   selected?: string;
   data: DataType;
   setData: Function;
-  handleValues: Function;
+  handleValues: THandleValues;
 }
 
 export interface CustomSettingsProps {
@@ -151,8 +155,8 @@ export const cleaner = (data: DataType, item: string): void => {
 
 export const sectionPreConfig = (item: string, selected?: string): CustomType => {
   // @ts-ignore
-  const component: any = components[item];
-  const data = component.data || {};
+  const component: IQrSetting = components[item];
+  const data = component.getDefaultQrData ? component.getDefaultQrData() : component.data || {};
 
   if (selected === 'petId') data.linksOnlyLinks = true;
 

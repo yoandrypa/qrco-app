@@ -17,8 +17,9 @@ import EbxIcon, { iconIds, iconName } from "../../icons"
 interface RenderTextFieldsProps {
   label?: string;
   required?: boolean;
+  disabled?: boolean;
   placeholder?: string;
-  onChange: Function;
+  onChange?: Function;
   value?: string;
   sx?: any;
   index?: number;
@@ -44,7 +45,7 @@ export default function SelectIconBox(props: RenderTextFieldsProps) {
 
     setValue(newValue);
     setValid(newValid);
-    onChange?.(newValue, newValid);
+    onChange && onChange(newValue, newValid);
   }
 
   const renderValue = (value: string) => (

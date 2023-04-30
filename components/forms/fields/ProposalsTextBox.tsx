@@ -12,9 +12,10 @@ import { useTheme } from "@mui/system";
 interface PropsType {
   label?: string;
   required?: boolean;
+  disabled?: boolean;
   shrink?: boolean;
   placeholder?: string;
-  onChange: Function;
+  onChange?: Function;
   value?: string;
   sx?: any;
   index?: number;
@@ -41,7 +42,7 @@ export default function ProposalsTextBox(props: PropsType) {
 
     setValue(newValue);
     setValid(newValid);
-    onChange?.(newValue, newValid);
+    onChange && onChange(newValue, newValid);
   }
 
   return (
