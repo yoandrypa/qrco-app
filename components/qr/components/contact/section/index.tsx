@@ -29,7 +29,7 @@ const setting: IQrSetting<ISectionData> = {
     const emailFormat = /^\w+(\.\w+)*(\+\w+(\.\w+)*)?@\w+(\.\w+)+$/;
 
     if (isEmpty(data.recipientEmail) || !emailFormat.test(data.recipientEmail)) {
-      errors.push(`Enter a valid email address for the receipt in section ${index + 1}`);
+      errors.push(`Enter a valid email address for the recipient in section ${index + 1}`);
     }
 
     return errors;
