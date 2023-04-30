@@ -11,6 +11,7 @@ import { useTheme } from "@mui/system";
 interface RenderTextFieldsProps {
   label?: string;
   required?: boolean;
+  disabled?: boolean;
   shrink?: boolean;
   placeholder?: string;
   onChange: Function;

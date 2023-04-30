@@ -17,6 +17,7 @@ import EbxIcon, { iconIds, iconName } from "../../icons"
 interface RenderTextFieldsProps {
   label?: string;
   required?: boolean;
+  disabled?: boolean;
   placeholder?: string;
   onChange: Function;
   value?: string;
