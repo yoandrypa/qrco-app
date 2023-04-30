@@ -3,6 +3,7 @@ import {EMAIL, PHONE, YEAR, ZIP} from "./constants";
 import {isValidUrl} from "../../utils";
 import {components} from "./renderers/custom/helperFuncs";
 import {capitalize} from "@mui/material";
+import { getQrSectionType } from "./qrtypes";
 
 // @ts-ignore
 const exists = (x: CustomType, item: string) => x.data?.[item] !== undefined && !x.data[item].trim().length !== 0;
@@ -60,6 +61,9 @@ const validator = (custom: CustomType[], forceExtra: boolean, ignore?: boolean) 
     errors.push('Add at least one section');
   } else {
     custom.forEach((x: CustomType, index: number) => {
+      const qrSecType = getQrSectionType(x.component);
+      if (qrSecType?.validate) errors = [...errors, ...qrSecType?.validate(x.data, index)];
+
       if (x.component !== 'date' && isEmpty(x)) { // @ts-ignore
         errors.push(`Make sure the ${components[x.component]?.name.toLowerCase() || x.component} section ${index + 1} is not empty`);
       } else { // @ts-ignore
@@ -177,13 +181,6 @@ const validator = (custom: CustomType[], forceExtra: boolean, ignore?: boolean) 
             if (!x.data.keyValues.some(xx => xx.value?.trim().length)) {
               errors.push(`There is at least one missing value in details in section ${index + 1}`);
             }
-          }
-        }
-        if (x.component === 'contact') {
-          if (!exists(x, 'email')) {
-            errors.push(`Enter an email address for the receipt in section ${index + 1}`);
-          } else if (!EMAIL.test(x.data?.email || '')) {
-            errors.push(`Enter a valid email address for the receipt in section ${index + 1}`);
           }
         }
         if (x.component === 'sms') {
