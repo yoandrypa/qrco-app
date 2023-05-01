@@ -2,13 +2,14 @@ import Notifications from "../../../notifications/Notifications";
 
 interface CopiedProp {
   setCopied: (copied: boolean) => void;
+  message?: string;
 }
 
-export default function RenderCopiedNotification({setCopied}: CopiedProp) {
+export default function RenderCopiedNotification({setCopied, message}: CopiedProp) {
   return (
     <Notifications
       autoHideDuration={2500}
-      message="Copied!"
+      message={message || "Copied!"}
       vertical="bottom"
       horizontal="center"
       severity="success"

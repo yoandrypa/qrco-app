@@ -430,6 +430,12 @@ export const cleanSelectionForMicrositeURL = (item: string, isDynamic: boolean, 
   return `sample qr ${clearItem(item)}`;
 };
 
+export const genURL = (isDynamic: boolean, code?: string, selected?: string) => {
+  if (!isDynamic) { return qrNameDisplayer(selected || '', false); }
+  if (selected) { return cleanSelectionForMicrositeURL(selected, isDynamic); }
+  return `${process.env.MICRO_SITES_BASE_URL}/${code}`;
+}
+
 export const getSx = (theme: any) => ({
   border: `solid 1px ${theme.palette.primary.main}`, borderRadius: '100%', width: '40px', height: '40px', my: 'auto', p: '5px', color: theme.palette.primary.main
 });

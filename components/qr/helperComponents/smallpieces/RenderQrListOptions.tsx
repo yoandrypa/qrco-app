@@ -39,9 +39,10 @@ interface RenderQrOptsProps {
   handleClone: (clone: QrDataType) => void;
   setConfirm: (conf: { createdAt: number; userId: string; }) => void;
   handlePauseQrLink: (id: LinkType) => void;
+  showDetails?: (qr: any) => void;
 }
 
-const RenderQrListOptions = ({qr, handleEdit, setConfirm, handlePauseQrLink, handleClone, link}: RenderQrOptsProps) => {
+const RenderQrListOptions = ({qr, handleEdit, setConfirm, handlePauseQrLink, handleClone, link, showDetails}: RenderQrOptsProps) => {
   const router = useRouter();
   // @ts-ignore
   const {loading, setLoading} = useContext(Context);
@@ -56,9 +57,13 @@ const RenderQrListOptions = ({qr, handleEdit, setConfirm, handlePauseQrLink, han
   };
 
   const handleDetails = () => {
-    setLoading(true);
-    router.push("/qr/" + (new Date(qr.createdAt)).getTime() + "/details").then(() => setLoading(false));
-    // router.push("/qr/" + (qr.createdAt.getTime() - 1) + "/details").then(() => setLoading(false));
+    if (showDetails !== undefined) {
+      showDetails(qr);
+    } else {
+      setLoading(true);
+      router.push("/qr/" + (new Date(qr.createdAt)).getTime() + "/details").then(() => setLoading(false));
+      router.push("/qr/" + (qr.createdAt.getTime() - 1) + "/details").then(() => setLoading(false));
+    }
   };
 
   const handlePreview = () => {
@@ -96,17 +101,17 @@ const RenderQrListOptions = ({qr, handleEdit, setConfirm, handlePauseQrLink, han
         {isWide && (
           <>
             <Tooltip title="Details">
-              <IconButton color="primary" disabled={loading} onClick={handleDetails}>
+              <IconButton color="primary" onClick={handleDetails}>
                 <InfoOutlinedIcon/>
               </IconButton>
             </Tooltip>
             <Tooltip title="Edit">
-              <IconButton color="primary" disabled={loading} onClick={beforeEdit}>
+              <IconButton color="primary" onClick={beforeEdit}>
                 <EditOutlined/>
               </IconButton>
             </Tooltip>
             <Tooltip title="Delete">
-              <IconButton color="error" disabled={loading} onClick={beforeDelete}>
+              <IconButton color="error" onClick={beforeDelete}>
                 <DeleteOutlineRounded/>
               </IconButton>
             </Tooltip>

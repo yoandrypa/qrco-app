@@ -21,7 +21,7 @@ import RenderCellPhoneShape from "../RenderCellPhoneShape";
 import {NO_MICROSITE, ONLY_QR} from "../../constants";
 import {getFileFromQr} from "../../auxFunctions";
 import {areEquals, handleCopy} from "../../../helpers/generalFunctions";
-import {cleanSelectionForMicrositeURL, qrNameDisplayer, SamplePrevProps} from "../../../../helpers/qr/helpers";
+import {cleanSelectionForMicrositeURL, genURL, qrNameDisplayer, SamplePrevProps} from "../../../../helpers/qr/helpers";
 
 import dynamic from "next/dynamic";
 
@@ -61,7 +61,6 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
   [sharerPos, hideQr]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const forceHide = useRef<boolean>(false);
-  const microSitesBaseUrl = process.env.MICRO_SITES_BASE_URL;
 
   const handleToggle = (_: MouseEvent<HTMLElement>, newSel: string | null) => {
     if (newSel !== null) {
@@ -69,12 +68,8 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
     }
   }
 
-  const URL = useMemo(() => {
-      if (!isDynamic) return qrNameDisplayer(selected || '', false);
-      if (selected) return cleanSelectionForMicrositeURL(selected, isDynamic);
-      return `${microSitesBaseUrl}/${code}`;
-    }, [isDynamic, selected, code] // eslint-disable-line react-hooks/exhaustive-deps
-  );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const URL = useMemo(() => genURL(isDynamic || false, code, selected), [isDynamic, selected, code]);
 
   const repaint = useCallback(debounce(() => { // eslint-disable-line react-hooks/exhaustive-deps
     setUpdating(true);
@@ -115,8 +110,9 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
         <Box sx={{ height: '31px', display: 'flex', justifyContent: 'space-between',
           ml: !isDrawed ? 0 : '5px', width: !isDrawed ? '100%' : 'calc(100% - 10px)' }}>
           <Box sx={{ display: 'flex', width: '100%' }}>
-            <RenderLinkItem step={step} code={code || ''} selected={selected || ''} onlyQr={onlyQr || false}
-                            urlData={!onlyQr ? clearUrl(URL || '') : URL || qrOptions?.data}/>
+            <RenderLinkItem onlyQr={onlyQr || false} urlData={!onlyQr ? clearUrl(URL || '') : URL || qrOptions?.data}/>
+            {/*<RenderLinkItem step={step} code={code || ''} selected={selected || ''} onlyQr={onlyQr || false}*/}
+            {/*                urlData={!onlyQr ? clearUrl(URL || '') : URL || qrOptions?.data}/>*/}
             {!onlyQr ? (
               <>
                 <IconButton size="small" target="_blank" component="a" href={URL} sx={{ height: '28px', width: '28px', mt: '9px', ml: '-2px' }}>
@@ -169,7 +165,7 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
                     hideBannerSelection={data?.layout?.includes('banner') || false} />
                 )}
                 <RenderIframe
-                  src={!code ? cleanSelectionForMicrositeURL(selected || '', isDynamic, true) : `${microSitesBaseUrl}/sample/empty`}
+                  src={!code ? cleanSelectionForMicrositeURL(selected || '', isDynamic, true) : `${process.env.MICRO_SITES_BASE_URL}/sample/empty`}
                   selected={selected} width="256px" height="536px" data={data} backImg={backImg} mainImg={mainImg}
                   shareLink={shareLink} notifyReady={setIsReady} backgroundImg={backgroundImg} qrImg={qrImg} />
               </Suspense>

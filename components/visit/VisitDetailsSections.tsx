@@ -12,39 +12,34 @@ import Stack from "@mui/material/Stack";
 import {getSx} from "../../helpers/qr/helpers";
 import {useTheme} from "@mui/system";
 
-const VisitDetailsSections = ({ visitData }: any) => {
+interface VisitDetailsProps {
+  visitData: any;
+  visitCount: number;
+}
+
+const VisitDetailsSections = ({ visitData, visitCount }: VisitDetailsProps) => {
   const theme = useTheme();
+  const total = visitCount || visitData?.total || 0;
 
   return (
-    <List sx={ { width: "100%", bgcolor: "background.paper" } }>
-      <ListItem>
+    <List sx={{ width: "100%", bgcolor: "background.paper", mt: '-20px' }}>
+      <ListItem sx={{width: '100%', background: 'rgba(181,181,181,0.05)'}}>
         <Stack direction="row" alignItems="center" spacing={2} justifyContent="end">
-          <Typography variant="h3"
-                      sx={ { color: visitData?.total > 0 ? "blue" : "red" } }>{ visitData?.total || 0 }</Typography>
+          <Typography variant="h3" sx={{color: total > 0 ? "blue" : "red"}}>{total}</Typography>
           <Typography>Visits</Typography>
         </Stack>
       </ListItem>
       <ListItem>
-        <ListItemAvatar>
-          {/*<Avatar sx={ { bgcolor: themeConfig().palette.primary.main } }>*/}
-            <LaptopIcon sx={getSx(theme)} />
-          {/*</Avatar>*/}
-        </ListItemAvatar>
-        <ListItemText
-          primary="Technology"
+        <ListItemAvatar><LaptopIcon sx={getSx(theme)} /></ListItemAvatar>
+        <ListItemText primary="Technology"
           secondary="What apps have accessed the Short URL, either by scanning the QR code or by visiting the link directly?" />
       </ListItem>
       <ListItem>
         <VisitTechnologyDetails visitData={ visitData || {} } />
       </ListItem>
       <ListItem>
-        <ListItemAvatar>
-          {/*<Avatar sx={ { bgcolor: themeConfig().palette.primary.main } }>*/}
-            <MapIcon sx={getSx(theme)}/>
-          {/*</Avatar>*/}
-        </ListItemAvatar>
-        <ListItemText
-          primary="Locations"
+        <ListItemAvatar><MapIcon sx={getSx(theme)}/></ListItemAvatar>
+        <ListItemText primary="Locations"
           secondary="What continents, countries and cities are your visitors from?" />
       </ListItem>
       <ListItem>
