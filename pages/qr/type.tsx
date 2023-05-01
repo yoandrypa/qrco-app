@@ -6,7 +6,7 @@ import QrTypeSelector from "../../components/qr/QrTypeSelector";
 import QrWizard from "../../components/qr/QrWizard";
 import Context from "../../components/context/Context";
 
-import { DEFAULT_DYNAMIC_SELECTED, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE } from "../../components/qr/constants";
+import { DEFAULT_DYNAMIC_SELECTED, QR_DESIGN_ROUTE } from "../../components/qr/constants";
 import { DataType } from "../../components/qr/types/types";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { findByAddress } from "../../handlers/links";

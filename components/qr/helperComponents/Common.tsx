@@ -54,6 +54,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
 
   const lastAction = useRef<string | undefined>(undefined);
   const loadingCount = useRef<number>(0);
+  const firstLoad = useRef<boolean>(true);
 
   const isWideForPreview = useMediaQuery("(min-width:720px)", { noSsr: true });
 
@@ -186,7 +187,15 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     }
   };
 
-  useEffect(() => { handleSave(); }, [data?.secret, data?.secretOps]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (data?.isDynamic) {
+      if (!firstLoad.current) {
+        handleSave();
+      } else {
+        firstLoad.current = false;
+      }
+    }
+  }, [data?.secret, data?.secretOps]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleImg = useCallback((prop: string) => setForceOpen(prop), []);
   const forceOpenValidator = () => { setValidationErrors(getValidationErrors()); }
@@ -195,6 +204,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     getOptionsForPreview(data, options, background, frame, cornersData, dotsData, selected), [data, options.data]);
 
   const omitProfileImg = useMemo(() => !PROFILE_IMAGE.includes(selected) || !data?.isDynamic, [selected, data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
+  const code = useMemo(() => options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected, [options?.data, selected]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -212,7 +222,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       {userInfo || data.mode === 'secret' ? (
         <Box sx={{ display: 'flex' }}>
           <Box sx={{ width: '100%' }}>
-            <RenderNameAndSecret handleValue={handleValue} qrName={data?.qrName} secret={data?.secret}
+            <RenderNameAndSecret handleValue={handleValue} qrName={data?.qrName} secret={data?.secret} code={code}
                                  hideSecret={data.mode === 'secret' || !data?.isDynamic} errors={getValidationErrors()}
                                  openValidationErrors={forceOpenValidator} secretOps={data?.secretOps} />
             {![...NO_MICROSITE, 'web'].includes(selected) && data?.isDynamic ? (
@@ -242,8 +252,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           </Box>
           {isWideForPreview && (
             <RenderSamplePreview
-              code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
-              save={handleSave} style={{mt: 1, ml: '15px', position: 'sticky', top: '120px'}}
+              code={code} save={handleSave} style={{mt: 1, ml: '15px', position: 'sticky', top: '120px'}}
               saveDisabled={isWrong || !data.qrName?.trim().length} shareLink={options?.data}
               qrOptions={optionsForPreview} step={1} data={previewQRGenerator(data, selected, omitProfileImg)}
               onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
@@ -257,8 +266,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={selected === 'web' || !data.isDynamic ? 400 : 700} border={35}>
           <RenderSamplePreview
-            code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
-            save={handleSave} saveDisabled={isWrong || !data.qrName?.trim().length} style={{mt: '-15px'}}
+            code={code} save={handleSave} saveDisabled={isWrong || !data.qrName?.trim().length} style={{mt: '-15px'}}
             data={previewQRGenerator(data, selected, omitProfileImg)} step={1} isDrawed
             onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
             shareLink={options?.data} qrOptions={optionsForPreview} handlePickImage={handleImg}

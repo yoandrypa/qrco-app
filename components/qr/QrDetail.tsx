@@ -22,7 +22,6 @@ const QrDetail = ({qrData}: any) => {
 
   const isWide = useMediaQuery("(min-width:925px)", {noSsr: true});
 
-
   return (
     <Grid container spacing={2}>
       <Grid item xs={isWide ? 1 : 2}>
@@ -76,9 +75,8 @@ const QrDetail = ({qrData}: any) => {
         <TodayIcon sx={getSx(theme)}/>
       </Grid>
       <Grid item xs={isWide ? 11 : 10} alignItems="center">
-        <Typography sx={{fontWeight: 'bold'}}>Created at</Typography>
-        <Typography>{humanDate(
-          new Date(qrData.createdAt).getTime())}</Typography>
+        <Typography sx={{fontWeight: 'bold'}}>Created</Typography>
+        <Typography>{humanDate(new Date(qrData.createdAt).getTime())}</Typography>
       </Grid>
       <Grid item xs={isWide ? 1 : 2}>
         <EventIcon sx={getSx(theme)}/>
