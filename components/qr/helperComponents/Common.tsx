@@ -158,7 +158,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
 
   const handleSave = async () => {
     const validate = getValidationErrors();
-    if (validate.length) {
+    if (validate.length) { debugger;
       setValidationErrors(validate);
     } else {
       lastAction.current = 'saving the data';
@@ -186,7 +186,9 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     }
   };
 
-  useEffect(() => { handleSave(); }, [data?.secret, data?.secretOps]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (data?.custom?.length) { handleSave(); }
+  }, [data?.secret, data?.secretOps]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleImg = useCallback((prop: string) => setForceOpen(prop), []);
   const forceOpenValidator = () => { setValidationErrors(getValidationErrors()); }
