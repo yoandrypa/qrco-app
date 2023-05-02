@@ -22,6 +22,7 @@ import { areEquals } from "../../helpers/generalFunctions";
 import initialOptions, { initialData } from "../../../helpers/qr/data";
 import { dynamicQrTypes, staticQrTypes } from "../qrtypes";
 import { IQrSetting } from "../components/commons/types";
+import {handleProceedWithStatic} from "../listHelper/functions";
 
 
 const RenderMode = dynamic(() => import("./looseComps/RenderMode"));
@@ -100,7 +101,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
       } else {
         proceed(selection);
       }
-    } else if (Object.keys(data || {}).length > 0) {
+    } else if (handleProceedWithStatic(data)) {
       setDisplayConfirm({select: selection});
     } else {
       proceed(selection);

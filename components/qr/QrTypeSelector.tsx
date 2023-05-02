@@ -7,6 +7,7 @@ import initialOptions, {initialData} from "../../helpers/qr/data";
 import {DataType, OptionsType} from "./types/types";
 
 import dynamic from "next/dynamic";
+import {handleProceedWithStatic} from "./listHelper/functions";
 const RenderLoseDataConfirm = dynamic(() => import("./helperComponents/smallpieces/RenderLoseDataConfirm"));
 
 interface QrTypeSelectorProps {
@@ -32,7 +33,7 @@ const QrTypeSelector = () => { // @ts-ignore
     setDisplayConfirm(null);
   };
 
-  const handleSelect = (payload: string): void => {
+  const handleSelect = (payload: string): void => { debugger;
     if (data?.isDynamic) {
       const compareWith = {...initialOptions, data: options.data}; // @ts-ignore
       if (options.id) { compareWith.id = options.id; } // @ts-ignore
@@ -66,7 +67,7 @@ const QrTypeSelector = () => { // @ts-ignore
       } else {
         proceedWithSelection(payload);
       }
-    } else if (Object.keys(data || {}).length > 0) {
+    } else if (handleProceedWithStatic(data)) {
       setDisplayConfirm(payload);
     } else {
       proceedWithSelection(payload);
