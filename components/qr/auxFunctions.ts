@@ -236,6 +236,9 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
   }
 
   if (data.custom?.length) {
+    // Set isMonetized in false to recalculate it new value.
+    data.isMonetized = false;
+
     for (let idx = 0, len = data.custom?.length || 0; idx < len; idx += 1) {
       const section = data.custom[idx];
 
