@@ -34,7 +34,7 @@ export const previewQRGenerator = (dataInfo: DataType, selected: string, omit?: 
   const obj = {...data, qrType: selected};
 
   if (proceed) {
-    if (data.layout !== 'empty') {
+    if (data.layout !== 'empty' && !Boolean(isDetailsView)) {
       if (!data.foregndImg && !omit) {
         obj.foregndImg = mainImg;
       }
