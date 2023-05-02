@@ -32,7 +32,7 @@ const VisitDetailsSections = ({ visitData, visitCount }: VisitDetailsProps) => {
       <ListItem>
         <ListItemAvatar><LaptopIcon sx={getSx(theme)} /></ListItemAvatar>
         <ListItemText primary="Technology"
-          secondary="What apps have accessed the Short URL, either by scanning the QR code or by visiting the link directly?" />
+          secondary="What apps have accessed the QRLynk URL, either by scanning the QR code or by visiting the link directly?" />
       </ListItem>
       <ListItem>
         <VisitTechnologyDetails visitData={ visitData || {} } />
@@ -40,7 +40,7 @@ const VisitDetailsSections = ({ visitData, visitCount }: VisitDetailsProps) => {
       <ListItem>
         <ListItemAvatar><MapIcon sx={getSx(theme)}/></ListItemAvatar>
         <ListItemText primary="Locations"
-          secondary="What continents, countries and cities are your visitors from?" />
+          secondary="What countries and cities are your visitors from?" />
       </ListItem>
       <ListItem>
         <VisitLocationDetails visitData={ visitData || {} } />
