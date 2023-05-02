@@ -11,6 +11,7 @@ export const PRIVATE_ROUTES = [
   QR_DESIGN_ROUTE,
   QR_DETAILS_ROUTE,
   PLANS_ACCOUNT_PORTAL,
+  "/management/*",
   "/links/*",
 ];
 
