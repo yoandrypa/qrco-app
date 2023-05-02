@@ -183,13 +183,6 @@ const validator = (custom: CustomType[], forceExtra: boolean, ignore?: boolean) 
           }
         }
       }
-      if (x.component === 'contact') {
-        if (!exists(x, 'email')) {
-          errors.push(`Enter an email address for the receipt in section ${index + 1}`);
-        } else if (!EMAIL.test(x.data?.email || '')) {
-          errors.push(`Enter a valid email address for the receipt in section ${index + 1}`);
-        }
-      }
       if (x.component === 'sms') {
         if (!exists(x, 'cell')) {
           errors.push(`Enter a cell phone number for the receipt in section ${index + 1}`);
