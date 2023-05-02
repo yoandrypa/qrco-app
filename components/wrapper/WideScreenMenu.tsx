@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 
 import MainMenu from "../menus/MainMenu";
+import AdminMenu from "../menus/AdminMenu";
 import ButtonLogin from "../menus/MainMenu/ButtonLogin";
 import ButtonMyQrLynks from "../menus/MainMenu/ButtonMyQrLynks";
 import ButtonCreateQrLynks from "../menus/MainMenu/ButtonCreateQrLynks";
@@ -25,6 +26,7 @@ export default function WideScreenMenu() {
     <Box sx={{ display: "flex" }}>
       <OutMenuButton />
       <MainMenu />
+      <AdminMenu />
     </Box>
   );
 }
