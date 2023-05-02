@@ -1,4 +1,4 @@
-import {ReactNode, SyntheticEvent, useState} from "react";
+import {ReactNode, SyntheticEvent, useEffect, useState} from "react";
 import Box from "@mui/material/Box";
 import VisitDetailsSections from "../visit/VisitDetailsSections";
 import QrDetail from "./QrDetail";
@@ -15,7 +15,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import dynamic from "next/dynamic";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-// import {findByShortLink} from "../../handlers/visit";
+import {findByShortLink} from "../../handlers/visit";
 
 const RenderPreviewButton = dynamic(() => import("./helperComponents/smallpieces/RenderPreviewButton"));
 const RenderPreviewDrawer = dynamic(() => import("./helperComponents/smallpieces/RenderPreviewDrawer"));
@@ -42,15 +42,10 @@ const TabPanel = (props: TabPanelProps) => {
   );
 };
 
-// const getVisits = async (userId: string, createdAt: number) => {
-//   return await findByShortLink({ userId, createdAt });
-// };
-
 const QrDetails = ({ visitData, qrData, goBack }: any) => {
   const [value, setValue] = useState(0);
   const [openPreview, setOpenPreview] = useState<boolean>(false);
   const [data, setData] = useState<any>(undefined);
-  // const [visitInfo, setVisitInfo] = useState(visitData);
 
   const isWideForPreview = useMediaQuery("(min-width:925px)", {noSsr: true});
 
@@ -58,16 +53,21 @@ const QrDetails = ({ visitData, qrData, goBack }: any) => {
     setValue(newValue);
   };
 
-  // useEffect(() => {
-  //   if (!visitData) {
-  //     let visits; // @ts-ignore
-  //     if (qrData.shortLinkId?.visitCount > 0) { // @ts-ignore
-  //       // const createdAt = (new Date(qrData.shortLinkId.createdAt)).getTime(); // eslint-disable-line react-hooks/exhaustive-deps
-  //       // visits = getVisits(qrData.shortLinkId.userId, qrData.shortLinkId.createdAt.getTime());
-  //     } // @ts-ignore
-  //     // setData({ qrData, visits });
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (!data) {
+      const getVisits = async (userId: string, createdAt: number) => {
+        const result = await findByShortLink({ userId, createdAt });
+        setData(result);
+      };
+
+      // @ts-ignore
+      if (qrData.shortLinkId?.visitCount > 0) { // @ts-ignore
+        // const createdAt = (new Date(qrData.shortLinkId.createdAt)).getTime(); // eslint-disable-line react-hooks/exhaustive-deps
+        getVisits(qrData.shortLinkId.userId, qrData.shortLinkId.createdAt.getTime());
+      } // @ts-ignore
+      // setData({ qrData, visits });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -95,7 +95,7 @@ const QrDetails = ({ visitData, qrData, goBack }: any) => {
           <QrDetail qrData={qrData}/>
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <VisitDetailsSections visitData={visitData} visitCount={qrData?.shortLinkId?.visitCount || 0}/>
+          <VisitDetailsSections visitData={data} visitCount={qrData?.shortLinkId?.visitCount || 0}/>
         </TabPanel>
       </Box>
       {isWideForPreview && (
