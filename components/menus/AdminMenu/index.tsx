@@ -1,4 +1,4 @@
-import React, { useState, MouseEvent, Fragment, ReactNode } from 'react';
+import React, { useState, MouseEvent, Fragment } from 'react';
 
 import session from '@ebanux/ebanux-utils/sessionStorage';
 
@@ -11,6 +11,7 @@ import MenuIcon from '@mui/icons-material/Settings';
 import AdminIcon from '@mui/icons-material/SettingsOutlined';
 import DashboardIcon from '@mui/icons-material/LineAxisOutlined';
 import CheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
+import AccountIcon from '@mui/icons-material/ManageAccountsOutlined';
 
 import MItem from './MItem';
 import classes from './classes.sx';
@@ -53,6 +54,7 @@ export default function AdminMenu() {
         <Divider />
         <MItem module='dashboard' title='Dashboard' Icon={DashboardIcon} />
         <MItem module='checkouts' title='Checkouts' Icon={CheckoutIcon} />
+        <MItem module='my-account' title='My Account' Icon={AccountIcon} />
       </Menu>
     </Fragment>
   );
