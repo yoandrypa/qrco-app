@@ -4,7 +4,7 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import {handleDesignerString, qrNameDisplayer} from "../../../helpers/qr/helpers";
-import MonetizationIcon from "@mui/icons-material/MonetizationOn";
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import {areEquals, humanDate} from "../../helpers/generalFunctions";
 import RenderLinkOptions from "../helperComponents/RenderLinkOptions";
 import RenderQrListOptions from "../helperComponents/smallpieces/RenderQrListOptions";
@@ -78,7 +78,7 @@ function RenderQrList({title, qrs, handleEdit, handlePauseQrLink, openDetails, s
                       <Stack direction="column" sx={{ my: "auto" }}>
                         <Typography variant="subtitle2" sx={{ color: "orange", mb: "-7px", display: 'flex', alignItems: 'center' }}>
                           {qrNameDisplayer(qr.qrType, qr.isDynamic)}
-                          {qr.isMonetized && <MonetizationIcon sx={{width: 18, height: 18, ml: '2px'}} color="warning" />}
+                          {qr.isMonetized && <AttachMoneyIcon sx={{width: 18, height: 18, ml: '2px'}} color="error" />}
                         </Typography>
                         <Typography variant="h6" sx={{
                           fontWeight: "bold", mb: "-2px", width: {sm: '350px', xs: '200px'}, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'

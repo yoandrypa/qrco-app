@@ -43,6 +43,7 @@ export default function RenderSecretHandler({secret, disabled, errors, openValid
   const generateSecretId = async () => {
     setLoading(true);
     handleValue('secret')(await generateSecret());
+    setAnchorOpts(undefined);
     setLoading(false);
   }
 
@@ -186,8 +187,8 @@ export default function RenderSecretHandler({secret, disabled, errors, openValid
                     <td>
                       Copy to the clipboard:
                       <ul style={{paddingLeft: '20px', marginTop: '3px', marginBottom: '1px'}}>
-                        <li>The secret URL for editing this QRLynk page (if enabled)</li>
-                        <li>The secret code for accessing this QRLynk page (if enabled)</li>
+                        <li>The secret URL for editing this QRLynk page (if enabled).</li>
+                        <li>The secret code for accessing this QRLynk page (if enabled).</li>
                       </ul>
                     </td>
                   </tr>
