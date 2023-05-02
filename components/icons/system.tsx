@@ -30,6 +30,9 @@ export const Drink2 = dynamic(() => import( '@mui/icons-material/LocalBarOutline
 export const Liquor1 = dynamic(() => import( '@mui/icons-material/Liquor'));
 export const Liquor2 = dynamic(() => import( '@mui/icons-material/LiquorOutlined'));
 
+export const FastFood1 = dynamic(() => import( '@mui/icons-material/Fastfood'));
+export const FastFood2 = dynamic(() => import( '@mui/icons-material/FastfoodOutlined'));
+
 export const ShoppingBag1 = dynamic(() => import( '@mui/icons-material/ShoppingBag'));
 export const ShoppingBag2 = dynamic(() => import( '@mui/icons-material/ShoppingBagOutlined'));
 
