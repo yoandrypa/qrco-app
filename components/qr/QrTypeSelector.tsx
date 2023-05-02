@@ -33,7 +33,7 @@ const QrTypeSelector = () => { // @ts-ignore
     setDisplayConfirm(null);
   };
 
-  const handleSelect = (payload: string): void => { debugger;
+  const handleSelect = (payload: string): void => {
     if (data?.isDynamic) {
       const compareWith = {...initialOptions, data: options.data}; // @ts-ignore
       if (options.id) { compareWith.id = options.id; } // @ts-ignore
