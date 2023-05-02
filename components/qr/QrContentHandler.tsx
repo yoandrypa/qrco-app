@@ -126,7 +126,7 @@ const QrContentHandler = () => { // @ts-ignore
     <>
       {selected ? (
         <>
-          {!Boolean(userInfo) && <Box sx={{ mb: '10px' }}><RenderNoUserWarning /></Box>}
+          {!Boolean(userInfo) && data.mode !== 'secret' && <Box sx={{ mb: '10px' }}><RenderNoUserWarning /></Box>}
           <Box sx={{ display: 'inline' }}>
             {renderQrIcon(qrType, { enabled: true, sx: { mb: '-5px' } })}
           </Box>
