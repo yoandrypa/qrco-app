@@ -97,7 +97,7 @@ export default function RenderSecretHandler({secret, disabled, errors, openValid
             disabled={disabled}
             margin="dense"
             value={secret || ''}
-            sx={{'& .MuiInputBase-root': { color: 'success.main' }}}
+            sx={{'& .MuiInputBase-root': { color: 'warning.main' }}}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end" sx={{mr: '-10px'}}>

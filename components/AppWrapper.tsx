@@ -6,7 +6,6 @@ import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import dynamic from "next/dynamic";
@@ -57,7 +56,7 @@ export default function AppWrapper(props: AppWrapperProps) {
     children, userInfo, handleLogout, clearData, setIsFreeMode: setIsFreeMode, mode, isTrialMode: isFreeMode, setRedirecting
   } = props;
 
-  const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
+  // const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
   const [pendingTask, setPendingTask] = useState<number>(1);
 
   // @ts-ignore
@@ -103,10 +102,10 @@ export default function AppWrapper(props: AppWrapperProps) {
       //@ts-ignore
       if (subscription?.status !== "active") {
         setIsFreeMode?.call(null, true);
-        setStartTrialDate(currentUser.localRecord.createdAt);
+        // setStartTrialDate(currentUser.localRecord.createdAt);
       } else {
         setIsFreeMode?.call(null, false);
-        setStartTrialDate(null);
+        // setStartTrialDate(null);
       }
     }
   }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -161,14 +160,12 @@ export default function AppWrapper(props: AppWrapperProps) {
             justifyContent: "space-betweem",
           }}>
             <Box sx={{ display: "flex", width: "100%", mt: 1 }}>
-              <Typography sx={{ my: "auto", fontSize: "14px" }}>
+              <Typography sx={{fontSize: "14px"}}>
                 {"Made by"}
               </Typography>
-              <Box component="img" alt="EBANUX" src="/ebanux.svg" sx={{ width: "95px", mt: "-2px", mx: "7px" }} />
-              <Typography sx={{ my: "auto", fontSize: "14px" }}>
-                {"with"}
+              <Typography sx={{ml: '5px', fontSize: "14px", fontWeight: 'bold'}}>
+                {"Ebanux"}
               </Typography>
-              <FavoriteIcon fontSize="small" sx={{color: '#f50057', mt: '5px', ml: '5px'}} />
             </Box>
           </Box>)}
       </Container>
