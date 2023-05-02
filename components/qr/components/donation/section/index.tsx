@@ -6,6 +6,7 @@ import session from "@ebanux/ebanux-utils/sessionStorage";
 const Icon = dynamic(() => import('@mui/icons-material/Coffee'));
 const Form = dynamic(() => import('./form'));
 
+import { isEmpty } from "@ebanux/ebanux-utils/utils";
 import { IIconProps, IFormProps, IQrSetting, IQrSection, ISectionData } from './types';
 import { parseIconStyle } from '../../commons/helpers';
 import { createAxiosInstance } from "@ebanux/ebanux-utils/request";
@@ -19,7 +20,7 @@ const setting: IQrSetting<ISectionData> = {
   renderForm: (props: IFormProps<ISectionData>) => <Form {...props} />,
   getDefaultQrData: () => ({
     title: '',
-    buttonText: 'Donation',
+    buttonText: 'Donate',
     message: '',
     unitAmount: 2,
     email: session.currentUser?.email as string,
@@ -52,7 +53,17 @@ const setting: IQrSetting<ISectionData> = {
     }
 
     return section;
-  }
+  },
+  validate: (data, index = 0) => {
+    const errors: string[] = [];
+    const { unitAmount } = data;
+
+    if (isEmpty(unitAmount) || !(unitAmount > 0)) {
+      errors.push(`Enter a valid 'unit amount' in the section ${index + 1}`);
+    }
+
+    return errors;
+  },
 };
 
 export default setting;
