@@ -43,6 +43,7 @@ export default function RenderSecretHandler({secret, disabled, errors, openValid
   const generateSecretId = async () => {
     setLoading(true);
     handleValue('secret')(await generateSecret());
+    setAnchorOpts(undefined);
     setLoading(false);
   }
 
