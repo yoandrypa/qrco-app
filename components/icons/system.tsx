@@ -3,11 +3,11 @@ import dynamic from "next/dynamic";
 export const Coffee1 = dynamic(() => import( '@mui/icons-material/Coffee'));
 export const Coffee2 = dynamic(() => import( '@mui/icons-material/CoffeeOutlined'));
 
-export const Coffee3 = dynamic(() => import( '@mui/icons-material/EmojiFoodBeverage'));
-export const Coffee4 = dynamic(() => import( '@mui/icons-material/EmojiFoodBeverageOutlined'));
+export const Tea1 = dynamic(() => import( '@mui/icons-material/EmojiFoodBeverage'));
+export const Tea2 = dynamic(() => import( '@mui/icons-material/EmojiFoodBeverageOutlined'));
 
-export const Tea1 = dynamic(() => import( '@mui/icons-material/FreeBreakfast'));
-export const Tea2 = dynamic(() => import( '@mui/icons-material/FreeBreakfastOutlined'));
+export const Breakfast1 = dynamic(() => import( '@mui/icons-material/FreeBreakfast'));
+export const Breakfast2 = dynamic(() => import( '@mui/icons-material/FreeBreakfastOutlined'));
 
 export const LunchDining1 = dynamic(() => import( '@mui/icons-material/LunchDining'));
 export const LunchDining2 = dynamic(() => import( '@mui/icons-material/LunchDiningOutlined'));
