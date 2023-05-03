@@ -9,17 +9,25 @@ import Button from "@mui/material/Button";
 
 import { startWaiting, releaseWaiting } from "../../Waiting";
 
-export default function ButtonMyQrLynks() {
+interface ButtonMyQrLynksProp {
+  setShowingDetails?: (item: undefined) => void;
+}
+
+export default function ButtonMyQrLynks({setShowingDetails}: ButtonMyQrLynksProp) {
   const router = useRouter();
   const { clearData } = useContext(Context);
   const { navButton } = classes;
 
   const onClick = () => {
-    startWaiting();
-    router.push('/').finally(() => {
-      clearData(true);
-      releaseWaiting();
-    });
+    if (setShowingDetails === undefined) {
+      startWaiting();
+      router.push('/').finally(() => {
+        clearData(true);
+        releaseWaiting();
+      });
+    } else {
+      setShowingDetails(undefined);
+    }
   }
 
   return (

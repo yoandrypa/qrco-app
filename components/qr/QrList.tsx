@@ -19,10 +19,9 @@ const ButtonCreateQrLynks = dynamic(() => import("../menus/MainMenu/ButtonCreate
 export default function QrList({ title }: any) {
   const [confirm, setConfirm] = useState<{ createdAt: number; userId: string; } | null>(null);
   const [qrs, setQRs] = useState({ items: [] });
-  const [details, setDetails] = useState<any>(undefined);
 
   // @ts-ignore
-  const {setOptions, userInfo} = useContext(Context);
+  const {setOptions, userInfo, showingDetails, setShowingDetails} = useContext(Context);
   const router = useRouter();
 
   const loadItems = useCallback(() => {
@@ -71,16 +70,17 @@ export default function QrList({ title }: any) {
   };
 
   const openDetails = (detailsQr: any) => {
-    setDetails(detailsQr);
+    setShowingDetails(detailsQr);
   }
 
   useEffect(() => {
     if (!router.query.selected) { setOptions(handleInitialData("Ebanux")); }
     loadItems();
+    return () => setShowingDetails(undefined);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (details) {
-    return <QrDetails qrData={details} goBack={openDetails} />
+  if (showingDetails) {
+    return <QrDetails qrData={showingDetails} goBack={openDetails} />
   }
 
   return (<>

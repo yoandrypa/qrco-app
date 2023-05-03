@@ -22,6 +22,7 @@ import {useRouter} from "next/router";
 import Context from "../../../context/Context";
 import {handleDesignerString} from "../../../../helpers/qr/helpers";
 import {handleCopy} from "../../../helpers/generalFunctions";
+import {MAIN_ORANGE} from "../../constants";
 
 const RenderPreview = dynamic(() => import("../../renderers/RenderPreview"));
 const DynamicFeedIcon = dynamic(() => import("@mui/icons-material/DynamicFeed"));
@@ -31,6 +32,7 @@ const PauseCircleOutlineIcon = dynamic(() => import("@mui/icons-material/PauseCi
 const KeyIcon = dynamic(() => import("@mui/icons-material/Key"));
 const LockOutlinedIcon = dynamic(() => import("@mui/icons-material/LockOutlined"));
 const RenderCopiedNotification = dynamic(() => import("../looseComps/RenderCopiedNotification"));
+const ContentCopyIcon = dynamic(() => import("@mui/icons-material/ContentCopy"));
 
 interface RenderQrOptsProps {
   qr: any;
@@ -155,7 +157,19 @@ const RenderQrListOptions = ({qr, handleEdit, setConfirm, handlePauseQrLink, han
             {link !== undefined && (
               <MenuItem key="openLink" target="_blank" component="a" href={link}>
                 <OpenInNewIcon color="primary"/>
-                <Typography sx={{ml: '5px'}}>{'Open microsite'}</Typography>
+                <Typography sx={{ml: '5px'}}>{'Open page'}</Typography>
+              </MenuItem>
+            )}
+            {link !== undefined && (
+              <MenuItem key="copyUrlPage" onClick={() => handleCopy(link, setCopy)}>
+                <ContentCopyIcon color="primary"/>
+                <Typography sx={{ml: '5px'}}>{'Copy page URL'}</Typography>
+              </MenuItem>
+            )}
+            {link !== undefined && (
+              <MenuItem key="copyPageCode" onClick={() => handleCopy(qr.shortLinkId.address, setCopy)}>
+                <ContentCopyIcon color="primary"/>
+                <Typography sx={{ml: '5px'}}>{'Copy page code'}</Typography>
               </MenuItem>
             )}
             <MenuItem key="downloadMenu" onClick={handlePreview}>
@@ -178,13 +192,13 @@ const RenderQrListOptions = ({qr, handleEdit, setConfirm, handlePauseQrLink, han
             {qr.secret !== undefined && <Divider />}
             {qr.secret !== undefined && !qr.secretOps?.includes('e') && (
               <MenuItem key="copySecretUrl" onClick={() => handleCopy(`${window.location.origin}/s/${qr.secret}`, setCopy)}>
-                <KeyIcon color="error"/>
+                <KeyIcon sx={{color: MAIN_ORANGE}}/>
                 <Typography sx={{ml: '5px'}}>{'Copy secret edit URL'}</Typography>
               </MenuItem>
             )}
             {qr.secret !== undefined && qr.secretOps?.includes('l') && (
               <MenuItem key="copySecretCode" onClick={() => handleCopy(qr.secret, setCopy)}>
-                <LockOutlinedIcon color="warning"/>
+                <LockOutlinedIcon sx={{color: MAIN_ORANGE}}/>
                 <Typography sx={{ml: '5px'}}>{'Copy secret code'}</Typography>
               </MenuItem>
             )}

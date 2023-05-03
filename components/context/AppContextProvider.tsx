@@ -29,13 +29,13 @@ const UpdateBrowser = dynamic(() => import("../UpdateBrowser"));
 const contextCache: any = isBrowser() ? session.get('CONTEXT', { custom: [] }, true) : { custom: [] };
 
 const AppContextProvider = ({ children }: { children: ReactNode }) => {
+  const [showingDetails, setShowingDetails] = useState<any>(undefined);
   const [options, setOptions] = useState<OptionsType>(handleInitialData("Ebanux"));
   const [cornersData, setCornersData] = useState<CornersAndDotsType>(null);
   const [dotsData, setDotsData] = useState<CornersAndDotsType>(null);
   const [background, setBackground] = useState<BackgroundType>(initialBackground);
   const [frame, setFrame] = useState<FramesType>(initialFrame);
   const [data, setData] = useState<DataType>(contextCache.data || initialData);
-  const [isTrialMode, setIsTrialMode] = useState<boolean>(false);
   const [updateBrowser, setUpdateBrowser] = useState<boolean>(false);
   const [selected, setSelected] = useState<string | null>(contextCache.selected || null);
   const [userInfo, setUserInfo] = useState(null);
@@ -182,8 +182,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       }
     } else {
       return (
-        <AppWrapper setIsFreeMode={setIsTrialMode} handleLogout={signOut} clearData={clearData}
-                    mode={data.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} userInfo={userInfo}>
+        <AppWrapper handleLogout={signOut} clearData={clearData} mode={data.mode} setRedirecting={setRedirecting} userInfo={userInfo}>
           {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>
       );
@@ -193,9 +192,9 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   return (
     <Context.Provider value={{
       cornersData, setCornersData, dotsData, setDotsData, frame, setFrame, background, setBackground,
-      options, setOptions, selected, setSelected, data, setData, isTrialMode, userInfo,
+      options, setOptions, selected, setSelected, data, setData, userInfo,
       clearData, loading, setLoading, setRedirecting, isWrong, setIsWrong, doNotClear,
-      subscription, setSubscription, setUserInfo
+      subscription, setSubscription, setUserInfo, showingDetails, setShowingDetails
     }}>
       {renderContent()}
     </Context.Provider>

@@ -47,20 +47,17 @@ interface AppWrapperProps {
   handleLogout?: () => void;
   clearData?: (keepType?: boolean, doNot?: boolean) => void;
   setRedirecting?: (redirecting: boolean) => void;
-  setIsFreeMode?: (isFreeMode: boolean) => void;
-  isTrialMode?: boolean;
 }
 
-export default function AppWrapper(props: AppWrapperProps) {
-  const {
-    children, userInfo, handleLogout, clearData, setIsFreeMode: setIsFreeMode, mode, isTrialMode: isFreeMode, setRedirecting
-  } = props;
+export default function AppWrapper(
+  { children, userInfo, handleLogout, clearData, mode, setRedirecting }
+    : AppWrapperProps) {
 
   // const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
   const [pendingTask, setPendingTask] = useState<number>(1);
 
   // @ts-ignore
-  const { subscription, setSubscription, setLoading } = useContext(Context);
+  const { subscription, setSubscription, setLoading, showingDetails, setShowingDetails } = useContext(Context);
 
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
   const router = useRouter();
@@ -95,7 +92,7 @@ export default function AppWrapper(props: AppWrapperProps) {
 
   const releaseTask = () => setPendingTask(Math.max(0, pendingTask - 1));
 
-  useEffect(() => {
+  /*useEffect(() => {
     const { currentUser, isAuthenticated } = session;
 
     if (isAuthenticated) {
@@ -108,7 +105,7 @@ export default function AppWrapper(props: AppWrapperProps) {
         // setStartTrialDate(null);
       }
     }
-  }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps*/
 
   useEffect(() => {
     if (session.isAuthenticated && !subscription) {
@@ -121,6 +118,12 @@ export default function AppWrapper(props: AppWrapperProps) {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handleLogoClick = () => {
+    if (Boolean(showingDetails)) {
+      setShowingDetails(undefined);
+    }
+  }
+
   return (
     <>
       <CssBaseline />
@@ -131,10 +134,10 @@ export default function AppWrapper(props: AppWrapperProps) {
               "&.MuiToolbar-root": { px: 0 },
               display: "flex",
               justifyContent: "space-between",
-              color: theme => theme.palette.text.primary
+              color: 'text.primary'
             }}>
               <Link href={{ pathname: !userInfo ? QR_TYPE_ROUTE : "/" }}>
-                <Box component="img" alt="EBANUX" src="/logo.svg" sx={{ width: "160px", cursor: "pointer" }} />
+                <Box component="img" alt="EBANUX" src="/logo.svg" sx={{ width: "160px", cursor: "pointer" }} onClick={handleLogoClick}/>
               </Link>
               <Box sx={{ display: "flex" }}>
                 {router.query[PARAM_QR_TEXT] === undefined && (<>
@@ -154,19 +157,13 @@ export default function AppWrapper(props: AppWrapperProps) {
           {pendingTask === 0 && children}
         </Box>
         {handleLogout !== undefined && !router.query.login && (
-          <Box sx={{
-            height: "40px",
-            display: "flex",
-            justifyContent: "space-betweem",
-          }}>
-            <Box sx={{ display: "flex", width: "100%", mt: 1 }}>
-              <Typography sx={{fontSize: "14px"}}>
-                {"Made by"}
-              </Typography>
-              <Typography sx={{ml: '5px', fontSize: "14px", fontWeight: 'bold'}}>
-                {"Ebanux"}
-              </Typography>
-            </Box>
+          <Box sx={{ display: "flex", width: "100%", mt: 1 }}>
+            <Typography sx={{fontSize: "14px"}}>
+              {"Made by"}
+            </Typography>
+            <Typography sx={{ml: '5px', fontSize: "14px", fontWeight: 'bold'}}>
+              {"Ebanux"}
+            </Typography>
           </Box>)}
       </Container>
     </>
