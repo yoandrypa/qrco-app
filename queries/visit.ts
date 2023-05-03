@@ -1,21 +1,18 @@
 // Create the DynamoDB service client module using ES6 syntax.
 import {
   DynamoDBClient,
-  ExecuteStatementCommand, ExecuteStatementCommandInput,
-  ExecuteStatementCommandOutput
+  ExecuteStatementCommand
+  /*, ExecuteStatementCommandInput,
+  ExecuteStatementCommandOutput*/
 } from "@aws-sdk/client-dynamodb";
-import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
+import { /*marshall,*/ unmarshall } from "@aws-sdk/util-dynamodb";
 // Set the AWS Region.
 const REGION = process.env.AMZ_WS_REGION; // For example, "us-east-1".
 const CREDENTIALS = {
   accessKeyId: <string>process.env.AMZ_WS_ACCESS_KEY_ID,
   secretAccessKey: <string>process.env.AMZ_WS_SECRET_ACCESS_KEY
 };
-const configuration = {
-  region: REGION,
-  credentials: CREDENTIALS,
-  apiVersion: "2012-08-10"
-};
+const configuration = { region: REGION, credentials: CREDENTIALS, apiVersion: "2012-08-10" };
 if (process.env.AMZ_WS_DYNAMODB_URL) {
   // @ts-ignore
   configuration["endpoint"] = <string>process.env.AMZ_WS_DYNAMODB_URL;

@@ -25,6 +25,7 @@ import valueHanler from "./valueHandler";
 import validator from "../validator";
 import dynamic from "next/dynamic";
 
+const RenderStats = dynamic(() => import("./commonHelper/RenderStats"));
 const ErrorsDialog = dynamic(() => import("./looseComps/ErrorsDialog"));
 const RenderMode = dynamic(() => import("./looseComps/RenderMode"));
 const Notifications = dynamic(() => import("../../notifications/Notifications"));
@@ -33,6 +34,7 @@ const RenderPreviewButton = dynamic(() => import("./smallpieces/RenderPreviewBut
 const RenderSamplePreview = dynamic(() => import("./smallpieces/RenderSamplePreview"));
 const RenderClaimingInfo = dynamic(() => import("./smallpieces/RenderClaimingInfo"));
 const LoadingMicrositeImages = dynamic(() => import("./looseComps/LoadingMicrositeImages"));
+const QueryStatsIcon = dynamic(() => import("@mui/icons-material/QueryStats"));
 
 interface CommonProps {
   msg: string; children: ReactNode;
@@ -231,6 +233,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>
                   <Tab label="Content" icon={<ArticleIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
                   <Tab label="Page Design" icon={<DesignServicesIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
+                  {data.mode === 'edit' && <Tab label="Stats" icon={<QueryStatsIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>}
                 </Tabs>
                 {data.mode && <RenderMode isWide={isWideForPreview} mode={data.mode} />}
                 {data.claim !== undefined && (
@@ -239,7 +242,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                   </Box>
                 )}
                 {loading && <LoadingMicrositeImages />}
-                {tabSelected === 0 ? renderChildren() : (
+                {tabSelected === 0 && renderChildren()}
+                {tabSelected === 1 && (
                   <RenderQRCommons
                     isWideForPreview={isWideForPreview} handleValue={handleValue} omitPrimaryImg={omitProfileImg}
                     backgndImg={isEditOrClone ? (Array.isArray(data?.backgndImg) ? backImg || undefined : data?.backgndImg) : data?.backgndImg}
@@ -248,6 +252,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                     loading={loading} foreError={foreImg === null} backError={backImg === null}
                     data={data} releasePick={releasePick} forcePick={forceOpen} />
                 )}
+                {tabSelected === 2 && <RenderStats userId={options.userId} visitCount={data.visitCount} createdAt={data.creation} />}
               </Box>
             ) : renderChildren()}
           </Box>

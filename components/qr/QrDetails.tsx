@@ -66,7 +66,7 @@ const QrDetails = ({ visitData, qrData, goBack }: any) => {
       if (qrData.shortLinkId?.visitCount > 0) { // @ts-ignore
         // const createdAt = (new Date(qrData.shortLinkId.createdAt)).getTime(); // eslint-disable-line react-hooks/exhaustive-deps
         getVisits(qrData.shortLinkId.userId, qrData.shortLinkId.createdAt.getTime());
-      } // @ts-ignore
+      }
       // setData({ qrData, visits });
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

@@ -1,8 +1,7 @@
-import {memo, useCallback} from "react";
-import LinkIcon from "@mui/icons-material/Link";
+import {memo} from "react";
 import Box from "@mui/material/Box";
+import {useTheme} from "@mui/system";
 // import EditIcon from '@mui/icons-material/Edit';
-import RenderIcon from "./RenderIcon";
 
 // import dynamic from "next/dynamic";
 // import IconButton from "@mui/material/IconButton";
@@ -25,13 +24,15 @@ function RenderLinkItem({onlyQr, urlData}: LinkItemProps) {
   //   if (step === 1) { setAnchor(event.currentTarget); }
   // }, [step]);
 
-  const renderIcon = useCallback((cursor: boolean) => (
-    <LinkIcon sx={{
-      color: theme => theme.palette.primary.dark,
-      mt: '12px', mr: '-7px', cursor: cursor ? 'pointer' : 'inherit',
-      '&:hover': cursor ? {background: '#f5f5f5', borderRadius: '50%'} : undefined
-    }} />
-  ), []);
+  // const renderIcon = useCallback((cursor: boolean) => (
+  //   <LinkIcon sx={{
+  //     color: theme => theme.palette.primary.dark,
+  //     mt: '12px', mr: '-7px', cursor: cursor ? 'pointer' : 'inherit',
+  //     '&:hover': cursor ? {background: '#f5f5f5', borderRadius: '50%'} : undefined
+  //   }} />
+  // ), []);
+
+  const theme = useTheme();
 
   const renderUrlData = () => {
     const index = urlData.lastIndexOf('/') + 1;
@@ -42,7 +43,7 @@ function RenderLinkItem({onlyQr, urlData}: LinkItemProps) {
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', direction: 'rtl', textAlign: 'left'
         }}>
           <span>{!onlyQr ? urlData.slice(0, index) : urlData}</span>
-          {!onlyQr && <span style={{color: '#2196f3'}}>{urlData.slice(index)}</span>}
+          {!onlyQr && <span style={{color: theme.palette.primary.main}}>{urlData.slice(index)}</span>}
         </Box>
         {/*{!onlyQr && step === 1 && (*/}
         {/*  <IconButton size="small" sx={{height: '28px', width: '28px', mt: '9px', mr: '-5px'}} onClick={handleEdit}>*/}
