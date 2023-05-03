@@ -397,6 +397,10 @@ export const dataCleaner = (options: any, mainObj?: boolean) => {
       if (!checkFor.includes(x)) { delete data[x]; }
     });
   }
+  if (options.mode === 'edit' && !mainObj && options?.shortLinkId) {
+    data.creation = options.shortLinkId.createdAt.getTime();
+    data.visitCount = options.shortLinkId.visitCount || 0;
+  }
   return data;
 };
 

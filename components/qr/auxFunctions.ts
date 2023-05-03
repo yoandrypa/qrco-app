@@ -431,6 +431,9 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
         objToEdit.shortLinkId = { address: objToEdit.qrOptionsId.shortCode };
       }
 
+      if (objToEdit.creation !== undefined) { delete objToEdit.creation; }
+      if (objToEdit.visitCount !== undefined) { delete objToEdit.visitCount; }
+
       if (secretMode) {
         if (typeof objToEdit.userId !== 'string') { objToEdit.userId = objToEdit.userId.id; }
         if (typeof objToEdit.qrOptionsId.userId !== 'string') { objToEdit.qrOptionsId.userId = objToEdit.qrOptionsId.userId.id; }
