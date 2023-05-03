@@ -12,6 +12,7 @@ const setting: IQrSetting<IQrData> = {
   name: 'Send Me Money',
   description: 'Receive payments worldwide',
   tip: 'Generate a custom QR code for your page and give your supporters a quick and touch-free checkout option.',
+  isOnlyQr: true,
   renderIcon: qrSection.renderIcon,
   renderForm: ({ data, ...props }: IFormProps<IQrData>) => {
     return qrSection.renderForm({
@@ -33,7 +34,10 @@ const setting: IQrSetting<IQrData> = {
     // @ts-ignore
     if (section && qrSection.beforeSave) await qrSection.beforeSave(section);
     return data;
-  }
+  },
+  validate: (data, index = 0) => {
+    return qrSection.validate?.(data.custom[0].data) || [];
+  },
 };
 
 export default setting;

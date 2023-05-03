@@ -50,7 +50,16 @@ const setting: IQrSetting<ISectionData> = {
     }
 
     return section;
-  }
+  },
+  validate: (data, index = 0) => {
+    const errors: string[] = [];
+    const { unitAmount, concept } = data;
+
+    if (isEmpty(unitAmount) || !(unitAmount > 0)) errors.push(`Enter a valid 'unit amount' in the section ${index + 1}`);
+    if (isEmpty(concept)) errors.push(`Enter a valid 'concept' in the section ${index + 1}`);
+
+    return errors;
+  },
 };
 
 export default setting;
