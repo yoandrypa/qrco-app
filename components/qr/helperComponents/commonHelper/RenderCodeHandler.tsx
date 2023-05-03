@@ -144,11 +144,11 @@ export default function RenderCodeHandler({url, code}: CodeProps) {
         >
           <MenuItem key="copyMenu" onClick={handleCopier}>
             <ContentCopyIcon color="primary"/>
-            <Typography sx={{ml: '5px'}}>{'Copy QRLynk page URL'}</Typography>
+            <Typography sx={{ml: '5px'}}>{'Copy page URL'}</Typography>
           </MenuItem>
           <MenuItem key="copyCodeMenu" onClick={handleCopyCode}>
             <ContentCopyIcon color="primary"/>
-            <Typography sx={{ml: '5px'}}>{'Copy QRLynk code'}</Typography>
+            <Typography sx={{ml: '5px'}}>{'Copy code'}</Typography>
           </MenuItem>
           <Divider/>
           <MenuItem key="editMenu" onClick={handleEdit}>

@@ -1,27 +1,31 @@
 import Typography from "@mui/material/Typography";
-import {sanitize} from "../../../utils";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-import {handleDesignerString, qrNameDisplayer} from "../../../helpers/qr/helpers";
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import {areEquals, humanDate} from "../../helpers/generalFunctions";
 import RenderLinkOptions from "../helperComponents/RenderLinkOptions";
 import RenderQrListOptions from "../helperComponents/smallpieces/RenderQrListOptions";
-import pluralize from "pluralize";
 import Divider from "@mui/material/Divider";
-import Edit from "@mui/icons-material/Edit";
-import RenderPreview from "../renderers/RenderPreview";
-import {dateHandler} from "./functions";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import SyncIcon from "@mui/icons-material/Sync";
 import SyncDisabledIcon from "@mui/icons-material/SyncDisabled";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
+import RenderPreview from "../renderers/RenderPreview";
+import {dateHandler} from "./functions";
+import {areEquals, humanDate} from "../../helpers/generalFunctions";
+import {handleDesignerString, qrNameDisplayer} from "../../../helpers/qr/helpers";
+import {MAIN_ORANGE} from "../constants";
+
+import {sanitize} from "../../../utils";
+import pluralize from "pluralize";
 
 import dynamic from "next/dynamic";
-import useMediaQuery from "@mui/material/useMediaQuery";
+
 import {memo} from "react";
 
 const KeyIcon = dynamic(() => import("@mui/icons-material/Key"));
 const LockOutlinedIcon = dynamic(() => import("@mui/icons-material/LockOutlined"));
+const AttachMoneyIcon = dynamic(() => import("@mui/icons-material/AttachMoney"));
 
 const renderQr = (qr: any) => {
   const options = { ...qr.qrOptionsId };
@@ -38,8 +42,8 @@ const renderStaticDynamic = (is: boolean, avoidIcon?: boolean, isSecret?: boolea
   <Typography variant="caption" style={{ color: '#808080'}}>
     {!avoidIcon ? (is ? <SyncIcon sx={{ ...iconsProps, mr: '5px' }} /> : <SyncDisabledIcon sx={{ ...iconsProps, mr: '5px' }} />) : null}
     {is ? "Dynamic" : "Static"}
-    {isSecret && <KeyIcon sx={{ ...iconsProps, mb: '-5px', ml: '1px' }} color="error"/>}
-    {isLock && <LockOutlinedIcon sx={{ ...iconsProps, mb: '-5px', ml: '1px' }} color="warning"/>}
+    {isSecret && <KeyIcon sx={{ ...iconsProps, mb: '-5px', ml: '1px', color: MAIN_ORANGE }} />}
+    {isLock && <LockOutlinedIcon sx={{ ...iconsProps, mb: '-5px', ml: '1px', color: MAIN_ORANGE }}/>}
   </Typography>
 );
 
@@ -76,7 +80,7 @@ function RenderQrList({title, qrs, handleEdit, handlePauseQrLink, openDetails, s
                         {renderQr(qr)}
                       </Box>
                       <Stack direction="column" sx={{ my: "auto" }}>
-                        <Typography variant="subtitle2" sx={{ color: "orange", mb: "-7px", display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="subtitle2" sx={{ color: MAIN_ORANGE, mb: "-7px", display: 'flex', alignItems: 'center' }}>
                           {qrNameDisplayer(qr.qrType, qr.isDynamic)}
                           {qr.isMonetized && <AttachMoneyIcon sx={{width: 18, height: 18, ml: '2px'}} color="error" />}
                         </Typography>
@@ -87,6 +91,7 @@ function RenderQrList({title, qrs, handleEdit, handlePauseQrLink, openDetails, s
                         </Typography>
                         {isWide ? (
                           <Typography variant="caption" sx={{ color: '#808080'}}>
+                            <CalendarMonthIcon sx={{ ...iconsProps, mr: '5px' }} />
                             {`Created${dateHandler(humanDate(new Date(qr.createdAt).getTime()))}`}
                           </Typography>
                         ) : <RenderLinkOptions link={qrLink?.link || ''} isWide={false} iconsProps={iconsProps} />}
@@ -94,7 +99,7 @@ function RenderQrList({title, qrs, handleEdit, handlePauseQrLink, openDetails, s
                     </Box>
                   </Box>
                   {!isWide && (<Box sx={{display: 'grid', textAlign: 'right'}}>
-                    <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink}
+                    <RenderQrListOptions qr={qr} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink} showDetails={openDetails}
                                          setConfirm={setConfirm} handleClone={handleClone} link={qrLink.link} />
                     <Box sx={{display: 'grid', mr: '10px'}}>
                       {renderStaticDynamic(qr.isDynamic, true, qr.secret !== undefined && !qr.secretOps?.includes('e'), qr.secretOps?.includes('l'))}
@@ -110,8 +115,8 @@ function RenderQrList({title, qrs, handleEdit, handlePauseQrLink, openDetails, s
                         {qrLink.address ? (
                           <RenderLinkOptions link={qrLink?.link || ''} isWide={true} iconsProps={iconsProps} />
                         ) : <div />}
-                        <Typography variant="caption" sx={{ color: '#808080'}}>
-                          <Edit sx={{ ...iconsProps, mr: '5px' }} />
+                        <Typography variant="caption" sx={{ color: '#808080', mt: '1px !important'}}>
+                          <CalendarMonthIcon sx={{ ...iconsProps, mr: '5px' }} />
                           {`Updated${dateHandler(humanDate(new Date(qr.updatedAt).getTime()))}`}
                         </Typography>
                       </Stack>
@@ -122,7 +127,7 @@ function RenderQrList({title, qrs, handleEdit, handlePauseQrLink, openDetails, s
                       {qr.isDynamic ? (
                         <Stack direction="column" spacing={1} justifyContent="flex-start" alignItems="center"
                                sx={{ my: 'auto' }}>
-                          <Typography variant="h4" sx={{ color: qrLink.visitCount > 0 ? "blue" : "red", mb: '-12px' }}>
+                          <Typography variant="h4" sx={{ color: qrLink.visitCount > 0 ? "blue" : MAIN_ORANGE, mb: '-12px' }}>
                             {qrLink.visitCount || 0}
                           </Typography>
                           <Typography variant="caption" sx={{ color: '#808080'}}>

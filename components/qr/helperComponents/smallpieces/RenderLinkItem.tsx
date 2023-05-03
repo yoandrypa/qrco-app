@@ -42,7 +42,7 @@ function RenderLinkItem({onlyQr, urlData}: LinkItemProps) {
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', direction: 'rtl', textAlign: 'left'
         }}>
           <span>{!onlyQr ? urlData.slice(0, index) : urlData}</span>
-          {!onlyQr && <span style={{fontWeight: 'bold'}}>{urlData.slice(index)}</span>}
+          {!onlyQr && <span style={{color: '#2196f3'}}>{urlData.slice(index)}</span>}
         </Box>
         {/*{!onlyQr && step === 1 && (*/}
         {/*  <IconButton size="small" sx={{height: '28px', width: '28px', mt: '9px', mr: '-5px'}} onClick={handleEdit}>*/}

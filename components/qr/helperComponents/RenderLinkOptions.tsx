@@ -4,7 +4,7 @@ import Link from "next/link";
 import IconButton from "@mui/material/IconButton";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import Public from "@mui/icons-material/Public";
+import LinkIcon from "@mui/icons-material/Link";
 import RenderCopiedNotification from "./looseComps/RenderCopiedNotification";
 import {handleCopy} from "../../helpers/generalFunctions";
 
@@ -21,13 +21,27 @@ const RenderLinkOptions = ({link, isWide, iconsProps}: LinkOpsProps) => {
     handleCopy(link, setCopied);
   }
 
+  const renderLink = () => {
+    const newLink = link.split("//")[1];
+    const index = newLink.lastIndexOf('/') + 1;
+
+    return (
+      <Typography sx={{fontSize: '12px'}}>
+        {newLink.slice(0, index)}
+        <Typography sx={{fontSize: '12px', display: 'inline-flex', color: 'primary.main'}}>
+          {newLink.slice(index)}
+        </Typography>
+      </Typography>
+    );
+  }
+
   return (
     <div style={{display: 'flex', color: '#808080'}}>
-      {isWide && <Public sx={{ ...iconsProps, mr: '5px' }} />}
+      {isWide && <LinkIcon sx={{ ...iconsProps, mr: '5px' }} />}
       <Typography variant="caption" sx={{mr: '2px'}}>
         <Link href={link}>
           <a target="_blank" rel="noopener noreferrer"> {/*this is needed until next 13 is used*/}
-            {link.split("//")[1]}
+            {renderLink()}
           </a>
         </Link>
       </Typography>

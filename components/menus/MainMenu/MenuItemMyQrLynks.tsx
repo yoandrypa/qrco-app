@@ -11,15 +11,23 @@ import classes from "./classes.sx";
 import Context from "../../context/Context";
 import { releaseWaiting, startWaiting } from "../../Waiting";
 
-export default function MenuItemMyQrLynks() {
+interface ButtonMyQrLynksProp {
+  setShowingDetails?: (item: undefined) => void;
+}
+
+export default function MenuItemMyQrLynks({setShowingDetails}: ButtonMyQrLynksProp) {
   const router = useRouter();
   const { iconSmall } = classes;
   const { clearData } = useContext(Context);
 
   const onClick = () => {
-    startWaiting();
-    clearData(true);
-    router.push('/').finally(releaseWaiting);
+    if (setShowingDetails === undefined) {
+      startWaiting();
+      clearData(true);
+      router.push('/').finally(releaseWaiting);
+    } else {
+      setShowingDetails(undefined);
+    }
   }
 
   return (
