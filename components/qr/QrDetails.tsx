@@ -1,4 +1,4 @@
-import {ReactNode, SyntheticEvent, useEffect, useState} from "react";
+import { ReactNode, SyntheticEvent, useEffect, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
 import VisitDetailsSections from "../visit/VisitDetailsSections";
 import QrDetail from "./QrDetail";
@@ -7,15 +7,15 @@ import Tab from "@mui/material/Tab";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import QueryStatsIcon from "@mui/icons-material/QueryStats";
 import RenderSamplePreview from "./helperComponents/smallpieces/RenderSamplePreview";
-import {previewQRGenerator} from "../../helpers/qr/auxFunctions";
-import {ONLY_QR} from "./constants";
+import { previewQRGenerator } from "../../helpers/qr/auxFunctions";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import dynamic from "next/dynamic";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import {findByShortLink} from "../../handlers/visit";
+import { findByShortLink } from "../../handlers/visit";
+import { useCheckOnlyQr } from "../../helpers/qr/helpers";
 
 const RenderPreviewButton = dynamic(() => import("./helperComponents/smallpieces/RenderPreviewButton"));
 const RenderPreviewDrawer = dynamic(() => import("./helperComponents/smallpieces/RenderPreviewDrawer"));
@@ -52,6 +52,8 @@ const QrDetails = ({ visitData, qrData, goBack }: any) => {
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
+  const isOnlyQr = useCheckOnlyQr(qrData.qrType, qrData);
 
   useEffect(() => {
     if (!data) {
@@ -111,7 +113,7 @@ const QrDetails = ({ visitData, qrData, goBack }: any) => {
           noEditImages
           isDynamic={qrData.isDynamic || false}
           code={qrData?.shortLinkId?.address || ''}
-          onlyQr={ONLY_QR.includes(qrData.qrType) || !qrData.isDynamic}
+          onlyQr={isOnlyQr}
           data={previewQRGenerator(qrData, qrData.qrType, undefined, true)}
           qrOptions={qrData.qrOptionsId} />
       )} {/* @ts-ignore */}
@@ -121,7 +123,7 @@ const QrDetails = ({ visitData, qrData, goBack }: any) => {
           <RenderSamplePreview
             noEditImages
             code={qrData?.shortLinkId?.address || ''}
-            onlyQr={ONLY_QR.includes(qrData.qrType) || !qrData.isDynamic}
+            onlyQr={isOnlyQr}
             data={previewQRGenerator(qrData, qrData.qrType, undefined, true)}
             qrOptions={qrData.qrOptionsId}
             isDrawed style={{mt: '-15px'}} step={1} isDynamic={qrData.isDynamic || false} />

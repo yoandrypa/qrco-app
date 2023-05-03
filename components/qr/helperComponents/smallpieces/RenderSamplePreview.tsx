@@ -18,7 +18,7 @@ import Context from "../../../context/Context";
 import RenderPreview from "../../renderers/RenderPreview";
 import RenderLinkItem from "./RenderLinkItem";
 import RenderCellPhoneShape from "../RenderCellPhoneShape";
-import {NO_MICROSITE, ONLY_QR} from "../../constants";
+import {NO_MICROSITE} from "../../constants";
 import {getFileFromQr} from "../../auxFunctions";
 import {areEquals, handleCopy} from "../../../helpers/generalFunctions";
 import {cleanSelectionForMicrositeURL, genURL, qrNameDisplayer, SamplePrevProps} from "../../../../helpers/qr/helpers";
@@ -98,9 +98,7 @@ const RenderSamplePreview = ({ step, isDynamic, onlyQr, data, selected, style, s
   }, [updating]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (selected) {
-      setPrev((!isDynamic || ONLY_QR.includes(selected)) ? 'qr' : 'preview');
-    }
+    if (selected) setPrev(onlyQr ? 'qr' : 'preview');
   }, [selected]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

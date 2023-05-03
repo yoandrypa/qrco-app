@@ -1,4 +1,5 @@
 import QrScanner from 'qr-scanner';
+
 import frame0 from '../../components/qr/frames/frame0';
 import frame1 from '../../components/qr/frames/frame1';
 import frame2 from '../../components/qr/frames/frame2';
@@ -7,9 +8,14 @@ import frame4 from '../../components/qr/frames/frame4';
 import frame5 from '../../components/qr/frames/frame5';
 import frame6 from '../../components/qr/frames/frame6';
 import frame7 from '../../components/qr/frames/frame7';
-import {DataType, FramesType} from '../../components/qr/types/types';
+
 import initialOptions from "./data";
-import {capitalize} from "@mui/material";
+
+import { DataType, FramesType } from '../../components/qr/types/types';
+import { capitalize } from "@mui/material";
+import { useMemo } from "react";
+import { getQrType } from "../../components/qr/qrtypes";
+import { ONLY_QR } from "../../components/qr/constants";
 
 export const handleDesignerString = (selected: string | null | undefined, data: DataType): string => {
   let designerString = '';
@@ -293,6 +299,13 @@ export const getFrame = (frame: FramesType): string => {
   }
   return result;
 }
+
+export const useCheckOnlyQr = (qrTypeId: string | null | undefined, qrData?: any) => useMemo(() => {
+  if (!qrTypeId) return false;
+  const qtType = getQrType(qrTypeId);
+  if (qtType.isOnlyQr !== undefined) return qtType.isOnlyQr;
+  return ONLY_QR.includes(qrTypeId) || !qrData?.isDynamic
+}, [qrTypeId]);
 
 export function getUuid(): string {
   let dt = new Date().getTime();
