@@ -1,4 +1,4 @@
-import {ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
+import { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import Typography from "@mui/material/Typography";
 import ArticleIcon from '@mui/icons-material/ArticleOutlined';
@@ -11,19 +11,18 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Context from "../../context/Context";
 import RenderNameAndSecret from "./commonHelper/RenderNameAndSecret";
 import RenderQRCommons from "../renderers/RenderQRCommons";
-import {NO_MICROSITE, PROFILE_IMAGE} from "../constants";
-import {download} from "../../../handlers/storage";
-import {DataType} from "../types/types";
-import {getOptionsForPreview, previewQRGenerator} from "../../../helpers/qr/auxFunctions";
-import {saveOrUpdate} from "../auxFunctions";
-import {blobUrlToFile} from "../../../helpers/qr/helpers";
-import {generateUUID} from "listr2/dist/utils/uuid";
+import { NO_MICROSITE, PROFILE_IMAGE } from "../constants";
+import { download } from "../../../handlers/storage";
+import { DataType } from "../types/types";
+import { getOptionsForPreview, previewQRGenerator } from "../../../helpers/qr/auxFunctions";
+import { saveOrUpdate } from "../auxFunctions";
+import { blobUrlToFile, useCheckOnlyQr } from "../../../helpers/qr/helpers";
+import { generateUUID } from "listr2/dist/utils/uuid";
+import { releaseWaiting, startWaiting } from "../../Waiting";
+import { FORCE_EXTRA, IGNORE_VALIDATOR } from "../../../consts";
+
 import valueHanler from "./valueHandler";
 import validator from "../validator";
-import {FORCE_EXTRA, IGNORE_VALIDATOR} from "../../../consts";
-
-import {releaseWaiting, startWaiting} from "../../Waiting";
-
 import dynamic from "next/dynamic";
 
 const ErrorsDialog = dynamic(() => import("./looseComps/ErrorsDialog"));
@@ -197,6 +196,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     }
   }, [data?.secret, data?.secretOps]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const isOnlyQr = useCheckOnlyQr(selected, data);
+
   const handleImg = useCallback((prop: string) => setForceOpen(prop), []);
   const forceOpenValidator = () => { setValidationErrors(getValidationErrors()); }
 
@@ -255,7 +256,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
               code={code} save={handleSave} style={{mt: 1, ml: '15px', position: 'sticky', top: '120px'}}
               saveDisabled={isWrong || !data.qrName?.trim().length} shareLink={options?.data}
               qrOptions={optionsForPreview} step={1} data={previewQRGenerator(data, selected, omitProfileImg)}
-              onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
+              onlyQr={isOnlyQr} isDynamic={data.isDynamic || false}
               backImg={isEditOrClone && backImg ? backImg : undefined} handlePickImage={handleImg}
               mainImg={isEditOrClone && foreImg ? foreImg : undefined}
               backgroundImg={isEditOrClone && micrositeBackImage ? micrositeBackImage : undefined} />
@@ -268,7 +269,7 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           <RenderSamplePreview
             code={code} save={handleSave} saveDisabled={isWrong || !data.qrName?.trim().length} style={{mt: '-15px'}}
             data={previewQRGenerator(data, selected, omitProfileImg)} step={1} isDrawed
-            onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
+            onlyQr={isOnlyQr} isDynamic={data.isDynamic || false}
             shareLink={options?.data} qrOptions={optionsForPreview} handlePickImage={handleImg}
             backImg={isEditOrClone && backImg ? backImg : undefined}
             mainImg={isEditOrClone && foreImg ? foreImg : undefined}

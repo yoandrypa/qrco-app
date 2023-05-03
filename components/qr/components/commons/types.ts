@@ -26,6 +26,7 @@ export interface IQrSetting<IQrData> {
   tip?: string;
   isDynamic?: boolean;
   isMonetized?: boolean;
+  isOnlyQr?: boolean;
   renderIcon: (props: IIconProps) => ReactElement;
   renderForm: (props: IFormProps<IQrData>) => ReactElement;
   getDefaultQrData: () => IQrData;

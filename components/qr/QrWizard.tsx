@@ -141,8 +141,12 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   const handleNext = async () => {
     if (!(await allowCreate())) return;
 
+    const qrType = getQrType(selected);
+
     if (router.pathname === QR_CONTENT_ROUTE) {
-      const validation = validator(data.custom || [], FORCE_EXTRA.includes(selected), IGNORE_VALIDATOR.includes(selected) || !data.isDynamic);
+      const validation = qrType.validate ?  qrType.validate(data) : validator(
+        data.custom || [], FORCE_EXTRA.includes(selected), IGNORE_VALIDATOR.includes(selected) || !data.isDynamic
+      );
       if (validation.length) {
         setValidationErrors(validation);
         return;
@@ -152,7 +156,6 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
     if (isFirstStep) { // Step 1: QR_TYPE_ROUTE or / ==>  QR_CONTENT_ROUTE
       startWaiting();
 
-      const qrType = getQrType(selected);
       if (qrType?.getDefaultQrData) setData(qrType.getDefaultQrData());
 
       router.push(QR_CONTENT_ROUTE).finally(releaseWaiting);

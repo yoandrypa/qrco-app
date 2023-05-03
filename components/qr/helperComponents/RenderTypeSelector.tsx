@@ -12,7 +12,7 @@ import { DataType } from "../types/types";
 
 import dynamic from "next/dynamic";
 
-import { IS_DEV_ENV, ONLY_QR } from "../constants";
+import { IS_DEV_ENV } from "../constants";
 import RenderProDesc from "./smallpieces/RenderProDesc";
 import RenderFreeDesc from "./smallpieces/RenderFreeDesc";
 import RenderSamplePreview from "./smallpieces/RenderSamplePreview";
@@ -22,7 +22,8 @@ import { areEquals } from "../../helpers/generalFunctions";
 import initialOptions, { initialData } from "../../../helpers/qr/data";
 import { dynamicQrTypes, staticQrTypes } from "../qrtypes";
 import { IQrSetting } from "../components/commons/types";
-import {handleProceedWithStatic} from "../listHelper/functions";
+import { handleProceedWithStatic } from "../listHelper/functions";
+import { useCheckOnlyQr } from "../../../helpers/qr/helpers";
 
 
 const RenderMode = dynamic(() => import("./looseComps/RenderMode"));
@@ -51,7 +52,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
   const isWide = useMediaQuery("(min-width:600px)", {noSsr: true});
   const isWideForPreview = useMediaQuery("(min-width:925px)", {noSsr: true});
   const isWideForThreeColumns = useMediaQuery("(min-width:1045px)", {noSsr: true});
-
+  const isOnlyQr = useCheckOnlyQr(selected, data);
   const isDynamic = useMemo(() => data.isDynamic || false, [data.isDynamic]);
 
   const proceed = (selection: number) => {
@@ -170,7 +171,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
       </Grid>
       {isWideForPreview && selected && (
         <RenderSamplePreview selected={selected} style={{ml: '15px', mt: '56px', width: '287px', position: 'sticky', top: '120px'}}
-                             isDynamic={data.isDynamic || false} onlyQr={ONLY_QR.includes(selected) || !data.isDynamic}
+                             isDynamic={data.isDynamic || false} onlyQr={isOnlyQr}
                              showSampleMessage step={0} />
       )}
       {!openPreview && !isWideForPreview && selected && ( // @ts-ignore
@@ -178,7 +179,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
       )}
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer setOpenPreview={setOpenPreview} border={35} height={!data.isDynamic ? 425 : 700} > {/* @ts-ignore */}
-          <RenderSamplePreview onlyQr={[...ONLY_QR, 'web'].includes(selected) || !data.isDynamic} selected={selected}
+          <RenderSamplePreview onlyQr={isOnlyQr} selected={selected}
                                isDrawed style={{mt: '-15px'}} step={0} isDynamic={data.isDynamic || false} showSampleMessage />
         </RenderPreviewDrawer>
       )}
