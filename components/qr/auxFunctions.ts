@@ -228,7 +228,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   const clearExpand = !data.custom?.some((x: CustomType) => x.data?.sectionArrangement === 'tabbed');
 
-  const qrType = options.qrType ? getQrType(options.qrType) : null;
+  const qrType = getQrType(selected);
   try {
     if (qrType?.beforeSave) await qrType.beforeSave(data);
   } catch (e: any) {

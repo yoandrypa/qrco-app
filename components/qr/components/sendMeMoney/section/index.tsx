@@ -34,7 +34,7 @@ const setting: IQrSetting<ISectionData> = {
       const productPath = data.productId ? `products/${data.productId}` : 'products';
       const { id: productId } = await payLynkRequest({
         url: productPath, method: 'POST',
-        data: { name: concept, description }
+        data: { name: concept, description: !isEmpty(description) ? description : undefined }
       });
       data.productId = productId;
       delete data.changeProduct;
