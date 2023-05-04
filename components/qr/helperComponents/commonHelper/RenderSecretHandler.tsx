@@ -17,6 +17,7 @@ import {generateSecret} from "../../../../handlers/qrs";
 import {handleCopy} from "../../../helpers/generalFunctions";
 
 import dynamic from "next/dynamic";
+import {MAIN_ORANGE} from "../../constants";
 
 const ClearIcon = dynamic(() => import("@mui/icons-material/Clear"));
 const ReplayIcon = dynamic(() => import("@mui/icons-material/Replay"));
@@ -98,7 +99,7 @@ export default function RenderSecretHandler({secret, disabled, errors, openValid
             disabled={disabled}
             margin="dense"
             value={secret || ''}
-            sx={{'& .MuiInputBase-root': { color: 'warning.main' }}}
+            sx={{'& .MuiInputBase-root': { color: MAIN_ORANGE }}}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end" sx={{mr: '-10px'}}>
@@ -127,6 +128,15 @@ export default function RenderSecretHandler({secret, disabled, errors, openValid
           anchorEl={anchorOpts}
           open onClose={() => setAnchorOpts(undefined)}
         >
+          <MenuItem key="editionEnabled" onClick={handleEdit}>
+            {secretOps?.includes('e') ? <KeyOffIcon sx={iconColor(disabled)}/> : <KeyIcon sx={iconColor(disabled)}/>}
+            <Typography sx={{ml: '5px'}}>{`Edit ${secretOps?.includes('e') ? 'dis' : 'en'}abled`}</Typography>
+          </MenuItem>
+          <MenuItem key="lockEnabler" onClick={handleLock}>
+            {!secretOps?.includes('l') ? <LockIconOpen sx={iconColor(disabled)}/> : <LockIcon sx={iconColor(disabled)}/>}
+            <Typography sx={{ml: '5px'}}>{`Page lock ${!secretOps?.includes('l') ? 'dis' : 'en'}abled`}</Typography>
+          </MenuItem>
+          <Divider />
           <MenuItem key="copyURL" onClick={() => {
             handleCopy(`${window.location.origin}/s/${secret}`, setCopied);
             setAnchorOpts(undefined);
@@ -140,15 +150,6 @@ export default function RenderSecretHandler({secret, disabled, errors, openValid
           }}>
             <ContentCopyIcon color="primary"/>
             <Typography sx={{ml: '5px'}}>{'Copy secret code'}</Typography>
-          </MenuItem>
-          <Divider />
-          <MenuItem key="editionEnabled" onClick={handleEdit}>
-            {secretOps?.includes('e') ? <KeyOffIcon sx={iconColor(disabled)}/> : <KeyIcon sx={iconColor(disabled)}/>}
-            <Typography sx={{ml: '5px'}}>{`Edit ${secretOps?.includes('e') ? 'dis' : 'en'}abled`}</Typography>
-          </MenuItem>
-          <MenuItem key="lockEnabler" onClick={handleLock}>
-            {!secretOps?.includes('l') ? <LockIconOpen sx={iconColor(disabled)}/> : <LockIcon sx={iconColor(disabled)}/>}
-            <Typography sx={{ml: '5px'}}>{`Page lock ${!secretOps?.includes('l') ? 'dis' : 'en'}abled`}</Typography>
           </MenuItem>
           <Divider />
           <MenuItem key="generateOther" onClick={generateSecretId}>
@@ -183,6 +184,14 @@ export default function RenderSecretHandler({secret, disabled, errors, openValid
                     <span style={{fontWeight: 'bold'}}>Secret allows you to share the edition and/or the lock of this QRLynk page</span>
                   </td></tr>
                   <tr>
+                    <td style={td}>{secretOps?.includes('e') ? <EditOffIcon fontSize="small" color="primary"/> : <EditIcon fontSize="small" color="primary"/>}</td>
+                    <td>Enables or disables the edition via secret URL. It means knowing<br/>the secret URL any user can use it to edit this QRLynk.</td>
+                  </tr>
+                  <tr>
+                    <td style={td}>{!secretOps?.includes('l') ? <LockIconOpen fontSize="small" color="primary"/> : <LockIcon fontSize="small" color="primary"/>}</td>
+                    <td>Enables or disables the lock for this QRLynk page. It means users<br/>need to enter the secret code to access to this QRLynk page.</td>
+                  </tr>
+                  <tr>
                     <td style={td}><ContentCopyIcon fontSize="small" color="primary" /></td>
                     <td>
                       Copy to the clipboard:
@@ -191,14 +200,6 @@ export default function RenderSecretHandler({secret, disabled, errors, openValid
                         <li>The secret code for accessing this QRLynk page (if enabled).</li>
                       </ul>
                     </td>
-                  </tr>
-                  <tr>
-                    <td style={td}>{secretOps?.includes('e') ? <EditOffIcon fontSize="small" color="primary"/> : <EditIcon fontSize="small" color="primary"/>}</td>
-                    <td>Enables or disables the edition via secret URL. It means knowing<br/>the secret URL any user can use it to edit this QRLynk.</td>
-                  </tr>
-                  <tr>
-                    <td style={td}>{!secretOps?.includes('l') ? <LockIconOpen fontSize="small" color="primary"/> : <LockIcon fontSize="small" color="primary"/>}</td>
-                    <td>Enables or disables the lock for this QRLynk page. It means users<br/>need to enter the secret code to access to this QRLynk page.</td>
                   </tr>
                   <tr>
                     <td style={td}><ReplayIcon fontSize="small" color="primary"/></td>

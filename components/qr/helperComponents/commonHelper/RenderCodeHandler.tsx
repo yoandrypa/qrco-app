@@ -110,6 +110,14 @@ export default function RenderCodeHandler({url, code}: CodeProps) {
                 <span style={{fontWeight: 'bold'}}>QRLynk page URL options</span>
               </td></tr>
               <tr>
+                <td style={td}><EditIcon color="primary" fontSize="small"/></td>
+                <td>Edit QRLynk code.</td>
+              </tr>
+              <tr>
+                <td style={td}><OpenInNewIcon color="primary" fontSize="small"/></td>
+                <td>Open this QRLynk in another tab.</td>
+              </tr>
+              <tr>
                 <td style={td}><ContentCopyIcon color="primary" fontSize="small"/></td>
                 <td>
                   Copy to the clipboard:
@@ -118,14 +126,6 @@ export default function RenderCodeHandler({url, code}: CodeProps) {
                     <li>The QRLynk code.</li>
                   </ul>
                 </td>
-              </tr>
-              <tr>
-                <td style={td}><EditIcon color="primary" fontSize="small"/></td>
-                <td>Edit QRLynk code.</td>
-              </tr>
-              <tr>
-                <td style={td}><OpenInNewIcon color="primary" fontSize="small"/></td>
-                <td>Open this QRLynk in another tab.</td>
               </tr>
               </tbody>
             </table>
@@ -142,15 +142,6 @@ export default function RenderCodeHandler({url, code}: CodeProps) {
           anchorEl={anchorOpts}
           open onClose={() => setAnchorOpts(undefined)}
         >
-          <MenuItem key="copyMenu" onClick={handleCopier}>
-            <ContentCopyIcon color="primary"/>
-            <Typography sx={{ml: '5px'}}>{'Copy page URL'}</Typography>
-          </MenuItem>
-          <MenuItem key="copyCodeMenu" onClick={handleCopyCode}>
-            <ContentCopyIcon color="primary"/>
-            <Typography sx={{ml: '5px'}}>{'Copy code'}</Typography>
-          </MenuItem>
-          <Divider/>
           <MenuItem key="editMenu" onClick={handleEdit}>
             <EditIcon color="primary"/>
             <Typography sx={{ml: '5px'}}>{'Edit'}</Typography>
@@ -159,6 +150,15 @@ export default function RenderCodeHandler({url, code}: CodeProps) {
           <MenuItem key="openMenu" target="_blank" component="a" href={`${url}/${code}`} disabled={!url} onClick={() => setAnchorOpts(undefined)}>
             <OpenInNewIcon color="primary"/>
             <Typography sx={{ml: '5px'}}>{'Open'}</Typography>
+          </MenuItem>
+          <Divider/>
+          <MenuItem key="copyMenu" onClick={handleCopier}>
+            <ContentCopyIcon color="primary"/>
+            <Typography sx={{ml: '5px'}}>{'Copy page URL'}</Typography>
+          </MenuItem>
+          <MenuItem key="copyCodeMenu" onClick={handleCopyCode}>
+            <ContentCopyIcon color="primary"/>
+            <Typography sx={{ml: '5px'}}>{'Copy code'}</Typography>
           </MenuItem>
         </Menu>
       )}
