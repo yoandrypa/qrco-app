@@ -51,10 +51,16 @@ export default function VisitTechnologyDetails({ visitData, total }: any) {
           </TableHead>
           <TableBody>
             {countriesRows.map((row, index) => {
+              let name;
+              try {
+                name = regionNames.of(row.name);
+              } catch {
+                name = 'Unknown';
+              }
               const percent = Math.round((row.visits * 100 / total) * 100) / 100;
               return (
                 <TableRow key={index} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                  <TableCell component="th" scope="row">{Object.keys(regionNames || {}).length > 0 ? regionNames.of(row.name) : 'Unknown'}</TableCell>
+                  <TableCell component="th" scope="row">{name}</TableCell>
                   <TableCell align="right" sx={{ width: 400 }}>
                     <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-around">
                       <LinearProgress variant="determinate" value={percent} sx={{width: "90%"}}/>
