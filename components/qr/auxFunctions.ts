@@ -197,7 +197,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
   // @ts-ignore
   const userId = data.mode !== 'secret' ? userInfo.cognito_user_id : options?.userId?.id;
 
-  if (!data.hideQrForSharing) {
+  if (!data.hideQrForSharing && data.isDynamic) {
     prevUpdatingHandler(`${data.qrForSharing?.[0]?.Key === undefined ? 'Saving' : 'Adjusting'} QR code`);
 
     const file = getFileFromQr(data, options, background, frame, cornersData, dotsData, selected, false, data.qrForSharing?.[0]?.name);
