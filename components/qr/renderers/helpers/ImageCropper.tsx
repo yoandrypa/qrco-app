@@ -13,7 +13,9 @@ import CropIcon from '@mui/icons-material/Crop';
 import PhotoSizeSelectLargeIcon from '@mui/icons-material/PhotoSizeSelectLarge';
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import {getUuid} from "../../../../helpers/qr/helpers";
+import Notifications from "../../../notifications/Notifications";
+
+import {checkForAlpha, compressImage, getUuid} from "../../../../helpers/qr/helpers";
 
 interface ImageCropperProps {
   handleClose: () => void;
@@ -26,6 +28,7 @@ interface ImageCropperProps {
 export default function ImageCropper({handleAccept, handleClose, file, kind, message}: ImageCropperProps) {
   const [drag, setDrag] = useState<boolean>(false);
   const [zoom, setZoom] = useState<{max: number, min: number, selected: number}>({max: 100, min: 50, selected: 100});
+  const [alphaWarning, setAlphaWarning] = useState<boolean>(false);
 
   const isWide = useMediaQuery("(min-width:570px)", { noSsr: true });
 
@@ -117,7 +120,21 @@ export default function ImageCropper({handleAccept, handleClose, file, kind, mes
     if (canvas) {
       canvas.toBlob(blob => { // @ts-ignore
         const newFile = new File([blob], `${getUuid()}${name.slice(name.indexOf('.'))}`, {type});
-        handleAccept(newFile, kind);
+
+        if (newFile.size <= 153600) {
+          handleAccept(newFile, kind);
+        } else {
+          let quality = 0.4;
+          let resizing = 0.35;
+          if (newFile.size < 1048576) {
+            quality = 0.7;
+            resizing = 0.7;
+          } else if (newFile.size < 5242880) {
+            quality = 0.5;
+            resizing = 0.5;
+          }
+          compressImage(newFile, (newFileItem: File) => handleAccept(newFileItem, kind), resizing, quality);
+        }
       }, type, 0.5);
     }
   };
@@ -160,10 +177,16 @@ export default function ImageCropper({handleAccept, handleClose, file, kind, mes
     const dims = kind === 'backgndImg' ? {width: 460, height: 200} :
       (kind === 'micrositeBackImage' ? {width: 350, height: 650} : {width: 200, height: 200});
 
-    img.onload = () => {
+    img.onload = async () => {
       let height = img.height;
       let width = img.width;
       let percent = 100;
+
+      const result = await checkForAlpha(file);
+
+      if (result?.hasAlpha) {
+        setAlphaWarning(true);
+      }
 
       const greaterWidth = () => {
         width = dims.width;
@@ -263,13 +286,13 @@ export default function ImageCropper({handleAccept, handleClose, file, kind, mes
               ref={canvasRef} />
           </Box>
         </Box>
-        <Typography sx={{ mt: 2, fontSize: 'small' }}>{'Zoom'}</Typography>
+        <Typography sx={{ mt: 1, fontSize: 'small' }}>{'Zoom'}</Typography>
         <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
           <ZoomOutIcon fontSize="small" color="primary" />
           <Slider aria-label="Zoom" max={zoom.max} min={zoom.min} value={zoom.selected} onChange={handleChange} />
           <ZoomInIcon fontSize="large" color="primary" />
         </Stack>
-        <Box sx={{ mt: 2, display: 'flex', color: theme => theme.palette.text.disabled, width: '100%', justifyContent: 'center' }}>
+        <Box sx={{ mt: 1, display: 'flex', color: theme => theme.palette.text.disabled, width: '100%', justifyContent: 'center' }}>
           <Typography sx={{ fontSize: 'small', fontWeight: 'bold', mr: '5px' }}>{'Note:'}</Typography>
           <Typography sx={{ fontSize: 'small'}}>{'Image might have a tiny difference on microsite.'}</Typography>
         </Box>
@@ -278,6 +301,18 @@ export default function ImageCropper({handleAccept, handleClose, file, kind, mes
         <Button startIcon={<CropIcon />} variant="outlined" onClick={beforeSend}>{'Done'}</Button>
         <Button variant="outlined" onClick={handleClose}>{'Close'}</Button>
       </DialogActions>
+      {alphaWarning && (
+        <Notifications
+          onClose={() => setAlphaWarning(false)}
+          title="The selected image contains alpha channels."
+          autoHideDuration={7500}
+          severity={'warning'}
+          vertical="bottom"
+          showProgress
+          message="This could cause the image to not render properly. Be advised."
+
+        />
+      )}
     </Dialog>
   );
 }

@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
@@ -8,7 +8,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import dynamic from "next/dynamic";
 
-const RenderHandleOpacity = dynamic(() => import("../../helperComponents/smallpieces/RenderHandleOpacity"));
+const RenderHandleOpacityBlurness = dynamic(() => import("../../helperComponents/smallpieces/RenderHandleOpacityBlurness"));
 const RenderImgPreview = dynamic(() => import("./RenderImgPreview"));
 const RenderImagePicker = dynamic(() => import("./RenderImagePicker"));
 const ImageCropper = dynamic(() => import("./ImageCropper"));
@@ -17,7 +17,10 @@ const Notifications = dynamic(() => import("../../../notifications/Notifications
 interface BackImgProps {
   micrositesImg?: File | string;
   opacity: number;
+  blurness: number;
   handleValue: Function;
+  forcePick?: string;
+  releasePick: () => void;
 }
 
 interface ErrorProps {
@@ -26,7 +29,7 @@ interface ErrorProps {
   warning?: boolean;
 }
 
-export default function RenderBackgroundImageSelector({handleValue, micrositesImg, opacity}: BackImgProps) {
+export default function RenderBackgroundImageSelector({handleValue, micrositesImg, opacity, blurness, forcePick, releasePick}: BackImgProps) {
   const [error, setError] = useState<ErrorProps | null>(null);
   const [selectFile, setSelectFile] = useState<boolean>(false);
   const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
@@ -55,6 +58,14 @@ export default function RenderBackgroundImageSelector({handleValue, micrositesIm
     handleValue(kind)(newFile);
     setCropper(null);
   };
+
+  useEffect(() => {
+    if (forcePick) {
+      setSelectFile(true);
+      setTimeout(() => releasePick(), 200);
+
+    }
+  }, [forcePick]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -89,7 +100,10 @@ export default function RenderBackgroundImageSelector({handleValue, micrositesIm
         )}
       </Box>
       {micrositesImg !== undefined && (
-        <RenderHandleOpacity opacity={opacity} handleValue={handleValue} property="micrositeBackImageOpacity" />
+        <>
+          <RenderHandleOpacityBlurness value={opacity} handleValue={handleValue} property="micrositeBackImageOpacity" />
+          <RenderHandleOpacityBlurness value={blurness} handleValue={handleValue} property="micrositeBackImageBlurness" message="Blurriness" maxValue={50} />
+        </>
       )}
       {selectFile && (
         <RenderImagePicker

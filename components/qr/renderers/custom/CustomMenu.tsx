@@ -1,5 +1,4 @@
-import {components} from "./helperFuncs";
-import React, {ChangeEvent, useState} from "react";
+import {ChangeEvent, useState} from "react";
 import MenuList from "@mui/material/MenuList";
 import {MenuItem, TextField} from "@mui/material";
 import ListItemText from "@mui/material/ListItemText";
@@ -10,25 +9,36 @@ import IconButton from "@mui/material/IconButton";
 import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
 
+import {components} from "./helperFuncs";
+
+import dynamic from "next/dynamic";
+
+const AttachMoneyIcon = dynamic(() => import("@mui/icons-material/AttachMoney"));
+
 interface CustomImageProps {
   handle: (item: string) => () => void;
   showOptions: HTMLElement;
   setShowOptions: Function;
+  isSecret?: boolean;
 }
 
-export default function CustomMenu({handle, showOptions, setShowOptions}: CustomImageProps) {
+export default function CustomMenu({handle, showOptions, setShowOptions, isSecret}: CustomImageProps) {
   const [filter, setFilter] = useState<string>('');
 
   const clearFilter = () => {
     setFilter('');
   }
 
-  const render = () => {
-    const list = components.filter(x => x.name.toUpperCase().includes(filter.toUpperCase()));
-    return list.map(x => {
-      return !x.notInMenu ? (
-        <MenuItem onClick={handle(x.type)} key={x.type}>
-          <ListItemText>{x.name}</ListItemText>
+  const render = () => { // @ts-ignore
+    const list = Object.keys(components).filter(x => components[x]?.name.toUpperCase().includes(filter.toUpperCase()));
+    return list.map((x: string) => { // @ts-ignore
+      const item = components[x];
+      return !item?.notInMenu ? (
+        <MenuItem onClick={handle(x)} key={x} disabled={isSecret && item.isMonetized}>
+          <ListItemText>
+            {item.name}
+            {item.isMonetized && <AttachMoneyIcon sx={{color: 'primary.light', mb: '-4px', ml: '3px'}} fontSize="small"/>}
+          </ListItemText>
         </MenuItem>
       ) : null;
     })

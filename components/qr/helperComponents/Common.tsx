@@ -1,41 +1,47 @@
-import {ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
+import { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+
 import Typography from "@mui/material/Typography";
-import InputAdornment from "@mui/material/InputAdornment";
 import ArticleIcon from '@mui/icons-material/ArticleOutlined';
 import DesignServicesIcon from '@mui/icons-material/DesignServices';
-import TextField from "@mui/material/TextField";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
+import Context from "../../context/Context";
+import RenderNameAndSecret from "./commonHelper/RenderNameAndSecret";
+import RenderQRCommons from "../renderers/RenderQRCommons";
+import { NO_MICROSITE, PROFILE_IMAGE } from "../constants";
+import { download } from "../../../handlers/storage";
+import { DataType } from "../types/types";
+import { getOptionsForPreview, previewQRGenerator } from "../../../helpers/qr/auxFunctions";
+import { saveOrUpdate } from "../auxFunctions";
+import { blobUrlToFile, useCheckOnlyQr } from "../../../helpers/qr/helpers";
+import { generateUUID } from "listr2/dist/utils/uuid";
+import { releaseWaiting, startWaiting } from "../../Waiting";
+import { FORCE_EXTRA, IGNORE_VALIDATOR } from "../../../consts";
+
+import valueHanler from "./valueHandler";
+import validator from "../validator";
 import dynamic from "next/dynamic";
 
-import Context from "../../context/Context";
-import RenderQRCommons from "../renderers/RenderQRCommons";
-import {DEFAULT_COLORS, NO_MICROSITE, PROFILE_IMAGE} from "../constants";
-import {download} from "../../../handlers/storage";
-import {DataType} from "../types/types";
-import {previewQRGenerator} from "../../../helpers/qr/auxFunctions";
-import {saveOrUpdate} from "../auxFunctions";
-import {blobUrlToFile, handleDesignerString} from "../../../helpers/qr/helpers";
-import {initialData} from "../../../helpers/qr/data";
-import {generateUUID} from "listr2/dist/utils/uuid";
-
+const RenderStats = dynamic(() => import("./commonHelper/RenderStats"));
+const ErrorsDialog = dynamic(() => import("./looseComps/ErrorsDialog"));
 const RenderMode = dynamic(() => import("./looseComps/RenderMode"));
 const Notifications = dynamic(() => import("../../notifications/Notifications"));
 const RenderPreviewDrawer = dynamic(() => import("./smallpieces/RenderPreviewDrawer"));
 const RenderPreviewButton = dynamic(() => import("./smallpieces/RenderPreviewButton"));
 const RenderSamplePreview = dynamic(() => import("./smallpieces/RenderSamplePreview"));
 const RenderClaimingInfo = dynamic(() => import("./smallpieces/RenderClaimingInfo"));
+const LoadingMicrositeImages = dynamic(() => import("./looseComps/LoadingMicrositeImages"));
+const QueryStatsIcon = dynamic(() => import("@mui/icons-material/QueryStats"));
 
 interface CommonProps {
-  msg: string;
-  children: ReactNode;
+  msg: string; children: ReactNode;
 }
 
 function Common({msg, children}: CommonProps) { // @ts-ignore
-  const {selected, data, setData, userInfo, options, isWrong, background, frame, cornersData, dotsData, setLoading} = useContext(Context);
+  const {selected, data, setData, userInfo, options, isWrong, background, frame, cornersData, dotsData} = useContext(Context);
 
   const [loading, setLocalLoading] = useState<boolean>(false);
   const [backImg, setBackImg] = useState<any>(undefined);
@@ -45,9 +51,11 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   const [tabSelected, setTabSelected] = useState<number>(0);
   const [openPreview, setOpenPreview] = useState<boolean>(false);
   const [forceOpen, setForceOpen] = useState<string | undefined>(undefined);
+  const [validationErrors, setValidationErrors] = useState<string[] | undefined>(undefined);
 
   const lastAction = useRef<string | undefined>(undefined);
   const loadingCount = useRef<number>(0);
+  const firstLoad = useRef<boolean>(true);
 
   const isWideForPreview = useMediaQuery("(min-width:720px)", { noSsr: true });
 
@@ -55,105 +63,15 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     setTabSelected(newValue);
   }
 
+  const releasePick = useCallback(() => setForceOpen(undefined), []);
+
   const handleValue = useCallback((prop: string) => (payload: any) => {
-    if (payload === undefined) {
-      setData((prev: any) => {
-        const tempo = {...prev};
-        delete tempo[prop];
-        return tempo;
-      })
-    } else if (!prop.startsWith('both')) {
-      if (prop === 'micrositeBackImage' && micrositeBackImage !== undefined) {
-        setMicrositeBackImage(undefined); // @ts-ignore
-        setData((prev: DataType) => ({...prev, micrositeBackImage: payload, prevMicrositeImg: prev.micrositeBackImage[0].Key}));
-      } else if (prop === 'backgndImg' && backImg !== undefined) {
-        setBackImg(undefined); // @ts-ignore
-        setData((prev: DataType) => ({...prev, backgndImg: payload, prevBackImg: prev.backgndImg[0].Key}));
-      } else if (prop === 'foregndImg' && foreImg !== undefined) {
-        setForeImg(undefined); // @ts-ignore
-        setData((prev: DataType) => ({...prev, foregndImg: payload, prevForeImg: prev.foregndImg[0].Key}));
-      } else if (payload.clear || (((prop === "globalFont" && payload === "Default") ||
-          (['buttonsFont', 'titlesFont', 'messagesFont', 'titlesFontSize', 'messagesFontSize', 'buttonsFontSize',
-              'subtitlesFontSize', 'subtitlesFont', 'layout'].includes(prop) && (['none', 'default'].includes(payload))
-          )) && data[prop] === payload) || (prop === 'buttonShape' && payload === '1') ||
-        (prop === 'buttonBack' && payload === 'default') || (prop === 'autoOpen' && !payload)) {
-        setData((prev: any) => {
-          const tempo = {...prev};
-          delete tempo[prop];
-          if (prop === 'buttonBack' && payload === 'default' && tempo.buttonBackColor !== undefined) {
-            delete tempo.buttonBackColor;
-          }
-          return tempo;
-        })
-      } else if (prop === 'backgroundType') {
-        setData((prev: any) => {
-          const tempo = {...prev};
-          if (tempo.backgroundColor !== undefined) { delete tempo.backgroundColor; }
-          if (tempo.backgroundColorRight !== undefined) { delete tempo.backgroundColorRight; }
-          if (tempo.backgroundDirection !== undefined) { delete tempo.backgroundDirection; }
-          tempo.backgroundType = payload.target.value;
-          return tempo;
-        });
-      } else if (prop === 'buttonBack') {
-        setData((prev: any) => {
-          const newData = {...prev, buttonBackColor: payload === 'solid' ? DEFAULT_COLORS.p : 'unset'};
-          newData[prop] = payload.target?.value !== undefined ? payload.target.value : payload;
-          if (payload === 'gradient' && newData.buttonsOpacity !== undefined) {
-            delete newData.buttonsOpacity;
-          }
-          return newData;
-        });
-      } else if (prop === 'buttonShape') {
-        setData((prev: any) => {
-          const newData = {...prev, [prop]: payload};
-          if (newData.flipHorizontal !== undefined) { delete newData.flipHorizontal; }
-          if (newData.flipVertical !== undefined && !['5', '6', '7'].includes(payload)) { delete newData.flipVertical; }
-          if (newData.alternate !== undefined && !['5', '6', '7'].includes(payload)) { delete newData.alternate; }
-          if (payload !== '4' && newData.buttonBorders !== undefined) { delete newData.buttonBorders; }
-          return newData;
-        })
-      } else {
-        setData((prev: any) => {
-          const newData = {...prev};
-          newData[prop] = payload.target?.value !== undefined ? payload.target.value : payload;
-          if (['flipHorizontal', 'flipVertical', 'buttonShadow', 'buttonCase'].includes(prop) && !payload && newData[prop] !== undefined) {
-            delete newData[prop];
-          }
-          if (prop === 'buttonBorderStyle') {
-            if (payload !== 'two' && newData.buttonBorderColors !== undefined) {
-              delete newData.buttonBorderColors;
-            }
-            if (payload === 'noBorders') {
-              delete newData.buttonBorderStyle;
-              if (newData.buttonBorderWeight !== undefined) { delete newData.buttonBorderWeight; }
-              if (newData.buttonBorderType !== undefined) { delete newData.buttonBorderType; }
-            }
-          }
-          return newData;
-        });
-      }
-    } else if ((prop === 'both' && (payload.p !== DEFAULT_COLORS.p || payload.s !== DEFAULT_COLORS.s)) ||
-      (prop === 'both-gradient' && (payload.p !== DEFAULT_COLORS.s || payload.s !== DEFAULT_COLORS.p) )) {
-      const isMain = prop === 'both';
-      setData((prev: any) => ({...prev, [isMain ? 'primary' : 'backgroundColor']: payload.p, [isMain ? 'secondary' : 'backgroundColorRight']: payload.s}));
-    } else {
-      setData((prev: any) => {
-        const temp = {...prev};
-        if (prop === 'both') {
-          if (temp.primary) { delete temp.primary; }
-          if (temp.secondary) { delete temp.secondary; }
-        } else {
-          if (temp.backgroundColor) { delete temp.backgroundColor; }
-          if (temp.backgroundColorRight) { delete temp.backgroundColorRight; }
-        }
-        return temp;
-      });
-    }
+    valueHanler(prop, data, payload, foreImg, backImg, micrositeBackImage, setData, setBackImg, setForeImg, setMicrositeBackImage);
   }, [backImg, foreImg, micrositeBackImage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getFiles = useCallback(async (key: string, item: string) => {
     try {
-      lastAction.current = 'loading the banner/profile images';
+      lastAction.current = 'loading images';
       const fileData = await download(key);
 
       if (options.mode === 'edit') {
@@ -204,18 +122,18 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   useEffect(() => {
     if (isEditOrClone) {
       if (data?.micrositeBackImage?.[0]?.Key) {
-        setLocalLoading(true);
         loadingCount.current += 1;
+        setLocalLoading(true);
         getFiles(data.micrositeBackImage[0].Key, 'micrositeBackImage');
       }
       if (data?.backgndImg?.[0]?.Key) {
-        setLocalLoading(true);
         loadingCount.current += 1;
+        setLocalLoading(true);
         getFiles(data.backgndImg[0].Key, 'backgndImg');
       }
       if (data?.foregndImg?.[0]?.Key) {
-        setLocalLoading(true);
         loadingCount.current += 1;
+        setLocalLoading(true);
         getFiles(data.foregndImg[0].Key, 'foregndImg');
       }
     }
@@ -226,12 +144,8 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   }, [isWideForPreview]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (forceOpen) {
-      if (tabSelected === 0) {
-        setTabSelected(1);
-      }
-    } else {
-      setForceOpen(undefined);
+    if (forceOpen && tabSelected === 0) {
+      setTabSelected(1);
     }
   }, [forceOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -240,46 +154,60 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     {children}
   </>);
 
+  const getValidationErrors = useCallback(() =>
+    validator(data.custom || [], FORCE_EXTRA.includes(selected), IGNORE_VALIDATOR.includes(selected) || !data.isDynamic),
+    [data.custom, data.isDynamic, selected]);
+
   const handleSave = async () => {
-    lastAction.current = 'saving the data';
-    setLoading(true);
-    await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setError, (creationDate?: string) => {
-      setData((prev: DataType) => {
-        const newData = {...prev, mode: 'edit'};
-        if (newData.claim !== undefined) {
-          delete newData.claim;
-        }
-        if (newData.preGenerated !== undefined) {
-          delete newData.preGenerated;
-        }
-        if (newData.claimable !== undefined) {
-          delete newData.claimable;
-        }
-        if (creationDate) { // @ts-ignore
-          newData.createdAt = creationDate;
-        }
-        return newData;
+    const validate = getValidationErrors();
+    if (validate.length) {
+      setValidationErrors(validate);
+    } else {
+      lastAction.current = 'saving the data';
+      startWaiting();
+      await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setError, (creationDate?: string) => {
+        setData((prev: DataType) => {
+          const newData = {...prev};
+          if (newData.mode !== 'secret') { newData.mode = 'edit'; }
+          if (newData.claim !== undefined) {
+            delete newData.claim;
+          }
+          if (newData.preGenerated !== undefined) {
+            delete newData.preGenerated;
+          }
+          if (newData.claimable !== undefined) {
+            delete newData.claimable;
+          }
+          if (creationDate) { // @ts-ignore
+            newData.createdAt = creationDate;
+          }
+          return newData;
+        });
+        releaseWaiting();
       });
-      setLoading(false);
-    });
+    }
   };
 
-  const handleImg = useCallback((prop: string) => {
-    setForceOpen(prop);
-  }, []);
-
-  const optionsForPreview = useCallback(() => {
-    const opts = {...options, background, frame, corners: cornersData, cornersDot: dotsData};
-    if (!data?.isDynamic) {
-      opts.data = handleDesignerString(selected, data || {...initialData});
-      if (!opts.data.length) {
-        opts.data = selected === 'web' ? 'https://www.example.com' : 'Example';
+  useEffect(() => {
+    if (data?.isDynamic) {
+      if (!firstLoad.current) {
+        handleSave();
+      } else {
+        firstLoad.current = false;
       }
     }
-    return opts;
-  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [data?.secret, data?.secretOps]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const isOnlyQr = useCheckOnlyQr(selected, data);
+
+  const handleImg = useCallback((prop: string) => setForceOpen(prop), []);
+  const forceOpenValidator = () => { setValidationErrors(getValidationErrors()); }
+
+  const optionsForPreview = useMemo(() => // eslint-disable-next-line react-hooks/exhaustive-deps
+    getOptionsForPreview(data, options, background, frame, cornersData, dotsData, selected), [data, options.data]);
 
   const omitProfileImg = useMemo(() => !PROFILE_IMAGE.includes(selected) || !data?.isDynamic, [selected, data?.isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
+  const code = useMemo(() => options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected, [options?.data, selected]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -294,30 +222,18 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           autoHideDuration={10500}
         />
       )}
-      {userInfo ? (
+      {userInfo || data.mode === 'secret' ? (
         <Box sx={{ display: 'flex' }}>
           <Box sx={{ width: '100%' }}>
-            <TextField
-              label="QR name"
-              required
-              size="small"
-              fullWidth
-              margin="dense"
-              value={data?.qrName || ''}
-              onChange={handleValue('qrName')}
-              InputProps={{
-                endAdornment: (
-                  !Boolean(data?.qrName?.trim().length) ? (<InputAdornment position="end">
-                    <Typography color="error">{'REQUIRED'}</Typography>
-                  </InputAdornment>) : null
-                )
-              }}
-            />
+            <RenderNameAndSecret handleValue={handleValue} qrName={data?.qrName} secret={data?.secret} code={code}
+                                 hideSecret={data.mode === 'secret' || !data?.isDynamic} errors={getValidationErrors()}
+                                 openValidationErrors={forceOpenValidator} secretOps={data?.secretOps} />
             {![...NO_MICROSITE, 'web'].includes(selected) && data?.isDynamic ? (
               <Box sx={{width: '100%', position: 'relative'}}>
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>
                   <Tab label="Content" icon={<ArticleIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
                   <Tab label="Page Design" icon={<DesignServicesIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>
+                  {data.mode === 'edit' && <Tab label="Stats" icon={<QueryStatsIcon fontSize="small"/>} iconPosition="start" sx={{ mt: '-10px', mb: '-15px'}}/>}
                 </Tabs>
                 {data.mode && <RenderMode isWide={isWideForPreview} mode={data.mode} />}
                 {data.claim !== undefined && (
@@ -325,30 +241,27 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
                     <RenderClaimingInfo claim={data.claim} />
                   </Box>
                 )}
-                {tabSelected === 0 ? renderChildren() : (
+                {loading && <LoadingMicrositeImages />}
+                {tabSelected === 0 && renderChildren()}
+                {tabSelected === 1 && (
                   <RenderQRCommons
-                    isWideForPreview={isWideForPreview}
-                    handleValue={handleValue}
-                    omitPrimaryImg={omitProfileImg}
+                    isWideForPreview={isWideForPreview} handleValue={handleValue} omitPrimaryImg={omitProfileImg}
                     backgndImg={isEditOrClone ? (Array.isArray(data?.backgndImg) ? backImg || undefined : data?.backgndImg) : data?.backgndImg}
                     foregndImg={isEditOrClone ? (Array.isArray(data?.foregndImg) ? foreImg || undefined : data?.foregndImg) : data?.foregndImg}
                     micrositesImg={isEditOrClone ? (Array.isArray(data?.micrositeBackImage) ? micrositeBackImage || undefined : data?.micrositeBackImage) : data?.micrositeBackImage}
-                    loading={loading}
-                    foreError={foreImg === null}
-                    backError={backImg === null}
-                    data={data}
-                    forcePick={forceOpen} />
+                    loading={loading} foreError={foreImg === null} backError={backImg === null}
+                    data={data} releasePick={releasePick} forcePick={forceOpen} />
                 )}
+                {tabSelected === 2 && <RenderStats userId={options.userId} visitCount={data.visitCount} createdAt={data.creation} />}
               </Box>
             ) : renderChildren()}
           </Box>
           {isWideForPreview && (
             <RenderSamplePreview
-              code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
-              save={handleSave} style={{mt: 1, ml: '15px', position: 'sticky', top: '120px'}}
+              code={code} save={handleSave} style={{mt: 1, ml: '15px', position: 'sticky', top: '120px'}}
               saveDisabled={isWrong || !data.qrName?.trim().length} shareLink={options?.data}
-              qrOptions={optionsForPreview()} step={1} data={previewQRGenerator(data, selected, omitProfileImg)}
-              onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
+              qrOptions={optionsForPreview} step={1} data={previewQRGenerator(data, selected, omitProfileImg)}
+              onlyQr={isOnlyQr} isDynamic={data.isDynamic || false}
               backImg={isEditOrClone && backImg ? backImg : undefined} handlePickImage={handleImg}
               mainImg={isEditOrClone && foreImg ? foreImg : undefined}
               backgroundImg={isEditOrClone && micrositeBackImage ? micrositeBackImage : undefined} />
@@ -359,15 +272,17 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
       {openPreview && ( // @ts-ignore
         <RenderPreviewDrawer title="Preview" setOpenPreview={setOpenPreview} height={selected === 'web' || !data.isDynamic ? 400 : 700} border={35}>
           <RenderSamplePreview
-            code={options?.data ? options.data.slice(options.data.lastIndexOf('/') + 1) : selected}
-            save={handleSave} saveDisabled={isWrong || !data.qrName?.trim().length} style={{mt: '-15px'}}
+            code={code} save={handleSave} saveDisabled={isWrong || !data.qrName?.trim().length} style={{mt: '-15px'}}
             data={previewQRGenerator(data, selected, omitProfileImg)} step={1} isDrawed
-            onlyQr={selected === 'web' || !data.isDynamic} isDynamic={data.isDynamic || false}
-            shareLink={options?.data} qrOptions={optionsForPreview()} handlePickImage={handleImg}
+            onlyQr={isOnlyQr} isDynamic={data.isDynamic || false}
+            shareLink={options?.data} qrOptions={optionsForPreview} handlePickImage={handleImg}
             backImg={isEditOrClone && backImg ? backImg : undefined}
             mainImg={isEditOrClone && foreImg ? foreImg : undefined}
             backgroundImg={isEditOrClone && micrositeBackImage ? micrositeBackImage : undefined} />
         </RenderPreviewDrawer>
+      )}
+      {validationErrors !== undefined && (
+        <ErrorsDialog errors={validationErrors} handleClose={() => setValidationErrors(undefined)} />
       )}
     </>
   );

@@ -1,21 +1,20 @@
-import {useCallback, useContext, useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 
 import {DataType} from "../types/types";
 import Expander from "./helpers/Expander";
-import Context from "../../context/Context";
 
 import dynamic from "next/dynamic";
 
+const RenderUpperSectionHeight = dynamic(() => import ("../helperComponents/smallpieces/RenderUpperSectionHeightAndSharer"));
 const RenderHandlerBackground = dynamic(() => import ("../helperComponents/smallpieces/RenderHandlerBackground"));
 const RenderMainImgsSelector = dynamic(() => import("../helperComponents/smallpieces/RenderMainImgsSelector"));
-const RenderButtonsHandler = dynamic(() => import('../helperComponents/looseComps/RenderButtonHandler'));
+const RenderButtonHandler = dynamic(() => import('../helperComponents/smallpieces/RenderButtonHandler'));
 const RenderFontsHandler = dynamic(() => import('../helperComponents/smallpieces/RenderFontsHandler'));
 const RenderLayoutHandler = dynamic(() => import("../helperComponents/smallpieces/RenderLayoutHandler"));
-const RenderMainColors = dynamic(() => import("./helpers/RenderMainColors"));
-const Typography = dynamic(() => import("@mui/material/Typography"));
-const CircularProgress = dynamic(() => import("@mui/material/CircularProgress"));
+const RenderMainColors = dynamic(() => import("../helperComponents/smallpieces/RenderMainColors"));
+const RenderFooterHandler = dynamic(() => import("../helperComponents/smallpieces/RenderFooterHandler"));
 
 interface QRCommonsProps {
   omitPrimaryImg?: boolean;
@@ -29,75 +28,69 @@ interface QRCommonsProps {
   foreError?: boolean;
   handleValue: Function;
   forcePick?: string;
+  releasePick: () => void;
 }
 
-function RenderQRCommons({loading, data, omitPrimaryImg, foregndImg, backgndImg, micrositesImg, backError, foreError, handleValue, isWideForPreview, forcePick}: QRCommonsProps) { // @ts-ignore
-  const [expander, setExpander] = useState<string | null>('mainColors');
+const sx = {p: 1, mb: '10px'};
 
-  // @ts-ignore
-  const {selected}: {selected: string} = useContext(Context);
+const RenderQRCommons = ({ loading, data, omitPrimaryImg, foregndImg, backgndImg, micrositesImg, backError, foreError,
+                           handleValue, isWideForPreview, forcePick, releasePick }: QRCommonsProps) => { // @ts-ignore
+  const [expander, setExpander] = useState<string | null>('mainColors');
 
   const handleExpander = useCallback((item: string): void => {
     setExpander(item === expander ? null : item);
   }, [expander]);
 
   useEffect(() => {
-    if (data?.layout?.includes('banner') && backgndImg) {
-      handleValue('backgndImg')(undefined)
+    if (forcePick) {
+      setExpander(forcePick === 'background' ? 'background' : 'images');
     }
-  }, [data?.layout]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (data?.backgroundType !== 'image' && micrositesImg) {
-      handleValue('micrositesImg')(undefined);
-    }
-  }, [data?.backgroundType]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [forcePick]);
 
   return (
-    <>
-      {loading && (
-        <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center', mt: '10px', mb: '-10px' }}>
-          <CircularProgress size={20} sx={{ mr: '5px' }} />
-          <Typography sx={{ fontSize: 'small', color: theme => theme.palette.text.disabled}}>
-            {'Loading data. Please wait...'}
-          </Typography>
-        </Box>
-      )}
-      <Box sx={{p: 1, mt: 1}}>
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="mainColors" title="Main colors" bold/>
-          {expander === 'mainColors' && <RenderMainColors data={data} handleValue={handleValue} />}
-        </Paper>
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="images" title="Banner and profile images" bold/>
-          {expander === 'images' && (
-            <RenderMainImgsSelector handleValue={handleValue} data={data} foregndImg={foregndImg} forcePick={forcePick}
-                                    backgndImg={backgndImg} isWideForPreview={isWideForPreview} backError={backError}
-                                    foreError={foreError} omitPrimaryImg={omitPrimaryImg} loading={loading} />
-          )}
-        </Paper>
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="background" title="Background" bold/>
-          {expander === 'background' && (
-            <RenderHandlerBackground handleValue={handleValue} data={data} micrositesImg={micrositesImg}/>
-          )}
-        </Paper>
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="fonts" title="Fonts" bold/>
-          {expander === 'fonts' && <RenderFontsHandler data={data} handleValue={handleValue} />}
-        </Paper>
-        {!['social', 'petId', 'gallery'].includes(selected) && (<Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="buttons" title="Buttons" bold/>
-          {expander === 'buttons' && <RenderButtonsHandler handleValue={handleValue} data={data}/>}
-        </Paper>)}
-        <Paper sx={{p: 1, mb: '10px'}} elevation={2}> {/* @ts-ignore */}
-          <Expander expand={expander} setExpand={handleExpander} item="layout" title="Layout" bold/>
-          {expander === 'layout' && (
-            <RenderLayoutHandler handleValue={handleValue} data={data} omitPrimary={omitPrimaryImg}/>
-          )}
-        </Paper>
-      </Box>
-    </>
+    <Box sx={{p: 1, mt: 1}}>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="mainColors" title="Main colors" bold/>
+        {expander === 'mainColors' && <RenderMainColors data={data} handleValue={handleValue} />}
+      </Paper>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="upperSection" title="Top margin and sharer config" bold/>
+        {expander === 'upperSection' && (
+          <RenderUpperSectionHeight data={data} handleValue={handleValue} includeSharerConfig includeQrCode />
+        )}
+      </Paper>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="images" title="Banner and profile images" bold/>
+        {expander === 'images' && (
+          <RenderMainImgsSelector handleValue={handleValue} data={data} foregndImg={foregndImg} forcePick={forcePick}
+                                  backgndImg={backgndImg} isWideForPreview={isWideForPreview} backError={backError}
+                                  foreError={foreError} omitPrimaryImg={omitPrimaryImg} loading={loading}
+                                  releasePick={releasePick}/>)}
+      </Paper>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="background" title="Background" bold/>
+        {expander === 'background' && (
+          <RenderHandlerBackground handleValue={handleValue} data={data} micrositesImg={micrositesImg}
+                                   forcePick={forcePick} releasePick={releasePick}/>
+        )}
+      </Paper>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="fonts" title="Fonts" bold/>
+        {expander === 'fonts' && <RenderFontsHandler data={data} handleValue={handleValue} />}
+      </Paper>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="buttons" title="Buttons" bold/>
+        {expander === 'buttons' && <RenderButtonHandler handleValue={handleValue} data={data}/>}
+      </Paper>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="layout" title="Layout" bold/>
+        {expander === 'layout' && <RenderLayoutHandler handleValue={handleValue} data={data} omitPrimary={omitPrimaryImg}/>}
+      </Paper>
+      <Paper sx={sx} elevation={2}> {/* @ts-ignore */}
+        <Expander expand={expander} setExpand={handleExpander} item="footer" title="Footer" bold/>
+        {expander === 'footer' && <RenderFooterHandler data={data} handleValue={handleValue} />}
+      </Paper>
+    </Box>
   );
 }
 

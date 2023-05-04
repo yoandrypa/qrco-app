@@ -1,10 +1,12 @@
 import {useEffect, useRef, useState} from "react";
+
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
-import {DataType} from "./qr/types/types";
-import {convertBase64, getImageAsString} from "../helpers/qr/helpers";
 import CircularProgress from "@mui/material/CircularProgress";
+
+import {DataType} from "./qr/types/types";
+import {convertBase64, getImageData} from "../helpers/qr/helpers";
 
 interface IframeProps {
   src: string;
@@ -17,6 +19,7 @@ interface IframeProps {
   backgroundImg?: File | string;
   backImg?: File | string;
   mainImg?: File | string;
+  qrImg?: File;
 }
 
 const style = {
@@ -36,7 +39,7 @@ const proceed = (plain?: any, imgData?: any) => {
   return imgData !== undefined && (imgData instanceof File || imgData instanceof Blob);
 }
 
-const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, backgroundImg, shareLink, notifyReady}: IframeProps) => {
+const RenderIframe = ({ src, width, height, data, selected, backImg, mainImg, backgroundImg, shareLink, notifyReady, qrImg }: IframeProps) => {
   const [whatToRender, setWhatToRender] = useState<string | null>(null);
   const [error, setError] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
@@ -53,17 +56,21 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
         if (shareLink && previewData.shortlinkurl === undefined) {
           previewData.shortlinkurl = shareLink;
         }
+
         if (previewData.backgndImg || backImg) {
           previewData.backgndImg = !isInEdition || proceed(backImg, previewData.backgndImg) ?
-            await getImageAsString(previewData.backgndImg) : await getImageAsString(backImg);
+            await getImageData(previewData.backgndImg) : await getImageData(backImg);
         }
         if (previewData.foregndImg || mainImg) {
           previewData.foregndImg = !isInEdition || proceed(mainImg, previewData.foregndImg) ?
-            await getImageAsString(previewData.foregndImg) : await getImageAsString(mainImg);
+            await getImageData(previewData.foregndImg) : await getImageData(mainImg);
         }
         if (previewData.micrositeBackImage || backgroundImg) {
           previewData.micrositeBackImage = !isInEdition || proceed(backgroundImg, previewData.micrositeBackImage) ?
-            await getImageAsString(previewData.micrositeBackImage) : await getImageAsString(backgroundImg);
+            await getImageData(previewData.micrositeBackImage) : await getImageData(backgroundImg);
+        }
+        if (qrImg) {
+          previewData.qrCodeImg = qrImg;
         }
 
         if (previewData.custom) {
@@ -89,7 +96,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
         }
 
         if (iRef.current?.contentWindow) { // @ts-ignore
-          iRef.current.contentWindow.postMessage(JSON.stringify({previewData}), process.env.MICRO_SITES_BASE_URL);
+          iRef.current.contentWindow.postMessage(JSON.stringify({ previewData }), process.env.MICRO_SITES_BASE_URL);
         }
       }, 75);
     }
@@ -119,9 +126,9 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (whatToRender !== null) { setWhatToRender(null); }
-    if (error) { setError(false); }
-  },[src]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (whatToRender !== null) setWhatToRender(null);
+    if (error) setError(false);
+  }, [src]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setIsLoading(true);
@@ -139,20 +146,21 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
   if (whatToRender !== null || error) {
     return (
       <Box sx={style}>
-        <Typography sx={{fontWeight: 'bold'}}>
+        <Typography sx={{ fontWeight: 'bold' }}>
           {'The requested example failed to load'}
         </Typography>
-        <Divider sx={{mt: '10px'}}/>
-        <Typography sx={{fontSize: 'small'}}>
+        <Divider sx={{ mt: '10px' }} />
+        <Typography sx={{ fontSize: 'small' }}>
           {whatToRender === 'IO Error' ? 'Containing file was not found or is offline' : (
             whatToRender === 'offline' ? 'Current example is offline' : 'Unknown cause'
           )}
         </Typography>
-        <Divider/>
+        <Divider />
         <Typography
-          sx={{color: theme => theme.palette.text.disabled, mx: 'auto', mt: '10px', fontSize: 'small'}}>
+          sx={{ color: theme => theme.palette.text.disabled, mx: 'auto', mt: '10px', fontSize: 'small' }}>
           {"Please, contact support by clicking "}
-          <a target="_blank" href="mailto:info@ebanux.com" rel="noopener noreferrer" style={{color: "royalblue"}}>{"here"}</a>
+          <a target="_blank" href="mailto:info@ebanux.com" rel="noopener noreferrer"
+             style={{ color: "royalblue" }}>{"here"}</a>
           {"."}
         </Typography>
       </Box>
@@ -163,7 +171,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
     <>
       {isLoading && (<Box sx={style}>
         <Typography sx={{ p: 2 }}>{'Loading...'}</Typography>
-        <CircularProgress color="primary" size={25}/>
+        <CircularProgress color="primary" size={25} />
       </Box>)}
       <iframe
         src={src}
@@ -172,7 +180,7 @@ const RenderIframe = ({src, width, height, data, selected, backImg, mainImg, bac
         ref={iRef}
         onLoad={handleLoad}
         onError={handleError}
-        style={{border: 'none', borderRadius: 'inherit'}}/>
+        style={{ border: 'none', borderRadius: 'inherit' }} />
     </>
   );
 }

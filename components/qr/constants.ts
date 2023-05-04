@@ -11,6 +11,7 @@ export const PRIVATE_ROUTES = [
   QR_DESIGN_ROUTE,
   QR_DETAILS_ROUTE,
   PLANS_ACCOUNT_PORTAL,
+  "/management/*",
   "/links/*",
 ];
 
@@ -20,7 +21,7 @@ export const DEFAULT_STATIC_SELECTED = 'vcard';
 export const PARAM_QR_TEXT = "qr_text" as string;
 
 export const NO_MICROSITE = ["facebook", "twitter", "whatsapp", "paylink", "fundme"];
-export const ONLY_QR = ["fundme", "paylink"];
+export const ONLY_QR = ["fundme", "paylink", "web"];
 
 export const PROFILE_IMAGE = ['vcard+', 'link', 'business', 'social', 'donation', 'petId', 'linkedLabel', 'custom', 'findMe', 'gallery', 'pdf', 'audio', 'video'];
 

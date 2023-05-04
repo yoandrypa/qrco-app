@@ -1,6 +1,8 @@
 import pluralize from "pluralize";
-import {formatBytes} from "../../utils";
-import {FILE_LIMITS} from "../../consts";
+import { formatBytes } from "../../utils";
+import { FILE_LIMITS } from "../../consts";
+import { dynamicQrTypes as dynamicQrSettings, staticQrTypes as staticQrSettings, sectionsQrTypes } from "./components"
+import { IQrSetting } from "./components/commons/types"
 
 export const dynamicQrTypes = {
   web: {
@@ -10,7 +12,7 @@ export const dynamicQrTypes = {
     description: 'Share your contact and social details'
   },
   custom: {
-    description: "Custom QR link from scratch using the predefined sections"
+    description: "Custom QRlynk from scratch using the predefined sections"
   },
   business: {
     description: 'Describe your business or company'
@@ -39,15 +41,11 @@ export const dynamicQrTypes = {
   coupon: {
     description: "Share a coupon"
   },
-  donation: {
-    description: "Get donations from your supporters worldwide",
-    devOnly: true
-  },
   petId: {
     description: "Share your pet's information"
   },
   findMe: {
-    description: "Place a QR link on your stuff to make easy to find you"
+    description: "Place a QRLynk on your stuff to make easy to find you"
   },
   linkedLabel: {
     description: "Share your product's information"
@@ -56,10 +54,8 @@ export const dynamicQrTypes = {
     description: "Start your own charity or fundraising campaign",
     devOnly: true
   },
-  paylink: {
-    description: "Receive payments worldwide",
-    devOnly: true
-  }
+  // Include the dynamic qr-types from independent components
+  ...dynamicQrSettings,
 };
 
 const handleAssetDesc = (selected: 'pdf' | 'gallery' | 'audio' | 'video') => (
@@ -76,7 +72,8 @@ export const dynamicQr = {
     predefined: ['company', 'action', 'address', 'opening', 'easiness', 'socials']
   },
   social: {
-    description: "Share your social networks information"
+    description: "Share your social networks information",
+    predefined: ['title', 'socials']
   },
   link: {
     tip: "Add at least one link to your websites",
@@ -91,7 +88,7 @@ export const dynamicQr = {
     predefined: ['petId', 'presentation', 'keyvalue', 'links', 'socials', 'contact']
   },
   custom: {
-    tip: "Create a custom qr link on your own from scratch."
+    tip: "Create a custom QRLynk on your own from scratch."
   },
   findMe: {
     tip: "Information to make easy to find you.",
@@ -100,10 +97,6 @@ export const dynamicQr = {
   linkedLabel: {
     tip: "Smart labels.",
     predefined: ['title', 'tags', 'gallery']
-  },
-  inventory: {
-    tip: "Inventory tracking information.",
-    predefined: ['title', 'gallery', 'sku', 'keyvalue']
   },
   pdf: {
     tip: handleAssetDesc('pdf'),
@@ -154,5 +147,17 @@ export const staticQrTypes = {
   crypto: {
     description: "Receive crypto on your eWallet",
     devOnly: true
-  }
+  },
+  // Include the dynamic qr-types from independent components
+  ...staticQrSettings,
+}
+
+export function getQrType(qrTypeId: string): IQrSetting<any> {
+  // @ts-ignore
+  return dynamicQrTypes[qrTypeId] || staticQrTypes[qrTypeId];
+}
+
+export function getQrSectionType(qrTypeId: string): IQrSetting<any> {
+  // @ts-ignore
+  return sectionsQrTypes[qrTypeId];
 }

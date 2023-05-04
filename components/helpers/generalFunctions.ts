@@ -61,3 +61,14 @@ export function areEquals(object1: any, object2: any) {
   }
   return true;
 }
+
+export const handleCopy = (copy?: string, doneCopy?: (copied: boolean) => void): void => {
+  try {
+    navigator.clipboard.writeText(copy || '');
+    if (doneCopy) {
+      doneCopy(true);
+    }
+  } catch {
+    console.log('Copy failed');
+  }
+}

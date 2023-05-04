@@ -11,7 +11,7 @@ interface RenderBordersProps {
 }
 
 export default function RenderBorders({data, handleValue}: RenderBordersProps) {
-  const [topL, setTopL] = useState<number>(50);
+  const [topL, setTopL] = useState<number>(30);
   const [topR, setTopR] = useState<number>(10);
   const [belowL, setBelowL] = useState<number>(0);
   const [belowR, setBelowR] = useState<number>(15);
@@ -41,6 +41,7 @@ export default function RenderBorders({data, handleValue}: RenderBordersProps) {
       value = belowR;
       icon = <SouthEastIcon fontSize="small"/>;
     }
+
     return (<TextField
       size="small"
       type="number"
@@ -51,23 +52,25 @@ export default function RenderBorders({data, handleValue}: RenderBordersProps) {
       value={value}
       onChange={handler(item)}
       variant="outlined" // @ts-ignore
-      InputProps={{ inputMode: 'numeric', pattern: '[0-9]{2}', inputProps: { min: 0, max: 30 } }}
+      InputProps={{ inputMode: 'numeric', pattern: '[0-9]{2}', inputProps: { min: 0, max: 35 } }}
     />);
   }
 
   useEffect(() => {
     if (doneFirst.current) {
-      handleValue('buttonBorders')(`${topL}px ${topR}px ${belowR}px ${belowL}px`);
+      handleValue('buttonBorders')(`${topL}px ${topR}px ${belowL}px ${belowR}px`);
     }
   }, [topL, topR, belowL, belowR]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (data?.buttonBorders && data.buttonBorders.includes(' ')) {
       const borders = data.buttonBorders.split(' ');
-      setTopL(+borders[0]);
-      setTopR(+borders[1]);
-      setBelowL(+borders[2]);
-      setBelowR(+borders[3]);
+      const handleValue = (corner: string) => +(corner.endsWith('px') ? corner.slice(0, -2) : corner);
+
+      setTopL(handleValue(borders[0]));
+      setTopR(handleValue(borders[1]));
+      setBelowL(handleValue(borders[2]));
+      setBelowR(handleValue(borders[3]));
     }
     doneFirst.current = true;
   }, []);  // eslint-disable-line react-hooks/exhaustive-deps

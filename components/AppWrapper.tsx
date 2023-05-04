@@ -1,4 +1,4 @@
-import React, { cloneElement, ReactElement, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { cloneElement, ReactElement, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -21,7 +21,6 @@ import ConfirmDialog from "./ConfirmDialog";
 import Notification from "./Notification";
 import Waiting from "./Waiting";
 
-const CountDown = dynamic(() => import("./countdown/CountDown"));
 const WideScreenMenu = dynamic(() => import("./wrapper/WideScreenMenu"));
 const NarrowScreenMenu = dynamic(() => import("./wrapper/NarrowScreenMenu"));
 
@@ -48,19 +47,17 @@ interface AppWrapperProps {
   handleLogout?: () => void;
   clearData?: (keepType?: boolean, doNot?: boolean) => void;
   setRedirecting?: (redirecting: boolean) => void;
-  setIsFreeMode?: (isFreeMode: boolean) => void;
-  isTrialMode?: boolean;
 }
 
-export default function AppWrapper(props: AppWrapperProps) {
-  const {
-    children, userInfo, handleLogout, clearData, setIsFreeMode: setIsFreeMode, mode, isTrialMode: isFreeMode, setRedirecting
-  } = props;
+export default function AppWrapper(
+  { children, userInfo, handleLogout, clearData, mode, setRedirecting }
+    : AppWrapperProps) {
 
-  const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
+  // const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
+  const [pendingTask, setPendingTask] = useState<number>(1);
 
   // @ts-ignore
-  const { subscription, setSubscription, setLoading } = useContext(Context);
+  const { subscription, setSubscription, setLoading, showingDetails, setShowingDetails } = useContext(Context);
 
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
   const router = useRouter();
@@ -93,26 +90,39 @@ export default function AppWrapper(props: AppWrapperProps) {
     });
   }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
+  const releaseTask = () => setPendingTask(Math.max(0, pendingTask - 1));
+
+  /*useEffect(() => {
     const { currentUser, isAuthenticated } = session;
 
     if (isAuthenticated) {
       //@ts-ignore
       if (subscription?.status !== "active") {
         setIsFreeMode?.call(null, true);
-        setStartTrialDate(currentUser.localRecord.createdAt);
+        // setStartTrialDate(currentUser.localRecord.createdAt);
       } else {
         setIsFreeMode?.call(null, false);
-        setStartTrialDate(null);
+        // setStartTrialDate(null);
       }
     }
-  }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps*/
 
   useEffect(() => {
-    if (session.isAuthenticated && !subscription) loadSubscription().then((subscription: any) => {
-      setSubscription(subscription);
-    });
+    if (session.isAuthenticated && !subscription) {
+      loadSubscription().then((subscription: any) => {
+        setSubscription(subscription);
+        releaseTask();
+      });
+    } else {
+      releaseTask();
+    }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleLogoClick = () => {
+    if (Boolean(showingDetails)) {
+      setShowingDetails(undefined);
+    }
+  }
 
   return (
     <>
@@ -124,19 +134,17 @@ export default function AppWrapper(props: AppWrapperProps) {
               "&.MuiToolbar-root": { px: 0 },
               display: "flex",
               justifyContent: "space-between",
-              color: theme => theme.palette.text.primary
+              color: 'text.primary'
             }}>
               <Link href={{ pathname: !userInfo ? QR_TYPE_ROUTE : "/" }}>
-                <Box component="img" alt="EBANUX" src="/logo.svg" sx={{ width: "160px", cursor: "pointer" }} />
+                <Box component="img" alt="EBANUX" src="/logo.svg" sx={{ width: "160px", cursor: "pointer" }} onClick={handleLogoClick}/>
               </Link>
               <Box sx={{ display: "flex" }}>
                 {router.query[PARAM_QR_TEXT] === undefined && (<>
                   {isWide ? <WideScreenMenu /> : <NarrowScreenMenu />}
                 </>)}
-                {isFreeMode && <CountDown />}
               </Box>
             </Toolbar>
-            {/*{isTrialMode && startTrialDate && <CountDown startDate={startTrialDate} />}*/}
           </Container>
         </AppBar>
       </ElevationScroll>)}
@@ -146,20 +154,16 @@ export default function AppWrapper(props: AppWrapperProps) {
           <ConfirmDialog />
           <Notification />
           <Waiting />
-          {children}
+          {pendingTask === 0 && children}
         </Box>
         {handleLogout !== undefined && !router.query.login && (
-          <Box sx={{
-            height: "40px",
-            display: "flex",
-            justifyContent: "space-betweem",
-          }}>
-            <Box sx={{ display: "flex", width: "100%" }}>
-              <Typography sx={{ my: "auto", display: { sm: "block", xs: "none" } }}>
-                {"Powered by"}
-              </Typography>
-              <Box component="img" alt="EBANUX" src="/ebanux.svg" sx={{ width: "95px", mt: "-2px", ml: "7px" }} />
-            </Box>
+          <Box sx={{ display: "flex", width: "100%", mt: 1 }}>
+            <Typography sx={{fontSize: "14px"}}>
+              {"Made by"}
+            </Typography>
+            <Typography sx={{ml: '5px', fontSize: "14px", fontWeight: 'bold'}}>
+              {"Ebanux"}
+            </Typography>
           </Box>)}
       </Container>
     </>

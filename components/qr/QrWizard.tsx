@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import Context from "../context/Context";
 import Step from "@mui/material/Step";
@@ -16,13 +16,17 @@ import RenderBackButton from "./helperComponents/smallpieces/RenderBackButton";
 
 import dynamic from "next/dynamic";
 import session from "@ebanux/ebanux-utils/sessionStorage";
-import { startAuthorizationFlow } from "@ebanux/ebanux-utils/auth";
 import { useRouter } from "next/router";
 import { request } from "../../libs/utils/request";
-import { setWarning, hideNotification } from "../Notification";
+import { setWarning, hideNotification, setError } from "../Notification";
 import { waitConfirmation } from "../ConfirmDialog";
 import { releaseWaiting, startWaiting } from "../Waiting";
+import { startAuthorizationFlow } from "../../libs/utils/auth";
+import validator from "./validator";
+import { FORCE_EXTRA, IGNORE_VALIDATOR } from "../../consts";
+import { getQrType } from "./qrtypes";
 
+const ErrorsDialog = dynamic(() => import("./helperComponents/looseComps/ErrorsDialog"));
 const RenderFloatingButtons = dynamic(() => import("./helperComponents/smallpieces/RenderFloatingButtons"));
 const ProcessHandler = dynamic(() => import("./renderers/ProcessHandler"));
 const RenderPreview = dynamic(() => import("./renderers/RenderPreview"));
@@ -32,6 +36,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [size, setSize] = useState<number>(0);
   const [forceDownload, setForceDownload] = useState<{ item: HTMLElement } | undefined>(undefined);
+  const [validationErrors, setValidationErrors] = useState<string[] | undefined>(undefined);
   const [, setUnusedState] = useState();
 
   // @ts-ignore
@@ -45,8 +50,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   // @ts-ignore
   const {
     selected, data, options, frame, background, cornersData, dotsData, isWrong, loading, setOptions,
-    setRedirecting, clearData, setData,
-    subscription, userInfo,
+    setRedirecting, clearData, setData, subscription, userInfo
   }: StepsProps = useContext(Context);
 
   const router = useRouter();
@@ -54,11 +58,8 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
 
   const handleBack = () => {
     startWaiting();
-    router.push(
-      router.pathname === QR_DESIGN_ROUTE ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE,
-      undefined,
-      { shallow: true }
-    ).finally(releaseWaiting);
+    router.push(router.pathname === QR_DESIGN_ROUTE ? QR_CONTENT_ROUTE : QR_TYPE_ROUTE,
+      undefined, { shallow: true }).finally(releaseWaiting);
   };
 
   const isLogged = Boolean(userInfo);
@@ -97,61 +98,72 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
   }
 
   async function allowCreate() {
-    const { isDynamic, preGenerated } = data;
+    try {
+      const { isDynamic, preGenerated } = data;
 
-    if (!isDynamic || preGenerated || !isFirstStep) return true;
+      if (!isDynamic || preGenerated || !isFirstStep) return true;
 
-    if (!session.isAuthenticated) {
-      startWaiting();
-      session.set('CONTEXT', { selected, data });
-      session.set('CALLBACK_ROUTE', { pathname: QR_CONTENT_ROUTE });
-      startAuthorizationFlow();
-      return false;
-    }
-
-    if (process.env.REACT_APP_OVERRIDE === 'dev') {
-      return true;
-    }
-
-    let upToDynamicQR = process.env.FREE_DYNAMIC_QRS || 1;
-    let amountByAdditionalDynamicQR = 0;
-
-    if (subscription?.status === 'active') {
-      upToDynamicQR = subscription.features.upToDynamicQR;
-      amountByAdditionalDynamicQR = subscription.features.amountByAdditionalDynamicQR;
-    }
-
-    if (amountByAdditionalDynamicQR === 0) {
-      const { count } = await request({ url: 'links/count', params: { preGenerated: false }, throwError: 'notify' });
-      if (upToDynamicQR !== -1 && count >= upToDynamicQR) {
-        setWarning([
-          'You have reached the limit of Dynamic QRs for this account.',
-          'Upgrade to a paid plan to add more QRs.',
-        ], false);
-        waitConfirmation('Click accept to if you want to view or upgrade your current plan.', onConfirmUpgrade);
+      if (!session.isAuthenticated) {
+        session.set('CONTEXT', { selected, data });
+        startAuthorizationFlow({ pathname: QR_CONTENT_ROUTE });
         return false;
       }
-    }
 
-    return true;
+      if (process.env.REACT_APP_OVERRIDE === 'dev') {
+        return true;
+      }
+
+      let upToDynamicQR = process.env.FREE_DYNAMIC_QRS || 1;
+      let amountByAdditionalDynamicQR = 0;
+
+      if (subscription?.status === 'active') {
+        upToDynamicQR = subscription.features.upToDynamicQR;
+        amountByAdditionalDynamicQR = subscription.features.amountByAdditionalDynamicQR;
+      }
+
+      if (amountByAdditionalDynamicQR === 0) {
+        const { count } = await request({ url: 'links/count', params: { preGenerated: false } });
+        if (upToDynamicQR !== -1 && count >= upToDynamicQR) {
+          setWarning([
+            'You have reached the limit of Dynamic QRs for this account.',
+            'Upgrade to a paid plan to add more QRs.',
+          ], false);
+          waitConfirmation('Click accept to if you want to view or upgrade your current plan.', onConfirmUpgrade);
+          return false;
+        }
+      }
+      return true;
+    } catch (e: any) {
+      setError(e);
+    }
   }
 
   const handleNext = async () => {
     if (!(await allowCreate())) return;
 
-    if (isFirstStep) {
-      // Step 1: QR_TYPE_ROUTE or / ==>  QR_CONTENT_ROUTE
-      startWaiting();
-      router.push(QR_CONTENT_ROUTE).finally(releaseWaiting);
+    const qrType = getQrType(selected);
 
-    } else if (router.pathname === QR_CONTENT_ROUTE) {
-      // Step 2: QR_CONTENT_ROUTE ==> QR_DESIGN_ROUTE
+    if (router.pathname === QR_CONTENT_ROUTE) {
+      const validation = qrType.validate ?  qrType.validate(data) : validator(
+        data.custom || [], FORCE_EXTRA.includes(selected), IGNORE_VALIDATOR.includes(selected) || !data.isDynamic
+      );
+      if (validation.length) {
+        setValidationErrors(validation);
+        return;
+      }
+    }
+
+    if (isFirstStep) { // Step 1: QR_TYPE_ROUTE or / ==>  QR_CONTENT_ROUTE
+      startWaiting();
+
+      if (qrType?.getDefaultQrData) setData(qrType.getDefaultQrData());
+
+      router.push(QR_CONTENT_ROUTE).finally(releaseWaiting);
+    } else if (router.pathname === QR_CONTENT_ROUTE) { // Step 2: QR_CONTENT_ROUTE ==> QR_DESIGN_ROUTE
       startWaiting();
       router.push(QR_DESIGN_ROUTE, undefined, { shallow: true }).finally(releaseWaiting);
-
-    } else if (router.pathname === QR_DESIGN_ROUTE) {
-      // Step 3: QR_DESIGN_ROUTE    ==> PRINT | DOWNLOAD | SAVE
-      if (!session.isAuthenticated) return lastStep(false);
+    } else if (router.pathname === QR_DESIGN_ROUTE) { // Step 3: QR_DESIGN_ROUTE ==> PRINT | DOWNLOAD | SAVE
+      if (!session.isAuthenticated && data.mode !== 'secret') { return lastStep(false); }
 
       startWaiting();
       await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setIsError,
@@ -190,7 +202,9 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
       const genShortLinkAndId = async () => {
         const id = getUuid();
         const shortCode = data.claim || await generateId(); // @ts-ignore
-        setOptions((prev: OptionsType) => ({ ...prev, id, shortCode, data: generateShortLink(shortCode, process.env.SHORT_URL_DOMAIN) }));
+        setOptions((prev: OptionsType) => ({
+          ...prev, id, shortCode, data: generateShortLink(shortCode, process.env.SHORT_URL_DOMAIN)
+        }));
       };
       genShortLinkAndId();
     }
@@ -214,6 +228,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
           handleBack={handleBack}
           editingStatic={!data.isDynamic && options.mode === 'edit'}
           cloneMode={data.mode === 'clone'}
+          secretMode={data.mode === 'secret'}
           selected={selected} />
         <Stepper activeStep={currentStep} sx={{ width: "100%", my: 0 }}>
           {steps.map((label: string) => <Step key={label}><StepLabel>{isWide ? label : ""}</StepLabel></Step>)}
@@ -248,6 +263,7 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
           isWrong={isWrong}
           editingStatic={!data.isDynamic && options.mode === 'edit'}
           cloneMode={options.mode === 'clone'}
+          secretMode={options.mode === 'secret'}
           handleBack={handleBack}
           handleNext={handleNext}
           size={size}
@@ -266,6 +282,9 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
               setRedirecting(false);
             }).finally(releaseWaiting);
           }} />
+      )}
+      {validationErrors !== undefined && (
+        <ErrorsDialog errors={validationErrors} handleClose={() => setValidationErrors(undefined)} />
       )}
     </>
   );

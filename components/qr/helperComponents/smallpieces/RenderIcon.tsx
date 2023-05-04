@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import { grey } from "@mui/material/colors";
+import {useTheme} from "@mui/system";
 
 const WebIcon = dynamic(() => import('@mui/icons-material/Web'));
 const AlternateEmailIcon = dynamic(() => import('@mui/icons-material/AlternateEmail'));
@@ -33,6 +34,7 @@ const EmailIcon = dynamic(() => import('@mui/icons-material/Email'));
 const PetsIcon = dynamic(() => import('@mui/icons-material/Pets'));
 const LocalParkingIcon = dynamic(() => import('@mui/icons-material/LocalParking'));
 const ParkIcon = dynamic(() => import('@mui/icons-material/Park'));
+const FaxIcon = dynamic(() => import('@mui/icons-material/Fax'));
 const TrainIcon = dynamic(() => import('@mui/icons-material/Train'));
 const DirectionsBusIcon = dynamic(() => import('@mui/icons-material/DirectionsBus'));
 const LocalTaxiIcon = dynamic(() => import('@mui/icons-material/LocalTaxi'));
@@ -59,84 +61,105 @@ const CreditCard = dynamic(() => import('@mui/icons-material/CreditCard'));
 const CurrencyBitcoinIcon = dynamic(() => import('@mui/icons-material/CurrencyBitcoin'));
 const QrCode = dynamic(() => import('@mui/icons-material/QrCode'));
 const CustomizeIcon = dynamic(() => import('@mui/icons-material/DashboardCustomize'));
-const PersonSearchIcon = dynamic(() =>  import('@mui/icons-material/PersonSearch'));
-const InventoryIcon = dynamic(() =>  import('@mui/icons-material/Inventory'));
+const PersonSearchIcon = dynamic(() => import('@mui/icons-material/PersonSearch'));
+const InventoryIcon = dynamic(() => import('@mui/icons-material/Inventory'));
+const RedditIcon = dynamic(() => import('@mui/icons-material/Reddit'));
+const PaymentLinkIcon = dynamic(() => import('@mui/icons-material/PaidOutlined'));
+const TikTokIcon = dynamic(() => import("../TikTokIcon"));
+const QuoraIcon = dynamic(() => import("../QuoraIcon"));
+const Snapchat = dynamic(() => import("../Snapchat"));
+const Twitch = dynamic(() => import("../Twitch"));
+const DiscordIcon = dynamic(() => import("../DiscordIcon"));
 
 type RenderIconProp = {
   icon: string;
   enabled: boolean;
-  adjust?: boolean;
   color?: string;
+  sx?: Object;
 };
 
-export default function RenderIcon({ icon, color, enabled, adjust }: RenderIconProp) {
+export default function RenderIcon({ icon, color, enabled, sx }: RenderIconProp) {
+  const theme = useTheme();
+
   const renderIcon = () => {
+    const sxStyling = { ...sx, color: enabled ? color || theme.palette.primary.dark : grey[600] };
     switch (icon) {
-      case 'custom': { return <CustomizeIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'copy': { return <ContentCopyIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'phone': { return <PhoneIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'cell': { return <SmartphoneIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'location': { return <LocationOnIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'email': { return <AlternateEmailIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'emailIcon': { return <EmailIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'facebook': { return <FacebookIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} /> }
-      case 'sms': { return <SmsOutlinedIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'twitter': { return <TwitterIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} /> }
-      case 'vcard': { return <ContactPhoneOutlinedIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
+      case 'custom': { return <CustomizeIcon sx={sxStyling} />; }
+      case 'copy': { return <ContentCopyIcon sx={sxStyling} />; }
+      case 'companyPhone':
+      case 'phone': { return <PhoneIcon sx={sxStyling} />; }
+      case 'companyCell':
+      case 'cell': { return <SmartphoneIcon sx={sxStyling} />; }
+      case 'companyFax':
+      case 'fax': { return <FaxIcon sx={sxStyling} />; }
+      case 'location': { return <LocationOnIcon sx={sxStyling} />; }
+      case 'email': { return <AlternateEmailIcon sx={sxStyling} />; }
+      case 'emailIcon': { return <EmailIcon sx={sxStyling} />; }
+      case 'facebook': { return <FacebookIcon sx={sxStyling} /> }
+      case 'sms': { return <SmsOutlinedIcon sx={sxStyling} />; }
+      case 'twitter': { return <TwitterIcon sx={sxStyling} /> }
+      case 'vcard': { return <ContactPhoneOutlinedIcon sx={sxStyling} />; }
       case 'contact':
-      case 'vcard+': { return <ContactPhoneIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'web': { return <WebIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'whatsapp': { return <WhatsAppIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'pinterest': { return <PinterestIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'linkedin': { return <LinkedInIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'telegram': { return <TelegramIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'instagram': { return <InstagramIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'youtube': { return <YouTubeIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'wifi': { return <WifiIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'pdf': { return <PictureAsPdfIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'audio': { return <VolumeUpIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'video': { return <MovieIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
+      case 'vcard+': { return <ContactPhoneIcon sx={sxStyling} />; }
+      case 'web': { return <WebIcon sx={sxStyling} />; }
+      case 'paymentLink': { return <PaymentLinkIcon sx={sxStyling} />; }
+      case 'whatsapp': { return <WhatsAppIcon sx={sxStyling} />; }
+      case 'pinterest': { return <PinterestIcon sx={sxStyling} />; }
+      case 'linkedin': { return <LinkedInIcon sx={sxStyling} />; }
+      case 'telegram': { return <TelegramIcon sx={sxStyling} />; }
+      case 'instagram': { return <InstagramIcon sx={sxStyling} />; }
+      case 'youtube': { return <YouTubeIcon sx={sxStyling} />; }
+      case 'wifi': { return <WifiIcon sx={sxStyling} />; }
+      case 'pdf': { return <PictureAsPdfIcon sx={sxStyling} />; }
+      case 'audio': { return <VolumeUpIcon sx={sxStyling} />; }
+      case 'video': { return <MovieIcon sx={sxStyling} />; }
       case 'gallery':
-      case 'image': { return <PhotoIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'business': { return <BusinessIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'health': { return <LocalHospitalIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'seat': { return <ChairIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'accessible': { return <AccessibleIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'toilet': { return <WcIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'restaurant': { return <RestaurantIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'social': { return <ShareIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'child': { return <ChildFriendlyIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'pets': { return <PetsIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'petId': { return <PetsIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'parking': { return <LocalParkingIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'park': { return <ParkIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'train': { return <TrainIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'bus': { return <DirectionsBusIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'taxi': { return <LocalTaxiIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'cafe': { return <LocalCafeIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'bed': { return <HotelIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'smoking': { return <SmokingRoomsIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'bar': { return <LocalBarIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'coupon': { return <ConfirmationNumberIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'fastfood': { return <FastfoodIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'gym': { return <FitnessCenterIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'climate': { return <AcUnitIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'shower': { return <ShowerIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'training': { return <SchoolIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'http': { return <HttpIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'donation': { return <Coffee sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'about': { return <InfoIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'world': { return <PublicIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'link': { return <LinkIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'fundme': { return <VolunteerActivism sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'paylink': { return <CreditCard sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'crypto': { return <CurrencyBitcoinIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'linkedLabel': { return <QrCode sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      case 'findMe': {{ return <PersonSearchIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }}
-      case 'inventory': { return <InventoryIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
-      default: { return <TextSnippetOutlinedIcon sx={{ mb: adjust ? '-5px' : 0, color: enabled ? theme => (color || theme.palette.primary.dark) : grey[600] }} />; }
+      case 'image': { return <PhotoIcon sx={sxStyling} />; }
+      case 'business': { return <BusinessIcon sx={sxStyling} />; }
+      case 'health': { return <LocalHospitalIcon sx={sxStyling} />; }
+      case 'seat': { return <ChairIcon sx={sxStyling} />; }
+      case 'accessible': { return <AccessibleIcon sx={sxStyling} />; }
+      case 'toilet': { return <WcIcon sx={sxStyling} />; }
+      case 'restaurant': { return <RestaurantIcon sx={sxStyling} />; }
+      case 'social': { return <ShareIcon sx={sxStyling} />; }
+      case 'child': { return <ChildFriendlyIcon sx={sxStyling} />; }
+      case 'pets': { return <PetsIcon sx={sxStyling} />; }
+      case 'petId': { return <PetsIcon sx={sxStyling} />; }
+      case 'parking': { return <LocalParkingIcon sx={sxStyling} />; }
+      case 'park': { return <ParkIcon sx={sxStyling} />; }
+      case 'train': { return <TrainIcon sx={sxStyling} />; }
+      case 'bus': { return <DirectionsBusIcon sx={sxStyling} />; }
+      case 'taxi': { return <LocalTaxiIcon sx={sxStyling} />; }
+      case 'cafe': { return <LocalCafeIcon sx={sxStyling} />; }
+      case 'bed': { return <HotelIcon sx={sxStyling} />; }
+      case 'smoking': { return <SmokingRoomsIcon sx={sxStyling} />; }
+      case 'bar': { return <LocalBarIcon sx={sxStyling} />; }
+      case 'coupon': { return <ConfirmationNumberIcon sx={sxStyling} />; }
+      case 'fastfood': { return <FastfoodIcon sx={sxStyling} />; }
+      case 'gym': { return <FitnessCenterIcon sx={sxStyling} />; }
+      case 'climate': { return <AcUnitIcon sx={sxStyling} />; }
+      case 'shower': { return <ShowerIcon sx={sxStyling} />; }
+      case 'training': { return <SchoolIcon sx={sxStyling} />; }
+      case 'http': { return <HttpIcon sx={sxStyling} />; }
+      case 'donation': { return <Coffee sx={sxStyling} />; }
+      case 'about': { return <InfoIcon sx={sxStyling} />; }
+      case 'world': { return <PublicIcon sx={sxStyling} />; }
+      case 'link': { return <LinkIcon sx={sxStyling} />; }
+      case 'fundme': { return <VolunteerActivism sx={sxStyling} />; }
+      case 'paylink': { return <CreditCard sx={sxStyling} />; }
+      case 'crypto': { return <CurrencyBitcoinIcon sx={sxStyling} />; }
+      case 'linkedLabel': { return <QrCode sx={sxStyling} />; }
+      case 'findMe': { return <PersonSearchIcon sx={sxStyling} />; }
+      case 'inventory': { return <InventoryIcon sx={sxStyling} />; }
+      case 'reddit': { return <RedditIcon sx={sxStyling} />; }
+      case 'tiktok': { return <TikTokIcon sx={sxStyling} />; }
+      case 'quora': { return <QuoraIcon sx={sxStyling} />; }
+      case 'snapchat': { return <Snapchat sx={sxStyling} />; }
+      case 'twitch': { return <Twitch sx={sxStyling} />; }
+      case 'discord': { return <DiscordIcon sx={sxStyling} />; }
+      default: { return <TextSnippetOutlinedIcon sx={sxStyling} />; }
     }
   };
 
-  return (<>{renderIcon()}</>);
+  return renderIcon();
 };

@@ -69,8 +69,7 @@ export type OpeningType = {
 } | {} | null;
 
 export type LinkType = {
-  label?: string;
-  link: string;
+  label?: string; link: string; type?: string;
 }
 
 export type KeyValues = { key?: string; value: string; }
@@ -88,10 +87,26 @@ export type SocialProps = {
   isDynamic?: boolean;
 };
 
-export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram' | 'title' | 'about';
+export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'youtube' | 'linkedin' | 'pinterest' | 'telegram' | 'tiktok' | 'title' | 'about' | string;
 export type SocialNetworksType = { network: SocialsType, value?: string };
 
 export type Type = {
+  sectionArrangement?: string;
+  invertIconColors?: boolean;
+  showIcons?: boolean;
+  extras?: any;
+  customFont?: boolean;
+  headLineFontStyle?: string;
+  headlineFontSize?: string;
+  headlineFont?: string;
+  hideHeadLineIcon?: boolean;
+  showOnlyNetworkName?: boolean;
+  visibleReceipt?: boolean;
+  iconSize?: string;
+  linksAsButtons?: boolean;
+  hideNetworkIcon?: boolean;
+  topSpacing?: string;
+  bottomSpacing?: string;
   buttonText?: string;
   tags?: string[];
   splitInTwoColumns?: boolean;
@@ -123,6 +138,7 @@ export type Type = {
   firstName?: string;
   cell?: string;
   phone?: string;
+  whatsapp?: string;
   fax?: string;
   organization?: string;
   position?: string;
@@ -191,10 +207,25 @@ export type Type = {
 };
 
 export type CustomType = {
-  component: string, name?: string, data?: Type; expand: string;
+  component: string;
+  name?: string;
+  data: Type;
+  expand: string;
+  isMonetized?: boolean;
 };
 
 export type DataType = {
+  qrForSharing?: File;
+  hideQrForSharing?: boolean;
+  sharerPosition?: string;
+  upperHeight?: string;
+  buttonShadowDisplacement?: string;
+  forceChange?: boolean;
+  buttonsSeparation?: string;
+  profileImageVertical?: string;
+  profileImageSize?: string;
+  customFooter?: string;
+  footerKind?: string;
   buttonCase?: boolean;
   alternate?: boolean;
   flipVertical?: boolean;
@@ -206,6 +237,7 @@ export type DataType = {
   buttonBorderColor?: string;
   buttonBorderStyle?: string;
   buttonsOpacity?: number;
+  micrositeBackImageBlurness?: number;
   micrositeBackImageOpacity?: number;
   qrType?: string;
   mode?: string;
@@ -218,15 +250,15 @@ export type DataType = {
   index?: number[];
   includeDescription?: boolean;
   claimable?: boolean;
+  secret?: string;
   preGenerated?: boolean;
   custom?: CustomType[];
   qrName?: string;
   number?: string;
   avatarImage?: string;
   bannerImage?: string;
-  donationUnitAmount?: number;
-  donationPriceId?: string;
-  donationProductId?: string;
+  unitAmount?: number;
+  priceId?: string;
   message?: string;
   subject?: string;
   body?: string;
@@ -314,6 +346,12 @@ export type DataType = {
   buttonBorders?: string;
   buttonBackColor?: string;
   layout?: string;
+  sectionTitleFont?: string;
+  sectionTitleFontSize?: string;
+  sectionTitleFontStyle?: string;
+  sectionDescFont?: string;
+  sectionDescFontSize?: string;
+  sectionDescFontStyle?: string;
   titlesFont?: string;
   subtitlesFont?: string;
   messagesFont?: string;
@@ -441,3 +479,12 @@ export type TextField = DragField & {
 export type MediaField = DragField & {
   files?: File[];
 };
+
+export interface CustomCommon {
+  data?: DataType;
+  handleValue: Function;
+}
+
+export interface RenderLinksBtnsProps {
+  index: number; data?: Type; setData: Function; isButtons: boolean;
+}

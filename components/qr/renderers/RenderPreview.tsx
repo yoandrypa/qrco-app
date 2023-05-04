@@ -24,6 +24,9 @@ import {
 } from "../../../helpers/qr/helpers";
 import {initialBackground} from "../../../helpers/qr/data";
 
+// @ts-ignore
+import {renderToString} from "react-dom/server";
+
 // noinspection JSDeprecatedSymbols
 const QRRender = ({qrData, width, alt}: {qrData: string; width: number | string; alt: string;}) =>
   <img src={`data:image/svg+xml;base64,${btoa(qrData)}`} alt={alt} width={width}/>;
@@ -33,6 +36,7 @@ interface PreviewProps {
   externalFrame?: FramesType;
   externalDesign?: any;
   qrDesign?: any;
+  getDataBack?: (data: any) => void;
   qr?: any;
   avoidDuplicate?: boolean;
   onlyPreview?: boolean;
@@ -41,9 +45,11 @@ interface PreviewProps {
   externalClose?: () => void;
 }
 
-const RenderPreview = ({externalClose, onlyPreview, qrDesign, qr, externalFrame, externalDesign, handleDone, override, width, avoidDuplicate, ...qrProps}: PreviewProps) => {
+const RenderPreview = (
+  {externalClose, onlyPreview, qrDesign, qr, externalFrame, externalDesign, handleDone, override, width,
+   getDataBack, avoidDuplicate, ...qrProps}: PreviewProps
+) => {
   const [preview, setPreview] = useState<boolean>(false);
-  const [qrData, setQrData] = useState<any>(null);
   const [current, setCurrent] = useState<string | null>(externalDesign || null);
   const [anchor, setAnchor] = useState<object | null>(null);
   const [generatePdf, setGeneratePdf] = useState<boolean>(false);
@@ -65,6 +71,14 @@ const RenderPreview = ({externalClose, onlyPreview, qrDesign, qr, externalFrame,
     setAnchor(currentTarget);
   };
 
+  const handleCloseEvent = () => {
+    if (!externalClose) {
+      handlePreView();
+    } else {
+      externalClose();
+    }
+  }
+
   // frame definition is outside due to it is used in the donwload mechanism
   const frame: FramesType | null = externalFrame || getFrameObject(qrDesign);
 
@@ -82,31 +96,19 @@ const RenderPreview = ({externalClose, onlyPreview, qrDesign, qr, externalFrame,
       cornersData={cornersData}
       dotsData={dotsData}
       overrideValue={undefined}
-    /> // @ts-ignore
-    setQrData(render);
+    />
+
+    const t = renderToString(render);
+    if (getDataBack) { getDataBack(t); }
+    setCurrent(t);
   };
 
-  const handleCloseEvent = () => {
-    if (!externalClose) {
-      handlePreView();
-    } else {
-      externalClose();
-    }
-  }
-
-  useEffect(() => {
-    if (qrData) { // @ts-ignore
-      const t = qrRef.current?.outerHTML;
-      setCurrent(t);
-    }
-  }, [qrData]);
-
-  useEffect(() => {
+  /*useEffect(() => {                                           <------- this effect makes the component to rerender when logos
     if (current && qrDesign?.image?.length && !done.current) {
       done.current = true;
       setUpdating(true);
     }
-  }, [current]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [current]); // eslint-disable-line react-hooks/exhaustive-deps*/
 
   useEffect(() => {
     if (updating) {
@@ -114,7 +116,7 @@ const RenderPreview = ({externalClose, onlyPreview, qrDesign, qr, externalFrame,
       setTimeout(() => {
         setUpdating(false);
         generateQr();
-      }, 450);
+      }, 150);
     }
   }, [updating]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -122,7 +124,7 @@ const RenderPreview = ({externalClose, onlyPreview, qrDesign, qr, externalFrame,
     if (qrDesign || override) {
       generateQr();
     }
-  }, [qrDesign, override]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [qrDesign?.data, override]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const name = qr?.name || 'unnamed';
 
@@ -157,7 +159,7 @@ const RenderPreview = ({externalClose, onlyPreview, qrDesign, qr, externalFrame,
 
   return (
     <>
-      <Box sx={{display: 'none'}}>{qrData}</Box>
+      {/*<Box sx={{display: 'none'}}>{qrData}</Box>*/}
       {!avoidDuplicate && !externalClose && (<Box onClick={handlePreView} sx={{cursor: !override ? 'pointer' : 'normal'}}>
         {current && !updating ? (
           <>

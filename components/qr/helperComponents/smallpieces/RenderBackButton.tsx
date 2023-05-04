@@ -7,14 +7,15 @@ interface RenderBackProps {
   selected?: string;
   editingStatic: boolean;
   cloneMode: boolean;
+  secretMode: boolean;
   handleBack: () => void;
 }
 
-const RenderBackButton = ({loading, step, selected, editingStatic, handleBack, cloneMode}: RenderBackProps) => (
+const RenderBackButton = ({loading, step, selected, editingStatic, handleBack, cloneMode, secretMode}: RenderBackProps) => (
   <StepperButtons
     variant="contained"
     startIcon={<ChevronLeftIcon/>}
-    disabled={loading || step === 0 || (cloneMode && step === 1) || !selected || editingStatic}
+    disabled={loading || step === 0 || ((cloneMode || secretMode) && step === 1) || !selected || editingStatic}
     onClick={handleBack}>
     {"Back"}
   </StepperButtons>

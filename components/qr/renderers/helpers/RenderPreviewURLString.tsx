@@ -9,7 +9,11 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import {handleDesignerString} from "../../../../helpers/qr/helpers";
 import {DataType} from "../../types/types";
 import Context from "../../../context/Context";
-import Notifications from "../../../notifications/Notifications";
+import {handleCopy} from "../../../helpers/generalFunctions";
+
+import dynamic from "next/dynamic";
+
+const RenderCopied = dynamic(() => import("../../helperComponents/looseComps/RenderCopiedNotification"));
 
 interface RenderGenerateProps {
   selected: string;
@@ -27,12 +31,7 @@ export default function RenderPreviewURLString({selected, data}: RenderGenerateP
   }
 
   const copyHandler = () => {
-    try {
-      navigator.clipboard.writeText(handleDesignerString(selected, data));
-      setCopied(true);
-    } catch {
-      console.log('Copy failed');
-    }
+    handleCopy(handleDesignerString(selected, data), setCopied);
   }
 
   return (
@@ -56,15 +55,7 @@ export default function RenderPreviewURLString({selected, data}: RenderGenerateP
           )
         }}
       />
-      {copied && (
-        <Notifications
-          autoHideDuration={2500}
-          message="Copied!"
-          vertical="bottom"
-          horizontal="center"
-          severity="success"
-          onClose={() => setCopied(false)}/>
-      )}
+      {copied && <RenderCopied setCopied={setCopied} />}
     </>
   );
 }

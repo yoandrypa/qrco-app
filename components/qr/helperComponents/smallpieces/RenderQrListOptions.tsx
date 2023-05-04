@@ -1,9 +1,11 @@
-import {MouseEvent, useContext, useEffect, useState} from "react";
+import {memo, MouseEvent, useContext, useEffect, useState} from "react";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import EditOutlined from "@mui/icons-material/EditOutlined";
 import DeleteOutlineRounded from "@mui/icons-material/DeleteOutlineRounded";
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import Divider from '@mui/material/Divider';
 
 import Stack from "@mui/material/Stack";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -18,29 +20,37 @@ import dynamic from "next/dynamic";
 import {useRouter} from "next/router";
 
 import Context from "../../../context/Context";
-import {IS_DEV_ENV} from "../../constants";
 import {handleDesignerString} from "../../../../helpers/qr/helpers";
+import {handleCopy} from "../../../helpers/generalFunctions";
+import {MAIN_ORANGE} from "../../constants";
 
 const RenderPreview = dynamic(() => import("../../renderers/RenderPreview"));
 const DynamicFeedIcon = dynamic(() => import("@mui/icons-material/DynamicFeed"));
 const DashboardIcon = dynamic(() => import("@mui/icons-material/Dashboard"));
 const PlayCircleOutlineIcon = dynamic(() => import("@mui/icons-material/PlayCircleOutline"));
 const PauseCircleOutlineIcon = dynamic(() => import("@mui/icons-material/PauseCircleOutline"));
+const KeyIcon = dynamic(() => import("@mui/icons-material/Key"));
+const LockOutlinedIcon = dynamic(() => import("@mui/icons-material/LockOutlined"));
+const RenderCopiedNotification = dynamic(() => import("../looseComps/RenderCopiedNotification"));
+const ContentCopyIcon = dynamic(() => import("@mui/icons-material/ContentCopy"));
 
 interface RenderQrOptsProps {
   qr: any;
+  link?: string;
   handleEdit: (edit: QrDataType) => void;
   handleClone: (clone: QrDataType) => void;
   setConfirm: (conf: { createdAt: number; userId: string; }) => void;
   handlePauseQrLink: (id: LinkType) => void;
+  showDetails?: (qr: any) => void;
 }
 
-export default function RenderQrListOptions({qr, handleEdit, setConfirm, handlePauseQrLink, handleClone}: RenderQrOptsProps) {
+const RenderQrListOptions = ({qr, handleEdit, setConfirm, handlePauseQrLink, handleClone, link, showDetails}: RenderQrOptsProps) => {
   const router = useRouter();
   // @ts-ignore
   const {loading, setLoading} = useContext(Context);
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
   const [preview, setPreview] = useState<any>(null);
+  const [copy, setCopy] = useState<boolean>(false);
 
   const isWide = useMediaQuery("(min-width:900px)", { noSsr: true });
 
@@ -49,8 +59,13 @@ export default function RenderQrListOptions({qr, handleEdit, setConfirm, handleP
   };
 
   const handleDetails = () => {
-    setLoading(true);
-    router.push("/qr/" + (new Date(qr.createdAt)).getTime() + "/details").then(() => setLoading(false));
+    if (showDetails !== undefined) {
+      showDetails(qr);
+    } else {
+      setLoading(true);
+      router.push("/qr/" + (new Date(qr.createdAt)).getTime() + "/details").then(() => setLoading(false));
+      router.push("/qr/" + (qr.createdAt.getTime() - 1) + "/details").then(() => setLoading(false));
+    }
   };
 
   const handlePreview = () => {
@@ -88,17 +103,17 @@ export default function RenderQrListOptions({qr, handleEdit, setConfirm, handleP
         {isWide && (
           <>
             <Tooltip title="Details">
-              <IconButton color="primary" disabled={loading} onClick={handleDetails}>
+              <IconButton color="primary" onClick={handleDetails}>
                 <InfoOutlinedIcon/>
               </IconButton>
             </Tooltip>
             <Tooltip title="Edit">
-              <IconButton color="primary" disabled={loading} onClick={beforeEdit}>
+              <IconButton color="primary" onClick={beforeEdit}>
                 <EditOutlined/>
               </IconButton>
             </Tooltip>
             <Tooltip title="Delete">
-              <IconButton color="error" disabled={loading} onClick={beforeDelete}>
+              <IconButton color="error" onClick={beforeDelete}>
                 <DeleteOutlineRounded/>
               </IconButton>
             </Tooltip>
@@ -138,13 +153,32 @@ export default function RenderQrListOptions({qr, handleEdit, setConfirm, handleP
               <DynamicFeedIcon color="primary"/>
               <Typography sx={{ml: '5px'}}>{'Clone'}</Typography>
             </MenuItem>
+            <Divider/>
+            {link !== undefined && (
+              <MenuItem key="openLink" target="_blank" component="a" href={link}>
+                <OpenInNewIcon color="primary"/>
+                <Typography sx={{ml: '5px'}}>{'Open page'}</Typography>
+              </MenuItem>
+            )}
+            {link !== undefined && (
+              <MenuItem key="copyUrlPage" onClick={() => handleCopy(link, setCopy)}>
+                <ContentCopyIcon color="primary"/>
+                <Typography sx={{ml: '5px'}}>{'Copy page URL'}</Typography>
+              </MenuItem>
+            )}
+            {link !== undefined && (
+              <MenuItem key="copyPageCode" onClick={() => handleCopy(qr.shortLinkId.address, setCopy)}>
+                <ContentCopyIcon color="primary"/>
+                <Typography sx={{ml: '5px'}}>{'Copy page code'}</Typography>
+              </MenuItem>
+            )}
             <MenuItem key="downloadMenu" onClick={handlePreview}>
               <QrCodeIcon color="primary"/>
               <Typography sx={{ml: '5px'}}>{'Download QR code'}</Typography>
             </MenuItem>
-            {IS_DEV_ENV && qr.qrType === "donation" && !!qr.donationProductId && (
+            {qr.isMonetized && (
               <MenuItem component="a" target="_blank" rel="noopener noreferrer" key="goToDashBoardMenuItem" onClick={() => setAnchor(null)}
-                        href={IS_DEV_ENV ? "https://dev-app.ebanux.com/checkouts" : "https://app.ebanux.com/checkouts"}>
+                        href={`${process.env.PAYLINK_APP_URL}/dashboard`}>
                 <DashboardIcon color="info" />
                 <Typography sx={{ml: '5px'}}>Go to dashboard</Typography>
               </MenuItem>
@@ -155,10 +189,26 @@ export default function RenderQrListOptions({qr, handleEdit, setConfirm, handleP
                 <Typography sx={{ml: '5px'}}>{'Delete'}</Typography>
               </MenuItem>
             )}
+            {qr.secret !== undefined && <Divider />}
+            {qr.secret !== undefined && !qr.secretOps?.includes('e') && (
+              <MenuItem key="copySecretUrl" onClick={() => handleCopy(`${window.location.origin}/s/${qr.secret}`, setCopy)}>
+                <KeyIcon sx={{color: MAIN_ORANGE}}/>
+                <Typography sx={{ml: '5px'}}>{'Copy secret edit URL'}</Typography>
+              </MenuItem>
+            )}
+            {qr.secret !== undefined && qr.secretOps?.includes('l') && (
+              <MenuItem key="copySecretCode" onClick={() => handleCopy(qr.secret, setCopy)}>
+                <LockOutlinedIcon sx={{color: MAIN_ORANGE}}/>
+                <Typography sx={{ml: '5px'}}>{'Copy secret code'}</Typography>
+              </MenuItem>
+            )}
           </Menu>
         )}
       </Stack>
+      {copy && <RenderCopiedNotification setCopied={() => setCopy(false)} />}
       {preview && <RenderPreview qrDesign={preview} externalClose={() => setPreview(null)} />}
     </>
   );
 }
+
+export default memo(RenderQrListOptions, (curr: RenderQrOptsProps, next: RenderQrOptsProps) => curr.link === next.link);

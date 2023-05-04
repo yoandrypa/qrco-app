@@ -11,10 +11,12 @@ import {
   QR_DETAILS_ROUTE, QR_TYPE_ROUTE
 } from "../qr/constants";
 import AppWrapper from "../AppWrapper";
-import { dataCleaner, getBackgroundObject, getCornersAndDotsObject, getFrameObject, handleInitialData } from "../../helpers/qr/helpers";
+import {
+  dataCleaner, getBackgroundObject, getCornersAndDotsObject, getFrameObject, handleInitialData
+} from "../../helpers/qr/helpers";
 
 import session from "@ebanux/ebanux-utils/sessionStorage";
-import { logout } from '@ebanux/ebanux-utils/auth';
+import { signOut } from '@ebanux/ebanux-utils/auth';
 
 import { startWaiting, releaseWaiting } from "../Waiting";
 import { isBrowser } from "@ebanux/ebanux-utils/utils";
@@ -24,16 +26,16 @@ const Generator = dynamic(() => import("../qr/Generator"));
 const PleaseWait = dynamic(() => import("../PleaseWait"));
 const UpdateBrowser = dynamic(() => import("../UpdateBrowser"));
 
-const contextCache: any = isBrowser() ? session.get('CONTEXT', {}, true) : {};
+const contextCache: any = isBrowser() ? session.get('CONTEXT', { custom: [] }, true) : { custom: [] };
 
 const AppContextProvider = ({ children }: { children: ReactNode }) => {
+  const [showingDetails, setShowingDetails] = useState<any>(undefined);
   const [options, setOptions] = useState<OptionsType>(handleInitialData("Ebanux"));
   const [cornersData, setCornersData] = useState<CornersAndDotsType>(null);
   const [dotsData, setDotsData] = useState<CornersAndDotsType>(null);
   const [background, setBackground] = useState<BackgroundType>(initialBackground);
   const [frame, setFrame] = useState<FramesType>(initialFrame);
   const [data, setData] = useState<DataType>(contextCache.data || initialData);
-  const [isTrialMode, setIsTrialMode] = useState<boolean>(false);
   const [updateBrowser, setUpdateBrowser] = useState<boolean>(false);
   const [selected, setSelected] = useState<string | null>(contextCache.selected || null);
   const [userInfo, setUserInfo] = useState(null);
@@ -131,14 +133,14 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, [isUserInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (["edit", "clone"].includes(options?.mode || '')) {
+    if (["edit", "clone", "secret"].includes(options?.mode || '')) {
+      setData(dataCleaner(options));
+      setOptions(dataCleaner(options, true)); // @ts-ignore
+      setSelected(options.qrType);
       setCornersData(getCornersAndDotsObject(options, "corners"));
       setDotsData(getCornersAndDotsObject(options, "cornersDot"));
       setBackground(getBackgroundObject(options) || initialBackground);
       setFrame(getFrameObject(options) || initialFrame);
-      setData(dataCleaner(options));
-      setOptions(dataCleaner(options, true)); // @ts-ignore
-      setSelected(options.qrType);
     }
   }, [options.mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -153,11 +155,11 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (updateBrowser) {
-    return <UpdateBrowser/>;
+    return <UpdateBrowser />;
   }
 
   if (verifying || !data) {
-    return <PleaseWait/>;
+    return <PleaseWait />;
   }
 
   if (router.pathname.startsWith("/qr") && ![QR_TYPE_ROUTE, QR_CONTENT_ROUTE, QR_DESIGN_ROUTE, QR_DETAILS_ROUTE]
@@ -167,7 +169,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
 
   const renderContent = () => {
     if (router.pathname.startsWith('/claim')) {
-      return <Claimer code={(router.query.code || '') as string}/>;
+      return <Claimer code={(router.query.code || '') as string} />;
     }
     if (router.pathname === "/" && router.query[PARAM_QR_TEXT] !== undefined) {
       const qrText = router.query[PARAM_QR_TEXT] as string;
@@ -180,8 +182,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       }
     } else {
       return (
-        <AppWrapper setIsFreeMode={setIsTrialMode} handleLogout={logout} clearData={clearData}
-                    mode={data.mode} setRedirecting={setRedirecting} isTrialMode={isTrialMode} userInfo={userInfo}>
+        <AppWrapper handleLogout={signOut} clearData={clearData} mode={data.mode} setRedirecting={setRedirecting} userInfo={userInfo}>
           {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>
       );
@@ -191,9 +192,9 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
   return (
     <Context.Provider value={{
       cornersData, setCornersData, dotsData, setDotsData, frame, setFrame, background, setBackground,
-      options, setOptions, selected, setSelected, data, setData, isTrialMode, userInfo,
+      options, setOptions, selected, setSelected, data, setData, userInfo,
       clearData, loading, setLoading, setRedirecting, isWrong, setIsWrong, doNotClear,
-      subscription, setSubscription, setUserInfo
+      subscription, setSubscription, setUserInfo, showingDetails, setShowingDetails
     }}>
       {renderContent()}
     </Context.Provider>

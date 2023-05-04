@@ -6,50 +6,25 @@ import { useRouter } from "next/router";
 import Context from "../../components/context/Context";
 import PlanList from "../../components/plans/PlanList";
 
-import { request } from "../../libs/utils/request";
-import { setWarning } from "../../components/Notification";
+import { gotoLogin, buyPlan, reviewingPlan } from "../../helpers/plans";
 
 const Plans = () => {
-  const { pathname, query } = useRouter();
+  const router = useRouter();
   const { subscription } = useContext(Context);
-  const [activePlan, setActivePlan] = useState<string>();
+  const [activePlan, setActivePlan] = useState<string>(subscription?.metadata?.plan_type || 'free');
 
-  async function reviewingPlan() {
-    request({ url: 'billing-portal', throwError: 'notify' }).then(({ url }) => {
-      window.open(url, '_blank');
-    });
-  }
-
-  async function onSelectedPlan(planType: string) {
-    if (subscription && activePlan === planType) return await reviewingPlan();
-
-    const options = {
-      url: 'subscriptions',
-      method: "POST",
-      data: { planType },
-      throwError: 'notify',
-    };
-
-    // Send request to create and get checkout-session url
-    request(options).then(({ url: checkoutSessionUrl }) => {
-      window.location.href = checkoutSessionUrl;
-    });
+  function onSelectedPlan(planType: string) {
+    if (!subscription || subscription.status === 'canceled') return buyPlan(planType);
+    return reviewingPlan();
   }
 
   useEffect(() => {
-    if (session.isAuthenticated) {
-      setActivePlan(subscription?.metadata?.plan_type || 'free');
-    } else {
-      setWarning('You need to be authenticated before buying any plan!', true);
-      session.set('CALLBACK_ROUTE', { pathname, query });
-    }
+    if (!session.isAuthenticated) return gotoLogin(router);
+    setActivePlan(subscription?.metadata?.plan_type || 'free');
   }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <PlanList
-      activePlan={activePlan}
-      onSelected={session.isAuthenticated ? onSelectedPlan : undefined}
-    />
+    <PlanList activePlan={activePlan} onSelected={session.isAuthenticated ? onSelectedPlan : undefined} />
   );
 };
 

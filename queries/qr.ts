@@ -173,6 +173,7 @@ export const remove = async (key: { userId: string, createdAt: number }) => {
         promises.push(StorageHandler.remove(section.data.files));
       }
     }
+
     if (["video", "gallery", "pdf", "audio"].includes(qr.qrType) && qr.files?.length) {
       promises.push(StorageHandler.remove(qr.files));
     }
@@ -181,6 +182,12 @@ export const remove = async (key: { userId: string, createdAt: number }) => {
     }
     if (qr.foregndImg) {
       promises.push(StorageHandler.remove(qr.foregndImg));
+    }
+    if (qr.micrositeBackImage) {
+      promises.push(StorageHandler.remove(qr.micrositeBackImage));
+    }
+    if (qr.qrForSharing) {
+      promises.push(StorageHandler.remove(qr.qrForSharing));
     }
 
     return Promise.all(promises).then(() => {
@@ -195,3 +202,27 @@ export const remove = async (key: { userId: string, createdAt: number }) => {
     throw e;
   }
 };
+
+export const getBySecret = async (secret: string, skipPopulate?: boolean) => {
+  try {
+    const resp = await QrDataModel.scan({'secret': {'eq': secret}}).exec();
+
+    if (resp?.[0] === undefined) {
+      return undefined;
+    }
+
+    if (skipPopulate) {
+      return resp[0];
+    }
+
+    if (resp[0].secretOps?.includes('e')) {
+      return undefined;
+    }
+
+    // @ts-ignore
+    const extraData = await resp.populate(['shortLinkId', 'qrOptionsId']); // @ts-ignore
+    return extraData[0];
+  } catch (e) {
+    throw e;
+  }
+}

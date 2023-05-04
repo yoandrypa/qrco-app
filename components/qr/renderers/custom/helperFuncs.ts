@@ -1,45 +1,78 @@
-import {CustomType, DataType, KeyValues, LinkType, Type} from "../../types/types";
-import {EMAIL, PHONE, ZIP} from "../../constants";
-import {isValidUrl} from "../../../../utils";
-import socialsAreValid from "../validator";
+import { CustomType, DataType, Type } from "../../types/types";
+import { getUuid } from "../../../../helpers/qr/helpers";
+import { sectionsQrTypes } from "../../components";
+import { IQrSetting, THandleValues } from "../../components/commons/types";
 
-export const components = [
-  {type: 'address', name: 'Address'}, {type: 'company', name: 'Company'},
-  {type: 'date', name: 'Date'}, {type: 'justEmail', name: 'Email address'},
-  {type: 'email', name: 'Email and web'}, {type: 'easiness', name: 'Easiness'},
-  {type: 'links', name: 'Links'}, {type: 'organization', name: 'Organization'},
-  {type: 'phones', name: 'Phones'}, {type: 'gallery', name: 'Gallery'},
-  {type: 'presentation', name: 'Presentation'}, {type: 'opening', name: 'Opening time'},
-  {type: 'socials', name: 'Social networks'}, {type: 'title', name: 'Title and description'},
-  {type: 'action', name: 'Action button'}, {type: 'single', name: 'Single text'},
-  {type: 'pdf', name: 'PDF file'}, {type: 'audio', name: 'Audio files'}, {type: 'video', name: 'Video files'},
-  {type: 'keyvalue', name: 'Details'}, {type: 'web', name: 'Web'}, {type: 'contact', name: 'Contact form'},
-  {type: 'tags', name: 'Tags'}, {type: 'couponInfo', name: 'Promotion info', notInMenu: true},
-  {type: 'couponData', name: 'Coupon data', notInMenu: true},
-  {type: 'petId', name: 'Pet presentation', notInMenu: true},
-  {type: 'sku', name: 'Product', notInMenu: true}, {type: 'petId', name: 'Pet presentation', notInMenu: true}
+export const components = {
+  address: { name: 'Address' },
+  buttons: { name: 'Buttons', data: { hideHeadLine: true } },
+  company: { name: 'Company' },
+  date: { name: 'Date' },
+  donation: { name: 'Donation', isMonetized: true, data: { iconId: 'Coffee1', buttonText: 'Donation', unitAmount: 2 } },
+  easiness: { name: 'Easiness' },
+  justEmail: { name: 'Email address' },
+  email: { name: 'Email and web' },
+  gallery: { name: 'Gallery' },
+  links: { name: 'Links', data: { hideHeadLine: true } },
+  opening: { name: 'Opening time' },
+  organization: { name: 'Organization' },
+  phones: { name: 'Phones' },
+  presentation: { name: 'Presentation' },
+  socials: { name: 'Social networks', data: { socialsOnlyIcons: true, hideHeadLine: true } },
+  tags: { name: 'Tags' },
+  title: { name: 'Title and description' },
+  contact: { name: 'Contact form' },
+  sms: { name: 'Contact via SMS' },
+  keyvalue: { name: 'Details' },
+  audio: { name: 'Audio files' },
+  pdf: { name: 'PDF file' },
+  video: { name: 'Video files' },
+  single: { name: 'Single text' },
+  web: { name: 'Web' },
+  action: { name: 'Action button', notInMenu: true },
+  couponInfo: { name: 'Promotion info', notInMenu: true },
+  couponData: { name: 'Coupon data', notInMenu: true },
+  petId: { name: 'Pet presentation', notInMenu: true },
+  sku: { name: 'Product', notInMenu: true },
+  // Include the sections qr-types from independent components
+  ...sectionsQrTypes,
+};
+
+export interface RenderSocialsProps {
+  index: number;
+  data?: Type;
+  setData: Function;
+  isSolidButton?: boolean;
+}
+
+export const NETWORKS = [
+  { property: "facebook", tooltip: "Facebook" }, { property: "whatsapp", tooltip: "Whatsapp" },
+  { property: "twitter", tooltip: "Twitter" }, { property: "instagram", tooltip: "Instagram" },
+  { property: "youtube", tooltip: "YouTube" }, { property: "linkedin", tooltip: "LinkedIn" },
+  { property: "pinterest", tooltip: "Pinterest" }, { property: "telegram", tooltip: "Telegram" },
+  { property: "tiktok", tooltip: "TikTok" }, { property: "reddit", tooltip: "Reddit" },
+  { property: "snapchat", tooltip: "Snapchat" }, { property: "twitch", tooltip: "Twitch" },
+  { property: "quora", tooltip: "Quora" }, { property: "discord", tooltip: "Discord" }
 ];
 
-export const getName = (index: number) => {
-  return components[index].name;
-}
-
-const lookFor = (type: string): string => {
-  const index = components.findIndex(x => x.type === type);
-  return getName(index);
-}
+// @ts-ignore
+const getName = (type: string) => components[type].name;
 
 export const getNameStr = (type: string, selected: string): string => {
   if (['inventory'].includes(selected)) {
     switch (type) {
-      case 'title': { return 'Product information'; }
-      case 'gallery': { return 'Images'; }
-      case 'sku': { return 'Product SKU and quantity'; }
-      case 'keyvalue': { return 'Location'; }
+      case 'title':
+        return 'Product information';
+      case 'gallery':
+        return 'Images';
+      case 'sku':
+        return 'Product SKU and quantity';
+      case 'keyvalue':
+        return 'Location';
     }
-    return lookFor(type);
+    return getName(type);
   }
-  return lookFor(type);
+  return getName(type);
 }
 
 export interface CustomProps {
@@ -48,8 +81,13 @@ export interface CustomProps {
   selected?: string;
   data: DataType;
   setData: Function;
-  handleValues: Function;
-  setIsWrong: (isWrong: boolean) => void;
+  handleValues: THandleValues;
+}
+
+export interface CustomSettingsProps {
+  anchor: HTMLElement;
+  index: number;
+  hideHeadlineOpts: boolean;
 }
 
 export interface CustomEditProps {
@@ -63,77 +101,6 @@ export interface ContentProps {
   index: number;
   data?: Type;
   handleValues: Function;
-}
-
-export const validator = (dataToCheck: DataType, selected?: string): boolean => {
-  if (!dataToCheck.custom?.length) { return true; }
-
-  let errors = false;
-
-  dataToCheck.custom.every((custom: CustomType) => {
-    const data = custom.data || {};
-
-    const {component} = custom;
-    if (component === 'company' && (!data.company?.trim().length || (
-      (data.companyPhone?.trim().length && !PHONE.test(data.companyPhone)) ||
-      (data.companyCell?.trim().length && !PHONE.test(data.companyCell)) ||
-      (data.companyFax?.trim().length && !PHONE.test(data.companyFax)) ||
-      (data.companyWebSite?.trim().length && !isValidUrl(data.companyWebSite)) ||
-      (data.companyEmail?.trim().length && !EMAIL.test(data.companyEmail))
-    ))) {
-      errors = true;
-      return false;
-    }
-    if ((component === 'contact') && (!data.email?.trim().length || !EMAIL.test(data.email) || !data.message?.trim().length)) {
-      errors = true;
-      return false;
-    }
-    if ((component === 'address' && data.zip?.trim().length && !ZIP.test(data.zip)) ||
-      (component === 'justEmail' && data.email?.trim().length && !EMAIL.test(data.email)) ||
-      (component === 'web' && data.web?.trim().length && !isValidUrl(data.web)) ||
-      (component === 'tags' && !data.tags?.length)) {
-      errors = true;
-      return false;
-    }
-    if (component === 'email' && (data.email?.trim().length && !EMAIL.test(data.email)) || (data.web?.trim().length && !isValidUrl(data.web))) {
-      errors = true;
-      return false;
-    }
-    if (component === 'keyvalue' && data.keyValues?.some((x: KeyValues) => (!x.key?.trim().length || !x.value.trim().length))) {
-      errors = true;
-      return false;
-    }
-    if (component === 'links' && data.links?.some((x: LinkType) =>
-      ((!data.linksOnlyLinks && !(x.label || '').trim().length) || !x.link.trim().length || !isValidUrl(x.link)))) {
-      errors = true;
-      return false;
-    }
-    if (component === 'phones' && ((data.phone?.trim().length && !PHONE.test(data.phone)) ||
-      (data.cell?.trim().length && !PHONE.test(data.cell)) || (data.fax?.trim().length && !PHONE.test(data.fax)))) {
-      errors = true;
-      return false;
-    }
-    if (component === 'presentation' && !data.firstName?.trim().length && ((data.includeExtraInfo || ['vcard+', 'petId'].includes(selected || '')) &&
-      ((data.email?.trim() && !EMAIL.test(data.email)) || (data.web?.trim() && !isValidUrl(data.web)) ||
-      (data.phone?.trim().length && !PHONE.test(data.phone)) || (data.cell?.trim().length && !PHONE.test(data.cell)) ||
-      (data.fax?.trim().length && !PHONE.test(data.fax)) || (data.zip?.trim().length && !ZIP.test(data.zip))))) {
-      errors = true;
-      return false;
-    }
-    if (component === 'action' && data.urlOptionLabel !== undefined && data.urlOptionLink !== undefined &&
-      (!data.urlOptionLabel.trim().length || !data.urlOptionLink.trim().length || !isValidUrl(data.urlOptionLink))) {
-        errors = true;
-        return false;
-    }
-    if ((['gallery', 'pdf', 'audio', 'video'].includes(component) && !data.files?.length) ||
-      (component === 'title' && !data.titleAbout?.trim().length && !data.descriptionAbout?.trim().length) ||
-      (component === 'socials' && !socialsAreValid(data))) {
-      errors = true;
-      return false;
-    }
-  });
-
-  return errors;
 }
 
 export const cleaner = (data: DataType, item: string): void => {
@@ -183,5 +150,20 @@ export const cleaner = (data: DataType, item: string): void => {
   } else if (item === 'title') {
     deleteItem('titleAbout');
     deleteItem('descriptionAbout');
+  }
+}
+
+export const sectionPreConfig = (item: string, selected?: string): CustomType => {
+  // @ts-ignore
+  const component: IQrSetting = components[item];
+  const data = component.getDefaultQrData ? component.getDefaultQrData() : component.data || {};
+
+  if (selected === 'petId') data.linksOnlyLinks = true;
+
+  return {
+    component: item,
+    expand: getUuid(), // @ts-ignore
+    isMonetized: components[item]?.isMonetized || false,
+    data
   }
 }

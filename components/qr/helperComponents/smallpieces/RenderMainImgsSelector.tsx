@@ -9,7 +9,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import {DataType} from "../../types/types";
+import {CustomCommon} from "../../types/types";
+import RenderUpperSectionHeightAndSharer from "./RenderUpperSectionHeightAndSharer";
 
 import dynamic from "next/dynamic";
 
@@ -17,9 +18,10 @@ const RenderImagePicker = dynamic(() => import("../../renderers/helpers/RenderIm
 const ImageCropper = dynamic(() => import("../../renderers/helpers/ImageCropper"));
 const RenderForeImgTypePicker = dynamic(() => import("../../renderers/helpers/RenderForeImgTypePicker"));
 const RenderImgPreview = dynamic(() => import("../../renderers/helpers/RenderImgPreview"));
+const RenderProfileImgSettings = dynamic(() => import("../looseComps/RenderProfileImgSettings"));
+const Typography = dynamic(() => import("@mui/material/Typography"));
 
-interface MainImgSelectorProps {
-  data?: DataType;
+interface MainImgSelectorProps extends CustomCommon {
   omitPrimaryImg?: boolean;
   isWideForPreview?: boolean;
   backgndImg?: File | string;
@@ -27,13 +29,13 @@ interface MainImgSelectorProps {
   loading?: boolean;
   backError?: boolean;
   foreError?: boolean;
-  handleValue: Function;
   forcePick?: string;
+  releasePick: () => void;
 }
 
 const RenderMainImgsSelector = (
   {
-    data, omitPrimaryImg, isWideForPreview, backgndImg, foregndImg, loading, backError, foreError, handleValue, forcePick
+    data, omitPrimaryImg, isWideForPreview, backgndImg, foregndImg, loading, backError, foreError, handleValue, forcePick, releasePick
   }: MainImgSelectorProps) => {
   const [selectFile, setSelectFile] = useState<string | null>(null);
   const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
@@ -43,7 +45,7 @@ const RenderMainImgsSelector = (
 
   const shrink = isWideForPreview && !isWideEnough && (backgndImg || foregndImg);
 
-  const handleSelectFile = (kind: string) => () => {
+  const handleSelectFile = (kind: 'backgndImg' | 'foregndImg') => () => {
     setSelectFile(kind);
   };
 
@@ -76,68 +78,85 @@ const RenderMainImgsSelector = (
   useEffect(() => {
     if (forcePick) {
       setSelectFile(forcePick === 'banner' ? 'backgndImg' : 'foregndImg');
+      setTimeout(() => releasePick(), 200);
     }
   }, [forcePick]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Box sx={{
-      width: '100%',
-      display: 'flex',
-      textAlign: 'center',
-      flexDirection: shrink ? "column" : {md: "row", xs: "column"},
-      mt: 2
-    }}>
-      {!data?.layout?.includes('banner') && <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
-        <Tooltip title="Click for selecting the banner image">
-          <Button
-            sx={{width: '100%'}}
-            disabled={loading}
-            startIcon={<WallpaperIcon sx={{ color: theme => backError ? theme.palette.error.dark : undefined }}/>}
-            variant="outlined"
-            color="primary"
-            onClick={handleSelectFile('backgndImg')}>
-            {`Banner image${backgndImg && !loading ? ' / Loaded' : ''}`}
-          </Button>
-        </Tooltip>
-        {backgndImg && !loading && renderOptions('backgndImg')}
-      </ButtonGroup>}
-      {!omitPrimaryImg && (
-        <ButtonGroup sx={{mt: shrink ? 1 : {xs: 1, md: 0}, width: '100%'}}>
-          <Tooltip title="Click for selecting the profile image">
-            <Button
-              sx={{width: '100%'}}
-              startIcon={<ImageIcon sx={{ color: theme => foreError ? theme.palette.error.dark : undefined }}/>}
-              variant="outlined"
-              disabled={loading}
-              onClick={handleSelectFile('foregndImg')}
-              color="primary">
-              {`Profile image${backgndImg && !loading ? ' | Loaded' : ''}`}
-            </Button>
-          </Tooltip>
-          {foregndImg && !loading && renderOptions('foregndImg')}
-        </ButtonGroup>
+    <>
+      {data?.layout !== 'empty' ? (
+        <Box sx={{
+          width: '100%',
+          display: 'flex',
+          textAlign: 'center',
+          flexDirection: shrink ? "column" : {md: "row", xs: "column"},
+          mt: 2
+        }}>
+          {!data?.layout?.includes('banner') && <ButtonGroup sx={{mr: !omitPrimaryImg ? {md: 1, xs: 0} : 0, width: '100%'}}>
+            <Tooltip title="Click for selecting the banner image">
+              <Button
+                sx={{width: '100%'}}
+                disabled={loading}
+                startIcon={<WallpaperIcon sx={{ color: theme => backError ? theme.palette.error.dark : undefined }}/>}
+                variant="outlined"
+                color="primary"
+                onClick={handleSelectFile('backgndImg')}>
+                {`Banner image${backgndImg && !loading ? ' / Loaded' : ''}`}
+              </Button>
+            </Tooltip>
+            {backgndImg && !loading && renderOptions('backgndImg')}
+          </ButtonGroup>}
+          {!omitPrimaryImg && (
+            <ButtonGroup sx={{mt: shrink ? 1 : {xs: 1, md: 0}, width: '100%'}}>
+              <Tooltip title="Click for selecting the profile image">
+                <Button
+                  sx={{width: '100%'}}
+                  startIcon={<ImageIcon sx={{ color: theme => foreError ? theme.palette.error.dark : undefined }}/>}
+                  variant="outlined"
+                  disabled={loading}
+                  onClick={handleSelectFile('foregndImg')}
+                  color="primary">
+                  {`Profile image${backgndImg && !loading ? ' | Loaded' : ''}`}
+                </Button>
+              </Tooltip>
+              {foregndImg && !loading && renderOptions('foregndImg')}
+            </ButtonGroup>
+          )}
+          {selectFile !== null && (
+            <RenderImagePicker
+              handleClose={() => setSelectFile(null)}
+              title={selectFile === 'foregndImg' ? 'profile' : 'banner'}
+              kind={selectFile}
+              handleAcept={handleAccept}
+              wasError={(selectFile === 'foregndImg' && foreError) || (selectFile === 'backgndImg' && backError)}/>
+          )}
+          {preview !== null && ( // @ts-ignore
+            <RenderImgPreview handleClose={() => setPreview(null)} file={preview === 'backgndImg' ? backgndImg : foregndImg} kind={preview} />
+          )}
+          {cropper !== null && (
+            <ImageCropper
+              handleClose={() => setCropper(null)}
+              handleAccept={handleSave}
+              file={cropper.file}
+              kind={cropper.kind}
+              message={cropper.kind === 'backgndImg' ? 'banner' : 'profile'} />
+          )}
+        </Box>
+      ) : (
+        <Typography sx={{color: theme => theme.palette.text.disabled, fontSize: 'smaller'}}>
+          {'To set a banner image and/or profile image select another layout'}
+        </Typography>
       )}
-      {selectFile !== null && (
-        <RenderImagePicker
-          handleClose={() => setSelectFile(null)}
-          title={selectFile === 'foregndImg' ? 'profile' : 'banner'}
-          kind={selectFile}
-          handleAcept={handleAccept}
-          wasError={(selectFile === 'foregndImg' && foreError) || (selectFile === 'backgndImg' && backError)}/>
+      {data?.layout?.includes('banner') && (
+        <Typography sx={{color: theme => theme.palette.text.disabled, fontSize: 'smaller'}}>
+          {'To set a banner image select another layout that doesn\' override it'}
+        </Typography>
       )}
-      {preview !== null && ( // @ts-ignore
-        <RenderImgPreview handleClose={() => setPreview(null)} file={preview === 'backgndImg' ? backgndImg : foregndImg} kind={preview} />
-      )}
-      {cropper !== null && (
-        <ImageCropper
-          handleClose={() => setCropper(null)}
-          handleAccept={handleSave}
-          file={cropper.file}
-          kind={cropper.kind}
-          message={cropper.kind === 'backgndImg' ? 'banner' : 'profile'} />
-      )}
-    </Box>
-  );
+    {foregndImg !== undefined && (
+      <RenderProfileImgSettings profileImageVertical={data?.profileImageVertical} profileImageSize={data?.profileImageSize} handleValue={handleValue} />
+    )}
+    <RenderUpperSectionHeightAndSharer handleValue={handleValue} data={data} />
+  </>);
 };
 
 export default RenderMainImgsSelector;

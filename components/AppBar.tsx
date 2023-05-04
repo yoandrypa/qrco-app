@@ -1,4 +1,4 @@
-import * as React from "react";
+import {MouseEvent, useState} from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -15,15 +15,15 @@ import AdbIcon from "@mui/icons-material/Adb";
 import Image from "next/image";
 
 const ResponsiveAppBar = ({ signOut }: any) => {
-  const [anchorElNav, setAnchorElNav] = React.useState<undefined | HTMLElement>(undefined);
-  const [anchorElUser, setAnchorElUser] = React.useState<undefined | HTMLElement>(undefined);
+  const [anchorElNav, setAnchorElNav] = useState<undefined | HTMLElement>(undefined);
+  const [anchorElUser, setAnchorElUser] = useState<undefined | HTMLElement>(undefined);
   const pages: string[] = [];
   const settings: { label: string, action: Function }[] = [{ label: "Logout", action: signOut }];
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
 

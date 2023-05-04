@@ -1,4 +1,5 @@
 import QrScanner from 'qr-scanner';
+
 import frame0 from '../../components/qr/frames/frame0';
 import frame1 from '../../components/qr/frames/frame1';
 import frame2 from '../../components/qr/frames/frame2';
@@ -7,9 +8,14 @@ import frame4 from '../../components/qr/frames/frame4';
 import frame5 from '../../components/qr/frames/frame5';
 import frame6 from '../../components/qr/frames/frame6';
 import frame7 from '../../components/qr/frames/frame7';
-import {DataType, FramesType} from '../../components/qr/types/types';
+
 import initialOptions from "./data";
-import {capitalize} from "@mui/material";
+
+import { DataType, FramesType } from '../../components/qr/types/types';
+import { capitalize } from "@mui/material";
+import { useMemo } from "react";
+import { getQrType } from "../../components/qr/qrtypes";
+import { ONLY_QR } from "../../components/qr/constants";
 
 export const handleDesignerString = (selected: string | null | undefined, data: DataType): string => {
   let designerString = '';
@@ -104,9 +110,12 @@ export const blobUrlToFile = (url: string, name: string) => {
   })
 };
 
-export const getImageAsString = async (imageData?: File | string) => {
+export const getImageData = async (imageData?: File | string | {Key: string; name: string;}[]) => {
   if (!imageData) {
     return undefined;
+  }
+  if (Array.isArray(imageData)) {
+    return imageData;
   }
   if (typeof imageData === 'string') {
     return imageData.startsWith('blob:http') ? await getBase64FromUrl(imageData) : imageData
@@ -227,7 +236,7 @@ export const downloadAsSVGOrVerify = (qrImageData: string | { outerHTML: string;
   } else {
     const element = document.createElement('a');
     element.href = URL.createObjectURL(data);
-    element.download = 'ebanuxQr.svg';
+    element.download = 'qrLynk.svg';
     document.body.appendChild(element);
     element.click();
     element.remove();
@@ -250,7 +259,7 @@ export const downloadAsImg = async (svgData: string | { outerHTML: string | numb
     const data = canvas.toDataURL( `image/${!asJpg ? 'png' : 'jpeg'}`, 1);
     if (!verify) {
       const anchor = document.createElement('a');
-      anchor.download = `ebanuxQr.${!asJpg ? 'png' : 'jpg'}`;
+      anchor.download = `qrLynk.${!asJpg ? 'png' : 'jpg'}`;
       anchor.href = data;
       anchor.click();
       anchor.remove();
@@ -290,6 +299,13 @@ export const getFrame = (frame: FramesType): string => {
   }
   return result;
 }
+
+export const useCheckOnlyQr = (qrTypeId: string | null | undefined, qrData?: any) => useMemo(() => {
+  if (!qrTypeId) return false;
+  const qtType = getQrType(qrTypeId);
+  if (qtType.isOnlyQr !== undefined) return qtType.isOnlyQr;
+  return ONLY_QR.includes(qrTypeId) || !qrData?.isDynamic
+}, [qrTypeId]);
 
 export function getUuid(): string {
   let dt = new Date().getTime();
@@ -381,6 +397,10 @@ export const dataCleaner = (options: any, mainObj?: boolean) => {
       if (!checkFor.includes(x)) { delete data[x]; }
     });
   }
+  if (options.mode === 'edit' && !mainObj && options?.shortLinkId) {
+    data.creation = options.shortLinkId.createdAt.getTime();
+    data.visitCount = options.shortLinkId.visitCount || 0;
+  }
   return data;
 };
 
@@ -427,6 +447,31 @@ export const cleanSelectionForMicrositeURL = (item: string, isDynamic: boolean, 
   return `sample qr ${clearItem(item)}`;
 };
 
+export const genURL = (isDynamic: boolean, code?: string, selected?: string) => {
+  if (!isDynamic) { return qrNameDisplayer(selected || '', false); }
+  if (selected) { return cleanSelectionForMicrositeURL(selected, isDynamic); }
+  return `${process.env.MICRO_SITES_BASE_URL}/${code}`;
+}
+
 export const getSx = (theme: any) => ({
   border: `solid 1px ${theme.palette.primary.main}`, borderRadius: '100%', width: '40px', height: '40px', my: 'auto', p: '5px', color: theme.palette.primary.main
 });
+
+export interface SamplePrevProps {
+  style?: object;
+  save?: () => void;
+  saveDisabled?: boolean;
+  isDrawed?: boolean;
+  data?: DataType;
+  onlyQr?: boolean;
+  qrOptions?: any;
+  isDynamic: boolean;
+  shareLink?: string;
+  backgroundImg?: File | string;
+  backImg?: File | string;
+  mainImg?: File | string;
+  step: number;
+  handlePickImage?: (prop: string) => void;
+  showSampleMessage?: boolean;
+  noEditImages?: boolean;
+}

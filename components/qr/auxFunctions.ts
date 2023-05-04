@@ -1,9 +1,8 @@
 // TODO: Use setError from Notification component.
 import {
   BackgroundType,
-  CornersAndDotsType,
+  CornersAndDotsType, CustomType,
   DataType,
-  EbanuxDonationPriceData,
   EditType,
   FramesType,
   OptionsType
@@ -11,7 +10,6 @@ import {
 import { areEquals } from "../helpers/generalFunctions";
 import { initialBackground, initialFrame } from "../../helpers/qr/data";
 import { upload, remove } from "../../handlers/storage";
-import { updateEbanuxDonationPrice, createEbanuxDonationPrice } from "../../handlers/ebanux";
 import { getUuid } from "../../helpers/qr/helpers";
 import { generateId, generateShortLink } from "../../utils";
 import { create, edit as qrEdit } from "../../handlers/qrs";
@@ -19,7 +17,12 @@ import { startWaiting, releaseWaiting } from "../Waiting";
 import { QR_CONTENT_ROUTE, QR_TYPE_ROUTE } from "./constants";
 import { capitalize } from "@mui/material";
 
-import session from "@ebanux/ebanux-utils/sessionStorage";
+// @ts-ignore
+import { renderToString } from "react-dom/server";
+import { getOptionsForPreview } from "../../helpers/qr/auxFunctions";
+import { generateSVGObj, handleQrData } from "./QrGenerator";
+import { getQrType, getQrSectionType } from "./qrtypes";
+import { setError } from "../../components/Notification";
 
 interface UserInfoProps {
   attributes: { sub: string, email: string },
@@ -87,32 +90,20 @@ export const steps = ["Type", "Content", "QR Design"];
 
 const cleaner = (qrDesign: OptionsType, background: BackgroundType, frame: FramesType,
                  cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, edit: boolean): void => {
-  if (!areEquals(frame, initialFrame)) {
-    qrDesign.frame = frame;
-  }
-
+  if (frame.textUp === false) { delete frame.textUp; }
+  if (!areEquals(frame, initialFrame)) { qrDesign.frame = frame; }
   if (!areEquals(background, initialBackground)) {
     qrDesign.background = background;
-    if (qrDesign.background.file === null) { qrDesign.background.file = ''; }
-    if (qrDesign.background.backColor === null) { qrDesign.background.backColor = '#fff'; }
+    if (qrDesign.background.file === null) qrDesign.background.file = '';
+    if (qrDesign.background.backColor === null) qrDesign.background.backColor = '#fff';
   } else if (edit) { // @ts-ignore
     qrDesign.background = initialBackground;
   }
-  if (cornersData !== null) {
-    qrDesign.corners = cornersData;
-  }
-  if (dotsData !== null) {
-    qrDesign.cornersDot = dotsData;
-  }
-  if (!qrDesign.cornersDotOptions.type) {
-    qrDesign.cornersDotOptions.type = "";
-  }
-  if (!qrDesign.cornersSquareOptions.type) {
-    qrDesign.cornersSquareOptions.type = "";
-  }
-  if (qrDesign.mode !== undefined) {
-    delete qrDesign.mode;
-  }
+  if (cornersData !== null) { qrDesign.corners = cornersData; }
+  if (dotsData !== null) { qrDesign.cornersDot = dotsData; }
+  if (!qrDesign.cornersDotOptions.type) { qrDesign.cornersDotOptions.type = ""; }
+  if (!qrDesign.cornersSquareOptions.type) { qrDesign.cornersSquareOptions.type = ""; }
+  if (qrDesign.mode !== undefined) { qrDesign.mode = undefined; }
 };
 
 const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: OptionsType): EditType => {
@@ -147,6 +138,19 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
   return objToEdit;
 };
 
+export const getFileFromQr = (data: DataType, options: OptionsType, background: BackgroundType, frame: FramesType,
+                              cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string, onlySvg?: boolean, name?: string) => {
+  const qrDesign = getOptionsForPreview(data, options, background, frame, cornersData, dotsData, selected);
+  const svgObject = generateSVGObj(handleQrData(qrDesign), frame, background, cornersData, dotsData, undefined, undefined, undefined, options?.image);
+  const svgString = renderToString(svgObject);
+
+  if (onlySvg) {
+    return svgString;
+  }
+
+  return new File([svgString], name !== undefined ? name : `${getUuid()}QR.svg`, {type: 'image/svg+xml'});
+}
+
 /**
  * @param dataSource is data
  * @param userInfo
@@ -164,38 +168,111 @@ const generateObjectToEdit = (qrData: DataType, data: DataType, qrDesign: Option
  * @param updatingHandler
  */
 export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps, options: OptionsType, frame: FramesType,
-                                   background: BackgroundType, cornersData: CornersAndDotsType, dotsData: CornersAndDotsType, selected: string,
-                                   setIsError: (isError: boolean) => void,
-                                   success: (creationData?: string) => void, router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
+                                   background: BackgroundType, cornersData: CornersAndDotsType, dotsData: CornersAndDotsType,
+                                   selected: string, setIsError: (isError: boolean) => void, success: (creationData?: string) => void,
+                                   router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
                                    updatingHandler?: (value: string | null, status?: boolean) => void) => {
 
   const prevUpdatingHandler = (value: string | null, status?: boolean) => {
-    if (updatingHandler) {
-      updatingHandler(value, status);
+    if (updatingHandler) { updatingHandler(value, status); }
+  }
+
+  const data = structuredClone(dataSource) as any;
+
+  // cleaning layout data, does not affect the original object
+  if (data.layout?.startsWith('empty')) {
+    if (data.backgndImg) { data.backgndImg = undefined; }
+    if (data.foregndImg) { data.foregndImg = undefined; }
+    if (data.foregndImgType !== undefined) { data.foregndImgType = undefined; }
+    if (data.profileImageSize) { data.profileImageSize = undefined; }
+    if (data.profileImageVertical) { data.profileImageVertical = undefined; }
+  } else if (data.layout?.includes('banner') && data.backgndImg) {
+    data.backgndImg = undefined;
+  }
+
+  // cleaning, same as above
+  if (data.claim) { delete data.claim; }
+  if (data.forceChange) { delete data.forceChange; }
+
+  // @ts-ignore
+  const userId = data.mode !== 'secret' ? userInfo.cognito_user_id : options?.userId?.id;
+
+  if (!data.hideQrForSharing) {
+    prevUpdatingHandler(`${data.qrForSharing?.[0]?.Key === undefined ? 'Saving' : 'Adjusting'} QR code`);
+
+    const file = getFileFromQr(data, options, background, frame, cornersData, dotsData, selected, false, data.qrForSharing?.[0]?.name);
+
+    try { // @ts-ignore
+      data.qrForSharing = await upload([file], `${userId}/${selected}s/design`);
+      if (!updatingHandler && dataSource.qrForSharing?.name !== data.qrForSharing.name) {
+        dataSource.qrForSharing = structuredClone(data.qrForSharing);
+      }
+      prevUpdatingHandler(null, true);
+    } catch {
+      prevUpdatingHandler(null, false);
+      setIsError(true);
     }
   }
 
-  const data = structuredClone(dataSource);
+  if ((data.hideQrForSharing || data.sharerPosition === 'no') && (data.qrForSharing || data.qrForSharing?.[0]?.Key)) {
+    prevUpdatingHandler('Removing QR Code');
+    try {
+      await remove([{ Key: data.qrForSharing.Key }]);
+      data.qrForSharing = undefined;
+      prevUpdatingHandler(null, true);
+    } catch {
+      prevUpdatingHandler(null, false);
+      setIsError(true);
+    }
+  }
+
+  const clearExpand = !data.custom?.some((x: CustomType) => x.data?.sectionArrangement === 'tabbed');
+
+  const qrType = getQrType(selected);
+  try {
+    if (qrType?.beforeSave) await qrType.beforeSave(data);
+  } catch (e: any) {
+    setError(e);
+  }
+
   if (data.custom?.length) {
+    // Set isMonetized in false to recalculate it new value.
+    data.isMonetized = false;
+
     for (let idx = 0, len = data.custom?.length || 0; idx < len; idx += 1) {
-      const x = data.custom[idx]; // @ts-ignore
-      if (x.expand !== undefined) { delete x.expand; }
-      if (["pdf", "audio", "gallery", "video"].includes(x.component) && x.data?.files?.length) {
-        prevUpdatingHandler(`Uploading assets for ${capitalize(x.component)} section`);
+      const section = data.custom[idx];
+
+      if (clearExpand && section.expand !== undefined) delete section.expand;
+
+      if (!qrType?.beforeSave) {
+        const qrSecType = getQrSectionType(section.component);
+
+        if (qrSecType?.beforeSave) {
+          try {
+            prevUpdatingHandler(`Setting ${section.component} micro-site section`)
+            await qrSecType.beforeSave(section, idx);
+          } catch (error) {
+            setIsError(true);
+            prevUpdatingHandler(null, false);
+          }
+        }
+      }
+
+      if (["pdf", "audio", "gallery", "video"].includes(section.component) && section.data?.files?.length) {
+        prevUpdatingHandler(`Uploading assets for ${capitalize(section.component)} section`);
         try {
           // upload will handle only File instances, others are ignored
-          x.data.files = await upload(x.data.files, `${userInfo.cognito_user_id}/${selected}s`);
+          section.data.files = await upload(section.data.files, `${userId}/${selected}s`);
           prevUpdatingHandler(null, true);
         } catch {
           prevUpdatingHandler(null, false);
           setIsError(true);
         }
       }
-    }
-  }
 
-  if (data.claim) {
-    delete data.claim;
+      // Check if the section is monetized
+      data.isMonetized ||= section.isMonetized;
+    }
   }
 
   const dataLength = updatingHandler !== undefined && dataInfo !== undefined && dataInfo > 0;
@@ -204,7 +281,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     if (!Array.isArray(data.backgndImg)) {
       prevUpdatingHandler("Uploading banner image");
       try { // @ts-ignore
-        data.backgndImg = await upload([data.backgndImg], `${userInfo.cognito_user_id}/${selected}s/design`);
+        data.backgndImg = await upload([data.backgndImg], `${userId}/${selected}s/design`);
         prevUpdatingHandler(null, true);
       } catch {
         prevUpdatingHandler(null, false);
@@ -214,11 +291,12 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       delete data.backgndImg;
     }
   }
+
   if (data.prevBackImg !== undefined) {
     prevUpdatingHandler("Removing previous banner image");
     try {
       await remove([{ Key: data.prevBackImg }]);
-      delete data.prevBackImg;
+      data.prevBackImg = undefined;
       prevUpdatingHandler(null, true);
     } catch {
       prevUpdatingHandler(null, false);
@@ -230,7 +308,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     if (!Array.isArray(data.foregndImg)) {
       prevUpdatingHandler("Uploading profile image");
       try { // @ts-ignore
-        data.foregndImg = await upload([data.foregndImg], `${userInfo.cognito_user_id}/${selected}s/design`);
+        data.foregndImg = await upload([data.foregndImg], `${userId}/${selected}s/design`);
         prevUpdatingHandler(null, true);
       } catch {
         prevUpdatingHandler(null, false);
@@ -240,11 +318,12 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       delete data.foregndImg;
     }
   }
+
   if (data.prevForeImg !== undefined) {
     prevUpdatingHandler("Deleting previous profile image");
     try {
       await remove([{ Key: data.prevForeImg }]);
-      delete data.prevForeImg;
+      data.prevForeImg = undefined;
       prevUpdatingHandler(null, true);
     } catch {
       prevUpdatingHandler(null, false);
@@ -256,7 +335,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     if (!Array.isArray(data.micrositeBackImage)) {
       prevUpdatingHandler("Uploading background image");
       try { // @ts-ignore
-        data.micrositeBackImage = await upload([data.micrositeBackImage], `${userInfo.cognito_user_id}/${selected}s/design`);
+        data.micrositeBackImage = await upload([data.micrositeBackImage], `${userId}/${selected}s/design`);
         prevUpdatingHandler(null, true);
       } catch {
         prevUpdatingHandler(null, false);
@@ -266,11 +345,12 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       delete data.backgndImg;
     }
   }
+
   if (data.prevMicrositeImg !== undefined) {
     prevUpdatingHandler("Removing previous background image");
     try {
       await remove([{ Key: data.prevMicrositeImg }]);
-      delete data.prevMicrositeImg;
+      data.prevMicrositeImg = undefined;
       prevUpdatingHandler(null, true);
     } catch {
       prevUpdatingHandler(null, false);
@@ -278,63 +358,24 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     }
   }
 
-  if (selected === "donation") {
-    data["email"] = session.currentUser.account.email;
-    let priceData: EbanuxDonationPriceData;
-    priceData = {
-      name: `Donate ${data["title"]}` || "Donation",
-      unitAmountUSD: data["donationUnitAmount"] || 1,
-      redirectUrl: data["web"] || ""
-    };
-    if (data["donationPriceId"]) {
-      try {
-        prevUpdatingHandler("Updating donation microsite");
-        const updatedPrice = await updateEbanuxDonationPrice(
-          userInfo.cognito_user_id,
-          data["donationPriceId"],
-          priceData);
-        console.log("updated price", updatedPrice)
-        prevUpdatingHandler(null, true);
-      } catch (error) {
-        setIsError(true);
-        prevUpdatingHandler(null, false);
-      }
-
-    } else {
-      try {
-        prevUpdatingHandler("Creating Donation microsite");
-        const price = await createEbanuxDonationPrice(userInfo.cognito_user_id, priceData);
-        console.log("the price is")
-        //@ts-ignore
-        data["donationPriceId"] = price.result.price.id;
-        //@ts-ignore
-        data["donationProductId"] = price.result.product.id;
-        prevUpdatingHandler(null, true)
-      } catch (error) {
-        setIsError(true);
-        console.log(error)
-        prevUpdatingHandler(null, false)
-      }
-    }
-  }
-
   let shortLink;
-  const qrData = { ...data, qrType: selected };
+  const qrData: any = { ...data, qrType: selected };
   const qrDesign = { ...options };
 
-  if (data.mode !== 'edit') {
+  if (!['edit', 'secret'].includes(data.mode)) {
     const qrDesignId = getUuid();
-    const qrId = options.id || getUuid(); // @ts-ignore
+    const qrId = options.id || getUuid();
     qrData.qrOptionsId = qrDesignId;
+
     qrData.userId = userInfo.cognito_user_id;
 
     if (data.isDynamic) { // @ts-ignore
       qrData.shortLinkId = { userId: userInfo.cognito_user_id, createdAt: Date.now() };
       shortLink = {
+        address: options.shortCode || await generateId(),
         target: generateShortLink(`qr/${qrId}`),
-        address: options.shortCode || await generateId(), // @ts-ignore
-        claimable: data.claimable, // @ts-ignore
-        preGenerated: data.preGenerated, // @ts-ignore
+        claimable: data.claimable,
+        preGenerated: data.preGenerated,
         ...qrData.shortLinkId
       };
 
@@ -360,27 +401,49 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
   try {
     let edition = false;
-    if (data.mode !== 'edit') {
-      if (dataLength) {
-        prevUpdatingHandler("Saving QR Code data");
-      }
+
+    const secretMode = data.mode === 'secret';
+
+    if (!['edit', 'secret'].includes(data.mode)) {
+      if (qrData.frame !== undefined && !frame.type) { delete qrData.frame; }
+      if (dataLength) { prevUpdatingHandler("Saving QR Code data"); }
       const response = await create({ shortLink, qrDesign, qrData });
-      if (success && response?.creationDate) { success(response.creationDate); }
+      if (success && response?.creationDate) success(response.creationDate);
     } else {
       edition = true;
-      if (dataLength) {
-        prevUpdatingHandler("Updating QR Code data");
+
+      if (dataLength) { prevUpdatingHandler("Updating QR Code data"); }
+
+      const objToEdit = generateObjectToEdit(qrData, data, qrDesign) as any;
+
+      if (objToEdit.frame !== undefined) {
+        if (!frame?.type) {
+          objToEdit.frame = undefined;
+          objToEdit.qrOptionsId.frame = undefined;
+        } else if (!areEquals(objToEdit.frame, frame)) {
+          objToEdit.frame = frame;
+        }
       }
 
-      const objToEdit = generateObjectToEdit(qrData, data, qrDesign);
-
-      if (!objToEdit.userId) {
-        objToEdit.userId = userInfo.cognito_user_id;
+      if (!objToEdit.userId) { objToEdit.userId = userInfo.cognito_user_id; }
+      if (objToEdit.qrOptionsId.editedShortLink) {
+        delete objToEdit.qrOptionsId.editedShortLink;
+        objToEdit.shortLinkId = { address: objToEdit.qrOptionsId.shortCode };
       }
+
+      if (objToEdit.creation !== undefined) { delete objToEdit.creation; }
+      if (objToEdit.visitCount !== undefined) { delete objToEdit.visitCount; }
+
+      if (secretMode) {
+        if (typeof objToEdit.userId !== 'string') { objToEdit.userId = objToEdit.userId.id; }
+        if (typeof objToEdit.qrOptionsId.userId !== 'string') { objToEdit.qrOptionsId.userId = objToEdit.qrOptionsId.userId.id; }
+      } else if (objToEdit.secret === undefined) { objToEdit.secret = undefined; }
+      if (objToEdit.secretOps === undefined) { objToEdit.secretOps = undefined; }
 
       await qrEdit(objToEdit);
       if (success) success();
     }
+
     if (dataLength) {
       prevUpdatingHandler(null, true);
     } else if (lastStep !== undefined && router !== undefined) {
@@ -392,7 +455,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
       }
     }
   } catch {
-    if (dataLength) prevUpdatingHandler(null, false);
+    if (dataLength) { prevUpdatingHandler(null, false); }
     setIsError(true);
   }
   if (dataLength) prevUpdatingHandler("done");

@@ -26,7 +26,7 @@ export default function MainHandler({ Component, pageProps }: AppProps) {
     }
   }, [pathname, isDynamic]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (isAPrivateRoute(pathname, isDynamic)) {
+  if (data?.mode !== 'secret' && isAPrivateRoute(pathname, isDynamic)) {
     return (
       <Authenticator>
         {({ user }: any) => (

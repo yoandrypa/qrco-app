@@ -1,16 +1,19 @@
-import {ChangeEvent, useContext} from 'react';
+import React, { ChangeEvent, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import RenderIcon from './helperComponents/smallpieces/RenderIcon';
 import Context from '../context/Context';
-import {DataType, OptionsType, SocialProps, Type} from './types/types';
+import { DataType, OptionsType, SocialProps } from './types/types';
 
 import dynamic from "next/dynamic";
 
 import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
-import {qrNameDisplayer} from "../../helpers/qr/helpers";
-import {dynamicQr} from "./qrtypes";
+import { qrNameDisplayer } from "../../helpers/qr/helpers";
+import { dynamicQr, dynamicQrTypes } from "./qrtypes";
+import { renderQrIcon } from "./components/commons/helpers";
+import { IQrSetting, TEventPayload } from "./components/commons/types";
+import valuesHanlder from "./helperFunction";
+import Common from "./helperComponents/Common";
 
 const CardDataStatic = dynamic(() => import("./renderers/custom/CardDataStatic"));
 const Custom = dynamic(() => import("./renderers/Custom"));
@@ -26,7 +29,6 @@ const SendMeMoneyData = dynamic(() => import('./renderers/SendMeMoneyData'));
 const FundMe = dynamic(() => import('./renderers/FundMeData'));
 const PleaseWait = dynamic(() => import('../PleaseWait'));
 const RenderNoUserWarning = dynamic(() => import('./helperComponents/smallpieces/RenderNoUserWarning'));
-const DonationsData = dynamic(() => import('./renderers/DonationsData'));
 
 type QrContentHandlerProps = {
   data: DataType;
@@ -39,71 +41,11 @@ type QrContentHandlerProps = {
 
 const QrContentHandler = () => { // @ts-ignore
   const { data, setData, selected, setIsWrong, userInfo, options }: QrContentHandlerProps = useContext(Context);
+  // @ts-ignore
+  const qrType: IQrSetting = dynamicQrTypes[selected] || { id: selected };
 
-  const handleValues = (item: string, index?: number) => (payload: ChangeEvent<HTMLInputElement> | string | boolean | string[]) => {
-    const value = Array.isArray(payload) || typeof payload === 'string' || typeof payload === 'boolean' ? payload :
-      (item === 'includeExtraInfo' ? payload.target.checked : payload.target.value);
-    setData((prev: DataType) => {
-      const newData = {...prev};
-      if (index !== undefined && index !== -1) { // @ts-ignore
-        const element = newData.custom[index];
-        if (!element.data) { element.data = {}; }
-        const elementData = element.data as Type;
-        if (item === 'tags') {
-          if (Array.isArray(payload)) {
-            if (payload.length) {
-              elementData.tags = payload;
-            } else if (elementData.tags !== undefined) {
-              delete elementData.tags;
-            }
-          } else if (typeof payload === 'string') {
-            elementData.tags?.push(payload);
-          }
-        } else if (['hideHeadLine', 'centerHeadLine'].includes(item)) { // @ts-ignore
-          if (elementData[item] !== undefined && payload === false) { // @ts-ignore
-            delete elementData[item];
-          } else { // @ts-ignore
-            element.data[item] = true;
-            if (item === 'hideHeadLine' && elementData.centerHeadLine !== undefined) { delete elementData.centerHeadLine; }
-          }
-        } else if (item === 'easiness') {
-          if (!elementData.easiness) { elementData.easiness = {}; } // @ts-ignore
-          if (!elementData.easiness[payload]) { // @ts-ignore
-            elementData.easiness[payload] = true;
-          } else { // @ts-ignore
-            delete elementData.easiness[payload];
-            if (!Object.keys(elementData.easiness).length) { delete elementData.easiness; }
-          }
-        } else if ((typeof value === "string" && value.length) || payload) {
-          if (item === 'includeExtraInfo' && !value && elementData.includeExtraInfo !== undefined) {
-            delete elementData.includeExtraInfo;
-          } else {
-            if (typeof value === "string" && !value.trim().length) { // @ts-ignore
-              delete elementData[item];
-            } else { // @ts-ignore
-              elementData[item] = value;
-            }
-          } // @ts-ignore
-        } else if (elementData[item]) { // @ts-ignore
-          delete elementData[item];
-        }
-      } else {
-        if (item === 'easiness') {
-          if (!newData.easiness) { newData.easiness = {}; } // @ts-ignore
-          if (!newData.easiness[payload]) { // @ts-ignore
-            newData.easiness[payload] = true;
-          } else { // @ts-ignore
-            delete newData.easiness[payload];
-            if (!Object.keys(newData.easiness).length) { delete newData.easiness; }
-          }
-        } else if ((typeof value === "string" && value.length) || payload) { // @ts-ignore
-          newData[item] = value;// @ts-ignore
-        } else if (data[item]) { // @ts-ignore
-          delete newData[item];
-        }
-      }
-      return newData;
-    });
+  const handleValues = (item: string, index?: number) => (payload: TEventPayload) => {
+    valuesHanlder(setData, item, payload, index);
   };
 
   const handlePayload = (payload: DataType | SocialProps) => {
@@ -112,6 +54,13 @@ const QrContentHandler = () => { // @ts-ignore
 
   const renderSel = () => {
     if (!selected) { return null; }
+
+    if (qrType?.renderForm) return (
+      <Common msg={qrType.tip}>
+        {qrType.renderForm({data, handleValues})}
+      </Common>
+    )
+
     switch (selected) {
       case 'web': {
         return <SingleData
@@ -149,9 +98,6 @@ const QrContentHandler = () => { // @ts-ignore
       case 'twitter': {
         return <TwitterData data={data} setData={handlePayload} setIsWrong={setIsWrong} />;
       }
-      case 'donation': {
-        return <DonationsData data={data} handleValues={handleValues} setData={(payload: DataType) => setData(payload)} setIsWrong={setIsWrong} />
-      }
       case 'paylink': {
         return <SendMeMoneyData data={data} setData={handlePayload} handleValues={handleValues} setIsWrong={setIsWrong} />
       }
@@ -169,8 +115,8 @@ const QrContentHandler = () => { // @ts-ignore
         };
 
         return (
-          <Custom data={data} setData={setData} handleValues={handleValues} setIsWrong={setIsWrong} selected={selected}
-                  tip={item.tip} predefined={handlePredefined()} />
+          <Custom data={data} setData={setData} handleValues={handleValues} selected={selected} tip={item.tip}
+                  predefined={handlePredefined()} />
         );
       }
     }
@@ -180,9 +126,10 @@ const QrContentHandler = () => { // @ts-ignore
     <>
       {selected ? (
         <>
-          {!Boolean(userInfo) && <Box sx={{ mb: '10px' }}><RenderNoUserWarning /></Box>}
-          {/*<SlideQrTypeSelector />*/}
-          <Box sx={{ display: 'inline' }}><RenderIcon icon={selected} enabled adjust /></Box>
+          {!Boolean(userInfo) && data.mode !== 'secret' && <Box sx={{ mb: '10px' }}><RenderNoUserWarning /></Box>}
+          <Box sx={{ display: 'inline' }}>
+            {renderQrIcon(qrType, { enabled: true, sx: { mb: '-5px' } })}
+          </Box>
           <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{qrNameDisplayer(selected || '', data?.isDynamic || false)}</Typography>
           <Typography sx={{ display: { xs: 'none', sm: 'inline' } }}>{`: Enter the content${data?.isDynamic ? ' and page design' : ''}`}</Typography>
           <NotifyDynamic isDynamic={data?.isDynamic || false} />

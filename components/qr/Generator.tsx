@@ -87,7 +87,7 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
   const command = (): void => {
     if (mustReload.current) {
       mustReload.current = false;
-      setUpdating(true);
+      // setUpdating(true);                         <-------- this line makes the component to repaint if logos
     }
   };
 
@@ -302,7 +302,7 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
       {error && <Notifications open message={error} onClose={() => setError(null)}/>}
       {background.type === 'image' && <input ref={fileInput} type="file" accept="image/*" style={{display: 'none'}} onChange={onLoadFile}/>}
       <Box sx={{border: '1px solid rgba(0, 0, 0, .125)', borderRadius: '5px', p: 1, width: '100%'}}>
-        {!Boolean(userInfo) && forceOverride === undefined && <RenderNoUserWarning/>}
+        {!Boolean(userInfo) && forceOverride === undefined && data.mode !== 'secret' && <RenderNoUserWarning/>}
         <Box sx={{display: 'flex', width: '100%', position: 'relative'}}>
           <BrushIcon sx={{fontSize: '53px', mt: '2px', color: theme => theme.palette.primary.dark}}/>
           <Box sx={{textAlign: 'left', display: 'block'}}>
@@ -364,16 +364,10 @@ const Generator = ({forceOverride}: GenProps) => { // @ts-ignore
         </RenderPreviewDrawer>
       )}
       {Boolean(anchor) && (
-        <RenderDownload
-          frame={frame}
-          qrImageData={qrImageData.current}
-          anchor={anchor}
-          setAnchor={setAnchor}/>
+        <RenderDownload frame={frame} qrImageData={qrImageData.current} anchor={anchor} setAnchor={setAnchor}/>
       )}
       {generatePdf && (
-        <PDFGenDlg
-          data={qrImageData.current}
-          handleClose={() => setGeneratePdf(false)}
+        <PDFGenDlg data={qrImageData.current} handleClose={() => setGeneratePdf(false)}
           isFramed={frame?.type && frame.type !== '/frame/frame0.svg' || false}/>
       )}
     </>
