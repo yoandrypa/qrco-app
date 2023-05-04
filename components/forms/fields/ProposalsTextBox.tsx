@@ -6,7 +6,6 @@ import InputAdornment from "@mui/material/InputAdornment";
 import ReqAdornment from "../helpers/RequiredAdornment";
 
 import { checkValidity, FormatType } from "../helpers/validations";
-import { parseFormFieldSx, parseFormFieldInputSx } from "../helpers/styles";
 import { useTheme } from "@mui/system";
 
 interface PropsType {
@@ -59,7 +58,7 @@ export default function ProposalsTextBox(props: PropsType) {
           {...staticProps}
           {...params}
           required={required}
-          sx={parseFormFieldSx(sx, theme)}
+          sx={sx}
           fullWidth
           size="small"
           margin="dense"
@@ -69,7 +68,6 @@ export default function ProposalsTextBox(props: PropsType) {
             ...params.InputProps,
             startAdornment: sAdornment && <InputAdornment position="start">{sAdornment}</InputAdornment>,
             endAdornment: required && rAdornment && <ReqAdornment value={value}>{rAdornment}</ReqAdornment>,
-            sx: parseFormFieldInputSx(sx, theme),
           }}
         />
       )}
