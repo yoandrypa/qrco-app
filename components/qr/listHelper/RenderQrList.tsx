@@ -80,7 +80,7 @@ function RenderQrList({title, qrs, handleEdit, handlePauseQrLink, openDetails, s
                         {renderQr(qr)}
                       </Box>
                       <Stack direction="column" sx={{ my: "auto" }}>
-                        <Typography variant="subtitle2" sx={{ color: MAIN_ORANGE, mb: "-7px", display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="subtitle2" color="primary" sx={{mb: '-7px', display: 'flex', alignItems: 'center'}}>
                           {qrNameDisplayer(qr.qrType, qr.isDynamic)}
                           {qr.isMonetized && <AttachMoneyIcon sx={{width: 18, height: 18, ml: '2px'}} color="error" />}
                         </Typography>

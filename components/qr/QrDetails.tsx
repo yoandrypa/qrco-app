@@ -82,8 +82,8 @@ const QrDetails = ({ visitData, qrData, goBack }: any) => {
           >
             <Tab icon={<DescriptionOutlinedIcon fontSize="small"/>} iconPosition="start"
                  label="Details" sx={{ mt: "-10px", mb: "-15px" }}/>
-            <Tab icon={<QueryStatsIcon fontSize="small"/>} iconPosition="start"
-                 label="Stats" sx={{ mt: "-10px", mb: "-15px" }}/>
+            {qrData.isDynamic && (<Tab icon={<QueryStatsIcon fontSize="small"/>} iconPosition="start"
+                  label="Stats" sx={{mt: "-10px", mb: "-15px"}}/>)}
           </Tabs>
           {goBack && (
             <Tooltip title="Go back">
