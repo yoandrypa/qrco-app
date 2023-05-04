@@ -32,18 +32,17 @@ const VisitDetailsSections = ({ visitData, visitCount }: VisitDetailsProps) => {
       <ListItem>
         <ListItemAvatar><LaptopIcon sx={getSx(theme)} /></ListItemAvatar>
         <ListItemText primary="Technology"
-          secondary="What apps have accessed the QRLynk URL, either by scanning the QR code or by visiting the link directly?" />
+          secondary="Devices, operating systems, and browsers that had accessed your QRLynk" />
       </ListItem>
       <ListItem>
-        <VisitTechnologyDetails visitData={ visitData || {} } />
+        <VisitTechnologyDetails visitData={ visitData || {} } total={visitCount} />
       </ListItem>
       <ListItem>
         <ListItemAvatar><MapIcon sx={getSx(theme)}/></ListItemAvatar>
-        <ListItemText primary="Locations"
-          secondary="What countries and cities are your visitors from?" />
+        <ListItemText primary="Locations" secondary="Your QRLynk has been accessed from these countries and cities" />
       </ListItem>
       <ListItem>
-        <VisitLocationDetails visitData={ visitData || {} } />
+        <VisitLocationDetails visitData={ visitData || {} } total={visitCount} />
       </ListItem>
     </List>
   );

@@ -8,24 +8,34 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import LinearProgress from "@mui/material/LinearProgress";
 
-const createData = (name: string, visits: number, total: number) => (
-  { name, visits, percent: Math.round((visits * 100 / total) * 10) / 10 }
-);
+const createData = (name: string, visits: number) => ({ name, visits });
 
 const regionNames = new Intl.DisplayNames(['en'], {type: 'region'});
 
-export default function VisitTechnologyDetails({ visitData }: any) {
-  let countriesRows: { name: string, visits: number, percent: number }[] = [];
-  // @ts-ignore
-  Object.keys(visitData.countries || {}).forEach(country => countriesRows.push(
-    createData(country, visitData.countries[country], visitData.total)
-  ));
+const updater = (list: any, value: number): void => {
+  const other = list.find((x: {name: string}) => x.name === 'undefined');
+  if (other !== undefined) {
+    other.visits += value;
+  } else {
+    list.push(createData('undefined', value));
+  }
+}
 
-  let citiesRows: { name: string, visits: number, percent: number }[] = [];
+interface Row { name: string, visits: number }
+
+export default function VisitTechnologyDetails({ visitData, total }: any) {
+  const countriesRows: Row[] = [];
   // @ts-ignore
-  Object.keys(visitData.cities || {}).forEach((city) => citiesRows.push(
-    createData(city, visitData.cities[city], visitData.total)
-  ));
+  Object.keys(visitData.countries || {}).forEach(country => countriesRows.push(createData(country, visitData.countries[country])));
+
+  const countryTotal = countriesRows.reduce((acum, x) => acum + x.visits, 0);
+  if (countryTotal < total) { updater(countriesRows, total - countryTotal); }
+
+  const citiesRows: Row[] = [];
+  // @ts-ignore
+  Object.keys(visitData.cities || {}).forEach((city) => citiesRows.push(createData(city, visitData.cities[city])));
+  const cityTotal = citiesRows.reduce((acum, x) => acum + x.visits, 0);
+  if (cityTotal < total) { updater(citiesRows, total - cityTotal); }
 
   return (
     <Stack direction="column" spacing={2} width={"100%"}>
@@ -40,21 +50,21 @@ export default function VisitTechnologyDetails({ visitData }: any) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {countriesRows.map((row, index) => (
-              <TableRow
-                key={index}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">{regionNames.of(row.name)}</TableCell>
-                <TableCell align="right" sx={{ width: 400 }}>
-                  <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-around">
-                    <LinearProgress variant="determinate" value={row.percent} sx={{width: "90%"}}/>
-                    <>{row.visits}</>
-                  </Stack>
-                </TableCell>
-                <TableCell align="right">{row.percent}</TableCell>
-              </TableRow>
-            ))}
+            {countriesRows.map((row, index) => {
+              const percent = Math.round((row.visits * 100 / total) * 100) / 100;
+              return (
+                <TableRow key={index} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                  <TableCell component="th" scope="row">{Object.keys(regionNames || {}).length > 0 ? regionNames.of(row.name) : 'Unknown'}</TableCell>
+                  <TableCell align="right" sx={{ width: 400 }}>
+                    <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-around">
+                      <LinearProgress variant="determinate" value={percent} sx={{width: "90%"}}/>
+                      <>{row.visits}</>
+                    </Stack>
+                  </TableCell>
+                  <TableCell align="right">{percent}</TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
@@ -69,18 +79,21 @@ export default function VisitTechnologyDetails({ visitData }: any) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {citiesRows.map((row, index) => (
-              <TableRow key={index} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                <TableCell component="th" scope="row">{row.name}</TableCell>
-                <TableCell align="right" sx={{ width: 400 }}>
-                  <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-around">
-                    <LinearProgress variant="determinate" value={row.percent} sx={{width: "90%"}}/>
-                    <>{row.visits}</>
-                  </Stack>
-                </TableCell>
-                <TableCell align="right">{row.percent}</TableCell>
-              </TableRow>
-            ))}
+            {citiesRows.map((row, index) => {
+              const percent = Math.round((row.visits * 100 / total) * 100) / 100;
+              return (
+                <TableRow key={index} sx={{"&:last-child td, &:last-child th": {border: 0}}}>
+                  <TableCell component="th" scope="row">{!row.name || row.name === 'undefined' ? 'Unknown' : row.name}</TableCell>
+                  <TableCell align="right" sx={{width: 400}}>
+                    <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-around">
+                      <LinearProgress variant="determinate" value={percent} sx={{width: "90%"}}/>
+                      <>{row.visits}</>
+                    </Stack>
+                  </TableCell>
+                  <TableCell align="right">{percent}</TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
