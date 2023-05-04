@@ -9,7 +9,6 @@ import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 
 import { checkValidity } from "../helpers/validations";
-import { parseFormSelectFieldSx } from "../helpers/styles";
 import { useTheme } from "@mui/system";
 
 import EbxIcon, { iconIds, iconName } from "../../icons"
@@ -66,7 +65,7 @@ export default function SelectIconBox(props: RenderTextFieldsProps) {
   );
 
   return (
-    <FormControl sx={parseFormSelectFieldSx(sx, theme)} fullWidth>
+    <FormControl sx={{ mt: 1, mb: 0.5, ...sx }} fullWidth>
       <InputLabel>{label}</InputLabel>
       <Select
         {...staticProps}
@@ -75,6 +74,7 @@ export default function SelectIconBox(props: RenderTextFieldsProps) {
         error={!valid}
         renderValue={renderValue}
         onChange={onBaseChange}
+        inputProps={{ sx: { py: 1.0625 } }}
       >
         {iconIds().map(renderItem)}
       </Select>

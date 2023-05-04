@@ -5,7 +5,6 @@ import InputAdornment from "@mui/material/InputAdornment";
 import ReqAdornment from "../helpers/RequiredAdornment";
 
 import { checkValidity, FormatType } from "../helpers/validations";
-import { parseFormFieldSx, parseFormFieldInputSx } from "../helpers/styles";
 import { useTheme } from "@mui/system";
 
 interface RenderTextFieldsProps {
@@ -50,7 +49,7 @@ export default function TextBox(props: RenderTextFieldsProps) {
     <TextField
       {...staticProps}
       required={required}
-      sx={parseFormFieldSx(sx, theme)}
+      sx={sx}
       value={value}
       error={!valid}
       multiline={multiline || (staticProps.rows && staticProps.rows > 1) || false}
@@ -62,7 +61,6 @@ export default function TextBox(props: RenderTextFieldsProps) {
       InputProps={{
         startAdornment: sAdornment && <InputAdornment position="start">{sAdornment}</InputAdornment>,
         endAdornment: required && rAdornment && <ReqAdornment value={value}>{rAdornment}</ReqAdornment>,
-        sx: parseFormFieldInputSx(sx, theme),
       }}
     />
   );
