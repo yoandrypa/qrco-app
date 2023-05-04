@@ -54,6 +54,7 @@ export default function AdminMenu() {
         <Divider />
         <MItem module='dashboard' title='Dashboard' Icon={DashboardIcon} />
         <MItem module='checkouts' title='Checkouts' Icon={CheckoutIcon} />
+        <Divider />
         <MItem module='my-account' title='My Account' Icon={AccountIcon} />
       </Menu>
     </Fragment>
