@@ -38,7 +38,7 @@ export default function VisitTechnologyDetails({ visitData, total }: any) {
   if (visitData.os_ios > 0) { osRows.push(createData("iOS", visitData.os_ios)); }
   if (visitData.os_linux > 0) { osRows.push(createData("Linux", visitData.os_linux)); }
   if (visitData.os_macos > 0) { osRows.push(createData("MacOS", visitData.os_macos)); }
-  if (visitData.os_macos > 0) { osRows.push(createData("Windows", visitData.os_windows)); }
+  if (visitData.os_windows > 0) { osRows.push(createData("Windows", visitData.os_windows)); }
   if (visitData.os_chromeos > 0) { osRows.push(createData("Chrome OS", visitData.os_chromeos)); }
   if (visitData.os_tizen > 0) { osRows.push(createData("Tizen", visitData.os_tizen)); }
   if (visitData.os_other > 0) { osRows.push(createData("Other", visitData.os_other)); }
