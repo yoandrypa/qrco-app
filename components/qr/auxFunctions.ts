@@ -4,7 +4,7 @@ import {
   CornersAndDotsType, CustomType,
   DataType,
   EditType,
-  FramesType,
+  FramesType, LinkType,
   OptionsType
 } from "./types/types";
 import { areEquals } from "../helpers/generalFunctions";
@@ -22,7 +22,8 @@ import { renderToString } from "react-dom/server";
 import { getOptionsForPreview } from "../../helpers/qr/auxFunctions";
 import { generateSVGObj, handleQrData } from "./QrGenerator";
 import { getQrType, getQrSectionType } from "./qrtypes";
-import { setError } from "../../components/Notification";
+import { setError } from "../Notification";
+import {QrDataModel} from "../../models";
 
 interface UserInfoProps {
   attributes: { sub: string, email: string },
@@ -169,7 +170,8 @@ export const getFileFromQr = (data: DataType, options: OptionsType, background: 
  */
 export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps, options: OptionsType, frame: FramesType,
                                    background: BackgroundType, cornersData: CornersAndDotsType, dotsData: CornersAndDotsType,
-                                   selected: string, setIsError: (isError: boolean) => void, success: (creationData?: string) => void,
+                                   selected: string, setIsError: (isError: boolean) => void,
+                                   success: (creationData?: string, qrForSharing?: any) => void,
                                    router?: any, lastStep?: (go: boolean) => void, dataInfo?: number,
                                    updatingHandler?: (value: string | null, status?: boolean) => void) => {
 
@@ -239,10 +241,53 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     // Set isMonetized in false to recalculate it new value.
     data.isMonetized = false;
 
+    let qrInf = undefined;
+    if (data.mode === 'edit') {
+      prevUpdatingHandler('Reading data');
+      try {
+        qrInf = await QrDataModel.get({userId, createdAt: typeof data.createdAt === 'number' ? data.createdAt : data.createdAt.getTime()});
+        prevUpdatingHandler(null, true);
+      } catch (e) {
+        prevUpdatingHandler(null, false);
+        setIsError(true);
+      }
+    }
+
+    if (qrInf) {
+      const filesToRemove: {Key: string}[] = [];
+      prevUpdatingHandler('Processing assets');
+      qrInf.custom.forEach((cust: CustomType) => {
+        cust.data?.links?.forEach((link: LinkType) => { // @ts-ignore
+          if (link?.icon?.[0]?.Key && !data.custom.some((c: CustomType) => c.data?.showIcons && c.data?.links?.some((l: LinkType) => l?.icon?.[0]?.Key === link.icon[0].Key))) { // @ts-ignore
+            // @ts-ignore
+            filesToRemove.push({Key: link.icon[0].Key});
+          }
+        })
+        cust.data?.files?.forEach(file => { // @ts-ignore
+          if (file?.[0]?.Key && !data.custom.some((c: CustomType) => c.data?.files?.some(f => f[0]?.Key === file[0].Key))) {
+            // @ts-ignore
+            filesToRemove.push({Key: file[0].Key});
+          }
+        })
+      });
+
+      if (filesToRemove.length === 0) {
+        prevUpdatingHandler(null, true);
+      } else {
+        try {
+          await remove(filesToRemove);
+          prevUpdatingHandler(null, true);
+        } catch {
+          prevUpdatingHandler(null, false);
+        }
+      }
+    }
+
     for (let idx = 0, len = data.custom?.length || 0; idx < len; idx += 1) {
       const section = data.custom[idx];
 
-      if (clearExpand && section.expand !== undefined) delete section.expand;
+      if (section.data?.iconName !== undefined) { delete section.data.iconName; }
+      if (clearExpand && section.expand !== undefined) { delete section.expand; }
 
       if (!qrType?.beforeSave) {
         const qrSecType = getQrSectionType(section.component);
@@ -254,6 +299,31 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
           } catch (error) {
             setIsError(true);
             prevUpdatingHandler(null, false);
+          }
+        }
+      }
+
+      if (section.data?.links) {
+        let someFailed = false;
+
+        if (section.data.links.some((x: LinkType) => x.icon instanceof File)) {
+          prevUpdatingHandler('Uploading icons for buttons');
+          for (let i = 0, l = section.data.links.length; i < l; i += 1) {
+            const x = section.data.links[i];
+            if (x.icon instanceof File) {
+              try { // @ts-ignore
+                x.icon = await upload([x.icon], `${userId}/${selected}s/design`);
+              } catch {
+                someFailed = true;
+              }
+            }
+          }
+
+          if (!someFailed) {
+            prevUpdatingHandler(null, true);
+          } else {
+            prevUpdatingHandler(null, false);
+            setIsError(true);
           }
         }
       }
@@ -407,8 +477,10 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     if (!['edit', 'secret'].includes(data.mode)) {
       if (qrData.frame !== undefined && !frame.type) { delete qrData.frame; }
       if (dataLength) { prevUpdatingHandler("Saving QR Code data"); }
+
       const response = await create({ shortLink, qrDesign, qrData });
-      if (success && response?.creationDate) success(response.creationDate);
+
+      if (success && response) { success(response.creationDate, response.qrForSharing); }
     } else {
       edition = true;
 

@@ -1,4 +1,4 @@
-import {MouseEvent, useState} from "react";
+import {MouseEvent, useEffect, useRef, useState} from "react";
 
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Typography from "@mui/material/Typography";
@@ -34,12 +34,14 @@ const Menu = dynamic(() => import("@mui/material/Menu"));
 const MenuItem = dynamic(() => import("@mui/material/MenuItem"));
 const Divider = dynamic(() => import("@mui/material/Divider"));
 
-export default function RenderSecretHandler({secret, disabled, errors, openValidationErrors, handleValue, secretOps}: SecretHandlerProps) {
+export default function RenderSecretHandler({secret, disabled, errors, openValidationErrors, handleValue, secretOps, handleSave}: SecretHandlerProps) {
   const [handleSecret, setHandleSecret] = useState<boolean>(secret !== undefined);
   const [copied, setCopied] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [anchorHelp, setAnchorHelp] = useState<undefined | HTMLButtonElement>(undefined);
   const [anchorOpts, setAnchorOpts] = useState<undefined | HTMLElement>(undefined);
+
+  const doneFirstLoad = useRef<boolean>(false);
 
   const generateSecretId = async () => {
     setLoading(true);
@@ -79,6 +81,18 @@ export default function RenderSecretHandler({secret, disabled, errors, openValid
   const handleOpenOpts = (event: MouseEvent<HTMLElement>) => {
     setAnchorOpts(event.currentTarget);
   };
+
+  useEffect(() => {
+    if (doneFirstLoad.current) { handleSave(); }
+  }, [secretOps]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (doneFirstLoad.current) {
+      handleSave();
+    } else {
+      doneFirstLoad.current = true;
+    }
+  }, [secret]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>

@@ -23,9 +23,10 @@ interface ImageCropperProps {
   file: File;
   message: string;
   kind: string;
+  shortMessage?: boolean;
 }
 
-export default function ImageCropper({handleAccept, handleClose, file, kind, message}: ImageCropperProps) {
+export default function ImageCropper({handleAccept, handleClose, file, kind, message, shortMessage}: ImageCropperProps) {
   const [drag, setDrag] = useState<boolean>(false);
   const [zoom, setZoom] = useState<{max: number, min: number, selected: number}>({max: 100, min: 50, selected: 100});
   const [alphaWarning, setAlphaWarning] = useState<boolean>(false);
@@ -268,7 +269,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind, mes
         <Box sx={{ p: '1px' }}>
           <Box sx={{ display: 'flex', mb: '10px' }}>
             <PhotoSizeSelectLargeIcon sx={{ color: theme => theme.palette.info.dark, mr: '5px' }} />
-            <Typography sx={{ fontWeight: 'bold' }}>{`Adjust the ${message} image for the microsite`}</Typography>
+            <Typography sx={{ fontWeight: 'bold' }}>{`Adjust the ${message} image${!shortMessage ? ' for the page' : ''}`}</Typography>
           </Box>
           <Box sx={{ width: '100%', textAlign: 'center' }}>
             <canvas
@@ -292,10 +293,10 @@ export default function ImageCropper({handleAccept, handleClose, file, kind, mes
           <Slider aria-label="Zoom" max={zoom.max} min={zoom.min} value={zoom.selected} onChange={handleChange} />
           <ZoomInIcon fontSize="large" color="primary" />
         </Stack>
-        <Box sx={{ mt: 1, display: 'flex', color: theme => theme.palette.text.disabled, width: '100%', justifyContent: 'center' }}>
-          <Typography sx={{ fontSize: 'small', fontWeight: 'bold', mr: '5px' }}>{'Note:'}</Typography>
-          <Typography sx={{ fontSize: 'small'}}>{'Image might have a tiny difference on microsite.'}</Typography>
-        </Box>
+        {!shortMessage && (<Box sx={{mt: 1, display: 'flex', color: theme => theme.palette.text.disabled, width: '100%', justifyContent: 'center'}}>
+          <Typography sx={{fontSize: 'small', fontWeight: 'bold', mr: '5px'}}>{'Note:'}</Typography>
+          <Typography sx={{fontSize: 'small'}}>{'Image might have a tiny difference on microsite.'}</Typography>
+        </Box>)}
       </DialogContent>
       <DialogActions sx={{p: 2}}>
         <Button startIcon={<CropIcon />} variant="outlined" onClick={beforeSend}>{'Done'}</Button>

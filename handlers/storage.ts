@@ -13,15 +13,9 @@ export const upload = async (assets: File[], customPath = "") => {
         } else {
           res = await Storage.multipartUpload(asset, customPath + "/" + asset.name);
         }
-        files.push({
-          // @ts-ignore
-          Key: res.Key,
-          // @ts-ignore
-          ContentLength: res.ContentLength,
-          // @ts-ignore
-          ContentType: res.ContentType,
-          name: asset.name
-        });
+
+        // @ts-ignore
+        files.push({Key: res.Key, ContentLength: res.ContentLength, ContentType: res.ContentType, name: asset.name});
       } else {
         files.push(asset);
       }
@@ -49,8 +43,7 @@ export const download = async (key: string) => {
         start(controller) {
           return pump();
 
-          function pump() {
-            // @ts-ignore
+          function pump() { // @ts-ignore
             return reader.read().then(({ done, value }) => {
               // When no more data needs to be consumed, close the stream
               if (done) {
@@ -78,11 +71,7 @@ export const download = async (key: string) => {
 
 export const remove = async (keys: { Key: string }[]) => {
   try {
-    return await Storage.remove(keys.map(key => {
-      return {
-        Key: key.Key
-      };
-    }));
+    return await Storage.remove(keys.map(key => ({Key: key.Key})));
   } catch (e) {
     throw e;
   }

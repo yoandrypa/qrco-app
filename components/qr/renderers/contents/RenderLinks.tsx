@@ -20,18 +20,10 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import FormControl from "@mui/material/FormControl";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import renderText from "../helpers/textfieldHelpers/textHandler";
+import renderText, {getOptions} from "../helpers/textfieldHelpers/textHandler";
 import {EMAIL, PHONE} from "../../constants";
 
-const getOptions = (item?: string) => {
-  if (item !== undefined) {
-    if (item === 'call') { return ['Call now', 'Call me', 'Give me a call', 'Phone call']; }
-    if (item === 'whatsapp') { return ['Whatsapp', 'Whatsapp me', 'Hit my whatsapp', 'Whatsapp call', 'Send me a whatsapp call']; }
-    if (item === 'email') { return ['Email', 'Email me', 'Write me an email', 'Send me an email']; }
-    if (item === 'sms') { return ['SMS', 'Text me', 'Send me an SMS', 'Send me a text']; }
-  }
-  return ['My website', 'My youtube channel', 'My blog', 'My portfolio', 'My podcast', 'My store'];
-}
+interface Payload { payload: ChangeEvent<HTMLInputElement> | string | {type: string} | File }
 
 export default function RenderLinks({data, setData, index, isButtons}: RenderLinksBtnsProps) {
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
@@ -70,13 +62,19 @@ export default function RenderLinks({data, setData, index, isButtons}: RenderLin
     });
   }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleChangeValue = useCallback((item: string, idx: number) => (payload: ChangeEvent<HTMLInputElement> | string | {type: string}) => { // @ts-ignore
+  const handleChangeValue = useCallback((item: string, idx: number) => (payload: Payload) => { // @ts-ignore
     const value = payload.target?.value !== undefined ? payload.target.value : payload;
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
       const element = newData.custom[index].data.links[idx] as any;
       if (typeof value === 'string') {
         element[item] = item === 'link' ? value.toLowerCase() : value;
+      } else if (value instanceof File) {
+        element.icon = payload; // @ts-ignore
+        newData.custom[index].data.iconName = payload.name; // this item is meant only to force the component to render, must be removed
+      } else if (value.type === 'clearIcon') {
+        delete element.icon; // @ts-ignore
+        if (newData.custom[index].data.iconName) { delete newData.custom[index].data.iconName; }
       } else {
         element.type = value.type;
         if (element.type === 'link') { delete element.type; }
@@ -100,6 +98,7 @@ export default function RenderLinks({data, setData, index, isButtons}: RenderLin
           newData.custom[index].data[item] = true;
         } else { // @ts-ignore
           delete newData.custom[index].data[item];
+          newData.custom?.[index]?.data?.links?.forEach(x => { delete x.icon; });
         }
       }
       return newData;
@@ -115,20 +114,15 @@ export default function RenderLinks({data, setData, index, isButtons}: RenderLin
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const renderTableRow = (item: {label?: string, link: string, type?: string}, idx: number, length: number) => {
+  const renderTableRow = (item: LinkType, idx: number, length: number) => {
     const itemId = `item${idx}`;
 
     const removeItem = (adj?: boolean) => {
     const sx = {width: '40px', height: '40px'} as any;
-    if (adj) {
-      sx.mt = '8px';
-      sx.mr = '-7px';
-    }
+    if (adj) { sx.mt = '8px'; sx.mr = '-7px'; }
     return (
       <Tooltip title={`Remove ${isButtons ? 'button' : 'link'}`}>
-        <IconButton onClick={remove(idx)} sx={sx}>
-          <DeleteIcon color="error"/>
-        </IconButton>
+        <IconButton onClick={remove(idx)} sx={sx}><DeleteIcon color="error"/></IconButton>
       </Tooltip>
     )};
 
@@ -147,7 +141,7 @@ export default function RenderLinks({data, setData, index, isButtons}: RenderLin
       {(provided: any, snapshot: any) => (
         <TableRow
           sx={{p: 0, width: '100%'}}
-          key={`trow${idx}`}
+          key={`row${itemId}`}
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
@@ -174,12 +168,14 @@ export default function RenderLinks({data, setData, index, isButtons}: RenderLin
                 <RenderTextFields
                   required
                   type={item.type}
+                  icon={item.icon}
                   isButtons={isButtons}
                   index={index}
                   placeholder={renderText(item.type)}
                   value={item.link}
                   handleValues={handleChangeValue('link', idx)}
                   isError={isError}
+                  includeIcon={data?.showIcons || false}
                 />
                 {isWide && idx !== 0 && idx + 1 === length && removeItem(true)}
               </Box>

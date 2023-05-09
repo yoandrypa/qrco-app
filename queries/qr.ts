@@ -23,7 +23,12 @@ export const create = async (data: { shortLink: ObjectType; qrDesign: ObjectType
 
     const txResponse = await dynamoose.transaction(transactions);
 
-    return {...txResponse, creationDate};
+    const response = {...txResponse, creationDate};
+    if (data.qrData.qrForSharing) {
+      response.qrForSharing = data.qrData.qrForSharing;
+    }
+
+    return response;
   } catch (e) {
     throw e;
   }
@@ -167,13 +172,23 @@ export const remove = async (key: { userId: string, createdAt: number }) => {
     transactions.push(QrDataModel.transaction.delete({ userId: qr.userId, createdAt }));
     const promises = [dynamoose.transaction(transactions)];
 
+    const btnIconsToRemove = [] as {Key: string;}[];
+
     for (let i = 0, l = qr.custom?.length || 0; i < l; i += 1) {
       const section = qr.custom[i];
+
+      section.data?.links?.forEach((x: { icon: {Key: string;}[]; }) => {
+        if (x.icon?.[0]?.Key !== undefined) { btnIconsToRemove.push({Key: x.icon[0].Key}); }
+      });
+
       if (["video", "gallery", "pdf", "audio"].includes(section.component) && section.data?.files?.length) {
         promises.push(StorageHandler.remove(section.data.files));
       }
     }
 
+    if (btnIconsToRemove.length > 0) {
+      promises.push(StorageHandler.remove(btnIconsToRemove));
+    }
     if (["video", "gallery", "pdf", "audio"].includes(qr.qrType) && qr.files?.length) {
       promises.push(StorageHandler.remove(qr.files));
     }

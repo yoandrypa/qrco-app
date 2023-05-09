@@ -49,9 +49,7 @@ interface AppWrapperProps {
   setRedirecting?: (redirecting: boolean) => void;
 }
 
-export default function AppWrapper(
-  { children, userInfo, handleLogout, clearData, mode, setRedirecting }
-    : AppWrapperProps) {
+export default function AppWrapper({children, userInfo, handleLogout, clearData, mode, setRedirecting}: AppWrapperProps) {
 
   // const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
   const [pendingTask, setPendingTask] = useState<number>(1);
