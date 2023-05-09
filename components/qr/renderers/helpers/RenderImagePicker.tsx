@@ -11,12 +11,14 @@ import PhotoIcon from '@mui/icons-material/Photo';
 import FileUpload from "react-material-file-upload";
 import {ALLOWED_FILE_EXTENSIONS} from "../../../../consts";
 import Notifications from "../../../notifications/Notifications";
+import {formatBytes} from "../../../../utils";
 
 interface RenderImageProps {
   handleClose: () => void;
   handleAcept: (file: File, kind: string) => void;
   title: string;
   kind: string;
+  size?: number;
   wasError?: boolean;
 }
 
@@ -26,15 +28,15 @@ interface ErrorProps {
   warning?: boolean;
 }
 
-export default function RenderImagePicker({title, kind, handleClose, handleAcept, wasError}: RenderImageProps) {
+export default function RenderImagePicker({title, kind, handleClose, handleAcept, wasError, size}: RenderImageProps) {
   const [error, setError] = useState<ErrorProps | null>(null);
 
   const handleLoadedImage = async (f: File[]) => {
     if (f.length) {
-      if (f[0].size <= 10000000) {
-         handleAcept(f[0], kind);
+      if (f[0].size <= (size || 10000000)) {
+        handleAcept(f[0], kind);
       } else {
-        setError({msg: 'The selected file is larger than 10 megabytes.', title: 'Too heavy'});
+        setError({msg: `The selected file is larger than ${formatBytes(size || 10000000)}.`, title: 'Too heavy'});
       }
     }
   }

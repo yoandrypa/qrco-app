@@ -60,12 +60,10 @@ export default function QrList({ title }: any) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDelete = async () => {
+    setConfirm(null);
     startWaiting(); // @ts-ignore
     const deleted = await remove(confirm);
-    if (deleted) {
-      setConfirm(null);
-      loadItems();
-    }
+    if (deleted) { loadItems(); }
     releaseWaiting();
   };
 

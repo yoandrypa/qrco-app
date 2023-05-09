@@ -61,6 +61,7 @@ const RenderIframe = ({ src, width, height, data, selected, backImg, mainImg, ba
           previewData.backgndImg = !isInEdition || proceed(backImg, previewData.backgndImg) ?
             await getImageData(previewData.backgndImg) : await getImageData(backImg);
         }
+
         if (previewData.foregndImg || mainImg) {
           previewData.foregndImg = !isInEdition || proceed(mainImg, previewData.foregndImg) ?
             await getImageData(previewData.foregndImg) : await getImageData(mainImg);
@@ -76,6 +77,17 @@ const RenderIframe = ({ src, width, height, data, selected, backImg, mainImg, ba
         if (previewData.custom) {
           for (let idx = 0, ll = previewData.custom.length; idx < ll; idx += 1) {
             const section = previewData.custom[idx];
+            if (section.data?.links && section.data?.showIcons) {
+              if (!previewData.isSample) {
+                for (let i = 0, l = section.data.links.length; i < l; i += 1) {
+                  let x = section.data.links[i].icon as File | string; // @ts-ignore
+                  if (x instanceof File) { // @ts-ignore
+                    section.data.links[i].icon = await convertBase64(x);
+                  }
+                }
+              }
+            }
+
             if (['pdf', 'gallery', 'audio', 'video'].includes(section.component) && section.data?.files) {
               let files: string[] = [];
               if (!previewData.isSample) {

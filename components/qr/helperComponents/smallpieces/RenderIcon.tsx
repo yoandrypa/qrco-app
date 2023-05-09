@@ -86,6 +86,7 @@ export default function RenderIcon({ icon, color, enabled, sx }: RenderIconProp)
     switch (icon) {
       case 'custom': { return <CustomizeIcon sx={sxStyling} />; }
       case 'copy': { return <ContentCopyIcon sx={sxStyling} />; }
+      case 'call':
       case 'companyPhone':
       case 'phone': { return <PhoneIcon sx={sxStyling} />; }
       case 'companyCell':

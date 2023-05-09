@@ -13,7 +13,7 @@ import RenderNameAndSecret from "./commonHelper/RenderNameAndSecret";
 import RenderQRCommons from "../renderers/RenderQRCommons";
 import { NO_MICROSITE, PROFILE_IMAGE } from "../constants";
 import { download } from "../../../handlers/storage";
-import { DataType } from "../types/types";
+import {DataType, ProcessHanldlerType} from "../types/types";
 import { getOptionsForPreview, previewQRGenerator } from "../../../helpers/qr/auxFunctions";
 import { saveOrUpdate } from "../auxFunctions";
 import { blobUrlToFile, useCheckOnlyQr } from "../../../helpers/qr/helpers";
@@ -35,6 +35,7 @@ const RenderSamplePreview = dynamic(() => import("./smallpieces/RenderSamplePrev
 const RenderClaimingInfo = dynamic(() => import("./smallpieces/RenderClaimingInfo"));
 const LoadingMicrositeImages = dynamic(() => import("./looseComps/LoadingMicrositeImages"));
 const QueryStatsIcon = dynamic(() => import("@mui/icons-material/QueryStats"));
+const ProcessHandler = dynamic(() => import("../renderers/ProcessHandler"));
 
 interface CommonProps {
   msg: string; children: ReactNode;
@@ -52,12 +53,16 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   const [openPreview, setOpenPreview] = useState<boolean>(false);
   const [forceOpen, setForceOpen] = useState<string | undefined>(undefined);
   const [validationErrors, setValidationErrors] = useState<string[] | undefined>(undefined);
+  const [, setUnusedState] = useState();
 
   const lastAction = useRef<string | undefined>(undefined);
   const loadingCount = useRef<number>(0);
-  const firstLoad = useRef<boolean>(true);
+  const dataInfo = useRef<ProcessHanldlerType[]>([]);
 
   const isWideForPreview = useMediaQuery("(min-width:720px)", { noSsr: true });
+
+  // @ts-ignore
+  const forceUpdate = useCallback(() => setUnusedState({}), []);
 
   const handleSelectTab = (_: any, newValue: number) => {
     setTabSelected(newValue);
@@ -140,13 +145,19 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    if (error) {
+      dataInfo.current = [];
+      forceUpdate();
+      releaseWaiting();
+    }
+  }, [error]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     if (isWideForPreview && openPreview) { setOpenPreview(false); }
   }, [isWideForPreview]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (forceOpen && tabSelected === 0) {
-      setTabSelected(1);
-    }
+    if (forceOpen && tabSelected === 0) { setTabSelected(1); }
   }, [forceOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const renderChildren = () => (<>
@@ -165,38 +176,31 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
     } else {
       lastAction.current = 'saving the data';
       startWaiting();
-      await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setError, (creationDate?: string) => {
+      await saveOrUpdate(data, userInfo, options, frame, background, cornersData, dotsData, selected, setError,
+        (creationDate?: string, qrForSharing?: any) => {
         setData((prev: DataType) => {
           const newData = {...prev};
           if (newData.mode !== 'secret') { newData.mode = 'edit'; }
-          if (newData.claim !== undefined) {
-            delete newData.claim;
-          }
-          if (newData.preGenerated !== undefined) {
-            delete newData.preGenerated;
-          }
-          if (newData.claimable !== undefined) {
-            delete newData.claimable;
-          }
-          if (creationDate) { // @ts-ignore
-            newData.createdAt = creationDate;
-          }
+          if (newData.claim !== undefined) { delete newData.claim; }
+          if (newData.preGenerated !== undefined) { delete newData.preGenerated; }
+          if (newData.claimable !== undefined) { delete newData.claimable; } // @ts-ignore
+          if (creationDate) { newData.createdAt = creationDate; }
+          if (qrForSharing) { newData.qrForSharing = qrForSharing; }
           return newData;
         });
+        dataInfo.current = [];
+        forceUpdate();
         releaseWaiting();
+      }, undefined, undefined, undefined, (value: string | null, status?: boolean) => {
+        if (value !== null) {
+          dataInfo.current.push({ value });
+        } else {
+          dataInfo.current[dataInfo.current.length - 1].status = status;
+        }
+        forceUpdate();
       });
     }
   };
-
-  useEffect(() => {
-    if (data?.isDynamic) {
-      if (!firstLoad.current) {
-        handleSave();
-      } else {
-        firstLoad.current = false;
-      }
-    }
-  }, [data?.secret, data?.secretOps]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isOnlyQr = useCheckOnlyQr(selected, data);
 
@@ -222,12 +226,13 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
           autoHideDuration={10500}
         />
       )}
+      {dataInfo.current.length ? <ProcessHandler process={dataInfo.current} handleCommand={() => {}}/> : null}
       {userInfo || data.mode === 'secret' ? (
         <Box sx={{ display: 'flex' }}>
           <Box sx={{ width: '100%' }}>
             <RenderNameAndSecret handleValue={handleValue} qrName={data?.qrName} secret={data?.secret} code={code}
                                  hideSecret={data.mode === 'secret' || !data?.isDynamic} errors={getValidationErrors()}
-                                 openValidationErrors={forceOpenValidator} secretOps={data?.secretOps} />
+                                 openValidationErrors={forceOpenValidator} secretOps={data?.secretOps} handleSave={handleSave} />
             {![...NO_MICROSITE, 'web'].includes(selected) && data?.isDynamic ? (
               <Box sx={{width: '100%', position: 'relative'}}>
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>

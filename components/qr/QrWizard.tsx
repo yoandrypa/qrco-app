@@ -183,7 +183,6 @@ const QrWizard = ({ children }: { children: ReactNode; }) => {
           })
         }, router, lastStep, dataInfo.current.length, updatingHandler);
       releaseWaiting();
-
     }
   };
 
