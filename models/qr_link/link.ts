@@ -1,7 +1,6 @@
 import Schema from '../commons/schema';
 
 import dynamoose from "../../libs/dynamoose";
-import { UserModel } from "../UserModel";
 import { DomainModel } from "../link/DomainModel";
 
 const schema = new Schema({
@@ -34,14 +33,14 @@ const schema = new Schema({
     default: false
   },
   bannedById: {
-    type: UserModel
+    type: String
   },
   paused: {
     type: Boolean,
     default: false
   },
   pausedById: {
-    type: UserModel
+    type: String
   },
   domainId: {
     type: [DomainModel, dynamoose.type.NULL]
@@ -58,7 +57,7 @@ const schema = new Schema({
     required: true
   },
   userId: {
-    type: UserModel,
+    type: String,
     hashKey: true
     //TODO delete in cascade if user reference is deleted
   },

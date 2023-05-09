@@ -23,7 +23,7 @@ const parseCurrentUserFromValidateTokenResponse = async (user: any) => {
     email,
     email_verified,
     roles: roles
-      .filter((r: string) => r.match(/\/ebanux-[\w+-]+$/))
+      .filter((r: string) => r.match(/\/(ebanux|qr)-[\w+-]+$/))
       .map((r: string) => r.split(/\//)[1]),
     client_id: aud,
     custom: {},

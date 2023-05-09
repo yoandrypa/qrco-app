@@ -1,6 +1,5 @@
 import dynamoose from "../../libs/dynamoose";
-import { UserModel } from "../UserModel";
-import {getUuid} from "../../helpers/qr/helpers";
+import { getUuid } from "../../helpers/qr/helpers";
 
 // instantiate a dynamoose schema
 const DomainSchema = new dynamoose.Schema({
@@ -15,7 +14,7 @@ const DomainSchema = new dynamoose.Schema({
     default: false
   },
   bannedById: {
-    type: UserModel
+    type: String
   },
   address: {
     type: String,
@@ -30,7 +29,7 @@ const DomainSchema = new dynamoose.Schema({
     type: [String, dynamoose.type.NULL]
   },
   userId: {
-    type: UserModel,
+    type: String,
     hashKey: true
     //TODO delete in cascade if user reference is deleted
   },

@@ -113,7 +113,7 @@ const RenderTypeSelector = ({selected, handleSelect}: RenderTypeSelectorProps) =
     qrType.id ??= typeId;  // Set id in legacy qr-types
 
     return (
-      <Grid id={`card${typeId}`} item
+      <Grid id={`card${typeId}`} item key={typeId}
             lg={!selected ? 3 : isWideForThreeColumns ? 4 : 6}
             md={!selected ? 4 : (isWideForThreeColumns ? 4 : 6)} sm={6} xs={12}>
         <TypeSelector isDynamic={isDynamic} enabled={enabled} qrType={qrType} selected={selected === typeId}
