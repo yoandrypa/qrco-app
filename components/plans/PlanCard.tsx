@@ -84,8 +84,9 @@ const Feature = ({ name, value }: FeatureProps) => {
 const PlanCard = ({ data, clickAction, isCurrentPlan }: PlanCardProps) => {
   // @ts-ignore
   const { subscription } = useContext(Context);
-  const { title, description, planType, legend, priceAmount, highlighted, buttonText, features } = data;
+  const { title, description, planType, legend, priceAmount, highlighted, buttonText } = data;
 
+  const features = isCurrentPlan ? subscription.features : data.features;
   const elevation = isCurrentPlan ? 5 : 2;
   const bgColor = isCurrentPlan ? '#efffef' : '#ffffff';
   const disabled = !clickAction
