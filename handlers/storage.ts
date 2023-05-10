@@ -1,5 +1,6 @@
 import { CustomError, toBytes } from "../utils";
 import * as Storage from "../queries/storage";
+import {QrDataModel} from "../models";
 
 export const upload = async (assets: File[], customPath = "") => {
   try {
@@ -76,3 +77,11 @@ export const remove = async (keys: { Key: string }[]) => {
     throw e;
   }
 };
+
+export const get = async (userId: string, createdAt: number) => {
+  try {
+    return await QrDataModel.get({userId, createdAt});
+  } catch (e) {
+    throw e;
+  }
+}

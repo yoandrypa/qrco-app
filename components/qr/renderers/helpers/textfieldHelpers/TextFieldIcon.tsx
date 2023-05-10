@@ -41,17 +41,17 @@ export default function TextFieldIcon({anchor, setAnchor, icon, handleValues}: T
       >
         <MenuList>
           <MenuItem key={'selectIcon'} onClick={() => setOpen(true)}>
-            <Typography>{'Pick an icon'}</Typography>
+            <Typography>{'Pick an image'}</Typography>
           </MenuItem>
           <MenuItem key={'showIcon'} disabled={icon === undefined} onClick={() => setPreview(true)}>
-            <Typography>{'Show icon'}</Typography>
+            <Typography>{'Preview'}</Typography>
           </MenuItem>
           <Divider />
           <MenuItem key={'clearIcon'} disabled={icon === undefined} onClick={() => {
             handleValues({type: 'clearIcon'});
             setAnchor(undefined);
           }}>
-            <Typography>{'Clear icon'}</Typography>
+            <Typography>{'Clear'}</Typography>
           </MenuItem>
         </MenuList>
       </Popover>
