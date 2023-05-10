@@ -14,10 +14,15 @@ interface RenderImgPrevProps {
 
 const RenderImgPreview = ({handleClose, file, kind}: RenderImgPrevProps) => {
   const [data, setData] = useState<string | undefined>(undefined);
+  const [error, setError] = useState<boolean>(false);
 
-  useEffect(() => { // @ts-ignore
-    if (file[0] && file[0].Key) { // @ts-ignore
-      download(file[0].Key).then(resp => setData(resp.content));
+  useEffect(() => {
+    try { // @ts-ignore
+      if (file[0] && file[0].Key) { // @ts-ignore
+        download(file[0].Key).then(resp => setData(resp.content));
+      }
+    } catch {
+      setError(true);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -34,7 +39,11 @@ const RenderImgPreview = ({handleClose, file, kind}: RenderImgPrevProps) => {
           {file instanceof File || typeof file === 'string' || data ? (
             data !== undefined ? <Box component="img" alt="EBANUX" src={data}/> : // @ts-ignore
               <Box component="img" alt="EBANUX" src={typeof file !== 'string' ? URL.createObjectURL(file) : file}/>
-          ) : <Box sx={{width: '100%', textAlign: 'center'}}>{'Please wait...'}</Box>}
+          ) : (
+            <Box sx={{width: '100%', textAlign: 'center', color: error ? 'error.main' : undefined}}>
+              {!error ? 'Please wait...' : 'Error loading preview!'}
+            </Box>
+          )}
         </Box>
       </DialogContent>
       <DialogActions sx={{p: 2}}>
