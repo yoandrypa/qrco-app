@@ -155,7 +155,7 @@ export const cleaner = (data: DataType, item: string): void => {
 
 export const sectionPreConfig = (item: string, selected?: string): CustomType => {
   // @ts-ignore
-  const component: IQrSetting = structuredClone(components[item]);
+  const component: IQrSetting = JSON.parse(JSON.stringify(components[item]));
   const data = component.getDefaultQrData ? component.getDefaultQrData() : component.data || {};
 
   if (selected === 'petId') {
