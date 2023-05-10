@@ -116,6 +116,16 @@ export default function AppWrapper({children, userInfo, handleLogout, clearData,
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    const isInListView = router.pathname === "/";
+    if (isInListView) {
+      const isEdit = !isInListView && mode === "edit";
+      if (clearData !== undefined) {
+        clearData(false, isEdit || !isInListView);
+      }
+    }
+  }, [router.pathname]);
+
   const handleLogoClick = () => {
     if (Boolean(showingDetails)) {
       setShowingDetails(undefined);
