@@ -110,6 +110,12 @@ export const blobUrlToFile = (url: string, name: string) => {
   })
 };
 
+export const convertBlobUrlToFile = async (blobUrl: string, fileName: string): Promise<File> => {
+  const response = await fetch(blobUrl);
+  const blob = await response.blob();
+  return new File([blob], fileName, { type: blob.type });
+};
+
 export const getImageData = async (imageData?: File | string | {Key: string; name: string;}[]) => {
   if (!imageData) {
     return undefined;
