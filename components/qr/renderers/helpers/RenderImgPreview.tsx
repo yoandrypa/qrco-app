@@ -40,7 +40,12 @@ const RenderImgPreview = ({handleClose, file, kind}: RenderImgPrevProps) => {
             data !== undefined ? <Box component="img" alt="EBANUX" src={data}/> : // @ts-ignore
               <Box component="img" alt="EBANUX" src={typeof file !== 'string' ? URL.createObjectURL(file) : file}/>
           ) : (
-            <Box sx={{width: '100%', textAlign: 'center', color: error ? 'error.main' : undefined}}>
+            <Box sx={{
+              width: '100%',
+              textAlign: 'center',
+              color: error ? 'error.main' : undefined,
+              fontWeight: error ? 'bold' : undefined
+            }}>
               {!error ? 'Please wait...' : 'Error loading preview!'}
             </Box>
           )}
