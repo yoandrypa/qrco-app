@@ -1,4 +1,4 @@
-import { cloneElement, ReactElement, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { cloneElement, ReactElement, ReactNode, useContext, useEffect, useState } from "react";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -41,52 +41,52 @@ function ElevationScroll({ children, window }: Props) {
 }
 
 interface AppWrapperProps {
-  mode?: string;
+  // mode?: string;
   children: ReactNode;
   userInfo?: any;
   handleLogout?: () => void;
-  clearData?: (keepType?: boolean, doNot?: boolean) => void;
-  setRedirecting?: (redirecting: boolean) => void;
+  // clearData?: (keepType?: boolean, doNot?: boolean) => void;
+  // setRedirecting?: (redirecting: boolean) => void;
 }
 
-export default function AppWrapper({children, userInfo, handleLogout, clearData, mode, setRedirecting}: AppWrapperProps) {
+export default function AppWrapper({children, userInfo, handleLogout/*, clearData, mode, setRedirecting*/}: AppWrapperProps) {
 
   // const [startTrialDate, setStartTrialDate] = useState<number | string | Date | null>(null);
   const [pendingTask, setPendingTask] = useState<number>(1);
 
   // @ts-ignore
-  const { subscription, setSubscription, setLoading, showingDetails, setShowingDetails } = useContext(Context);
+  const { subscription, setSubscription, /*setLoading,*/ showingDetails, setShowingDetails } = useContext(Context);
 
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
   const router = useRouter();
 
-  const handleLoading = useCallback((loading?: boolean) => {
-    if (setLoading !== undefined) {
-      setLoading(loading !== undefined ? loading : true);
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // const handleLoading = useCallback((loading?: boolean) => {
+  //   if (setLoading !== undefined) {
+  //     setLoading(loading !== undefined ? loading : true);
+  //   }
+  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleNavigation = useCallback(() => {
-    const isInListView = router.pathname === "/";
-    const isEdit = !isInListView && mode === "edit";
-
-    console.log(router.pathname, mode, isEdit, isInListView);
-
-    if (setRedirecting && !isInListView) setRedirecting(true);
-    if (clearData !== undefined) {
-      clearData(false, isEdit || !isInListView);
-    }
-    handleLoading();
-    const navigationOptions = { pathname: !isEdit && isInListView ? QR_TYPE_ROUTE : "/", query: {} };
-    if (isEdit) { //@ts-ignore
-      navigationOptions.query = { mode };
-    }
-
-    router.push(navigationOptions, isInListView ? QR_TYPE_ROUTE : "/").then(() => {
-      handleLoading(false);
-      if (setRedirecting) setRedirecting(false);
-    });
-  }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+  // const handleNavigation = useCallback(() => {
+  //   const isInListView = router.pathname === "/";
+  //   const isEdit = !isInListView && mode === "edit";
+  //
+  //   console.log(router.pathname, mode, isEdit, isInListView);
+  //
+  //   if (setRedirecting && !isInListView) setRedirecting(true);
+  //   if (clearData !== undefined) {
+  //     clearData(false, isEdit || !isInListView);
+  //   }
+  //   handleLoading();
+  //   const navigationOptions = { pathname: !isEdit && isInListView ? QR_TYPE_ROUTE : "/", query: {} };
+  //   if (isEdit) { //@ts-ignore
+  //     navigationOptions.query = { mode };
+  //   }
+  //
+  //   router.push(navigationOptions, isInListView ? QR_TYPE_ROUTE : "/").then(() => {
+  //     handleLoading(false);
+  //     if (setRedirecting) setRedirecting(false);
+  //   });
+  // }, [router.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const releaseTask = () => setPendingTask(Math.max(0, pendingTask - 1));
 
@@ -105,6 +105,16 @@ export default function AppWrapper({children, userInfo, handleLogout, clearData,
     }
   }, [subscription]); // eslint-disable-line react-hooks/exhaustive-deps*/
 
+  // useEffect(() => {
+  //   const isInListView = router.pathname === "/";
+  //   if (isInListView) {
+  //     const isEdit = !isInListView && mode === "edit";
+  //     if (clearData !== undefined) {
+  //       clearData(false, isEdit || !isInListView);
+  //     }
+  //   }
+  // }, [router.pathname]);
+
   useEffect(() => {
     if (session.isAuthenticated && !subscription) {
       loadSubscription().then((subscription: any) => {
@@ -116,15 +126,6 @@ export default function AppWrapper({children, userInfo, handleLogout, clearData,
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    const isInListView = router.pathname === "/";
-    if (isInListView) {
-      const isEdit = !isInListView && mode === "edit";
-      if (clearData !== undefined) {
-        clearData(false, isEdit || !isInListView);
-      }
-    }
-  }, [router.pathname]);
 
   const handleLogoClick = () => {
     if (Boolean(showingDetails)) {

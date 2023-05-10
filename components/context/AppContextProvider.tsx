@@ -182,7 +182,7 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
       }
     } else {
       return (
-        <AppWrapper handleLogout={signOut} clearData={clearData} mode={data.mode} setRedirecting={setRedirecting} userInfo={userInfo}>
+        <AppWrapper handleLogout={signOut} userInfo={userInfo} /*clearData={clearData} mode={data.mode} setRedirecting={setRedirecting}*/>
           {!redirecting ? children : <PleaseWait redirecting hidePleaseWait />}
         </AppWrapper>
       );
