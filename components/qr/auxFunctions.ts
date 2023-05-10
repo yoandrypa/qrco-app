@@ -9,8 +9,8 @@ import {
 } from "./types/types";
 import { areEquals } from "../helpers/generalFunctions";
 import { initialBackground, initialFrame } from "../../helpers/qr/data";
-import { upload, remove } from "../../handlers/storage";
-import { getUuid } from "../../helpers/qr/helpers";
+import { upload, remove, download, get } from "../../handlers/storage";
+import { convertBlobUrlToFile, getUuid } from "../../helpers/qr/helpers";
 import { generateId, generateShortLink } from "../../utils";
 import { create, edit as qrEdit } from "../../handlers/qrs";
 import { startWaiting, releaseWaiting } from "../Waiting";
@@ -23,7 +23,6 @@ import { getOptionsForPreview } from "../../helpers/qr/auxFunctions";
 import { generateSVGObj, handleQrData } from "./QrGenerator";
 import { getQrType, getQrSectionType } from "./qrtypes";
 import { setError } from "../Notification";
-import {QrDataModel} from "../../models";
 
 interface UserInfoProps {
   attributes: { sub: string, email: string },
@@ -200,9 +199,9 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
   const userId = data.mode !== 'secret' ? userInfo.cognito_user_id : options?.userId?.id;
 
   if (!data.hideQrForSharing && data.isDynamic) {
-    prevUpdatingHandler(`${data.qrForSharing?.[0]?.Key === undefined ? 'Saving' : 'Adjusting'} QR code`);
+    prevUpdatingHandler(`${data.mode === 'clone' || data.qrForSharing?.[0]?.Key === undefined ? 'Saving' : 'Adjusting'} QR code`);
 
-    const file = getFileFromQr(data, options, background, frame, cornersData, dotsData, selected, false, data.qrForSharing?.[0]?.name);
+    const file = getFileFromQr(data, options, background, frame, cornersData, dotsData, selected, false, data.mode !== 'clone' ? data.qrForSharing?.[0]?.name : undefined);
 
     try { // @ts-ignore
       data.qrForSharing = await upload([file], `${userId}/${selected}s/design`);
@@ -245,7 +244,7 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
     if (data.mode === 'edit') {
       prevUpdatingHandler('Reading data');
       try {
-        qrInf = await QrDataModel.get({userId, createdAt: typeof data.createdAt === 'number' ? data.createdAt : data.createdAt.getTime()});
+        qrInf = await get(userId, typeof data.createdAt === 'number' ? data.createdAt : data.createdAt.getTime());
         prevUpdatingHandler(null, true);
       } catch (e) {
         prevUpdatingHandler(null, false);
@@ -305,9 +304,8 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
 
       if (section.data?.links) {
         let someFailed = false;
-
         if (section.data.links.some((x: LinkType) => x.icon instanceof File)) {
-          prevUpdatingHandler('Uploading icons for buttons');
+          prevUpdatingHandler(`Uploading images for buttons for ${section.component.toLowerCase()} section ${idx + 1}`);
           for (let i = 0, l = section.data.links.length; i < l; i += 1) {
             const x = section.data.links[i];
             if (x.icon instanceof File) {
@@ -318,7 +316,28 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
               }
             }
           }
-
+          if (!someFailed) {
+            prevUpdatingHandler(null, true);
+          } else {
+            prevUpdatingHandler(null, false);
+            setIsError(true);
+          }
+        } // @ts-ignore
+        if (data.mode === 'clone' && section.data.links.some((x: LinkType) => Array.isArray(x.icon) && x.icon.length > 0 && x.icon[0].Key)) {
+          someFailed = false;
+          prevUpdatingHandler(`Cloning images for buttons for ${section.component.toLowerCase()} section ${idx + 1}`);
+          for (let i = 0, l = section.data.links.length; i < l; i += 1) {
+            const x = section.data.links[i];
+            if (Array.isArray(x.icon) && x.icon.length > 0 && x.icon[0].Key) {
+              try {
+                const img = await download(x.icon[0].Key); // @ts-ignore
+                const newFile = await convertBlobUrlToFile(img.content, `${getUuid()}.${img.type.split('/')[1]}`);
+                x.icon = await upload([newFile], `${userId}/${selected}s/design`);
+              } catch {
+                someFailed = true;
+              }
+            }
+          }
           if (!someFailed) {
             prevUpdatingHandler(null, true);
           } else {
@@ -334,6 +353,24 @@ export const saveOrUpdate = async (dataSource: DataType, userInfo: UserInfoProps
           // upload will handle only File instances, others are ignored
           section.data.files = await upload(section.data.files, `${userId}/${selected}s`);
           prevUpdatingHandler(null, true);
+        } catch {
+          prevUpdatingHandler(null, false);
+          setIsError(true);
+        }
+
+        try {
+          if (data.mode === 'clone' && section.data.files.some((x: {Key: string;}) => !Array.isArray(x) && x.Key)) {
+            prevUpdatingHandler(`Cloning assets for ${section.component.toLowerCase()} section ${idx + 1}`); // @ts-ignore
+            for (let i = 0, l = section.data.files.length; i < l; i += 1) {
+              const x = section.data.files[i];
+              if (!Array.isArray(x) && x.Key) {
+                const tempo = await download(x.Key); // @ts-ignore
+                const newFile = await convertBlobUrlToFile(tempo.content, `${getUuid()}.${img.type.split('/')[1]}`);
+                section.data.files[i] = await upload([newFile], `${userId}/${selected}s`);
+              }
+            }
+            prevUpdatingHandler(null, false);
+          }
         } catch {
           prevUpdatingHandler(null, false);
           setIsError(true);
