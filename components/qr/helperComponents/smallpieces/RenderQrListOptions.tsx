@@ -179,7 +179,7 @@ const RenderQrListOptions = ({qr, handleEdit, setConfirm, handlePauseQrLink, han
             {qr.isMonetized && (
               <MenuItem component="a" target="_blank" rel="noopener noreferrer" key="goToDashBoardMenuItem" onClick={() => setAnchor(null)}
                         href={`${process.env.PAYLINK_APP_URL}/dashboard`}>
-                <DashboardIcon color="info" />
+                <DashboardIcon color="primary" />
                 <Typography sx={{ml: '5px'}}>Go to dashboard</Typography>
               </MenuItem>
             )}
