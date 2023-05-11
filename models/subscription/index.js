@@ -1,4 +1,4 @@
-import dynamoose from "../../libs/dynamoose";
+import dynamoose from "../../libs/gateways/dynamodb/dynamoose";
 import schema from "./subscription";
 
 export const Subscription = dynamoose.model("Subscription", schema);

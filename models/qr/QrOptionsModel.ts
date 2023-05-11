@@ -1,4 +1,4 @@
-import dynamoose from '../../libs/dynamoose';
+import dynamoose from '../../libs/gateways/dynamodb/dynamoose';
 
 const CornersSchema = new dynamoose.Schema({
   topL: String,

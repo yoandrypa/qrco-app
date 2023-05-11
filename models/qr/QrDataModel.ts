@@ -1,4 +1,4 @@
-import dynamoose from "../../libs/dynamoose";
+import dynamoose from "../../libs/gateways/dynamodb/dynamoose";
 import { QrOptionsModel } from "./QrOptionsModel";
 import { LinkModel } from "../link";
 import { UserModel } from "../UserModel";

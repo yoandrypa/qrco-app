@@ -1,4 +1,4 @@
-import dynamoose from "../../libs/dynamoose";
+import dynamoose from "../../libs/gateways/dynamodb/dynamoose";
 import { getUuid } from "../../helpers/qr/helpers";
 
 // instantiate a dynamoose schema

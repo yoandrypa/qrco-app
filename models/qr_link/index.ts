@@ -1,4 +1,4 @@
-import dynamoose from "../../libs/dynamoose";
+import dynamoose from "../../libs/gateways/dynamodb/dynamoose";
 import schema from "./link";
 import { ModelType, ObjectType } from "dynamoose/dist/General";
 import { Item } from "dynamoose/dist/Item";

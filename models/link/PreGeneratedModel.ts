@@ -1,4 +1,4 @@
-import dynamoose from "../../libs/dynamoose";
+import dynamoose from "../../libs/gateways/dynamodb/dynamoose";
 
 // Instantiate a dynamoose schema
 const schema = new dynamoose.Schema({

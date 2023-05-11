@@ -1,5 +1,5 @@
 import Joi from "joi";
-import dynamoose from "../../../libs/dynamoose";
+import dynamoose from "../../../libs/gateways/dynamodb/dynamoose";
 
 import { customAlphabet } from "nanoid";
 import { LinkModel, PreGeneratedModel } from "../../../models/link";

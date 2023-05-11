@@ -1,5 +1,5 @@
 import { QrDataModel } from "../models";
-import dynamoose from "../libs/dynamoose";
+import dynamoose from "../libs/gateways/dynamodb/dynamoose";
 import { CustomError } from "../utils";
 import { LinkModel } from "../models";
 import { QrOptionsModel } from "../models";
