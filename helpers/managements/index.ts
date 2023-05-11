@@ -1,5 +1,6 @@
-import { useRef, useEffect } from 'react';
 import { payLynkRequest } from "../../libs/utils/request";
+
+export { useDidUpdated } from '../commons';
 
 function onRequest(data: any, appWindow: Window) {
   const { options, requestId } = data;
@@ -26,13 +27,3 @@ export function startUpEventListener() {
     window.removeEventListener("message", onMessage);
   }
 }
-
-export function useDidUpdated() {
-  const didUpdatedRef = useRef(false);
-
-  useEffect(() => {
-    didUpdatedRef.current = true;
-  }, []);
-
-  return didUpdatedRef.current;
-};
