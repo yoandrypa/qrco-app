@@ -35,9 +35,9 @@ export default function RenderIconPicker({handleClose, handleAccept, icons}: Ico
         });
         setNewIcons(newData);
       }
-    }, 500);
+    }, 250);
     return () => clearTimeout(filtering);
-  }, [filter]);
+  }, [filter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     doneFirst.current = true;
@@ -50,7 +50,7 @@ export default function RenderIconPicker({handleClose, handleAccept, icons}: Ico
           <Filter filter={filter} setFilter={setFilter} sx={{mb: '10px', width: '300px'}} />
           <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: 'fit-content', margin: '0 auto', textAlign: 'center'}}>
             {newIcons.map(x => (
-              <Tooltip title={x.name || x.icon} arrow>
+              <Tooltip key={`tooltip${x}`} title={x.name || x.icon} arrow>
                 <Box
                   key={x.icon}
                   onClick={() => handleAccept(x.icon)}
