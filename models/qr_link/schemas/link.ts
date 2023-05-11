@@ -1,7 +1,7 @@
-import Schema from '../commons/schema';
+import Schema from '../../commons/schema';
 
-import dynamoose from "../../libs/gateways/dynamodb/dynamoose";
-import { DomainModel } from "../link/DomainModel";
+import dynamoose from "../../../libs/gateways/dynamodb/dynamoose";
+import { DomainModel } from "../../link/DomainModel";
 
 const schema = new Schema({
   type: {
