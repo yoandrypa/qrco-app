@@ -38,3 +38,8 @@ export interface RenderTextFieldsProps {
   includeIcon?: boolean;
   options?: boolean;
 }
+
+export interface IconsProps {
+ icon: string;
+ name?: string;
+}
