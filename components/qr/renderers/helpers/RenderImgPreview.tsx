@@ -1,15 +1,26 @@
+import {useEffect, useState} from "react";
+
 import Box from "@mui/material/Box";
 import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
-import {useEffect, useState} from "react";
+
 import {download} from "../../../../handlers/storage";
+
+import dynamic from "next/dynamic";
+
+const RenderIcon = dynamic(() => import("../../helperComponents/smallpieces/RenderIcon"));
 
 interface RenderImgPrevProps {
   handleClose: () => void;
   file: File | string | {Key: string, name: string};
   kind?: string;
+}
+
+function isBase64(str: string): boolean {
+  const regex = new RegExp("^data:[a-z]+\\\\/[a-z\\\\-]+(;[a-z]+\\\\=[a-zA-Z0-9]+)*;base64,");
+  return regex.test(str);
 }
 
 const RenderImgPreview = ({handleClose, file, kind}: RenderImgPrevProps) => {
@@ -26,6 +37,23 @@ const RenderImgPreview = ({handleClose, file, kind}: RenderImgPrevProps) => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const renderImage = () => {
+    if (typeof file === 'string' && !isBase64(file)) {
+      return (
+        <Box sx={{width: '100%', textAlign: 'center'}}>
+          <RenderIcon icon={file} enabled sx={{ width: '45px', height: '45px', color: 'primary.dark'}} />
+        </Box>
+      );
+    }
+
+    if (data !== undefined) {
+      return <Box component="img" alt="EBANUX" src={data}/>
+    }
+
+    // @ts-ignore
+    return <Box component="img" alt="EBANUX" src={typeof file !== 'string' ? URL.createObjectURL(file) : file}/>
+  }
+
   return (
     <Dialog onClose={handleClose} open={true}>
       <DialogContent dividers>
@@ -36,10 +64,7 @@ const RenderImgPreview = ({handleClose, file, kind}: RenderImgPrevProps) => {
           overflow: 'auto'
         }}
         >
-          {file instanceof File || typeof file === 'string' || data ? (
-            data !== undefined ? <Box component="img" alt="EBANUX" src={data}/> : // @ts-ignore
-              <Box component="img" alt="EBANUX" src={typeof file !== 'string' ? URL.createObjectURL(file) : file}/>
-          ) : (
+          {file instanceof File || typeof file === 'string' || data ? renderImage() : (
             <Box sx={{
               width: '100%',
               textAlign: 'center',

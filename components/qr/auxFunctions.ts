@@ -1,12 +1,4 @@
-// TODO: Use setError from Notification component.
-import {
-  BackgroundType,
-  CornersAndDotsType, CustomType,
-  DataType,
-  EditType,
-  FramesType, LinkType,
-  OptionsType
-} from "./types/types";
+import { BackgroundType, CornersAndDotsType, CustomType, DataType, EditType, FramesType, LinkType, OptionsType } from "./types/types";
 import { areEquals } from "../helpers/generalFunctions";
 import { initialBackground, initialFrame } from "../../helpers/qr/data";
 import { upload, remove, download, get } from "../../handlers/storage";

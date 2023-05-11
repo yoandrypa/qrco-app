@@ -178,6 +178,10 @@ export async function compressImage(file: File, callback: (newFile: File) => voi
       (blob) => {
         if (blob) {
           const result = new File([blob], file.name, {type: file.type});
+
+          console.log(file, result);
+          debugger;
+
           callback(result);
         }
       },

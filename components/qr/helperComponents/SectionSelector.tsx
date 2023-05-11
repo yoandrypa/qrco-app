@@ -93,6 +93,7 @@ const SectionSelector = ({w, h, mw, label, handleSelect, icon, selected, isUploa
               width: w || '50px',
               height: h || '60px',
               minWidth: mw || '64px',
+              cursor: 'pointer',
               border: theme => `solid 1px ${theme.palette.text.disabled}`,
               boxShadow: selected ? '0 0 3px 2px #286ED6' : 'none',
               '&:hover': {
