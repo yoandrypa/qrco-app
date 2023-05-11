@@ -1,12 +1,17 @@
+import {useState} from "react";
+
 import Popover from "@mui/material/Popover";
 import MenuList from "@mui/material/MenuList";
 import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
-import {useState} from "react";
-import RenderImagePicker from "../RenderImagePicker";
-import ImageCropper from "../ImageCropper";
-import Divider from "@mui/material/Divider";
-import RenderImgPreview from "../RenderImgPreview";
+
+import dynamic from "next/dynamic";
+
+const RenderImagePicker = dynamic(() => import ("../RenderImagePicker"));
+const ImageCropper = dynamic(() => import ("../ImageCropper"));
+const Divider = dynamic(() => import ("@mui/material/Divider"));
+const RenderImgPreview = dynamic(() => import ("../RenderImgPreview"));
+const PreIconPicker = dynamic(() => import ("./PreIconPicker"));
 
 interface TextFieldIconProps {
   anchor: Element;
@@ -17,6 +22,7 @@ interface TextFieldIconProps {
 
 export default function TextFieldIcon({anchor, setAnchor, icon, handleValues}: TextFieldIconProps) {
   const [open, setOpen] = useState<boolean>(false);
+  const [openIcon, setOpenIcon] = useState<boolean>(false);
   const [cropper, setCropper] = useState<{file: File, kind: string} | null>(null);
   const [preview, setPreview] = useState<boolean>(false);
 
@@ -36,18 +42,21 @@ export default function TextFieldIcon({anchor, setAnchor, icon, handleValues}: T
         open
         anchorEl={anchor}
         onClose={() => setAnchor(undefined)}
-        anchorOrigin={{vertical: 'top', horizontal: 'left'}}
-        transformOrigin={{vertical: 'top', horizontal: 'left'}}
+        anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+        transformOrigin={{vertical: 'top', horizontal: 'center'}}
       >
         <MenuList>
-          <MenuItem key={'selectIcon'} onClick={() => setOpen(true)}>
+          <MenuItem key="selectImage" onClick={() => setOpen(true)}>
             <Typography>{'Pick an image'}</Typography>
           </MenuItem>
-          <MenuItem key={'showIcon'} disabled={icon === undefined} onClick={() => setPreview(true)}>
+          <MenuItem key="selectIcon" onClick={() => setOpenIcon(true)}>
+            <Typography>{'Pick an icon'}</Typography>
+          </MenuItem>
+          <MenuItem key="showIcon" disabled={icon === undefined} onClick={() => setPreview(true)}>
             <Typography>{'Preview'}</Typography>
           </MenuItem>
           <Divider />
-          <MenuItem key={'clearIcon'} disabled={icon === undefined} onClick={() => {
+          <MenuItem key="clearIcon" disabled={icon === undefined} onClick={() => {
             handleValues({type: 'clearIcon'});
             setAnchor(undefined);
           }}>
@@ -55,6 +64,17 @@ export default function TextFieldIcon({anchor, setAnchor, icon, handleValues}: T
           </MenuItem>
         </MenuList>
       </Popover>
+      {openIcon && (
+        <PreIconPicker
+          setOpenIcon={setOpenIcon}
+          setAnchor={setAnchor}
+          handleAccept={(icon: string) => {
+            handleValues({icon});
+            setOpenIcon(false);
+            setAnchor(undefined);
+          }}
+        />
+      )}
       {open && (
         <RenderImagePicker
           handleClose={() => {
@@ -63,11 +83,13 @@ export default function TextFieldIcon({anchor, setAnchor, icon, handleValues}: T
           }}
           title="button icon"
           kind="btnImg"
-          size={35840} // 35 kb
+          size={716800} // 700 kb
           handleAcept={handleAcceptFile}/>
-      )} {/* @ts-ignore */}
-      {preview && <RenderImgPreview file={icon} kind="btnIcon"
-                                    handleClose={() => { setPreview(false); setAnchor(undefined); }} />}
+      )}
+      {preview && ( // @ts-ignore
+        <RenderImgPreview file={icon} kind="btnIcon"
+                          handleClose={() => { setPreview(false); setAnchor(undefined); }} />
+      )}
       {cropper !== null && (
         <ImageCropper
           handleClose={() => setCropper(null)}

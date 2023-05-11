@@ -91,6 +91,8 @@ export type SocialsType = 'facebook' | 'whatsapp' | 'twitter' | 'instagram' | 'y
 export type SocialNetworksType = { network: SocialsType, value?: string };
 
 export type Type = {
+  iconShape?: string;
+  leftAligned?: boolean;
   sectionArrangement?: string;
   invertIconColors?: boolean;
   showIcons?: boolean;
