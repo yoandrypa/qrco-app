@@ -1,4 +1,4 @@
-import Schema from '../commons/schema';
+import Schema from '../../commons/schema';
 
 const schema = new Schema(
   {

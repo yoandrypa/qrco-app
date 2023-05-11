@@ -1,7 +1,7 @@
-import Schema from '../commons/schema';
+import Schema from '../../commons/schema';
 
 import BillingThresholdsSchema from './billing_thresholds';
-import IdentifierSchema from '../commons/identifier';
+import IdentifierSchema from '../../commons/schemas/identifier';
 
 const schema = new Schema(
   {
