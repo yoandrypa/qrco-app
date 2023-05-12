@@ -1,5 +1,12 @@
+import React from "react";
+
 import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import ShowMoreIcon from '@mui/icons-material/DownloadingOutlined';
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
 interface IProps {
   count: number;
@@ -9,11 +16,6 @@ interface IProps {
 }
 
 import sxClasses from "./styles.sx";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import ShowMoreIcon from '@mui/icons-material/DownloadingOutlined';
-import IconButton from "@mui/material/IconButton";
-import React from "react";
 
 export default function ShowMore({ total, count, nextPageKey, onShowMore }: IProps) {
   const { sxRow, sxPaginator, sxFlexStart, sxFlexEnd } = sxClasses;
@@ -32,9 +34,11 @@ export default function ShowMore({ total, count, nextPageKey, onShowMore }: IPro
             </Typography>
           </Grid>
           <Grid item xs={6} sx={sxFlexEnd}>
-            <IconButton title="Show more..." color="primary" disabled={!nextPageKey} onClick={onLoadNextPage}>
-              <ShowMoreIcon />
-            </IconButton>
+            <Tooltip title="Show more QRLynks">
+              <IconButton color="primary" disabled={!nextPageKey} onClick={onLoadNextPage}>
+                <ShowMoreIcon />
+              </IconButton>
+            </Tooltip>
           </Grid>
         </Grid>
       </Paper>
