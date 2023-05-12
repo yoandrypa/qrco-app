@@ -23,7 +23,12 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import renderText, {getOptions} from "../helpers/textfieldHelpers/textHandler";
 import {EMAIL, PHONE} from "../../constants";
 
-interface Payload { payload: ChangeEvent<HTMLInputElement> | string | {type: string} | File }
+import dynamic from "next/dynamic";
+
+const RenderForeImgTypePicker = dynamic(() => import("../helpers/RenderForeImgTypePicker"));
+const Typography = dynamic(() => import("@mui/material/Typography"));
+
+interface Payload { payload: ChangeEvent<HTMLInputElement> | string | {type: string} | {icon: string} | File }
 
 export default function RenderLinks({data, setData, index, isButtons}: RenderLinksBtnsProps) {
   const isWide = useMediaQuery("(min-width:600px)", { noSsr: true });
@@ -75,6 +80,8 @@ export default function RenderLinks({data, setData, index, isButtons}: RenderLin
       } else if (value.type === 'clearIcon') {
         delete element.icon; // @ts-ignore
         if (newData.custom[index].data.iconName) { delete newData.custom[index].data.iconName; }
+      } else if (value.icon) { // @ts-ignore
+        element.icon = payload.icon;
       } else {
         element.type = value.type;
         if (element.type === 'link') { delete element.type; }
@@ -83,22 +90,37 @@ export default function RenderLinks({data, setData, index, isButtons}: RenderLin
     });
   }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleOnly = useCallback((item: string) => (e: ChangeEvent<HTMLInputElement>) => {
+  const handleOnly = useCallback((item: string) => (e: ChangeEvent<HTMLInputElement> | string) => {
     setData((prev: DataType) => {
       const newData = {...prev}; // @ts-ignore
       if (!newData?.custom?.[index]?.data) { newData.custom[index].data = {}; }
-      if (item === 'avoidButtons') {
-        if (!e.target.checked) { // @ts-ignore
-          newData.custom[index].data.avoidButtons = true;
-        } else { // @ts-ignore
-          delete newData.custom[index].data.avoidButtons;
+      if (typeof e !== 'string') {
+        if (item === 'avoidButtons') {
+          if (!e.target.checked) { // @ts-ignore
+            newData.custom[index].data.avoidButtons = true;
+            if (newData?.custom?.[index]?.data?.showIcons) { delete newData.custom[index].data.showIcons; }
+            if (newData?.custom?.[index]?.data?.leftAligned) { delete newData.custom[index].data.leftAligned; }
+            if (newData?.custom?.[index]?.data?.iconShape) { delete newData.custom[index].data.iconShape; }
+          } else { // @ts-ignore
+            delete newData.custom[index].data.avoidButtons;
+          }
+        } else {
+          if (e.target.checked) { // @ts-ignore
+            newData.custom[index].data[item] = true;
+          } else { // @ts-ignore
+            delete newData.custom[index].data[item];
+            if (item === 'showIcons') {
+              newData.custom?.[index]?.data?.links?.forEach(x => { delete x.icon; });
+              if (newData?.custom?.[index]?.data?.leftAligned) { delete newData.custom[index].data.leftAligned; }
+              if (newData?.custom?.[index]?.data?.iconShape) { delete newData.custom[index].data.iconShape; }
+            }
+          }
         }
       } else {
-        if (e.target.checked) { // @ts-ignore
-          newData.custom[index].data[item] = true;
+        if (e === 'circle' && newData.custom?.[index]?.data?.iconShape !== undefined) {
+          delete newData.custom[index].data.iconShape;
         } else { // @ts-ignore
-          delete newData.custom[index].data[item];
-          newData.custom?.[index]?.data?.links?.forEach(x => { delete x.icon; });
+          newData.custom[index].data.iconShape = e;
         }
       }
       return newData;
@@ -209,6 +231,25 @@ export default function RenderLinks({data, setData, index, isButtons}: RenderLin
     )
   }
 
+  const rendeButtonOptions = () => (<>
+    <FormControl>
+      <FormControlLabel control={<Switch onChange={handleOnly('showIcons')} checked={data?.showIcons || false} />}
+                        label="Show icons" />
+    </FormControl>
+    <FormControl>
+      <FormControlLabel control={<Switch onChange={handleOnly('leftAligned')} checked={data?.leftAligned || false} disabled={!data?.showIcons} />}
+                        label="Left aligned" />
+    </FormControl>
+    {data?.showIcons && (
+      <Box>
+        <Typography sx={{display: 'inline', mr: '3px'}}>{'Select image shape here'}</Typography>
+        <RenderForeImgTypePicker element='iconShape' handleValue={handleOnly} foregndImgType={data?.iconShape} variant="outlined"
+           color="primary" sx={{minWidth: '30px', width: '30px', height: '30px', px: '8px', mr: '5px'}} />
+
+      </Box>
+    )}
+  </>);
+
   return (
     <Box sx={{width: '100%'}}>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -224,13 +265,9 @@ export default function RenderLinks({data, setData, index, isButtons}: RenderLin
             <FormControlLabel control={<Switch onChange={handleOnly('linksOnlyLinks')} checked={data?.linksOnlyLinks || false} />}
               label="Only links" />
           </FormControl>
+          {/*{!Boolean(data?.avoidButtons) && rendeButtonOptions()}*/}
         </Box>
-      ) : (
-        <FormControl>
-          <FormControlLabel control={<Switch onChange={handleOnly('showIcons')} checked={data?.showIcons || false} />}
-                            label="Show icons" />
-        </FormControl>
-      )}
+      ) : rendeButtonOptions()}
     </Box>
   );
 }

@@ -13,9 +13,13 @@ import Tooltip from "@mui/material/Tooltip";
 interface RenderForeImgTypePickerProps {
   handleValue: Function;
   foregndImgType?: string;
+  element?: string;
+  sx?: object;
+  variant?: 'contained' | 'outlined' | 'text';
+  color?: 'info' | 'primary' | 'inherit';
 }
 
-export default function RenderForeImgTypePicker({handleValue, foregndImgType}: RenderForeImgTypePickerProps) {
+export default function RenderForeImgTypePicker({handleValue, foregndImgType, sx, variant, color, element = 'foregndImgType'}: RenderForeImgTypePickerProps) {
   const [open, setOpen] = useState<HTMLButtonElement | null>(null);
 
   const handleOpen = (e: MouseEvent<HTMLButtonElement>) => {
@@ -23,14 +27,14 @@ export default function RenderForeImgTypePicker({handleValue, foregndImgType}: R
   }
 
   const before = (item: string) => () => {
-    handleValue('foregndImgType')(item);
+    handleValue(element)(item);
     setOpen(null);
   }
 
   return (
     <>
       <Tooltip title="Select shape">
-        <Button sx={{width: '40px'}} variant="contained" color="info" onClick={handleOpen}>
+        <Button sx={{width: '40px', ...sx}} variant={variant || 'contained'} color={color || 'info'} onClick={handleOpen}>
           {(foregndImgType === undefined || foregndImgType === 'circle') ? <CircleIcon /> :
             foregndImgType === 'smooth' ? <SquareRoundedIcon /> : <SquareIcon />}
         </Button>
