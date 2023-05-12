@@ -36,9 +36,10 @@ export default function QrList({ title }: any) {
   const loadItems = () => {
     if (userInfo) {
       const pageKey = qrs.nextPageKey || null;
+      const limit = (process.env.PAGE_SIZE || 10) as number;
+
       startWaiting();
-      console.log(1, pageKey);
-      QrDataModel.fetchByUser(userInfo.cognito_user_id, 3, pageKey).then((response: any) => {
+      QrDataModel.fetchByUser(userInfo.cognito_user_id, limit, pageKey).then((response: any) => {
         const newQrs = { ...response };
         newQrs.items = [...qrs.items, ...newQrs.items];
         setQRs(newQrs);
