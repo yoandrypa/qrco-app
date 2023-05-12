@@ -14,27 +14,39 @@ import QrDetails from "../QrDetails";
 import RenderQrList from "./RenderQrList";
 
 import QrDataModel from "../../../models/qr_data";
+import ShowMore from "./ShowMore";
 
 const RenderConfirmDlg = dynamic(() => import("../../renderers/RenderConfirmDlg"));
+
+interface IQRs {
+  items: any[];
+  total?: number;
+  nextPageKey?: string;
+}
 
 export default function QrList({ title }: any) {
   const [confirm, setConfirm] = useState<{ createdAt: number; userId: string; } | null>(null);
   const [loading, setLoading] = useState(true);
-  const [qrs, setQRs] = useState({ items: [], total: undefined });
+  const [qrs, setQRs] = useState<IQRs>({ items: [] });
 
   // @ts-ignore
   const { setOptions, userInfo, showingDetails, setShowingDetails } = useContext(Context);
   const router = useRouter();
 
-  const loadItems = useCallback(() => {
+  const loadItems = () => {
     if (userInfo) {
+      const pageKey = qrs.nextPageKey || null;
       startWaiting();
-      QrDataModel.fetchByUser(userInfo.cognito_user_id, 5, null).then((response: any) => {
-        setQRs(response);
+      console.log(1, pageKey);
+      QrDataModel.fetchByUser(userInfo.cognito_user_id, 3, pageKey).then((response: any) => {
+        const newQrs = { ...response };
+        newQrs.items = [...qrs.items, ...newQrs.items];
+        setQRs(newQrs);
+        console.log(2, newQrs.nextPageKey);
         setLoading(false);
       }).finally(releaseWaiting);
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }
 
   const handleClone = useCallback((qr: QrDataType) => {
     startWaiting();
@@ -87,10 +99,20 @@ export default function QrList({ title }: any) {
   if (loading) return <LoadingQrs />;
   if (qrs.total === 0) return <NoQrs />;
 
+  const { items, nextPageKey, total = 0 } = qrs;
+
   return (
     <>
-      <RenderQrList title={title} qrs={qrs.items} handleEdit={handleEdit} handlePauseQrLink={handlePauseQrLink}
-                    openDetails={openDetails} setConfirm={setConfirm} handleClone={handleClone} />
+      <RenderQrList
+        title={title}
+        qrs={items}
+        handleEdit={handleEdit}
+        handlePauseQrLink={handlePauseQrLink}
+        handleClone={handleClone}
+        setConfirm={setConfirm}
+        openDetails={openDetails}
+      />
+      <ShowMore total={total} count={items.length} nextPageKey={nextPageKey} onShowMore={loadItems} />
       {confirm !== null && (
         <RenderConfirmDlg
           handleCancel={() => setConfirm(null)}

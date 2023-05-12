@@ -1,3 +1,7 @@
+import React, { memo } from "react";
+import dynamic from "next/dynamic";
+import pluralize from "pluralize";
+
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -10,18 +14,15 @@ import SyncIcon from "@mui/icons-material/Sync";
 import SyncDisabledIcon from "@mui/icons-material/SyncDisabled";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-import RenderPreview from "../renderers/RenderPreview";
 import { dateHandler } from "../listHelper/functions";
 import { areEquals, humanDate } from "../../helpers/generalFunctions";
 import { handleDesignerString, qrNameDisplayer } from "../../../helpers/qr/helpers";
 import { MAIN_ORANGE } from "../constants";
-
 import { sanitize } from "../../../utils";
-import pluralize from "pluralize";
 
-import dynamic from "next/dynamic";
+import RenderPreview from "../renderers/RenderPreview";
 
-import { memo } from "react";
+import sxClasses from "./styles.sx";
 
 const KeyIcon = dynamic(() => import("@mui/icons-material/Key"));
 const LockOutlinedIcon = dynamic(() => import("@mui/icons-material/LockOutlined"));
@@ -39,8 +40,9 @@ const renderQr = (qr: any) => {
 const iconsProps = { width: '17px', height: '17px', mb: '-3px' };
 
 const renderStaticDynamic = (is: boolean, avoidIcon?: boolean, isSecret?: boolean, isLock?: boolean) => (
-  <Typography variant="caption" style={{ color: '#808080'}}>
-    {!avoidIcon ? (is ? <SyncIcon sx={{ ...iconsProps, mr: '5px' }} /> : <SyncDisabledIcon sx={{ ...iconsProps, mr: '5px' }} />) : null}
+  <Typography variant="caption" style={{ color: '#808080' }}>
+    {!avoidIcon ? (is ? <SyncIcon sx={{ ...iconsProps, mr: '5px' }} /> :
+      <SyncDisabledIcon sx={{ ...iconsProps, mr: '5px' }} />) : null}
     {is ? "Dynamic" : "Static"}
     {isSecret && <KeyIcon sx={{ ...iconsProps, mb: '-5px', ml: '1px', color: MAIN_ORANGE }} />}
     {isLock && <LockOutlinedIcon sx={{ ...iconsProps, mb: '-5px', ml: '1px', color: MAIN_ORANGE }} />}
@@ -59,6 +61,7 @@ interface QRProps {
 
 function RenderQrList({ title, qrs, handleEdit, handlePauseQrLink, openDetails, setConfirm, handleClone }: QRProps) {
   const isWide = useMediaQuery("(min-width:665px)", { noSsr: true });
+  const { sxRow, sxQrTypeName, sxQrName, sxIcon } = sxClasses;
 
   return (
     <Stack spacing={2} sx={{ mt: '5px' }}>
@@ -71,8 +74,7 @@ function RenderQrList({ title, qrs, handleEdit, handlePauseQrLink, openDetails, 
             if (qr.qrOptionsId?.background?.file === "") qr.qrOptionsId.background.file = null;
 
             return (
-              <Paper sx={{ width: "100%", overflow: "hidden", '&:hover': { boxShadow: '0 0 3px 2px #849abb' } }}
-                     elevation={3} key={qr.createdAt}>
+              <Paper sx={sxRow} elevation={3} key={qr.createdAt}>
                 <Stack spacing={2} direction="row" justifyContent="space-between" sx={{ minHeight: '85px' }}>
                   <Box sx={{ display: "flex", justifyContent: "space-between", minWidth: '35%' }}>
                     <Box sx={{ display: "flex" }}>
@@ -80,18 +82,12 @@ function RenderQrList({ title, qrs, handleEdit, handlePauseQrLink, openDetails, 
                         {renderQr(qr)}
                       </Box>
                       <Stack direction="column" sx={{ my: "auto" }}>
-                        <Typography variant="subtitle2" color="primary" sx={{mb: '-7px', display: 'flex', alignItems: 'center'}}>
+                        <Typography variant="subtitle2" color="primary" sx={sxQrTypeName}>
                           {qrNameDisplayer(qr.qrType, qr.isDynamic)}
-                          {qr.isMonetized && <AttachMoneyIcon sx={{width: 18, height: 18, ml: '2px'}} color="error" />}
+                          {qr.isMonetized &&
+                          <AttachMoneyIcon sx={sxIcon} color="error" />}
                         </Typography>
-                        <Typography variant="h6" sx={{
-                          fontWeight: "bold",
-                          mb: "-2px",
-                          width: { sm: '350px', xs: '200px' },
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap'
-                        }}>
+                        <Typography variant="h6" sx={sxQrName}>
                           {qr.qrName}
                         </Typography>
                         {isWide ? (
