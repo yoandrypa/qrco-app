@@ -28,10 +28,9 @@ QrLink.methods.set("fetchByUser", async function (userId: string, limit: number,
   if (pageKey) query.startAt(decodePageKey(pageKey));
 
   const { count: total } = await QrLink.query({ userId }).count().exec();
-  const response: QueryResponse<any> = await query.exec();
-  const items = await response.populate();
+  const items = await query.exec();
 
-  return { items, total, nextPageKey: encodePageKey(response.lastKey) };
+  return { items, total, nextPageKey: encodePageKey(items.lastKey) };
 });
 
 export default QrLink;

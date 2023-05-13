@@ -39,13 +39,13 @@ export default function QrList({ title }: any) {
       const limit = (process.env.PAGE_SIZE || 10) as number;
 
       startWaiting();
-      QrDataModel.fetchByUser(userInfo.cognito_user_id, limit, pageKey).then((response: any) => {
-        const newQrs = { ...response };
-        newQrs.items = [...qrs.items, ...newQrs.items];
-        setQRs(newQrs);
-        console.log(2, newQrs.nextPageKey);
-        setLoading(false);
-      }).finally(releaseWaiting);
+      QrDataModel.fetchByUser(userInfo.cognito_user_id, limit, pageKey)
+        .then(async ({ items, total, nextPageKey }: any) => {
+          const newItems = await items.populate({ properties: ["shortLinkId", "qrOptionsId"] });
+          setQRs({ items: [...qrs.items, ...newItems], total, nextPageKey });
+          setLoading(false);
+        })
+        .finally(releaseWaiting);
     }
   }
 
