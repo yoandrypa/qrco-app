@@ -42,4 +42,5 @@ export interface RenderTextFieldsProps {
 export interface IconsProps {
  icon: string;
  name?: string;
+ alt?: string;
 }

@@ -29,7 +29,7 @@ export default function RenderIconPicker({handleClose, handleAccept, icons}: Ico
         const newData: IconsProps[] = [];
         const filterBy = filter.toLowerCase();
         icons.forEach((x: IconsProps) => {
-          if ((x.name || x.icon).toLowerCase().includes(filterBy)) {
+          if (x.alt?.replace(/,/g, '').includes(filterBy) || (x.name || x.icon).toLowerCase().includes(filterBy)) {
             newData.push(x);
           }
         });
@@ -48,28 +48,30 @@ export default function RenderIconPicker({handleClose, handleAccept, icons}: Ico
       <DialogContent dividers>
         <Paper elevation={2} sx={{p: 2}}>
           <Filter filter={filter} setFilter={setFilter} sx={{mb: '10px', width: '300px'}} />
-          <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: 'fit-content', margin: '0 auto', textAlign: 'center'}}>
-            {newIcons.map(x => (
-              <Tooltip key={`tooltip${x}`} title={x.name || x.icon} arrow>
-                <Box
-                  key={x.icon}
-                  onClick={() => handleAccept(x.icon)}
-                  sx={{
-                    width: '34px',
-                    height: '34px',
-                    mr: '5px',
-                    mb: '5px',
-                    pt: '3px',
-                    cursor: 'pointer !important',
-                    borderRadius: '3px',
-                    border: theme => `solid 1px ${theme.palette.text.disabled}`,
-                    '&:hover': {
-                      boxShadow: '0 0 2px 2px #849abb'
-                    }
-                }}>
-                <RenderIcon icon={x.icon} enabled />
-              </Box>
-            </Tooltip>))}
+          <Box sx={{ width: {xs: '100%', sm: '300px'}, height: {xs: '100%', sm: '250px'}, overflowX: 'none', overflowY: 'auto'}}>
+            <Box sx={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: 'fit-content', margin: '0 auto', textAlign: 'center'}}>
+              {newIcons.map(x => (
+                <Tooltip key={`tooltip${x}`} title={x.name || x.icon} arrow>
+                  <Box
+                    key={x.icon}
+                    onClick={() => handleAccept(x.icon)}
+                    sx={{
+                      width: '34px',
+                      height: '34px',
+                      mr: '5px',
+                      mb: '5px',
+                      pt: '3px',
+                      cursor: 'pointer !important',
+                      borderRadius: '3px',
+                      border: theme => `solid 1px ${theme.palette.text.disabled}`,
+                      '&:hover': {
+                        boxShadow: '0 0 2px 2px #849abb'
+                      }
+                  }}>
+                  <RenderIcon icon={x.icon} enabled />
+                </Box>
+              </Tooltip>))}
+            </Box>
           </Box>
         </Paper>
       </DialogContent>
