@@ -2,6 +2,7 @@ interface HandlerProps {
   openValidationErrors: () => void;
   handleValue: (prop: string) => (payload: any) => void;
   handleSave: () => void;
+  tracking?: string;
   secret?: string;
   secretOps?: string;
   errors: string[];

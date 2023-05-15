@@ -18,6 +18,7 @@ import {handleCopy} from "../../../helpers/generalFunctions";
 
 import dynamic from "next/dynamic";
 import {MAIN_ORANGE} from "../../constants";
+import RenderTrackingOpts from "./RenderTrackingOpts";
 
 const ClearIcon = dynamic(() => import("@mui/icons-material/Clear"));
 const ReplayIcon = dynamic(() => import("@mui/icons-material/Replay"));
@@ -34,7 +35,7 @@ const Menu = dynamic(() => import("@mui/material/Menu"));
 const MenuItem = dynamic(() => import("@mui/material/MenuItem"));
 const Divider = dynamic(() => import("@mui/material/Divider"));
 
-export default function RenderSecretHandler({secret, disabled, errors, openValidationErrors, handleValue, secretOps, handleSave}: SecretHandlerProps) {
+export default function RenderSecretHandler({secret, disabled, errors, openValidationErrors, handleValue, secretOps, handleSave, tracking}: SecretHandlerProps) {
   const [handleSecret, setHandleSecret] = useState<boolean>(secret !== undefined);
   const [copied, setCopied] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -96,43 +97,46 @@ export default function RenderSecretHandler({secret, disabled, errors, openValid
 
   return (
     <>
-      {!handleSecret ? (
-        <ButtonGroup aria-label="outlined button group" sx={{mt: {xs: '4px', sm: 1}, ml: {xs: 0, sm: 1}}} variant="outlined">
-          <Button sx={{height: '40px', width: '100%'}} onClick={toggleSecret}
-                  startIcon={<KeyIcon sx={{color: 'error.light'}}/>} disabled={disabled}>{'Secret'}</Button>
-          <Button sx={{height: '40px', width: '40px'}} onClick={handleOpenHelp}>
-            <HelpOutlineIcon />
-          </Button>
-        </ButtonGroup>
-      ) : (
-        <Box sx={{ml: {xs: 0, sm: 1}, width: '100%'}}>
-          <TextField
-            label="Secret"
-            size="small"
-            fullWidth
-            disabled={disabled}
-            margin="dense"
-            value={secret || ''}
-            sx={{'& .MuiInputBase-root': { color: MAIN_ORANGE }}}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end" sx={{mr: '-10px'}}>
-                  <Tooltip title="Help">
-                    <IconButton disabled={disabled || loading} sx={{mr: '-3px'}} size="small" onClick={handleOpenHelp}>
-                      <HelpOutlineIcon sx={iconColor(disabled)}/>
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Options">
-                    <IconButton sx={{mr: '-3px'}} size="small" onClick={handleOpenOpts}>
-                      <MoreVertIcon sx={iconColor(disabled)}/>
-                    </IconButton>
-                  </Tooltip>
-                </InputAdornment>
-              )
-            }}
-          />
-        </Box>
-      )}
+      <Box sx={{display: 'flex'}}>
+        {!handleSecret ? (
+          <ButtonGroup aria-label="outlined button group" sx={{mt: {xs: '4px', sm: 1}, ml: {xs: 0, sm: 1}, width: {xs: '100%', sm: undefined}}} variant="outlined">
+            <Button sx={{height: '40px', width: '100%'}} onClick={toggleSecret}
+                    startIcon={<KeyIcon sx={{color: 'error.light'}}/>} disabled={disabled}>{'Secret'}</Button>
+            <Button sx={{height: '40px', width: '40px'}} onClick={handleOpenHelp}>
+              <HelpOutlineIcon />
+            </Button>
+          </ButtonGroup>
+        ) : (
+          <Box sx={{ml: {xs: 0, sm: 1}, width: '100%'}}>
+            <TextField
+              label="Secret"
+              size="small"
+              fullWidth
+              disabled={disabled}
+              margin="dense"
+              value={secret || ''}
+              sx={{'& .MuiInputBase-root': { color: MAIN_ORANGE }}}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end" sx={{mr: '-10px'}}>
+                    <Tooltip title="Help">
+                      <IconButton disabled={disabled || loading} sx={{mr: '-3px'}} size="small" onClick={handleOpenHelp}>
+                        <HelpOutlineIcon sx={iconColor(disabled)}/>
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Options">
+                      <IconButton sx={{mr: '-3px'}} size="small" onClick={handleOpenOpts}>
+                        <MoreVertIcon sx={iconColor(disabled)}/>
+                      </IconButton>
+                    </Tooltip>
+                  </InputAdornment>
+                )
+              }}
+            />
+          </Box>
+        )}
+        <RenderTrackingOpts tracking={tracking} handleValue={handleValue} />
+      </Box>
       {anchorOpts && (
         <Menu
           id="menuButton"
