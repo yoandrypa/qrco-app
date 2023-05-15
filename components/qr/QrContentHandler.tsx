@@ -136,9 +136,7 @@ const QrContentHandler = () => { // @ts-ignore
           <NotifyDynamic isDynamic={data?.isDynamic || false} />
           <Box sx={{ textAlign: 'left', width: '100%' }}>{renderSel()}</Box>
         </>
-      ) : (
-        <PleaseWait redirecting hidePleaseWait />
-      )}
+      ) : <PleaseWait redirecting hidePleaseWait />}
     </>
   );
 }
