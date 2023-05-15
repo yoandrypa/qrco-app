@@ -29,7 +29,7 @@ export default function RenderIconPicker({handleClose, handleAccept, icons}: Ico
         const newData: IconsProps[] = [];
         const filterBy = filter.toLowerCase();
         icons.forEach((x: IconsProps) => {
-          if (x.alt?.replace(/,/g, '').includes(filterBy) || (x.name || x.icon).toLowerCase().includes(filterBy)) {
+          if (x.alt?.replaceAll(',', '').includes(filterBy) || (x.name || x.icon).toLowerCase().includes(filterBy)) {
             newData.push(x);
           }
         });
