@@ -1,5 +1,5 @@
 import { LinkModel as LinkModel } from "../models/link";
-import dynamoose from "../libs/dynamoose";
+import dynamoose from "../libs/gateways/dynamodb/dynamoose";
 // @ts-ignore
 import bcrypt from "bcryptjs";
 import { CustomError } from "../utils";

@@ -1,4 +1,4 @@
-import dynamoose from "../../libs/dynamoose";
+import dynamoose from "../../libs/gateways/dynamodb/dynamoose";
 import { UserModel } from "../UserModel";
 import {getUuid} from "../../helpers/qr/helpers";
 

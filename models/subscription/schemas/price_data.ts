@@ -1,7 +1,7 @@
-import Schema from '../commons/schema';
+import Schema from '../../commons/schema';
 
-import CurrencySchema from '../commons/currency';
-import RecurringSchema from '../commons/interval';
+import CurrencySchema from '../../commons/schemas/currency';
+import RecurringSchema from '../../commons/schemas/interval';
 
 const schema = new Schema(
   {

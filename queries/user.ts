@@ -1,5 +1,5 @@
 import { UserModel } from "../models/link";
-import dynamoose from "../libs/dynamoose";
+import dynamoose from "../libs/gateways/dynamodb/dynamoose";
 
 export const find = async (match: any) => {
   try {

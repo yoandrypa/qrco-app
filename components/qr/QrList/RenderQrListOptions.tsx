@@ -19,19 +19,19 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import dynamic from "next/dynamic";
 import {useRouter} from "next/router";
 
-import Context from "../../../context/Context";
-import {handleDesignerString} from "../../../../helpers/qr/helpers";
-import {handleCopy} from "../../../helpers/generalFunctions";
-import {MAIN_ORANGE} from "../../constants";
+import Context from "../../context/Context";
+import {handleDesignerString} from "../../../helpers/qr/helpers";
+import {handleCopy} from "../../helpers/generalFunctions";
+import {MAIN_ORANGE} from "../constants";
 
-const RenderPreview = dynamic(() => import("../../renderers/RenderPreview"));
+const RenderPreview = dynamic(() => import("../renderers/RenderPreview"));
 const DynamicFeedIcon = dynamic(() => import("@mui/icons-material/DynamicFeed"));
 const DashboardIcon = dynamic(() => import("@mui/icons-material/Dashboard"));
 const PlayCircleOutlineIcon = dynamic(() => import("@mui/icons-material/PlayCircleOutline"));
 const PauseCircleOutlineIcon = dynamic(() => import("@mui/icons-material/PauseCircleOutline"));
 const KeyIcon = dynamic(() => import("@mui/icons-material/Key"));
 const LockOutlinedIcon = dynamic(() => import("@mui/icons-material/LockOutlined"));
-const RenderCopiedNotification = dynamic(() => import("../looseComps/RenderCopiedNotification"));
+const RenderCopiedNotification = dynamic(() => import("../helperComponents/looseComps/RenderCopiedNotification"));
 const ContentCopyIcon = dynamic(() => import("@mui/icons-material/ContentCopy"));
 
 interface RenderQrOptsProps {

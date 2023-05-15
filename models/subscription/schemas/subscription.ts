@@ -1,16 +1,16 @@
-import Schema from '../commons/schema';
+import Schema from '../../commons/schema';
 
 import PendingUpdateSchema from './pending_update';
 import AutomaticTaxSchema from './automatic_tax';
 import PauseCollectionSchema from './pause_collection';
 import BillingThresholdsSchema from './billing_thresholds';
-import PendingInvoiceItemIntervalSchema from '../commons/interval';
+import PendingInvoiceItemIntervalSchema from '../../commons/schemas/interval';
 import PaymentSettingsSchema from './payment_settings';
 import TransferDataSchema from './transfer_data';
 import ItemSchema from './item';
-import IdentifierSchema from '../commons/identifier';
-import CurrencySchema from '../commons/currency';
-import DiscountSchema from '../commons/discount';
+import IdentifierSchema from '../../commons/schemas/identifier';
+import CurrencySchema from '../../commons/schemas/currency';
+import DiscountSchema from '../../commons/schemas/discount';
 
 const schema = new Schema(
   {
