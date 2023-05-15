@@ -155,17 +155,15 @@ export const cleaner = (data: DataType, item: string): void => {
 
 export const sectionPreConfig = (item: string, selected?: string): CustomType => {
   // @ts-ignore
-  const component: IQrSetting = JSON.parse(JSON.stringify(components[item]));
+  const component: IQrSetting = components[item];
   const data = component.getDefaultQrData ? component.getDefaultQrData() : component.data || {};
 
-  if (selected === 'petId') {
-    data.linksOnlyLinks = true;
-  }
+  if (selected === 'petId') data.linksOnlyLinks = true;
 
   return {
     component: item,
-    expand: getUuid(), // @ts-ignore
-    isMonetized: components[item]?.isMonetized || false,
-    data
+    expand: getUuid(),
+    isMonetized: component.isMonetized || false,
+    data: structuredClone(data),
   }
 }
