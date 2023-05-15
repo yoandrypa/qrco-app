@@ -19,7 +19,7 @@ export const LinkedIn = dynamic(() => import('@mui/icons-material/LinkedIn'));
 export const Pinterest = dynamic(() => import('@mui/icons-material/Pinterest'));
 export const YouTube = dynamic(() => import('@mui/icons-material/YouTube'));
 export const Telegram = dynamic(() => import('@mui/icons-material/Telegram'));
-export const Bussiness = dynamic(() => import('@mui/icons-material/Business'));
+export const Business = dynamic(() => import('@mui/icons-material/Business'));
 export const Video = dynamic(() => import('@mui/icons-material/Movie'));
 export const Seat = dynamic(() => import('@mui/icons-material/Chair'));
 export const Accessible = dynamic(() => import('@mui/icons-material/Accessible'));
