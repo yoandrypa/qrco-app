@@ -87,6 +87,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind, mes
 
         const context = canvas?.getContext('2d', { alpha: false, desynchronized: true });
         if (context) {
+          context.imageSmoothingQuality = 'high';
           context.imageSmoothingEnabled = true; // @ts-ignore
           context.drawImage(image.current, posX, posY, dimensionW, dimensionH);
         }
@@ -136,7 +137,7 @@ export default function ImageCropper({handleAccept, handleClose, file, kind, mes
           }
           compressImage(newFile, (newFileItem: File) => handleAccept(newFileItem, kind), resizing, quality);
         }
-      }, type, 0.5);
+      }, type, 0.7);
     }
   };
 

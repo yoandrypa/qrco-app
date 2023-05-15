@@ -174,14 +174,12 @@ export async function compressImage(file: File, callback: (newFile: File) => voi
     // @ts-ignore
     context.drawImage(img, 0, 0, originalWidth * resizingFactor, originalHeight * resizingFactor);
 
-    canvas.toBlob(
-      (blob) => {
+    canvas.toBlob((blob) => {
         if (blob) {
           const result = new File([blob], file.name, {type: file.type});
           callback(result);
         }
-      },
-      "image/jpeg",
+      }, "image/jpeg",
       quality
     );
   }

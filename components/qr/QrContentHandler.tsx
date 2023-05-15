@@ -1,19 +1,19 @@
-import React, { ChangeEvent, useContext } from 'react';
+import {useContext} from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 import Context from '../context/Context';
-import { DataType, OptionsType, SocialProps } from './types/types';
+import {DataType, OptionsType, SocialProps} from './types/types';
 
 import dynamic from "next/dynamic";
 
 import NotifyDynamic from "./helperComponents/smallpieces/NotifyDynamic";
-import { qrNameDisplayer } from "../../helpers/qr/helpers";
-import { dynamicQr, dynamicQrTypes } from "./qrtypes";
-import { renderQrIcon } from "./components/commons/helpers";
-import { IQrSetting, TEventPayload } from "./components/commons/types";
+import {qrNameDisplayer} from "../../helpers/qr/helpers";
+import {dynamicQr, dynamicQrTypes} from "./qrtypes";
+import {IQrSetting, TEventPayload} from "./components/commons/types";
 import valuesHanlder from "./helperFunction";
 import Common from "./helperComponents/Common";
+import RenderIcon from "./helperComponents/smallpieces/RenderIcon";
 
 const CardDataStatic = dynamic(() => import("./renderers/custom/CardDataStatic"));
 const Custom = dynamic(() => import("./renderers/Custom"));
@@ -128,16 +128,15 @@ const QrContentHandler = () => { // @ts-ignore
         <>
           {!Boolean(userInfo) && data.mode !== 'secret' && <Box sx={{ mb: '10px' }}><RenderNoUserWarning /></Box>}
           <Box sx={{ display: 'inline' }}>
-            {renderQrIcon(qrType, { enabled: true, sx: { mb: '-5px' } })}
+            {/*{renderQrIcon(qrType, { enabled: true, sx: { mb: '-5px' } })}*/}
+            <RenderIcon icon={selected} enabled sx={{ mb: '-5px' }}/>
           </Box>
           <Typography sx={{ fontWeight: 'bold', display: 'inline', ml: '5px' }}>{qrNameDisplayer(selected || '', data?.isDynamic || false)}</Typography>
           <Typography sx={{ display: { xs: 'none', sm: 'inline' } }}>{`: Enter the content${data?.isDynamic ? ' and page design' : ''}`}</Typography>
           <NotifyDynamic isDynamic={data?.isDynamic || false} />
           <Box sx={{ textAlign: 'left', width: '100%' }}>{renderSel()}</Box>
         </>
-      ) : (
-        <PleaseWait redirecting hidePleaseWait />
-      )}
+      ) : <PleaseWait redirecting hidePleaseWait />}
     </>
   );
 }
