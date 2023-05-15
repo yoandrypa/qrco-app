@@ -10,7 +10,7 @@ export function parseIconStyle({ color, enabled, sx }: IIconProps) {
 }
 
 export function renderQrIcon(qrType: IQrSetting<any>, iconProps: IIconProps): ReactElement {
-  const { id: qrTypeId, renderIcon } = qrType;
+  const { id: qrTypeId = 'custom', renderIcon } = qrType;
 
   if (renderIcon) return renderIcon(iconProps);
 
