@@ -10,7 +10,8 @@ import {NameSecretProps} from "./helpers";
 import RenderSecretHandler from "./RenderSecretHandler";
 import RenderCodeHandler from "./RenderCodeHandler";
 
-function RenderNameAndSecret({handleValue, qrName, secret, secretOps, hideSecret, code, errors, openValidationErrors, handleSave}: NameSecretProps) {
+function RenderNameAndSecret({handleValue, qrName, secret, secretOps, hideSecret, code, errors, openValidationErrors,
+                               handleSave, tracking}: NameSecretProps) {
   const disabled = !qrName?.trim()?.length;
 
   return (
@@ -34,7 +35,8 @@ function RenderNameAndSecret({handleValue, qrName, secret, secretOps, hideSecret
         <Box sx={{display: 'flex', flexDirection: {sm: 'row', xs: 'column'}}}>
           <RenderCodeHandler code={code} url={`${process.env.MICRO_SITES_BASE_URL}/`} />
           <RenderSecretHandler disabled={disabled} openValidationErrors={openValidationErrors} handleValue={handleValue}
-                               errors={errors} secret={secret} secretOps={secretOps} handleSave={handleSave} />
+                               errors={errors} secret={secret} secretOps={secretOps} handleSave={handleSave}
+                               tracking={tracking} />
         </Box>
       )}
     </>
@@ -43,6 +45,6 @@ function RenderNameAndSecret({handleValue, qrName, secret, secretOps, hideSecret
 
 const notIf = (current: NameSecretProps, next: NameSecretProps) =>
   current.qrName === next.qrName && current.secret === next.secret && current.secretOps === next.secretOps &&
-  current.code === next.code && areEquals(current.errors, next.errors);
+  current.code === next.code && current.tracking === next.tracking && areEquals(current.errors, next.errors);
 
 export default memo(RenderNameAndSecret, notIf);

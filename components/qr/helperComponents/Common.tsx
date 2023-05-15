@@ -231,8 +231,9 @@ function Common({msg, children}: CommonProps) { // @ts-ignore
         <Box sx={{ display: 'flex' }}>
           <Box sx={{ width: '100%' }}>
             <RenderNameAndSecret handleValue={handleValue} qrName={data?.qrName} secret={data?.secret} code={code}
-                                 hideSecret={data.mode === 'secret' || !data?.isDynamic} errors={getValidationErrors()}
-                                 openValidationErrors={forceOpenValidator} secretOps={data?.secretOps} handleSave={handleSave} />
+                                 tracking={data?.tracking} hideSecret={data.mode === 'secret' || !data?.isDynamic}
+                                 errors={getValidationErrors()} openValidationErrors={forceOpenValidator}
+                                 secretOps={data?.secretOps} handleSave={handleSave} />
             {![...NO_MICROSITE, 'web'].includes(selected) && data?.isDynamic ? (
               <Box sx={{width: '100%', position: 'relative'}}>
                 <Tabs value={tabSelected} onChange={handleSelectTab} sx={{ mb: 1 }}>
